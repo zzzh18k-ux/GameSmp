@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Crypto Miner PRO</title>
+    <title>Burger Tycoon</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA CRYPTO HACKER */
-        :root { --bg: #050505; --card: #0f0f0f; --green: #00ff41; --gold: #ffd700; --dim: #003b00; }
+        /* TEMA BURGER */
+        :root { --bg: #2c1e16; --card: #3e2723; --orange: #ff6f00; --yellow: #ffca28; --green: #4caf50; --red: #f44336; --text: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background-color: var(--bg); color: var(--green); font-family: 'Share Tech Mono', monospace;
+            background-color: var(--bg); color: var(--text); font-family: 'Roboto', sans-serif;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
             padding: 15px; padding-bottom: 50px;
-            background-image: linear-gradient(0deg, transparent 24%, rgba(0, 255, 65, .03) 25%, rgba(0, 255, 65, .03) 26%, transparent 27%, transparent 74%, rgba(0, 255, 65, .03) 75%, rgba(0, 255, 65, .03) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(0, 255, 65, .03) 25%, rgba(0, 255, 65, .03) 26%, transparent 27%, transparent 74%, rgba(0, 255, 65, .03) 75%, rgba(0, 255, 65, .03) 76%, transparent 77%, transparent);
-            background-size: 50px 50px;
+            background-image: radial-gradient(#4e342e 1px, transparent 1px); background-size: 20px 20px;
         }
 
         #banScreen {
@@ -31,171 +30,202 @@
 
         .app-container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 15px; }
 
-        /* CONSOLA DE MINERÍA (HEADER) */
-        .terminal-card {
-            background: var(--card); border: 1px solid var(--green); padding: 20px; border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.1); position: relative; overflow: hidden;
+        /* HEADER RESUMEN */
+        .stats-bar {
+            display: flex; gap: 10px;
         }
-        .terminal-header { font-size: 10px; color: #555; margin-bottom: 5px; display: flex; justify-content: space-between; }
-        .hash-rate { font-size: 40px; color: var(--gold); text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-        .btc-label { font-size: 12px; color: #888; }
-        .status-line { font-size: 12px; margin-top: 10px; color: var(--green); display: flex; align-items: center; gap: 5px; }
-        .blink { animation: blinker 1s linear infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
-
-        /* BOTÓN FUNCIONALIDAD BÁSICA (GRATIS) */
-        .btn-mine {
-            background: var(--dim); border: 1px solid var(--green); color: var(--green);
-            width: 100%; padding: 15px; font-family: 'Share Tech Mono', monospace; font-size: 16px;
-            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
-            transition: 0.2s; border-radius: 5px;
+        .stat-box {
+            flex: 1; background: var(--card); border: 2px solid #5d4037; border-radius: 15px; padding: 10px;
+            display: flex; flex-direction: column; align-items: center; position: relative;
         }
-        .btn-mine.active { background: var(--green); color: black; box-shadow: 0 0 15px var(--green); }
+        .stat-icon { font-size: 20px; margin-bottom: 5px; }
+        .stat-val { font-family: 'Fredoka One', cursive; font-size: 18px; }
+        .stat-label { font-size: 10px; color: #aaa; text-transform: uppercase; }
 
-        /* TIENDA DE HARDWARE (LOS 7 VIDEOS) */
-        .hardware-section { margin-top: 10px; border-top: 1px dashed #333; padding-top: 10px; }
-        .section-title { font-size: 12px; color: #666; margin-bottom: 10px; text-transform: uppercase; }
-
-        .hardware-grid { display: flex; flex-direction: column; gap: 8px; }
-
-        .hardware-item {
-            background: #111; border: 1px solid #333; padding: 12px; display: flex; 
-            justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;
+        /* CIRCULO DE VENTA (HAMBURGUESA) */
+        .game-zone {
+            position: relative; height: 250px; display: flex; justify-content: center; align-items: center;
+            background: url('https://img.freepik.com/free-vector/restaurant-mural-wallpaper_23-2148706001.jpg?w=740'); /* Fondo opcional */
+            background-size: cover; border-radius: 20px; border: 4px solid #5d4037; overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
         }
-        .hardware-item:active { background: #222; border-color: var(--green); }
+        .burger-btn {
+            font-size: 100px; cursor: pointer; transition: transform 0.1s; z-index: 10;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+        }
+        .burger-btn:active { transform: scale(0.9); }
         
-        .hw-left { display: flex; align-items: center; gap: 10px; }
-        .hw-icon { font-size: 20px; color: #555; width: 30px; text-align: center; }
-        .hw-info h4 { margin: 0; font-size: 14px; color: #ddd; font-weight: normal; }
-        .hw-info p { margin: 0; font-size: 10px; color: #666; }
-        
-        .hw-action { font-size: 12px; color: var(--gold); border: 1px solid var(--gold); padding: 2px 6px; border-radius: 3px; }
-
-        /* ESTADOS DE LOS BOTONES */
-        .hardware-item.disabled { opacity: 0.5; cursor: not-allowed; }
-        .hardware-item.disabled .hw-action { border-color: #333; color: #333; }
-
-        /* FOOTER */
-        .btn-withdraw {
-            background: #222; border: 1px solid var(--gold); color: var(--gold); width: 100%; 
-            padding: 15px; font-family: 'Share Tech Mono', monospace; font-size: 16px; margin-top: 15px;
-            cursor: pointer; transition: 0.2s;
+        /* STOCK ALERT */
+        .stock-alert {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 20; display: none;
+            flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
-        .btn-withdraw:hover { background: var(--gold); color: black; }
+        .stock-btn {
+            background: var(--green); color: white; border: none; padding: 15px 30px;
+            border-radius: 50px; font-weight: bold; font-size: 16px; margin-top: 10px;
+            cursor: pointer; box-shadow: 0 0 20px rgba(76, 175, 80, 0.5); animation: pulse 1.5s infinite;
+        }
+        .stock-wait { font-size: 12px; color: #aaa; margin-top: 15px; text-decoration: underline; cursor: pointer; }
+
+        /* BARRA DE PROGRESO */
+        .progress-container { background: #222; border-radius: 10px; padding: 10px; border: 1px solid #444; }
+        .prog-bar { height: 10px; background: #111; border-radius: 5px; overflow: hidden; margin: 5px 0; }
+        .prog-fill { height: 100%; width: 0%; background: var(--yellow); transition: 0.3s; }
+        .prog-text { display: flex; justify-content: space-between; font-size: 11px; color: #ccc; font-weight: bold; }
+
+        /* MEJORAS (LOS 7 ANUNCIOS) */
+        .upgrades-title { font-family: 'Fredoka One', cursive; color: var(--yellow); margin-top: 10px; font-size: 18px; text-align: center; }
+        .upgrade-list { display: flex; flex-direction: column; gap: 8px; }
+        
+        .upgrade-item {
+            background: var(--card); border: 1px solid #5d4037; padding: 12px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+        }
+        .upgrade-item:active { background: #4e342e; }
+        .up-icon { font-size: 24px; color: var(--orange); width: 40px; text-align: center; }
+        .up-info h4 { margin: 0; font-size: 14px; font-weight: bold; }
+        .up-info p { margin: 0; font-size: 10px; color: #888; }
+        .up-cost { background: #222; padding: 5px 10px; border-radius: 5px; font-size: 11px; color: var(--yellow); font-weight: bold; }
+
+        .upgrade-item.locked { opacity: 0.6; filter: grayscale(1); pointer-events: none; }
+
+        /* FLOTANTES */
+        .float-plus { position: absolute; color: var(--green); font-weight: bold; font-size: 24px; pointer-events: none; animation: floatUp 0.8s forwards; }
+        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* MODAL */
         #receiptModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; flex-direction:column; z-index:100; padding: 30px; }
-        .modal-box { background: #000; padding: 30px; border: 1px solid var(--green); width: 100%; text-align: center; box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); }
-        .receipt-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #333; padding: 10px 0; font-size: 12px; color: #aaa; }
+        .modal-box { background: var(--card); padding: 30px; border-radius: 20px; border: 2px solid var(--orange); width: 100%; text-align: center; }
+        .btn-withdraw { background: var(--green); color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="banScreen">
-        <h2 style="color:red;">SYSTEM ERROR: MULTI-ACCOUNT</h2>
-        <p style="color:#666;">ID: <span id="linkedID">...</span></p>
+        <h2>RESTAURANTE CLAUSURADO</h2>
+        <p>Multicuenta detectada.<br>ID: <span id="linkedID">...</span></p>
     </div>
 
     <div class="app-container" id="appContent">
         
-        <div class="terminal-card">
-            <div class="terminal-header"><span>SERVER: ONLINE</span><span>v8.8.0</span></div>
-            <div class="hash-rate"><span id="saldo">0</span></div>
-            <div class="btc-label">SATS MINADOS (META: 2500)</div>
-            <div class="status-line">
-                <span class="blink">_</span> <span id="statusText">SISTEMA EN ESPERA...</span>
+        <div class="stats-bar">
+            <div class="stat-box">
+                <i class="fa-solid fa-cash-register stat-icon" style="color:var(--green);"></i>
+                <div class="stat-val" id="moneyDisplay">0</div>
+                <div class="stat-label">CAJA CHICA</div>
+            </div>
+            <div class="stat-box">
+                <i class="fa-solid fa-boxes-stacked stat-icon" style="color:var(--orange);"></i>
+                <div class="stat-val" id="stockDisplay">20</div>
+                <div class="stat-label">INGREDIENTES</div>
             </div>
         </div>
 
-        <button class="btn-mine" id="btnMine" onclick="toggleMining()">
-            <i class="fa-solid fa-power-off"></i> <span id="mineBtnText">INICIAR MINADO AUTOMÁTICO</span>
-        </button>
+        <div class="progress-container">
+            <div class="prog-text"><span>PROGRESO DE RETIRO</span><span>$0.10</span></div>
+            <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+            <div class="prog-text"><span id="pctDisplay">0%</span><span>2,500 Pts</span></div>
+        </div>
 
-        <div class="hardware-section">
-            <div class="section-title">INSTALAR HARDWARE (BOOST)</div>
-            <div class="hardware-grid">
+        <div class="game-zone">
+            <div class="burger-btn" onclick="sellBurger(event)">🍔</div>
+            
+            <div class="stock-alert" id="stockAlert">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size:40px; color:var(--red); margin-bottom:10px;"></i>
+                <h3 style="color:white; margin-bottom:5px;">¡SIN INGREDIENTES!</h3>
+                <p style="font-size:12px; color:#ccc; margin-bottom:15px;">El restaurante no puede cocinar.</p>
                 
-                <div class="hardware-item" id="hw1" onclick="installHardware(1, 'adsgram')">
-                    <div class="hw-left"><i class="fa-solid fa-microchip hw-icon"></i>
-                        <div class="hw-info"><h4>GPU NVIDIA 3060</h4><p id="t1">Estado: Disponible</p></div>
-                    </div><div class="hw-action">+20 PTS</div>
-                </div>
-
-                <div class="hardware-item" id="hw2" onclick="installHardware(2, 'monetag')">
-                    <div class="hw-left"><i class="fa-solid fa-memory hw-icon"></i>
-                        <div class="hw-info"><h4>RAM 32GB EXPANSION</h4><p id="t2">Estado: Disponible</p></div>
-                    </div><div class="hw-action">+10 PTS</div>
-                </div>
-
-                <div class="hardware-item" id="hw3" onclick="installHardware(3, 'adsgram')">
-                    <div class="hw-left"><i class="fa-solid fa-server hw-icon"></i>
-                        <div class="hw-info"><h4>ASIC MINER v1</h4><p id="t3">Estado: Disponible</p></div>
-                    </div><div class="hw-action">+15 PTS</div>
-                </div>
-
-                <div class="hardware-item" id="hw4" onclick="installHardware(4, 'monetag')">
-                    <div class="hw-left"><i class="fa-solid fa-fan hw-icon"></i>
-                        <div class="hw-info"><h4>COOLING SYSTEM</h4><p id="t4">Estado: Disponible</p></div>
-                    </div><div class="hw-action">+8 PTS</div>
-                </div>
-
-                <div class="hardware-item" id="hw5" onclick="installHardware(5, 'adsgram')">
-                    <div class="hw-left"><i class="fa-solid fa-microchip hw-icon"></i>
-                        <div class="hw-info"><h4>GPU NVIDIA 4090</h4><p id="t5">Estado: Disponible</p></div>
-                    </div><div class="hw-action">+30 PTS</div>
-                </div>
-
-                <div class="hardware-item" id="hw6" onclick="installHardware(6, 'monetag')">
-                    <div class="hw-left"><i class="fa-solid fa-bolt hw-icon"></i>
-                        <div class="hw-info"><h4>POWER SUPPLY 1000W</h4><p id="t6">Estado: Disponible</p></div>
-                    </div><div class="hw-action">+12 PTS</div>
-                </div>
-
-                <div class="hardware-item" id="hw7" onclick="installHardware(7, 'adsgram')">
-                    <div class="hw-left"><i class="fa-solid fa-network-wired hw-icon"></i>
-                        <div class="hw-info"><h4>FIBER OPTIC CABLE</h4><p id="t7">Estado: Disponible</p></div>
-                    </div><div class="hw-action">+15 PTS</div>
-                </div>
-
+                <button class="stock-btn" onclick="restockExpress()">
+                    <i class="fa-solid fa-truck-fast"></i> RECARGA EXPRESS (+50)
+                </button>
+                <div class="stock-wait" onclick="restockFree()">Recarga Lenta (Esperar 10s)</div>
             </div>
+        </div>
+
+        <div class="upgrades-title">MEJORAS DEL LOCAL</div>
+        <div class="upgrade-list">
+            
+            <div class="upgrade-item" id="up1" onclick="buyUpgrade(1, 'adsgram')">
+                <div class="up-icon"><i class="fa-solid fa-chair"></i></div>
+                <div class="up-info"><h4>Nuevas Sillas</h4><p id="t1">Disponible</p></div>
+                <div class="up-cost">BONO +15</div>
+            </div>
+
+            <div class="upgrade-item" id="up2" onclick="buyUpgrade(2, 'monetag')">
+                <div class="up-icon"><i class="fa-solid fa-palette"></i></div>
+                <div class="up-info"><h4>Decoración</h4><p id="t2">Disponible</p></div>
+                <div class="up-cost">BONO +10</div>
+            </div>
+
+            <div class="upgrade-item" id="up3" onclick="buyUpgrade(3, 'adsgram')">
+                <div class="up-icon"><i class="fa-solid fa-utensils"></i></div>
+                <div class="up-info"><h4>Cubiertos Oro</h4><p id="t3">Disponible</p></div>
+                <div class="up-cost">BONO +20</div>
+            </div>
+
+            <div class="upgrade-item" id="up4" onclick="buyUpgrade(4, 'monetag')">
+                <div class="up-icon"><i class="fa-solid fa-music"></i></div>
+                <div class="up-info"><h4>Música Ambiente</h4><p id="t4">Disponible</p></div>
+                <div class="up-cost">BONO +8</div>
+            </div>
+
+            <div class="upgrade-item" id="up5" onclick="buyUpgrade(5, 'adsgram')">
+                <div class="up-icon"><i class="fa-solid fa-fire-burner"></i></div>
+                <div class="up-info"><h4>Horno Industrial</h4><p id="t5">Disponible</p></div>
+                <div class="up-cost">BONO +25</div>
+            </div>
+
+            <div class="upgrade-item" id="up6" onclick="buyUpgrade(6, 'monetag')">
+                <div class="up-icon"><i class="fa-solid fa-user-tie"></i></div>
+                <div class="up-info"><h4>Contratar Chef</h4><p id="t6">Disponible</p></div>
+                <div class="up-cost">BONO +12</div>
+            </div>
+
+            <div class="upgrade-item" id="up7" onclick="buyUpgrade(7, 'adsgram')">
+                <div class="up-icon"><i class="fa-solid fa-store"></i></div>
+                <div class="up-info"><h4>Ampliar Local</h4><p id="t7">Disponible</p></div>
+                <div class="up-cost">BONO +15</div>
+            </div>
+
         </div>
 
         <button class="btn-withdraw" onclick="retirar()">
-            <i class="fa-brands fa-btc"></i> RETIRAR FONDOS ($0.10)
+            <i class="fa-solid fa-sack-dollar"></i> RETIRAR GANANCIAS ($0.10)
         </button>
-        
-        <div style="text-align:center; margin-top:10px; font-size:10px; color:#444;">
-            <span onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">SOPORTE</span> | 
-            <span onclick="tg.openTelegramLink('https://t.me/noticebuddy')">CANAL</span>
+
+        <div style="text-align:center; font-size:10px; color:#666; margin-top:10px;">
+            <span onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">SOPORTE</span>
         </div>
 
     </div>
 
     <div id="receiptModal">
         <div class="modal-box">
-            <h2 style="color:var(--green); margin-bottom:15px;">TRANSFERENCIA PENDIENTE</h2>
-            <div class="receipt-row"><span>MINERO:</span><span id="recUser">...</span></div>
-            <div class="receipt-row"><span>TIMESTAMP:</span><span id="recDate">...</span></div>
-            <div class="receipt-row"><span>MONTO:</span><span style="color:var(--gold);">$0.10 USD</span></div>
-            <button class="btn-withdraw" style="background:var(--green); color:black; font-weight:bold;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">CONFIRMAR ENVÍO</button>
-            <button style="background:transparent; border:none; color:#666; margin-top:10px;" onclick="location.reload()">CERRAR</button>
+            <h2 style="color:var(--orange);">¡ORDEN LISTA!</h2>
+            <p style="font-size:12px; color:#ccc;">Envía este ticket al gerente.</p>
+            <hr style="border:1px dashed #555; margin:15px 0;">
+            <div style="display:flex; justify-content:space-between; color:#fff; font-size:12px;"><span>SOCIO:</span><span id="recUser">...</span></div>
+            <div style="display:flex; justify-content:space-between; color:#fff; font-size:12px; margin-top:5px;"><span>FECHA:</span><span id="recDate">...</span></div>
+            <div style="display:flex; justify-content:space-between; color:var(--yellow); font-size:14px; margin-top:10px; font-weight:bold;"><span>PAGO:</span><span>$0.10 USD</span></div>
+            
+            <button class="btn-withdraw" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">ENVIAR TICKET</button>
+            <button style="background:none; border:none; color:#666; margin-top:10px;" onclick="location.reload()">Cerrar</button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        tg.setHeaderColor('#050505'); tg.setBackgroundColor('#050505');
+        tg.setHeaderColor('#2c1e16'); tg.setBackgroundColor('#2c1e16');
 
         const ADSGRAM_ID = "18841"; 
-        const KEY = 'miner_v88_approved';
+        const MEMORY_KEY = 'burger_tycoon_v89';
         const META = 2500;
-        const COOLDOWN = 24 * 60 * 60 * 1000; // 24H
+        const COOLDOWN = 24 * 60 * 60 * 1000; // 24 Horas para las mejoras
 
-        let user = { balance: 0, timers: {} };
+        let user = { money: 0, stock: 20, timers: {} };
         for(let i=1; i<=7; i++) { if(!user.timers[i]) user.timers[i] = 0; }
-        
-        let miningInterval;
-        let isMining = false;
 
         window.onload = function() {
             // Anti-Multi
@@ -209,107 +239,135 @@
             } 
             if (!sid) localStorage.setItem('did', cid);
 
-            if(localStorage.getItem(KEY)) { 
-                let saved = JSON.parse(localStorage.getItem(KEY));
-                user.balance = parseInt(saved.balance) || 0;
+            if(localStorage.getItem(MEMORY_KEY)) { 
+                let saved = JSON.parse(localStorage.getItem(MEMORY_KEY));
+                user.money = parseInt(saved.money) || 0;
+                user.stock = parseInt(saved.stock) || 20;
                 user.timers = saved.timers || user.timers;
             }
             updateUI();
             setInterval(checkTimers, 1000);
         };
 
-        function updateUI() { document.getElementById('saldo').innerText = user.balance; checkTimers(); }
-        function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
-
-        // --- FUNCIÓN BÁSICA (SIN ANUNCIOS - CLAVE PARA APROBACIÓN) ---
-        function toggleMining() {
-            const btn = document.getElementById('btnMine');
-            const status = document.getElementById('statusText');
+        function updateUI() { 
+            document.getElementById('moneyDisplay').innerText = user.money;
+            document.getElementById('stockDisplay').innerText = user.stock;
             
-            if(isMining) {
-                // Detener
-                clearInterval(miningInterval);
-                isMining = false;
-                btn.classList.remove('active');
-                btn.innerHTML = '<i class="fa-solid fa-power-off"></i> INICIAR MINADO AUTOMÁTICO';
-                status.innerText = "SISTEMA EN ESPERA...";
-                status.style.color = "var(--green)";
+            let pct = (user.money / META) * 100;
+            if(pct > 100) pct = 100;
+            document.getElementById('progFill').style.width = pct + "%";
+            document.getElementById('pctDisplay').innerText = Math.floor(pct) + "%";
+
+            // Control de Stock
+            if(user.stock <= 0) {
+                document.getElementById('stockAlert').style.display = 'flex';
             } else {
-                // Iniciar
-                isMining = true;
-                btn.classList.add('active');
-                btn.innerHTML = '<i class="fa-solid fa-gear fa-spin"></i> MINANDO... (1 sat/3s)';
-                status.innerText = "HASHING EN PROCESO >>>";
-                status.style.color = "var(--gold)";
-                
-                miningInterval = setInterval(() => {
-                    user.balance += 1; // 1 Punto gratis cada 3 seg
-                    save();
-                }, 3000);
+                document.getElementById('stockAlert').style.display = 'none';
             }
+            
+            checkTimers();
+        }
+        function save() { localStorage.setItem(MEMORY_KEY, JSON.stringify(user)); updateUI(); }
+
+        // --- GAMEPLAY BÁSICO (GRATIS) ---
+        function sellBurger(e) {
+            if(user.stock <= 0) return; // No stock = No venta
+
+            user.money += 1;
+            user.stock -= 1;
+            save();
+            
+            // Efecto
+            const el = document.createElement('div');
+            el.className = 'float-plus';
+            el.innerText = '+$1';
+            el.style.left = e.clientX + 'px';
+            el.style.top = e.clientY + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 800);
+            tg.HapticFeedback.impactOccurred('light');
         }
 
-        // --- LOS 7 BOTONES (AD REWARDS) ---
+        // --- SISTEMA DE RECARGA (EL GANCHO DEL ANUNCIO) ---
+        function restockExpress() {
+            // ADSGRAM OBLIGATORIO (Es la forma principal de ganar)
+            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+            AdController.show().then(()=>{ 
+                user.stock += 50; // Recarga grande
+                save();
+                tg.showPopup({ title: "¡ENTREGA RECIBIDA!", message: "+50 Ingredientes listos." });
+            }).catch(()=>{ 
+                // Si falla Adsgram, intentamos Monetag
+                if(typeof show_10278425 === 'function') {
+                    show_10278425().then(()=>{
+                        user.stock += 50; save();
+                        tg.showPopup({ title: "¡ENTREGA RECIBIDA!", message: "+50 Ingredientes listos." });
+                    }).catch(()=>{ tg.showAlert("Proveedor ocupado. Intenta de nuevo."); });
+                }
+            });
+        }
+
+        function restockFree() {
+            tg.showAlert("Esperando camión de reparto... (Simulación: 10s)");
+            setTimeout(() => {
+                user.stock += 5; // Recarga pequeña
+                save();
+                tg.showPopup({ title: "Entrega Lenta", message: "+5 Ingredientes (Vio un video y gana más)" });
+            }, 10000);
+        }
+
+        // --- MEJORAS DEL LOCAL (ADS DIARIOS) ---
         function checkTimers() {
             const now = Date.now();
             for(let i=1; i<=7; i++) {
-                const row = document.getElementById('hw'+i);
+                const row = document.getElementById('up'+i);
                 const txt = document.getElementById('t'+i);
                 if(now < user.timers[i]) {
+                    row.classList.add('locked');
                     const h = Math.floor((user.timers[i] - now) / 3600000);
-                    row.classList.add('disabled');
-                    txt.innerText = `Refrigerando: ${h}h restantes`;
-                    txt.style.color = "#555";
+                    txt.innerText = `Instalando: ${h}h restantes`;
                 } else {
-                    row.classList.remove('disabled');
-                    txt.innerText = "Estado: Disponible (INSTALAR)";
-                    txt.style.color = "var(--green)";
+                    row.classList.remove('locked');
+                    txt.innerText = "Disponible para instalar";
                 }
             }
         }
 
-        function installHardware(id, provider) {
-            const row = document.getElementById('hw'+id);
-            if(row.classList.contains('disabled')) return;
+        function buyUpgrade(id, provider) {
+            const row = document.getElementById('up'+id);
+            if(row.classList.contains('locked')) return;
 
             // Random Reward (8 a 25 puntos)
             let reward = Math.floor(Math.random() * (25 - 8 + 1)) + 8;
 
             if(Math.random() < 0.5) {
                 const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-                AdController.show().then(()=>{ pay(id, reward); }).catch(()=>{ tryMonetag(id, reward); });
+                AdController.show().then(()=>{ payUpgrade(id, reward); }).catch(()=>{ tryMonetagUpgrade(id, reward); });
             } else {
-                tryMonetag(id, reward);
+                tryMonetagUpgrade(id, reward);
             }
         }
 
-        function tryMonetag(id, reward) {
-            if (typeof show_10278425 === 'function') {
-                show_10278425().then(()=>{ pay(id, reward); }).catch(()=>{ error(); });
-            } else { error(); }
+        function tryMonetagUpgrade(id, reward) {
+            if(typeof show_10278425 === 'function') {
+                show_10278425().then(()=>{ payUpgrade(id, reward); }).catch(()=>{ tg.showAlert("Error en construcción."); });
+            } else { tg.showAlert("Error en construcción."); }
         }
 
-        function pay(id, amount) {
-            user.balance += amount;
+        function payUpgrade(id, amount) {
+            user.money += amount;
             user.timers[id] = Date.now() + COOLDOWN;
             save();
-            tg.showPopup({ title:"HARDWARE INSTALADO", message:`Potencia aumentada: +${amount} Sats` });
+            tg.showPopup({ title:"¡MEJORA INSTALADA!", message:`Valor del local: +${amount}` });
         }
 
-        function error() { tg.showAlert("Error de conexión con el proveedor de hardware."); }
-
         function retirar() {
-            if(user.balance < META) { tg.showAlert(`Saldo insuficiente. Faltan ${META - user.balance} Sats.`); return; }
-            tg.showConfirm("¿Retirar fondos a billetera externa?", (ok)=>{
-                if(ok) {
-                    user.balance -= META; save();
-                    let d = new Date();
-                    document.getElementById('recDate').innerText = d.toISOString();
-                    document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Miner";
-                    document.getElementById('receiptModal').style.display = 'flex';
-                }
-            });
+            if(user.money < META) { tg.showAlert(`Caja insuficiente. Faltan $${META - user.money} para cierre.`); return; }
+            let d = new Date();
+            document.getElementById('recDate').innerText = d.toLocaleDateString();
+            document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Gerente";
+            document.getElementById('receiptModal').style.display = 'flex';
         }
     </script>
 </body>
-										</html>
+			</html>
