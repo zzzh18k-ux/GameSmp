@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Cash Buddy PRO</title>
+    
+    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
+    
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* LUXURY GOLD THEME */
+        :root { --bg-dark: #121212; --card-bg: #1a1a1a; --text-cream: #F5F5DC; --gold-solid: #FFD700; --gold-dim: #b38728; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background-color: #000; color: white; font-family: 'Montserrat', sans-serif; 
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
+            background-image: radial-gradient(circle, #222 0%, #000 100%); padding-bottom: 50px;
+        }
+        .app-container { width: 100%; max-width: 450px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        /* HEADER & BALANCE */
+        .balance-card { background: var(--card-bg); width: 100%; border-radius: 16px; padding: 25px; border: 1px solid var(--gold-dim); box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; margin-bottom: 25px; margin-top: 20px;}
+        .stat-num { font-size: 45px; font-weight: 900; margin: 10px 0; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); color: var(--gold-solid); }
+        .stat-label { color: #888; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+
+        /* LISTA DE 7 BOTONES */
+        .tasks-grid { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        
+        .video-btn {
+            width: 100%; padding: 15px; border-radius: 12px; border: none; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1a1a1a; border: 1px solid #333; color: white;
+            transition: all 0.2s; position: relative;
+        }
+        .video-btn:active { transform: scale(0.98); background: #252525; }
+        
+        .btn-content { display: flex; align-items: center; gap: 12px; }
+        .btn-title { font-weight: bold; font-size: 14px; }
+        .btn-sub { font-size: 11px; color: #4ade80; margin-top: 2px; } /* Verde disponible */
+        .btn-reward { background: #222; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; color: var(--gold-solid); border: 1px solid var(--gold-dim); }
+
+        /* ESTADO BLOQUEADO (COOLDOWN) */
+        .video-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #000; border-color: #222; }
+        .video-btn:disabled .btn-reward { display: none; }
+        .timer-text { color: #ef4444; font-weight: bold; font-size: 12px; } /* Rojo espera */
+
+        /* MENÚ INFERIOR */
+        .menu { width: 100%; display: flex; gap: 10px; margin-top: 30px; }
+        .btn-withdraw { width: 100%; padding: 18px; border-radius: 12px; font-weight: 900; border: none; cursor: pointer; background: linear-gradient(90deg, #fbbf24, #d97706); color: black; font-size: 16px; text-transform: uppercase; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+
+        /* MODAL RECIBO */
+        #receiptModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; flex-direction:column; z-index:100; padding: 30px; }
+        .modal-box { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 1px solid var(--gold-dim); width: 100%; text-align: center; }
+        .receipt-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #444; padding: 8px 0; font-size: 13px; color: #ccc; }
+        .receipt-val { color: var(--gold-solid); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="balance-card">
+            <div class="stat-label">TU SALDO</div>
+            <div class="stat-num"><span id="saldo">0</span></div>
+            <div style="font-size:11px; color:#666;">META: 5,000 PUNTOS</div>
+        </div>
+
+        <div class="tasks-grid">
+            <button class="video-btn" id="btn1" onclick="watchVideo(1, 'adsgram')">
+                <div class="btn-content">
+                    <i class="fa-solid fa-play" style="color:#fbbf24;"></i>
+                    <div>
+                        <div class="btn-title">Misión de Video #1</div>
+                        <div class="btn-sub" id="timer1">Disponible</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50</div>
+            </button>
+
+            <button class="video-btn" id="btn2" onclick="watchVideo(2, 'monetag')">
+                <div class="btn-content">
+                    <i class="fa-solid fa-play" style="color:#fbbf24;"></i>
+                    <div>
+                        <div class="btn-title">Misión de Video #2</div>
+                        <div class="btn-sub" id="timer2">Disponible</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50</div>
+            </button>
+
+            <button class="video-btn" id="btn3" onclick="watchVideo(3, 'adsgram')">
+                <div class="btn-content">
+                    <i class="fa-solid fa-play" style="color:#fbbf24;"></i>
+                    <div>
+                        <div class="btn-title">Misión de Video #3</div>
+                        <div class="btn-sub" id="timer3">Disponible</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50</div>
+            </button>
+
+            <button class="video-btn" id="btn4" onclick="watchVideo(4, 'monetag')">
+                <div class="btn-content">
+                    <i class="fa-solid fa-play" style="color:#fbbf24;"></i>
+                    <div>
+                        <div class="btn-title">Misión de Video #4</div>
+                        <div class="btn-sub" id="timer4">Disponible</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50</div>
+            </button>
+
+            <button class="video-btn" id="btn5" onclick="watchVideo(5, 'adsgram')">
+                <div class="btn-content">
+                    <i class="fa-solid fa-play" style="color:#fbbf24;"></i>
+                    <div>
+                        <div class="btn-title">Misión de Video #5</div>
+                        <div class="btn-sub" id="timer5">Disponible</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50</div>
+            </button>
+
+            <button class="video-btn" id="btn6" onclick="watchVideo(6, 'monetag')">
+                <div class="btn-content">
+                    <i class="fa-solid fa-play" style="color:#fbbf24;"></i>
+                    <div>
+                        <div class="btn-title">Misión de Video #6</div>
+                        <div class="btn-sub" id="timer6">Disponible</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50</div>
+            </button>
+
+            <button class="video-btn" id="btn7" onclick="watchVideo(7, 'random')" style="border: 1px solid #fbbf24;">
+                <div class="btn-content">
+                    <i class="fa-solid fa-gem" style="color:#fbbf24;"></i>
+                    <div>
+                        <div class="btn-title">Misión Sorpresa #7</div>
+                        <div class="btn-sub" id="timer7">Disponible</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50</div>
+            </button>
+
+        </div>
+
+        <div class="menu">
+            <button class="btn-withdraw" onclick="retirar()">
+                <i class="fa-solid fa-sack-dollar"></i> SOLICITAR PAGO
+            </button>
+        </div>
+    </div>
+
+    <div id="receiptModal">
+        <div class="modal-box">
+            <h2 style="color:#10b981; margin-bottom:15px;">✅ PAGO SOLICITADO</h2>
+            <p style="color:#888; font-size:12px; margin-bottom:15px;">Captura esta pantalla completa</p>
+            
+            <div class="receipt-row">
+                <span>USUARIO:</span>
+                <span class="receipt-val" id="recUser">...</span>
+            </div>
+            <div class="receipt-row">
+                <span>FECHA:</span>
+                <span class="receipt-val" id="recDate">...</span>
+            </div>
+            <div class="receipt-row">
+                <span>HORA:</span>
+                <span class="receipt-val" id="recTime">...</span>
+            </div>
+            <div class="receipt-row">
+                <span>MONTO:</span>
+                <span class="receipt-val">5,000 PUNTOS</span>
+            </div>
+
+            <button class="video-btn" style="background:#10b981; color:white; justify-content:center; margin-top:20px;" onclick="enviarAlDueño()">📩 ENVIAR AL SOPORTE</button>
+            <button style="background:transparent; border:none; color:#666; margin-top:15px;" onclick="location.reload()">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp; 
+        tg.expand();
+
+        // --- DATOS ---
+        const ADSGRAM_ID = "18677"; 
+        const MI_USUARIO = "Rik1295"; // O tu bot de soporte
+        const MEMORY_KEY = 'cash_7_missions_v67';
+        
+        const MIN_WITHDRAW = 5000;
+        const COOLDOWN = 5 * 60 * 60 * 1000; // 5 HORAS EXACTAS
+
+        let user = { balance: 0, timers: {} };
+        // Inicializar timers del 1 al 7
+        for(let i=1; i<=7; i++) { if(!user.timers[i]) user.timers[i] = 0; }
+
+        if(localStorage.getItem(MEMORY_KEY)) { 
+            let saved = JSON.parse(localStorage.getItem(MEMORY_KEY));
+            user.balance = saved.balance || 0;
+            user.timers = saved.timers || user.timers;
+        }
+        
+        setInterval(updateTimers, 1000);
+        updateUI();
+
+        function updateUI() { document.getElementById('saldo').innerText = user.balance; updateTimers(); }
+        function guardar() { localStorage.setItem(MEMORY_KEY, JSON.stringify(user)); updateUI(); }
+
+        // --- LÓGICA DE TIEMPO (5 HORAS) ---
+        function updateTimers() {
+            const now = Date.now();
+            for(let i=1; i<=7; i++) {
+                const btn = document.getElementById('btn'+i);
+                const label = document.getElementById('timer'+i);
+                const readyTime = user.timers[i] || 0;
+
+                if(now < readyTime) {
+                    const diff = readyTime - now;
+                    const h = Math.floor(diff / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    btn.disabled = true;
+                    label.innerText = `⏳ Espera ${h}h ${m}m ${s}s`;
+                    label.className = "timer-text";
+                } else {
+                    btn.disabled = false;
+                    label.innerText = "✅ Disponible";
+                    label.className = "btn-sub";
+                }
+            }
+        }
+
+        // --- VER VIDEO (LÓGICA MEZCLADA) ---
+        function watchVideo(id, type) {
+            const btn = document.getElementById('btn'+id);
+            if(btn.disabled) return;
+
+            // Lógica del Botón 7 (Aleatorio)
+            if (type === 'random') {
+                type = Math.random() < 0.5 ? 'adsgram' : 'monetag';
+            }
+
+            document.body.style.cursor = 'wait';
+            btn.style.opacity = "0.7";
+
+            if (type === 'adsgram') {
+                const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+                AdController.show().then(() => { pagoExitoso(id); })
+                .catch(() => {
+                    // Si falla adsgram, intenta monetag como respaldo
+                    intentarMonetag(id, btn);
+                });
+            } 
+            else if (type === 'monetag') {
+                intentarMonetag(id, btn);
+            }
+        }
+
+        function intentarMonetag(id, btn) {
+            if (typeof show_10278425 === 'function') {
+                show_10278425().then(() => { pagoExitoso(id); })
+                .catch(() => {
+                    btn.style.opacity = "1";
+                    document.body.style.cursor = 'default';
+                    tg.showAlert("Anuncio no disponible. Intenta en 1 minuto.");
+                });
+            } else {
+                btn.style.opacity = "1";
+                document.body.style.cursor = 'default';
+                tg.showAlert("Cargando...");
+            }
+        }
+
+        function pagoExitoso(id) {
+            document.body.style.cursor = 'default';
+            const btn = document.getElementById('btn'+id);
+            btn.style.opacity = "1";
+            
+            user.balance += 50;
+            user.timers[id] = Date.now() + COOLDOWN; // Bloquea por 5 horas
+            guardar();
+            tg.showPopup({ title: "¡Misión Cumplida!", message: "+50 Puntos" });
+        }
+
+        // --- RETIRO CON DATOS DE USUARIO ---
+        function retirar() {
+            if (user.balance < MIN_WITHDRAW) {
+                tg.showAlert(`Te faltan ${(MIN_WITHDRAW - user.balance)} Puntos.`);
+                return;
+            }
+            tg.showConfirm("¿Retirar 5,000 Puntos?", (ok) => {
+                if(ok) {
+                    user.balance -= MIN_WITHDRAW;
+                    guardar();
+                    
+                    // DATOS DEL RECIBO ANTI-FRAUDE
+                    let now = new Date();
+                    document.getElementById('recDate').innerText = now.toLocaleDateString();
+                    document.getElementById('recTime').innerText = now.toLocaleTimeString();
+                    
+                    // Obtener nombre del usuario de Telegram
+                    let username = "Anónimo";
+                    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                        username = tg.initDataUnsafe.user.first_name + " " + (tg.initDataUnsafe.user.last_name || "");
+                    }
+                    document.getElementById('recUser').innerText = username;
+
+                    document.getElementById('receiptModal').style.display = 'flex';
+                }
+            });
+        }
+
+        function enviarAlDueño() { tg.openTelegramLink(`https://t.me/${MI_USUARIO}`); }
+    </script>
+</body>
+      </html>
