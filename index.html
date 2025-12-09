@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Fruit Splash PRO</title>
+    <title>Fruit Splash ELITE</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
@@ -39,6 +39,7 @@
         }
         .score-title { font-size: 12px; color: #a4b0be; font-weight: 800; letter-spacing: 1px; }
         .score-val { font-family: 'Fredoka One', cursive; font-size: 40px; color: var(--text); }
+        .meta-tag { background: #ffeaa7; color: #d35400; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; margin-top: 5px; }
 
         /* ZONA DE JUEGO (FRUTA) */
         .game-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; }
@@ -48,7 +49,6 @@
             filter: drop-shadow(0 10px 0 rgba(0,0,0,0.1)); position: relative; z-index: 5;
         }
         .fruit-btn:active { transform: scale(0.9) rotate(5deg); }
-        .fruit-btn.shake { animation: shake 0.5s; }
 
         /* BARRA DE ENERGÍA */
         .energy-container { width: 100%; background: white; padding: 15px; border-radius: 15px; border-bottom: 4px solid #e1e1e1; text-align: center; }
@@ -56,10 +56,10 @@
         .energy-fill { height: 100%; width: 100%; background: var(--energy); transition: width 0.2s; }
         .energy-text { font-size: 12px; font-weight: bold; color: var(--text); display: flex; justify-content: space-between; }
 
-        /* BOTÓN DE RECARGA (Oculto hasta que se necesita) */
+        /* BOTÓN DE RECARGA GRANDE (Oculto) */
         .refill-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.9); z-index: 10; border-radius: 20px;
+            background: rgba(255,255,255,0.95); z-index: 10; border-radius: 20px;
             display: none; flex-direction: column; justify-content: center; align-items: center;
         }
         .btn-refill {
@@ -68,8 +68,8 @@
             box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4); animation: pulse 1.5s infinite;
         }
 
-        /* BOTONES DE ABAJO (ADS ADICIONALES) */
-        .bonus-row { display: flex; gap: 10px; width: 100%; margin-top: 10px; }
+        /* BOTONES DE ENERGÍA (ADS ADICIONALES) */
+        .bonus-row { display: flex; gap: 10px; width: 100%; margin-top: 5px; }
         .btn-bonus {
             flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; color: white;
@@ -83,36 +83,40 @@
         /* FLOTANTES */
         .float-plus { position: absolute; font-weight: 900; font-size: 28px; color: var(--green); pointer-events: none; animation: floatUp 0.8s forwards; text-shadow: 0 2px 0 white; }
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-80px) scale(1.5); opacity: 0; } }
-        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         /* MODAL */
         #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:100; }
         .modal-card { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
-        .btn-green { background: var(--green); color: white; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; margin-top: 10px; }
+        .btn-green { background: var(--green); color: white; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 0 #218c74; }
+        .btn-green:active { transform: translateY(4px); box-shadow: none; }
+        
+        /* LINKS */
+        .footer-links { margin-top: 15px; display: flex; gap: 15px; font-size: 12px; font-weight: bold; color: #a4b0be; }
+        .f-link { cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <div id="banScreen"><h2>Acceso Denegado</h2></div>
+    <div id="banScreen"><h2>Acceso Denegado</h2><p>Multicuenta</p></div>
 
     <div class="app-container" id="appContent">
         
         <div class="score-board">
-            <div class="score-title">TUS PUNTOS</div>
+            <div class="score-title">TUS FRUTAS</div>
             <div class="score-val" id="score">0</div>
-            <div style="font-size:10px; color:#aaa;">META: 2,500 ($0.10)</div>
+            <div class="meta-tag">META: 20,000 ($0.10)</div>
         </div>
 
         <div class="game-area">
             <div class="fruit-btn" id="fruit" onclick="tap(event)">🍊</div>
             
             <div class="refill-overlay" id="refillOverlay">
-                <div style="font-size:50px; margin-bottom:10px;">🥵</div>
-                <h3 style="color:#2f3542; margin-bottom:5px;">¡AGOTADO!</h3>
-                <p style="color:#747d8c; margin-bottom:20px; font-size:14px;">Necesitas energía para seguir.</p>
+                <div style="font-size:50px; margin-bottom:10px;">⚡</div>
+                <h3 style="color:#2f3542; margin-bottom:5px;">SIN ENERGÍA</h3>
+                <p style="color:#747d8c; margin-bottom:20px; font-size:14px;">Recarga para seguir jugando.</p>
                 <button class="btn-refill" onclick="refillEnergy()">
-                    <i class="fa-solid fa-bolt"></i> RECARGAR AHORA
+                    <i class="fa-solid fa-play"></i> VER VIDEO (+50⚡)
                 </button>
             </div>
         </div>
@@ -128,38 +132,38 @@
         </div>
 
         <div class="bonus-row">
-            <button class="btn-bonus b-adsgram" onclick="watchBonus('adsgram')">
-                <i class="fa-solid fa-gift" style="font-size:20px; margin-bottom:5px;"></i>
-                <span>BONUS +15</span>
+            <button class="btn-bonus b-adsgram" onclick="watchEnergyBonus('adsgram')">
+                <i class="fa-solid fa-bolt" style="font-size:20px; margin-bottom:5px;"></i>
+                <span>+15 ENERGÍA</span>
             </button>
-            <button class="btn-bonus b-monetag" onclick="watchBonus('monetag')">
-                <i class="fa-solid fa-gem" style="font-size:20px; margin-bottom:5px;"></i>
-                <span>BONUS +10</span>
+            <button class="btn-bonus b-monetag" onclick="watchEnergyBonus('monetag')">
+                <i class="fa-solid fa-battery-full" style="font-size:20px; margin-bottom:5px;"></i>
+                <span>+10 ENERGÍA</span>
             </button>
         </div>
 
-        <button class="btn-green" style="background:#2f3542; margin-top:5px;" onclick="retirar()">
-            <i class="fa-solid fa-wallet"></i> COBRAR $0.10
+        <button class="btn-green" style="background:#2f3542; box-shadow: 0 4px 0 #1e272e;" onclick="retirar()">
+            <i class="fa-solid fa-wallet"></i> SOLICITAR PAGO
         </button>
 
-        <div style="font-size:10px; color:#aaa; margin-top:10px; display:flex; gap:10px;">
-            <span onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">Soporte</span>
-            <span onclick="tg.openTelegramLink('https://t.me/noticebuddy')">Canal</span>
+        <div class="footer-links">
+            <span class="f-link" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">Soporte</span>
+            <span class="f-link" onclick="tg.openTelegramLink('https://t.me/noticebuddy')">Canal Oficial</span>
         </div>
 
     </div>
 
     <div id="modal">
         <div class="modal-card">
-            <h2 style="color:var(--green);">✅ ¡LISTO!</h2>
-            <p style="color:#666; font-size:13px;">Envía la captura para tu pago.</p>
-            <div style="background:#f1f2f6; padding:10px; border-radius:10px; margin:10px 0; text-align:left; font-size:12px; color:#2f3542;">
+            <h2 style="color:var(--green); margin-bottom:10px;">✅ ¡META ALCANZADA!</h2>
+            <p style="color:#666; font-size:13px; margin-bottom:15px;">Envía esta captura para procesar tu pago.</p>
+            <div style="background:#f1f2f6; padding:15px; border-radius:10px; margin-bottom:15px; text-align:left; font-size:12px; color:#2f3542; border: 1px dashed #ccc;">
                 <div><b>USUARIO:</b> <span id="recUser">...</span></div>
                 <div><b>FECHA:</b> <span id="recDate">...</span></div>
-                <div style="margin-top:5px; font-size:14px; color:var(--text);"><b>MONTO:</b> $0.10 USD</div>
+                <div style="margin-top:5px; font-size:16px; color:#27ae60;"><b>TOTAL:</b> $0.10 USD</div>
             </div>
-            <button class="btn-green" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">ENVIAR AHORA</button>
-            <button style="background:none; border:none; color:#aaa; margin-top:10px;" onclick="location.reload()">Cerrar</button>
+            <button class="btn-green" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
+            <button style="background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar Ventana</button>
         </div>
     </div>
 
@@ -168,12 +172,16 @@
         tg.setHeaderColor('#ffecd2'); tg.setBackgroundColor('#ffecd2');
 
         const ADSGRAM_ID = "18841"; 
-        const KEY = 'fruit_clicker_v90';
-        const META = 2500;
+        const KEY = 'fruit_elite_v91';
+        
+        // MATEMÁTICA DE RENTABILIDAD (1 Tap = 1 Pts / 1 Video = 50 Energía)
+        // Meta 20,000 / 50 = 400 Videos = $0.20 Ingreso (Costo $0.10) => GANANCIA SEGURA
+        const META = 20000; 
         
         let user = { pts: 0, energy: 100 };
 
         window.onload = function() {
+            // Anti-Multi
             const cid = tg.initDataUnsafe?.user?.id || 12345; 
             const sid = localStorage.getItem('did');
             if (sid && sid != cid) {
@@ -182,35 +190,36 @@
             } 
             if (!sid) localStorage.setItem('did', cid);
 
-            if(localStorage.getItem(KEY)) user = JSON.parse(localStorage.getItem(KEY));
+            if(localStorage.getItem(KEY)) {
+                let saved = JSON.parse(localStorage.getItem(KEY));
+                user.pts = parseInt(saved.pts) || 0;
+                user.energy = parseInt(saved.energy) || 100;
+            }
             updateUI();
         };
 
         function updateUI() {
             document.getElementById('score').innerText = user.pts;
             document.getElementById('energyText').innerText = `${user.energy}/100`;
-            document.getElementById('energyBar').style.width = `${user.energy}%`;
+            document.getElementById('energyBar').style.width = `${Math.min(user.energy, 100)}%`;
             
-            // Si la energía es 0, mostramos el overlay de recarga (EL NEGOCIO)
             if(user.energy <= 0) {
                 document.getElementById('refillOverlay').style.display = 'flex';
-                document.getElementById('energyBar').style.background = '#dcdde1';
             } else {
                 document.getElementById('refillOverlay').style.display = 'none';
-                document.getElementById('energyBar').style.background = '#ff4757';
             }
         }
         function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
 
-        // --- 1. JUEGO BÁSICO (APROBACIÓN) ---
+        // --- JUEGO (1 Tap = 1 Pts) ---
         function tap(e) {
-            if(user.energy <= 0) return; // Sin energía no suma
+            if(user.energy <= 0) return;
 
             user.pts += 1;
-            user.energy -= 1; // Gasta 1 de energía
+            user.energy -= 1;
             save();
 
-            // Animación visual
+            // Animación
             const el = document.createElement('div');
             el.className = 'float-plus';
             el.innerText = '+1';
@@ -219,54 +228,55 @@
             document.body.appendChild(el);
             setTimeout(() => el.remove(), 800);
             
-            // Vibración
             tg.HapticFeedback.impactOccurred('light');
         }
 
-        // --- 2. RECARGAR ENERGÍA (TU GANANCIA MASIVA) ---
+        // --- RECARGA PRINCIPAL (50 Energía = 50 Taps) ---
         function refillEnergy() {
-            // Aquí el usuario ELIGE ver el video para seguir jugando
             const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
             AdController.show().then(() => {
-                user.energy = 100; // Recarga completa
+                user.energy = 50; // Damos 50 para obligar a ver más videos
                 save();
-                tg.showPopup({ title: "¡Energía a tope!", message: "A seguir jugando 🍊" });
+                tg.showPopup({ title: "¡Recargado!", message: "+50 Energía lista" });
             }).catch(() => {
-                // Si falla Adsgram, probamos Monetag
+                // Fallback Monetag
                 if (typeof show_10278425 === 'function') {
                     show_10278425().then(()=>{
-                        user.energy = 100; save();
-                    }).catch(()=>{ tg.showAlert("No hay video disponible."); });
+                        user.energy = 50; save();
+                    }).catch(()=>{ tg.showAlert("No hay videos disponibles."); });
                 }
             });
         }
 
-        // --- 3. BONOS EXTRA (GANANCIA ADICIONAL) ---
-        function watchBonus(type) {
-            // Estos botones son opcionales, dan puntos directos
+        // --- BONOS DE ENERGÍA (NO PUNTOS) ---
+        function watchEnergyBonus(type) {
+            // Estos botones ahora dan ENERGÍA EXTRA, cumpliendo las reglas
             if(type === 'adsgram') {
                 const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-                AdController.show().then(() => { givePts(15); }).catch(() => { tg.showAlert("Video no listo"); });
+                AdController.show().then(() => { addEnergy(15); }).catch(() => { tg.showAlert("Video no listo"); });
             } else {
                 if (typeof show_10278425 === 'function') {
-                    show_10278425().then(()=>{ givePts(10); }).catch(()=>{ tg.showAlert("Video no listo"); });
+                    show_10278425().then(()=>{ addEnergy(10); }).catch(()=>{ tg.showAlert("Video no listo"); });
                 }
             }
         }
 
-        function givePts(amount) {
-            user.pts += amount;
+        function addEnergy(amount) {
+            user.energy += amount;
+            if(user.energy > 100) user.energy = 100; // Cap en 100
             save();
-            tg.showPopup({ title: "¡Bono Frutal!", message: `+${amount} Puntos` });
+            tg.showPopup({ title: "¡Energía Extra!", message: `+${amount} Energía` });
         }
 
         function retirar() {
-            if(user.pts < META) { tg.showAlert(`Faltan ${META - user.pts} Puntos.`); return; }
+            if(user.pts < META) { tg.showAlert(`Faltan ${META - user.pts} Puntos para llegar a $0.10.`); return; }
+            
             let d = new Date();
-            document.getElementById('recDate').innerText = d.toLocaleDateString();
+            // Formato de fecha seguro
+            document.getElementById('recDate').innerText = d.toLocaleString();
             document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Jugador";
             document.getElementById('modal').style.display = 'flex';
         }
     </script>
 </body>
-		    </html>
+	</html>
