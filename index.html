@@ -3,235 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Neon Clicker PRO</title>
+    <title>Cash Wallet PRO</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        :root { --bg: #000; --primary: #00ffcc; --secondary: #d500f9; --card: #111; }
-        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        /* TEMA LUXURY FINTECH */
+        :root { --bg: #0f0f0f; --card: #1a1a1a; --gold: #d4af37; --text: #ffffff; --green: #27ae60; }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background: var(--bg); color: white; font-family: 'Rajdhani', sans-serif;
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-            background-image: radial-gradient(circle, #1a1a2e 0%, #000 100%);
-            margin: 0; padding: 20px; overflow: hidden;
+            background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
+            padding: 20px; padding-bottom: 40px;
         }
 
+        /* BAN SCREEN */
         #banScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; 
             display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
 
-        /* HEADER */
-        .header { width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .score-box { text-align: left; }
-        .score-label { font-size: 12px; color: #888; letter-spacing: 1px; }
-        .score-val { font-size: 32px; font-weight: 900; color: var(--primary); text-shadow: 0 0 10px rgba(0,255,204,0.4); }
+        .app-container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 15px; }
 
-        /* CIRCULO PRINCIPAL (CLICKER) */
-        .clicker-zone {
-            flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; position: relative;
+        /* TARJETA DE SALDO */
+        .balance-card { 
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%); 
+            border: 1px solid #333; border-radius: 16px; padding: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative;
         }
-        .main-btn {
-            width: 240px; height: 240px; border-radius: 50%;
-            background: radial-gradient(circle, #222, #000);
-            border: 4px solid var(--secondary);
-            box-shadow: 0 0 30px rgba(213,0,249,0.3);
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; transition: transform 0.1s; position: relative; z-index: 10;
-        }
-        .main-btn:active { transform: scale(0.95); box-shadow: 0 0 15px rgba(213,0,249,0.6); }
-        .tap-text { font-size: 24px; font-weight: 900; color: white; pointer-events: none; }
+        .bal-title { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .bal-amount { font-size: 42px; font-weight: 900; color: var(--gold); margin: 5px 0; }
+        .bal-sub { font-size: 12px; color: #666; display: flex; align-items: center; gap: 5px; }
+        .meta-tag { background: #333; padding: 4px 8px; border-radius: 4px; color: #fff; font-size: 10px; }
 
-        /* EFECTO DE NÚMERO FLOTANTE */
-        .float-num {
-            position: absolute; color: white; font-weight: bold; font-size: 20px;
-            animation: floatUp 1s ease-out forwards; pointer-events: none;
+        /* BOTÓN DE INGRESO DIARIO (EL ESCUDO LEGAL) */
+        .daily-btn {
+            background: linear-gradient(90deg, #d4af37, #f1c40f); width: 100%; padding: 15px;
+            border: none; border-radius: 12px; color: #000; font-weight: 800; font-size: 14px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2); transition: 0.2s;
         }
-        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100px); opacity: 0; } }
+        .daily-btn:active { transform: scale(0.98); }
+        .daily-btn:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; }
 
-        /* BOTONES DE BOOST (PUBLICIDAD) */
-        .boost-menu { width: 100%; max-width: 400px; display: flex; gap: 10px; margin-bottom: 20px; }
-        .btn-boost {
-            flex: 1; background: linear-gradient(135deg, #111, #222); border: 1px solid #333;
-            padding: 15px; border-radius: 15px; text-align: center; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        /* LISTA DE ACTIVOS (LOS ANUNCIOS) */
+        .section-title { font-size: 14px; font-weight: bold; margin-top: 10px; color: #fff; border-left: 3px solid var(--gold); padding-left: 10px; }
+        
+        .task-list { display: flex; flex-direction: column; gap: 10px; }
+        
+        .task-row {
+            background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid #333;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+            transition: background 0.2s;
         }
-        .btn-boost i { font-size: 20px; color: var(--secondary); margin-bottom: 5px; }
-        .boost-title { font-size: 12px; font-weight: bold; color: #ccc; }
-        .boost-val { font-size: 10px; color: var(--primary); }
+        .task-row:active { background: #252525; }
+        
+        .task-left { display: flex; align-items: center; gap: 15px; }
+        .icon-box { 
+            width: 40px; height: 40px; background: #222; border-radius: 10px; 
+            display: flex; justify-content: center; align-items: center; font-size: 18px; color: #666; 
+        }
+        .task-info h4 { font-size: 14px; margin: 0; color: #eee; }
+        .task-info p { font-size: 11px; margin: 2px 0 0 0; color: var(--green); }
+        
+        .task-action { font-size: 12px; font-weight: bold; color: var(--gold); }
 
-        /* RETIRO */
-        .footer { width: 100%; max-width: 400px; }
-        .btn-withdraw {
-            background: var(--primary); color: #000; width: 100%; padding: 18px; border: none;
-            border-radius: 12px; font-weight: 900; font-size: 16px; cursor: pointer;
-            box-shadow: 0 0 15px rgba(0,255,204,0.3);
+        /* ESTADO BLOQUEADO */
+        .task-row.disabled { opacity: 0.5; pointer-events: none; }
+        .task-row.disabled .task-info p { color: #666; }
+
+        /* FOOTER */
+        .withdraw-btn {
+            background: #27ae60; color: white; width: 100%; padding: 18px; border: none;
+            border-radius: 12px; font-weight: bold; font-size: 16px; margin-top: 20px;
+            cursor: pointer; box-shadow: 0 5px 20px rgba(39, 174, 96, 0.2);
         }
-        .prog-bar { width: 100%; height: 5px; background: #333; margin-bottom: 10px; border-radius: 5px; overflow: hidden; }
-        .prog-fill { height: 100%; width: 0%; background: var(--primary); transition: 0.3s; }
+        .support-link { text-align: center; color: #666; font-size: 12px; margin-top: 15px; text-decoration: none; display: block; }
 
         /* MODAL */
         #receiptModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; flex-direction:column; z-index:100; padding: 30px; }
-        .modal-box { background: #151515; padding: 30px; border-radius: 20px; border: 1px solid var(--primary); width: 100%; text-align: center; }
+        .modal-box { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 1px solid #333; width: 100%; text-align: center; }
         .receipt-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #444; padding: 10px 0; font-size: 13px; color: #ccc; }
-        .receipt-val { color: var(--primary); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="banScreen">
+        <i class="fa-solid fa-lock" style="font-size:50px; color:#666; margin-bottom:15px;"></i>
         <h2 style="color:white;">ACCESO DENEGADO</h2>
-        <p style="color:#888;">ID: <span id="linkedID">...</span></p>
+        <p style="color:#666;">ID: <span id="linkedID">...</span></p>
     </div>
 
-    <div class="header">
-        <div class="score-box">
-            <div class="score-label">SALDO TOTAL</div>
-            <div class="score-val"><span id="score">0</span></div>
-        </div>
-        <div style="text-align:right;">
-            <div class="score-label">META</div>
-            <div style="font-weight:bold;">2,500 ($0.10)</div>
-        </div>
-    </div>
-
-    <div class="clicker-zone">
-        <div class="main-btn" id="tapBtn" onclick="tap(event)">
-            <div class="tap-text">TAP</div>
-        </div>
-    </div>
-
-    <div class="boost-menu">
-        <button class="btn-boost" onclick="watchAd('turbo')">
-            <i class="fa-solid fa-bolt"></i>
-            <span class="boost-title">TURBO</span>
-            <span class="boost-val">+50 Pts (Video)</span>
-        </button>
-        <button class="btn-boost" onclick="watchAd('mega')">
-            <i class="fa-solid fa-gem"></i>
-            <span class="boost-title">MEGA</span>
-            <span class="boost-val">+30 Pts (Bonus)</span>
-        </button>
-        <button class="btn-boost" onclick="watchAd('lucky')">
-            <i class="fa-solid fa-gift"></i>
-            <span class="boost-title">LUCKY</span>
-            <span class="boost-val">??? Pts</span>
-        </button>
-    </div>
-
-    <div class="footer">
-        <div style="display:flex; justify-content:space-between; font-size:10px; color:#666; margin-bottom:5px;">
-            <span>Progreso</span>
-            <span id="pctText">0%</span>
-        </div>
-        <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+    <div class="app-container" id="appContent">
         
-        <button class="btn-withdraw" onclick="retirar()">SOLICITAR PAGO</button>
-        
-        <div style="display:flex; gap:10px; margin-top:15px;">
-            <button style="flex:1; padding:10px; background:#111; border:1px solid #333; color:#888; border-radius:8px;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">Soporte</button>
-            <button style="flex:1; padding:10px; background:#111; border:1px solid #333; color:#888; border-radius:8px;" onclick="tg.openTelegramLink('https://t.me/noticebuddy')">Canal</button>
+        <div class="balance-card">
+            <div class="bal-title">BALANCE TOTAL</div>
+            <div class="bal-amount"><span id="saldo">0.00</span></div>
+            <div class="bal-sub">
+                <span class="meta-tag">META: $0.10</span>
+                <span>≈ 2,500 Pts</span>
+            </div>
         </div>
+
+        <button class="daily-btn" id="btnDaily" onclick="claimDaily()">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <i class="fa-solid fa-gift"></i> <span>INGRESO DIARIO</span>
+            </div>
+            <span id="dailyText">RECLAMAR</span>
+        </button>
+
+        <div class="section-title">CARTERA DE ACTIVOS</div>
+        <div class="task-list">
+            
+            <div class="task-row" id="row1" onclick="watchAd(1)">
+                <div class="task-left">
+                    <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="task-info"><h4>Activo #1</h4><p id="t1">+15 Pts (Disponible)</p></div>
+                </div>
+                <div class="task-action"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+
+            <div class="task-row" id="row2" onclick="watchAd(2)">
+                <div class="task-left">
+                    <div class="icon-box"><i class="fa-solid fa-coins"></i></div>
+                    <div class="task-info"><h4>Activo #2</h4><p id="t2">+10 Pts (Disponible)</p></div>
+                </div>
+                <div class="task-action"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+
+            <div class="task-row" id="row3" onclick="watchAd(3)">
+                <div class="task-left">
+                    <div class="icon-box"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="task-info"><h4>Activo #3</h4><p id="t3">+12 Pts (Disponible)</p></div>
+                </div>
+                <div class="task-action"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+
+            <div class="task-row" id="row4" onclick="watchAd(4)">
+                <div class="task-left">
+                    <div class="icon-box"><i class="fa-solid fa-globe"></i></div>
+                    <div class="task-info"><h4>Activo #4</h4><p id="t4">+8 Pts (Disponible)</p></div>
+                </div>
+                <div class="task-action"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+
+            <div class="task-row" id="row5" onclick="watchAd(5)">
+                <div class="task-left">
+                    <div class="icon-box"><i class="fa-solid fa-gem"></i></div>
+                    <div class="task-info"><h4>Activo #5</h4><p id="t5">+20 Pts (Disponible)</p></div>
+                </div>
+                <div class="task-action"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+
+            <div class="task-row" id="row6" onclick="watchAd(6)">
+                <div class="task-left">
+                    <div class="icon-box"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="task-info"><h4>Activo #6</h4><p id="t6">+10 Pts (Disponible)</p></div>
+                </div>
+                <div class="task-action"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+
+            <div class="task-row" id="row7" onclick="watchAd(7)">
+                <div class="task-left">
+                    <div class="icon-box"><i class="fa-solid fa-sack-dollar"></i></div>
+                    <div class="task-info"><h4>Activo #7</h4><p id="t7">+15 Pts (Disponible)</p></div>
+                </div>
+                <div class="task-action"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+
+        </div>
+
+        <button class="withdraw-btn" onclick="retirar()">SOLICITAR RETIRO ($0.10)</button>
+        <a href="https://t.me/AtencionYougamefavoriteBot" class="support-link">Contactar Soporte</a>
+
     </div>
 
     <div id="receiptModal">
         <div class="modal-box">
-            <h2 style="color:var(--primary); margin-bottom:15px;">✅ META COMPLETADA</h2>
-            <div class="receipt-row"><span>USUARIO:</span><span class="receipt-val" id="recUser">...</span></div>
-            <div class="receipt-row"><span>FECHA:</span><span class="receipt-val" id="recDate">...</span></div>
-            <div class="receipt-row"><span>MONTO:</span><span class="receipt-val">$0.10 USD</span></div>
-            <button style="background:var(--primary); color:#000; width:100%; padding:15px; border-radius:10px; margin-top:20px; font-weight:bold;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
+            <h2 style="color:var(--gold); margin-bottom:15px;">✅ PAGO PROCESADO</h2>
+            <div class="receipt-row"><span>USUARIO:</span><span style="color:white;" id="recUser">...</span></div>
+            <div class="receipt-row"><span>FECHA:</span><span style="color:white;" id="recDate">...</span></div>
+            <div class="receipt-row"><span>MONTO:</span><span style="color:var(--gold); font-weight:bold;">$0.10 USD</span></div>
+            <button style="background:var(--gold); color:#000; width:100%; padding:15px; border-radius:10px; margin-top:20px; font-weight:bold; border:none;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR AL AGENTE</button>
             <button style="background:transparent; border:none; color:#666; margin-top:10px;" onclick="location.reload()">Cerrar</button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        tg.setHeaderColor('#000000'); tg.setBackgroundColor('#000000');
+        tg.setHeaderColor('#0f0f0f'); tg.setBackgroundColor('#0f0f0f');
 
         const ADSGRAM_ID = "18841"; 
-        const KEY = 'neon_clicker_v86';
+        const KEY = 'wallet_pro_v87';
         const META = 2500;
-        
-        let user = { pts: 0 };
+        const COOLDOWN = 24 * 60 * 60 * 1000; // 24H
+
+        let user = { balance: 0, timers: {}, daily: 0 };
+        for(let i=1; i<=7; i++) { if(!user.timers[i]) user.timers[i] = 0; }
 
         window.onload = function() {
+            // SEGURIDAD
             const cid = tg.initDataUnsafe?.user?.id || 12345; 
             const sid = localStorage.getItem('did');
             if (sid && sid != cid) {
+                document.getElementById('appContent').style.display = 'none';
                 document.getElementById('banScreen').style.display = 'flex';
                 document.getElementById('linkedID').innerText = sid;
-                return;
+                return; 
             } 
             if (!sid) localStorage.setItem('did', cid);
-            if(localStorage.getItem(KEY)) user = JSON.parse(localStorage.getItem(KEY));
+
+            if(localStorage.getItem(KEY)) { 
+                let saved = JSON.parse(localStorage.getItem(KEY));
+                user.balance = parseInt(saved.balance) || 0;
+                user.timers = saved.timers || user.timers;
+                user.daily = parseInt(saved.daily) || 0;
+            }
             updateUI();
+            setInterval(checkTimers, 1000);
         };
 
-        function updateUI() {
-            document.getElementById('score').innerText = user.pts;
-            let pct = (user.pts / META) * 100;
-            if(pct > 100) pct = 100;
-            document.getElementById('progFill').style.width = pct + "%";
-            document.getElementById('pctText').innerText = Math.floor(pct) + "%";
+        function updateUI() { 
+            document.getElementById('saldo').innerText = user.balance;
+            checkTimers();
         }
         function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
 
-        // --- FUNCIÓN BÁSICA (SIN ANUNCIOS) ---
-        function tap(e) {
-            user.pts += 1; // 1 Punto por click
-            save();
+        function checkTimers() {
+            const now = Date.now();
             
-            // Efecto visual
-            const el = document.createElement('div');
-            el.className = 'float-num';
-            el.innerText = '+1';
-            el.style.left = e.clientX + 'px';
-            el.style.top = e.clientY + 'px';
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 1000);
-            
-            tg.HapticFeedback.impactOccurred('light');
+            // CHECK DIARIO (Gratis)
+            const btnD = document.getElementById('btnDaily');
+            const txtD = document.getElementById('dailyText');
+            if(now < user.daily) {
+                const h = Math.floor((user.daily - now) / 3600000);
+                btnD.disabled = true;
+                txtD.innerText = `ESPERA ${h}H`;
+            } else {
+                btnD.disabled = false;
+                txtD.innerText = "RECLAMAR (+10)";
+            }
+
+            // CHECK ACTIVOS
+            for(let i=1; i<=7; i++) {
+                const row = document.getElementById('row'+i);
+                const txt = document.getElementById('t'+i);
+                if(now < user.timers[i]) {
+                    const h = Math.floor((user.timers[i] - now) / 3600000);
+                    const m = Math.floor(((user.timers[i] - now) % 3600000) / 60000);
+                    row.classList.add('disabled');
+                    txt.innerText = `Bloqueado: ${h}h ${m}m`;
+                } else {
+                    row.classList.remove('disabled');
+                    txt.innerText = "Disponible";
+                    txt.style.color = "#27ae60";
+                }
+            }
         }
 
-        // --- FUNCIÓN BONO (CON ANUNCIOS) ---
-        function watchAd(type) {
-            // ADSGRAM PRIORITARIO
-            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-            AdController.show().then(() => {
-                giveReward(type);
-            }).catch(() => {
-                // Fallback Monetag
-                if (typeof show_10278425 === 'function') {
-                    show_10278425().then(()=>{ giveReward(type); }).catch(()=>{ tg.showAlert("No disponible"); });
-                } else { tg.showAlert("Cargando anuncios..."); }
-            });
+        // --- FUNCIÓN GRATIS (Para Aprobación) ---
+        function claimDaily() {
+            const btn = document.getElementById('btnDaily');
+            if(btn.disabled) return;
+            
+            user.balance += 10;
+            user.daily = Date.now() + COOLDOWN;
+            save();
+            tg.showPopup({ title: "¡Recibido!", message: "+10 Puntos añadidos a tu cartera." });
         }
 
-        function giveReward(type) {
-            let pts = 0;
-            if(type === 'turbo') pts = 50; // Pago alto
-            else if(type === 'mega') pts = 30; // Pago medio
-            else pts = Math.floor(Math.random() * (40 - 10 + 1)) + 10; // Aleatorio
-            
-            user.pts += pts;
-            save();
-            tg.showPopup({ title: "¡BONO ACTIVADO!", message: `+${pts} Puntos` });
+        // --- FUNCIÓN ANUNCIOS (Tu Ganancia) ---
+        function watchAd(id) {
+            const row = document.getElementById('row'+id);
+            if(row.classList.contains('disabled')) return;
+
+            // Randomizar pago (para que parezca real)
+            // Entre 8 y 20 puntos
+            let reward = Math.floor(Math.random() * (20 - 8 + 1)) + 8;
+
+            // Adsgram o Monetag
+            if(Math.random() < 0.5) {
+                const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+                AdController.show().then(()=>{ pay(id, reward); }).catch(()=>{ tryMonetag(id, reward); });
+            } else {
+                tryMonetag(id, reward);
+            }
         }
+
+        function tryMonetag(id, reward) {
+            if (typeof show_10278425 === 'function') {
+                show_10278425().then(()=>{ pay(id, reward); }).catch(()=>{ error(); });
+            } else { error(); }
+        }
+
+        function pay(id, amount) {
+            user.balance += amount;
+            user.timers[id] = Date.now() + COOLDOWN;
+            save();
+            tg.showPopup({ title:"¡Activo Procesado!", message:`+${amount} Puntos` });
+        }
+
+        function error() { tg.showAlert("El sistema de anuncios está cargando..."); }
 
         function retirar() {
-            if(user.pts < META) { tg.showAlert(`Faltan ${META - user.pts} Puntos.`); return; }
-            let d = new Date();
-            document.getElementById('recDate').innerText = d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
-            document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "User";
-            document.getElementById('receiptModal').style.display = 'flex';
+            if(user.balance < META) { tg.showAlert(`Saldo insuficiente. Faltan ${META - user.balance} Puntos.`); return; }
+            tg.showConfirm("¿Procesar retiro de $0.10?", (ok)=>{
+                if(ok) {
+                    user.balance -= META; save();
+                    let d = new Date();
+                    document.getElementById('recDate').innerText = d.toLocaleDateString();
+                    document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Inversor";
+                    document.getElementById('receiptModal').style.display = 'flex';
+                }
+            });
         }
     </script>
 </body>
-                </html>
+                    </html>
