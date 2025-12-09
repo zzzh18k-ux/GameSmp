@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Task Hub ULTIMATE</title>
+    <title>Task Hub DAILY</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
@@ -13,7 +13,7 @@
     
     <style>
         /* TEMA NEÓN FUTURE */
-        :root { --bg: #050505; --card: #111; --primary: #00ffcc; --secondary: #d500f9; --text: #fff; }
+        :root { --bg: #050505; --card: #111; --primary: #00ffcc; --secondary: #d500f9; --bonus: #ffd700; --text: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         body { 
             background-color: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; 
@@ -39,29 +39,29 @@
         .prog-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: 0.5s; }
         .prog-text { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; color: var(--primary); }
 
-        /* RULETA PEQUEÑA */
-        .wheel-section {
-            background: #151515; border-radius: 20px; padding: 15px; border: 1px solid var(--secondary);
-            display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden;
+        /* TARJETA DE BONO DIARIO */
+        .daily-card {
+            background: linear-gradient(135deg, #222, #111); border: 1px solid var(--bonus);
+            border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; 
+            align-items: center; position: relative; overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
         }
-        .wheel-title { color: var(--secondary); font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; font-size: 18px; }
+        .daily-left { display: flex; align-items: center; gap: 15px; z-index: 2; }
+        .daily-icon { font-size: 30px; color: var(--bonus); animation: bounce 2s infinite; }
+        .daily-info h3 { font-size: 16px; margin: 0; color: var(--bonus); font-weight: 900; }
+        .daily-info p { font-size: 11px; margin: 2px 0 0 0; color: #aaa; }
         
-        .wheel-container { position: relative; width: 200px; height: 200px; } /* Tamaño mini */
-        .wheel { width: 100%; height: 100%; border-radius: 50%; border: 3px solid var(--text); background: conic-gradient(
-            #222 0deg 45deg, #333 45deg 90deg, #222 90deg 135deg, #333 135deg 180deg,
-            #222 180deg 225deg, #333 225deg 270deg, #222 270deg 315deg, #333 315deg 360deg
-        ); transition: transform 3s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; }
-        
-        .pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 20px; height: 30px; background: var(--secondary); clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10; }
-        
-        .btn-spin { 
-            margin-top: 15px; background: var(--secondary); color: white; border: none; padding: 10px 25px; 
-            border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 0 15px rgba(213, 0, 249, 0.3); animation: pulse 2s infinite;
+        .btn-claim {
+            background: var(--bonus); color: black; border: none; padding: 10px 20px;
+            border-radius: 20px; font-weight: 900; cursor: pointer; z-index: 2;
+            box-shadow: 0 0 10px var(--bonus); transition: 0.2s;
         }
+        .btn-claim:active { transform: scale(0.95); }
+        .btn-claim:disabled { background: #333; color: #666; box-shadow: none; cursor: not-allowed; border: 1px solid #444; }
 
         /* LISTA DE 7 BOTONES */
-        .tasks-list { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        .tasks-list { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px; }
+        .section-title { font-size: 12px; color: #666; font-weight: bold; margin-left: 5px; letter-spacing: 1px; }
         
         .task-btn {
             width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #222;
@@ -102,7 +102,7 @@
         .receipt-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #444; padding: 10px 0; font-size: 13px; color: #ccc; }
         .receipt-val { color: var(--primary); font-weight: bold; }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     </style>
 </head>
 <body>
@@ -127,20 +127,19 @@
             </div>
         </div>
 
-        <div class="wheel-section">
-            <div class="wheel-title">RULETA INFINITA</div>
-            <div class="wheel-container">
-                <div class="pointer"></div>
-                <div class="wheel" id="wheel"></div>
+        <div class="daily-card">
+            <div class="daily-left">
+                <i class="fa-solid fa-calendar-check daily-icon"></i>
+                <div class="daily-info">
+                    <h3>BONO DIARIO</h3>
+                    <p id="bonusStatus">Disponible cada 24h</p>
+                </div>
             </div>
-            <button class="btn-spin" onclick="spinWheel()">
-                <i class="fa-solid fa-video"></i> VER VIDEO & GIRAR
-            </button>
-            <div style="font-size:10px; color:#666; margin-top:8px;">Gana 1 a 5 Puntos por giro</div>
+            <button class="btn-claim" id="btnBonus" onclick="claimDailyBonus()">RECLAMAR</button>
         </div>
 
         <div class="tasks-list">
-            <div style="color:#666; font-size:12px; margin-left:5px; font-weight:bold;">MISIONES DIARIAS (Puntos Aleatorios)</div>
+            <div class="section-title">MISIONES (Pago Aleatorio)</div>
 
             <button class="task-btn type-adsgram" id="btn1" onclick="watchTask(1, 'adsgram')">
                 <div class="btn-left"><i class="fa-solid fa-play btn-icon"></i>
@@ -212,13 +211,12 @@
         tg.setHeaderColor('#050505'); tg.setBackgroundColor('#050505');
 
         const ADSGRAM_ID = "18841"; 
-        const MEMORY_KEY = 'hybrid_hub_v84';
+        const MEMORY_KEY = 'daily_hub_v85';
         const META = 2500;
         const COOLDOWN = 24 * 60 * 60 * 1000; // 24H
 
-        let user = { balance: 0, timers: {} };
+        let user = { balance: 0, timers: {}, lastBonus: 0 };
         for(let i=1; i<=7; i++) { if(!user.timers[i]) user.timers[i] = 0; }
-        let isSpinning = false;
 
         // --- INIT ---
         window.onload = function() {
@@ -236,6 +234,7 @@
                 let saved = JSON.parse(localStorage.getItem(MEMORY_KEY));
                 user.balance = parseInt(saved.balance) || 0;
                 user.timers = saved.timers || user.timers;
+                user.lastBonus = parseInt(saved.lastBonus) || 0;
             }
             updateUI();
             setInterval(checkTimers, 1000);
@@ -252,6 +251,23 @@
 
         function checkTimers() {
             const now = Date.now();
+            
+            // CHECK BONO
+            const btnBonus = document.getElementById('btnBonus');
+            const txtBonus = document.getElementById('bonusStatus');
+            if(now < user.lastBonus) {
+                const h = Math.floor((user.lastBonus - now) / 3600000);
+                const m = Math.floor(((user.lastBonus - now) % 3600000) / 60000);
+                btnBonus.disabled = true;
+                btnBonus.innerText = `${h}h ${m}m`;
+                txtBonus.innerText = "Vuelve mañana";
+            } else {
+                btnBonus.disabled = false;
+                btnBonus.innerText = "RECLAMAR";
+                txtBonus.innerText = "+20 Puntos disponibles";
+            }
+
+            // CHECK TASKS
             for(let i=1; i<=7; i++) {
                 const btn = document.getElementById('btn'+i);
                 const txt = document.getElementById('t'+i);
@@ -269,7 +285,24 @@
             }
         }
 
-        // --- LÓGICA DE BOTONES (3 a 12 Puntos) ---
+        // --- BONO DIARIO (20 Puntos) ---
+        function claimDailyBonus() {
+            const btn = document.getElementById('btnBonus');
+            if(btn.disabled) return;
+            
+            // Ver video obligatorio para el bono
+            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+            AdController.show().then(()=>{ 
+                user.balance += 20;
+                user.lastBonus = Date.now() + COOLDOWN;
+                save();
+                tg.showPopup({ title:"¡Bono Diario!", message:`+20 Puntos` });
+            }).catch(()=>{ 
+                tg.showAlert("Debes ver el anuncio para recibir el bono.");
+            });
+        }
+
+        // --- TASKS (3 a 12 Puntos) ---
         function watchTask(id, provider) {
             const btn = document.getElementById('btn'+id);
             if(btn.disabled) return;
@@ -300,41 +333,6 @@
             tg.showPopup({ title:"¡Completado!", message:`+${pts} Puntos` });
         }
 
-        // --- LÓGICA DE RULETA INFINITA (1 a 5 Puntos) ---
-        function spinWheel() {
-            if(isSpinning) return;
-            
-            // PRIMERO VE EL VIDEO
-            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-            AdController.show().then(()=>{ 
-                doSpin(); // Si ve el video, gira
-            }).catch(()=>{ 
-                // Fallback a Monetag
-                if (typeof show_10278425 === 'function') {
-                    show_10278425().then(()=>{ doSpin(); }).catch(()=>{ error(); });
-                } else { error(); }
-            });
-        }
-
-        function doSpin() {
-            isSpinning = true;
-            let wheel = document.getElementById('wheel');
-            let deg = Math.floor(5000 + Math.random() * 5000); // Giro fuerte
-            wheel.style.transform = `rotate(${deg}deg)`;
-            
-            setTimeout(() => {
-                isSpinning = false;
-                // Reward bajito para la ruleta (1 a 5 pts)
-                let pts = Math.floor(Math.random() * 5) + 1;
-                user.balance += pts;
-                save();
-                tg.showPopup({ title:"¡Ruleta!", message:`+${pts} Puntos` });
-                wheel.style.transition = 'none';
-                wheel.style.transform = `rotate(${deg % 360}deg)`;
-                setTimeout(()=>{ wheel.style.transition = 'transform 3s cubic-bezier(0.2, 0.8, 0.2, 1)'; }, 50);
-            }, 3000);
-        }
-
         function error() { tg.showAlert("Video no disponible. Intenta más tarde."); }
 
         function retirar() {
@@ -352,4 +350,4 @@
         }
     </script>
 </body>
-            </html>
+        </html>
