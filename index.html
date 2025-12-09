@@ -19,7 +19,10 @@
         body {
             background-color: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
-            padding: 20px; overflow: hidden;
+            /* CORRECCIÓN DE SCROLL */
+            padding: 20px; padding-bottom: 100px; 
+            overflow-y: auto; 
+            /* FIN CORRECCIÓN */
             background-image: radial-gradient(#ffdfba 20%, transparent 20%), radial-gradient(#ffdfba 20%, transparent 20%);
             background-position: 0 0, 50px 50px; background-size: 100px 100px;
         }
@@ -40,7 +43,7 @@
         .score-title { font-size: 12px; color: #a4b0be; font-weight: 800; letter-spacing: 1px; }
         .score-val { font-family: 'Fredoka One', cursive; font-size: 45px; color: var(--text); line-height: 1; margin-bottom: 10px; }
 
-        /* BARRA DE PROGRESO DE META (NUEVO) */
+        /* BARRA DE PROGRESO DE META VISUAL */
         .goal-container { width: 100%; margin-top: 5px; }
         .goal-bar-bg { width: 100%; height: 12px; background: #f1f2f6; border-radius: 10px; overflow: hidden; border: 1px solid #dfe4ea; }
         .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #2ed573, #7bed9f); transition: width 0.3s; }
@@ -73,7 +76,7 @@
             box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4); animation: pulse 1.5s infinite;
         }
 
-        /* BONUS ROWS */
+        /* BONUS ROW */
         .bonus-row { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
         .btn-bonus {
             flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;
@@ -84,20 +87,18 @@
         .b-adsgram { background: #3742fa; }
         .b-monetag { background: #ffa502; }
 
-        /* BOTÓN DE RETIRO */
+        /* FOOTER */
         .btn-withdraw { 
             background: #2f3542; color: white; width: 100%; padding: 15px; border: none; 
-            border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 5px; 
+            border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 15px; /* Más margen arriba */
             cursor: pointer; box-shadow: 0 4px 0 #1e272e; transition: 0.3s;
         }
-        .btn-withdraw:active { transform: translateY(4px); box-shadow: none; }
-        
-        /* ESTADO "META ALCANZADA" */
         .btn-withdraw.ready {
             background: linear-gradient(45deg, #2ed573, #26de81);
             box-shadow: 0 0 20px rgba(46, 213, 115, 0.6);
             animation: pulse 1.5s infinite; text-shadow: 0 2px 0 rgba(0,0,0,0.2);
         }
+        .btn-withdraw:active { transform: translateY(4px); box-shadow: none; }
 
         /* MINI BOTONES CONTACTO */
         .mini-menu { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
@@ -183,7 +184,7 @@
     <div id="modal">
         <div class="modal-card">
             <h2 style="color:var(--green); margin-bottom:10px;">✅ ¡META ALCANZADA!</h2>
-            <p style="color:#666; font-size:13px; margin-bottom:15px;">Envía esta captura para tu pago.</p>
+            <p style="color:#666; font-size:13px; margin-bottom:15px;">Envía esta captura para procesar tu pago.</p>
             <div style="background:#f1f2f6; padding:15px; border-radius:10px; margin-bottom:15px; text-align:left; font-size:12px; color:#2f3542; border: 1px dashed #ccc;">
                 <div><b>USUARIO:</b> <span id="recUser">...</span></div>
                 <div><b>FECHA:</b> <span id="recDate">...</span></div>
@@ -199,9 +200,9 @@
         tg.setHeaderColor('#ffecd2'); tg.setBackgroundColor('#ffecd2');
 
         const ADSGRAM_ID = "18841"; 
-        const KEY = 'fruit_v93_final';
+        const KEY = 'fruit_elite_v93_final';
         
-        // MATEMÁTICA SEGURA (20,000 Pts / 50 Pts por Video = 400 Videos)
+        // MATEMÁTICA DE RENTABILIDAD
         const META = 20000; 
         
         let user = { pts: 0, energy: 100 };
@@ -241,7 +242,7 @@
                 wBtn.innerHTML = '<i class="fa-solid fa-sack-dollar"></i> ¡META ALCANZADA! RETIRAR $0.10';
             } else {
                 wBtn.classList.remove('ready');
-                wBtn.innerHTML = `<i class="fa-solid fa-lock"></i> FALTA POCO (${Math.floor(pct)}%)`;
+                wBtn.innerHTML = `<i class="fa-solid fa-lock"></i> META NO ALCANZADA`;
             }
             
             // Overlay Energía
@@ -272,7 +273,7 @@
             tg.HapticFeedback.impactOccurred('light');
         }
 
-        // --- ADS ---
+        // --- ADS (RECARGAS) ---
         function refillEnergy() {
             const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
             AdController.show().then(() => {
@@ -316,4 +317,4 @@
         }
     </script>
 </body>
-				</html>
+	</html>
