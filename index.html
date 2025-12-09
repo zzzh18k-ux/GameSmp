@@ -6,86 +6,134 @@
     <title>Lucky Gift PRO</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA CASINO OSCURO */
-        :root { --bg: #121212; --card: #1e1e1e; --gold: #FFD700; --accent: #b38728; }
+        /* TEMA DARK GOLD */
+        :root { --bg: #000000; --card: #151515; --gold: #FFD700; --bar-bg: #333; }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         body { 
-            background-color: #000; color: white; font-family: 'Montserrat', sans-serif; 
+            background-color: var(--bg); color: white; font-family: 'Montserrat', sans-serif; 
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
-            background-image: radial-gradient(circle, #222 0%, #000 100%); padding-bottom: 30px;
+            padding-bottom: 30px;
         }
+
+        /* PANTALLA DE BANEO */
+        #banScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 99999; display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 30px;
+        }
+        .ban-icon { font-size: 60px; color: #dc2626; margin-bottom: 20px; }
+        .ban-title { font-size: 24px; color: #dc2626; font-weight: bold; margin-bottom: 10px; }
+        .ban-text { color: #fff; font-size: 14px; line-height: 1.5; }
 
         .app-container { width: 100%; max-width: 450px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
-        /* SALDO */
-        .balance-card { 
-            background: var(--card); width: 100%; border-radius: 16px; padding: 20px; 
-            border: 1px solid var(--accent); text-align: center; margin-bottom: 20px; 
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+        /* BARRA DE PROGRESO (NUEVO) */
+        .progress-container {
+            width: 100%; background: var(--card); padding: 20px; border-radius: 20px;
+            border: 1px solid #333; margin-bottom: 25px; margin-top: 15px;
+            text-align: center;
         }
-        .stat-num { font-size: 40px; font-weight: 900; color: var(--gold); text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-        .stat-label { color: #888; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+        .progress-label { font-size: 12px; color: #888; margin-bottom: 10px; letter-spacing: 1px; }
+        
+        .progress-track {
+            width: 100%; height: 25px; background: #222; border-radius: 15px;
+            overflow: hidden; position: relative; border: 1px solid #444;
+        }
+        .progress-fill {
+            height: 100%; width: 0%; 
+            background: linear-gradient(90deg, #fbbf24, #d97706);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+        .progress-text {
+            margin-top: 8px; font-size: 14px; font-weight: bold; color: var(--gold);
+            display: flex; justify-content: space-between;
+        }
 
-        /* TABLERO DE REGALOS (GRILLA) */
+        /* TABLERO DE REGALOS (GRILLA 3x4) */
         .game-board { 
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; 
             width: 100%; margin-bottom: 25px; 
         }
         
         .gift-box {
-            aspect-ratio: 1/1; /* Cuadrado perfecto */
-            background: #252525; border-radius: 12px; border: 2px solid #333;
+            aspect-ratio: 1/1; 
+            background: #1a1a1a; border-radius: 12px; border: 2px solid #333;
             display: flex; justify-content: center; align-items: center;
             cursor: pointer; position: relative; overflow: hidden;
             transition: transform 0.1s;
         }
         .gift-box:active { transform: scale(0.95); }
-        .gift-icon { font-size: 35px; color: var(--gold); }
+        .gift-icon { font-size: 32px; color: #555; transition: color 0.3s;}
         
         /* ESTADOS DE LA CAJA */
-        .gift-box.opened { background: #111; border-color: #444; }
+        .gift-box:hover .gift-icon { color: var(--gold); }
+        .gift-box.opened { background: #111; border-color: #222; }
         .gift-val { font-size: 18px; font-weight: bold; color: #fff; animation: popIn 0.3s ease; }
-        .val-zero { color: #ef4444; } /* Rojo si es 0 */
-        .val-win { color: #4ade80; } /* Verde si gana */
+        .val-zero { color: #ef4444; } /* Rojo */
+        .val-low { color: #ccc; } /* Blanco */
+        .val-high { color: #4ade80; font-size: 22px; text-shadow: 0 0 10px #4ade80;} /* Verde WOW */
 
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
-        /* BOTONES DE ABAJO */
+        /* BOTONES */
         .btn-reset { 
             width: 100%; padding: 15px; background: #333; color: white; border: none; 
             border-radius: 10px; font-weight: bold; margin-bottom: 10px; cursor: pointer;
-            display: none; /* Se oculta hasta que abran todos */
+            display: none; 
         }
         .btn-withdraw { 
             width: 100%; padding: 18px; border-radius: 12px; font-weight: 900; border: none; 
-            cursor: pointer; background: linear-gradient(90deg, #fbbf24, #d97706); color: black; 
-            font-size: 16px; text-transform: uppercase; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); 
+            cursor: pointer; background: #444; color: #888; /* Desactivado por defecto */
+            font-size: 16px; text-transform: uppercase; 
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            pointer-events: none; /* No clickable */
+        }
+        
+        /* Botón Activo cuando llega a la meta */
+        .btn-withdraw.active {
+            background: linear-gradient(90deg, #10b981, #059669); color: white;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            pointer-events: all; cursor: pointer;
         }
 
         /* MODAL RECIBO */
         #receiptModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; flex-direction:column; z-index:100; padding: 30px; }
-        .modal-box { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 1px solid var(--accent); width: 100%; text-align: center; }
+        .modal-box { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 1px solid var(--gold); width: 100%; text-align: center; }
         .receipt-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #444; padding: 8px 0; font-size: 13px; color: #ccc; }
         .receipt-val { color: var(--gold); font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div class="balance-card">
-            <div class="stat-label">TU SALDO</div>
-            <div class="stat-num"><span id="saldo">0.00</span></div> 
-            <div style="font-size:11px; color:#666;">META: 2,500 PUNTOS ($0.10)</div>
+    <div id="banScreen">
+        <i class="fa-solid fa-ban ban-icon"></i>
+        <div class="ban-title">ACCESO DENEGADO</div>
+        <p class="ban-text">Dispositivo vinculado a otra cuenta.<br>ID: <span id="linkedID" style="color:#fbbf24">...</span></p>
+    </div>
+
+    <div class="app-container" id="appContent">
+        
+        <div class="progress-container">
+            <div class="progress-label">TU PROGRESO PARA RETIRAR</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progBar"></div>
+            </div>
+            <div class="progress-text">
+                <span id="ptsDisplay">0 Pts</span>
+                <span style="color:#4ade80; font-weight:900;">$0.10 <i class="fa-solid fa-flag-checkered"></i></span>
+            </div>
         </div>
 
-        <div class="game-board" id="board">
-            </div>
+        <div class="game-board" id="board"></div>
 
         <button class="btn-reset" id="resetBtn" onclick="resetBoard()">
             <i class="fa-solid fa-rotate-right"></i> JUGAR DE NUEVO
@@ -96,19 +144,20 @@
             <button style="flex:1; padding:10px; background:#151515; border:1px solid #333; color:#ccc; border-radius:8px;" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram"></i> Canal</button>
         </div>
 
-        <button class="btn-withdraw" onclick="retirar()">
-            <i class="fa-solid fa-sack-dollar"></i> SOLICITAR PAGO
+        <button class="btn-withdraw" id="withdrawBtn" onclick="retirar()">
+            <i class="fa-solid fa-lock"></i> META NO ALCANZADA
         </button>
     </div>
 
     <div id="receiptModal">
         <div class="modal-box">
-            <h2 style="color:#10b981; margin-bottom:15px;">✅ SOLICITUD ENVIADA</h2>
+            <h2 style="color:#10b981; margin-bottom:15px;">✅ META COMPLETADA</h2>
+            <p style="color:#fff; font-size:12px; margin-bottom:15px;">¡Felicidades! Envía la captura para cobrar.</p>
             <div class="receipt-row"><span>USUARIO:</span><span class="receipt-val" id="recUser">...</span></div>
             <div class="receipt-row"><span>FECHA:</span><span class="receipt-val" id="recDate">...</span></div>
             <div class="receipt-row"><span>HORA:</span><span class="receipt-val" id="recTime">...</span></div>
-            <div class="receipt-row"><span>MONTO:</span><span class="receipt-val">2,500 PTS</span></div>
-            <button style="background:#10b981; color:white; width:100%; padding:15px; border:none; border-radius:10px; margin-top:15px; font-weight:bold;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR AL DUEÑO</button>
+            <div class="receipt-row"><span>MONTO:</span><span class="receipt-val">$0.10 USD</span></div>
+            <button style="background:#10b981; color:white; width:100%; padding:15px; border:none; border-radius:10px; margin-top:15px; font-weight:bold;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 COBRAR AHORA</button>
             <button style="background:transparent; border:none; color:#666; margin-top:15px;" onclick="location.reload()">Cerrar</button>
         </div>
     </div>
@@ -116,129 +165,153 @@
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
 
-        const MEMORY_KEY = 'lucky_gift_v75';
-        const MIN_WITHDRAW = 2500;
+        const ADSGRAM_ID = "18841"; 
+        const MEMORY_KEY = 'lucky_bar_v77';
+        const META_PUNTOS = 2500; // Equivalente a $0.10
         
-        let user = { balance: 0.00 };
+        let user = { points: 0 };
         let openedCount = 0;
 
-        // Cargar datos
-        if(localStorage.getItem(MEMORY_KEY)) { 
-            let saved = JSON.parse(localStorage.getItem(MEMORY_KEY));
-            user.balance = parseFloat(saved.balance) || 0;
-        }
+        // --- SEGURIDAD ---
+        window.onload = function() {
+            const currentID = tg.initDataUnsafe?.user?.id || 12345; 
+            const savedID = localStorage.getItem('device_owner_id');
 
-        updateUI();
-        initBoard();
+            if (savedID && savedID != currentID) {
+                document.getElementById('appContent').style.display = 'none';
+                document.getElementById('banScreen').style.display = 'flex';
+                document.getElementById('linkedID').innerText = savedID;
+                return; 
+            } 
+            if (!savedID) { localStorage.setItem('device_owner_id', currentID); }
 
-        // --- PUBLICIDAD AUTOMÁTICA (CADA 60 SEGUNDOS) ---
-        const AUTO_AD_TIME = 60000; // 60 segundos
-        setInterval(() => {
-            // Llama a Monetag
-            if (typeof show_10278425 === 'function') {
-                show_10278425().then(() => { console.log("Ad Auto"); }).catch(() => {});
+            if(localStorage.getItem(MEMORY_KEY)) { 
+                let saved = JSON.parse(localStorage.getItem(MEMORY_KEY));
+                user.points = parseFloat(saved.points) || 0;
             }
-        }, AUTO_AD_TIME);
+            updateUI();
+            initBoard();
+        };
 
+        // --- PUBLICIDAD AUTOMÁTICA (Respaldo 60s) ---
+        setInterval(() => {
+            if (typeof show_10278425 === 'function') show_10278425().catch(()=>{});
+        }, 60000);
+
+        // --- ACTUALIZAR BARRA ---
         function updateUI() { 
-            // Mostrar 2 decimales siempre (Ej: 10.50)
-            document.getElementById('saldo').innerText = user.balance.toFixed(2); 
+            let porcentaje = (user.points / META_PUNTOS) * 100;
+            if(porcentaje > 100) porcentaje = 100;
+
+            document.getElementById('progBar').style.width = porcentaje + "%";
+            document.getElementById('ptsDisplay').innerText = Math.floor(user.points) + " / " + META_PUNTOS;
+
+            const btn = document.getElementById('withdrawBtn');
+            if (user.points >= META_PUNTOS) {
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="fa-solid fa-sack-dollar"></i> SOLICITAR $0.10';
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = `<i class="fa-solid fa-lock"></i> FALTA ${Math.floor(100 - porcentaje)}%`;
+            }
         }
+
         function guardar() { localStorage.setItem(MEMORY_KEY, JSON.stringify(user)); updateUI(); }
 
-        // --- LÓGICA DEL JUEGO ---
+        // --- JUEGO ---
         function initBoard() {
             const board = document.getElementById('board');
             board.innerHTML = '';
             openedCount = 0;
             document.getElementById('resetBtn').style.display = 'none';
 
-            // Crear 10 Cajas (Bueno, 9 para que cuadre en grid 3x3, o 12. Haremos 9 para que se vea bonito 3x3)
-            // El usuario pidió 10, pero en diseño grid queda un hueco. Haremos 12 cajas mejor.
+            // 12 Cajas
             for(let i=0; i<12; i++) {
                 let box = document.createElement('div');
                 box.className = 'gift-box';
                 box.innerHTML = '<i class="fa-solid fa-gift gift-icon"></i>';
-                box.onclick = () => openBox(box);
+                box.onclick = () => tryShowAdThenOpen(box);
                 board.appendChild(box);
             }
         }
 
-        function openBox(element) {
-            // Si ya está abierta, no hacer nada
-            if(element.classList.contains('opened')) return;
+        function tryShowAdThenOpen(box) {
+            if(box.classList.contains('opened')) return;
 
+            // 50% de probabilidad de anuncio
+            if (Math.random() < 0.5) {
+                // 50% Adsgram / 50% Monetag
+                if (Math.random() < 0.5) {
+                    const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+                    AdController.show().then(() => openBox(box)).catch(() => openBox(box));
+                } else {
+                    if (typeof show_10278425 === 'function') {
+                        show_10278425().then(() => openBox(box)).catch(() => openBox(box));
+                    } else {
+                        openBox(box);
+                    }
+                }
+            } else {
+                openBox(box);
+            }
+        }
+
+        function openBox(element) {
+            if(element.classList.contains('opened')) return;
             element.classList.add('opened');
             
-            // CALCULAR PREMIO (Lógica de Casino)
-            // 40% probabilidad: 0 puntos (Vacío)
-            // 30% probabilidad: 0.10 puntos
-            // 20% probabilidad: 0.20 puntos
-            // 10% probabilidad: 0.50 puntos
-            
+            // LÓGICA DE PREMIOS (META 2500)
             let rand = Math.random() * 100;
-            let premio = 0;
-            let claseColor = 'val-win';
+            let pts = 0;
+            let cssClass = 'val-low';
 
+            // 40% Vacio | 50% Bajo | 10% WOW
             if (rand < 40) {
-                premio = 0;
-                claseColor = 'val-zero'; // Rojo
-            } else if (rand < 70) {
-                premio = 0.10;
+                pts = 0; cssClass = 'val-zero';
             } else if (rand < 90) {
-                premio = 0.20;
+                pts = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // 5 a 10 ptos
+                cssClass = 'val-low';
             } else {
-                premio = 0.50;
+                pts = Math.floor(Math.random() * (100 - 50 + 1)) + 50; // 50 a 100 ptos (WOW)
+                cssClass = 'val-high';
             }
 
-            // Mostrar resultado en la caja
-            if (premio === 0) {
-                element.innerHTML = `<span class="gift-val ${claseColor}">VACÍO</span>`;
+            if (pts === 0) {
+                element.innerHTML = `<span class="gift-val ${cssClass}">0</span>`;
                 tg.HapticFeedback.notificationOccurred('error');
             } else {
-                element.innerHTML = `<span class="gift-val ${claseColor}">+${premio.toFixed(2)}</span>`;
-                user.balance += premio;
+                element.innerHTML = `<span class="gift-val ${cssClass}">+${pts}</span>`;
+                user.points += pts;
                 guardar();
                 tg.HapticFeedback.impactOccurred('medium');
             }
 
             openedCount++;
-
-            // Si abrieron todas (o casi todas), mostrar botón de reset
-            if(openedCount >= 12) {
-                document.getElementById('resetBtn').style.display = 'block';
-            }
+            if(openedCount >= 12) document.getElementById('resetBtn').style.display = 'block';
         }
 
         function resetBoard() {
-            // Mostrar anuncio al reiniciar el tablero (Opcional, muy efectivo)
-            if (typeof show_10278425 === 'function') {
-                show_10278425();
-            }
+            // Anuncio extra al resetear (Opcional)
+            if (Math.random() < 0.3 && typeof show_10278425 === 'function') show_10278425();
             initBoard();
         }
 
-        // --- RETIRO ---
         function retirar() {
-            if (user.balance < MIN_WITHDRAW) {
-                tg.showAlert(`Faltan ${(MIN_WITHDRAW - user.balance).toFixed(2)} Puntos.`);
-                return;
-            }
-            tg.showConfirm(`¿Retirar 2,500 Puntos?`, (ok) => {
+            if (user.points < META_PUNTOS) return;
+            
+            tg.showConfirm(`¿Cobrar $0.10 ahora?`, (ok) => {
                 if(ok) {
-                    user.balance -= MIN_WITHDRAW;
+                    user.points -= META_PUNTOS;
                     guardar();
                     
                     let now = new Date();
                     document.getElementById('recDate').innerText = now.toLocaleDateString();
                     document.getElementById('recTime').innerText = now.toLocaleTimeString();
-                    let username = tg.initDataUnsafe?.user?.first_name || "Usuario";
-                    document.getElementById('recUser').innerText = username;
-
+                    document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Usuario";
                     document.getElementById('receiptModal').style.display = 'flex';
                 }
             });
         }
     </script>
 </body>
-</html>
+                </html>
