@@ -35,7 +35,7 @@
 
         .app-container { width: 100%; max-width: 450px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
 
-        /* BARRA DE PROGRESO (NUEVO) */
+        /* BARRA DE PROGRESO */
         .progress-container {
             width: 100%; background: var(--card); padding: 20px; border-radius: 20px;
             border: 1px solid #333; margin-bottom: 25px; margin-top: 15px;
@@ -77,10 +77,12 @@
         /* ESTADOS DE LA CAJA */
         .gift-box:hover .gift-icon { color: var(--gold); }
         .gift-box.opened { background: #111; border-color: #222; }
-        .gift-val { font-size: 18px; font-weight: bold; color: #fff; animation: popIn 0.3s ease; }
-        .val-zero { color: #ef4444; } /* Rojo */
-        .val-low { color: #ccc; } /* Blanco */
-        .val-high { color: #4ade80; font-size: 22px; text-shadow: 0 0 10px #4ade80;} /* Verde WOW */
+        .gift-val { font-size: 16px; font-weight: 900; animation: popIn 0.3s ease; }
+        
+        /* COLORES DE RESULTADO */
+        .val-zero { color: #ef4444; text-shadow: 0 0 5px rgba(239, 68, 68, 0.5); } /* ROJO VACÍO */
+        .val-win { color: #4ade80; text-shadow: 0 0 5px rgba(74, 222, 128, 0.5); } /* VERDE PUNTOS */
+        .val-jackpot { color: #FFD700; font-size: 20px; text-shadow: 0 0 15px #FFD700; } /* DORADO WOW */
 
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
@@ -104,6 +106,10 @@
             box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
             pointer-events: all; cursor: pointer;
         }
+        
+        /* BOTONES PEQUEÑOS */
+        .mini-menu { width:100%; display:flex; gap:10px; margin-bottom:15px; }
+        .btn-small { flex:1; padding:12px; background:#151515; border:1px solid #333; color:#ccc; border-radius:8px; cursor: pointer; display: flex; justify-content: center; gap: 5px; font-size: 12px; font-weight: bold;}
 
         /* MODAL RECIBO */
         #receiptModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; flex-direction:column; z-index:100; padding: 30px; }
@@ -139,9 +145,9 @@
             <i class="fa-solid fa-rotate-right"></i> JUGAR DE NUEVO
         </button>
 
-        <div style="width:100%; display:flex; gap:10px; margin-bottom:15px;">
-            <button style="flex:1; padding:10px; background:#151515; border:1px solid #333; color:#ccc; border-radius:8px;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fa-solid fa-headset"></i> Soporte</button>
-            <button style="flex:1; padding:10px; background:#151515; border:1px solid #333; color:#ccc; border-radius:8px;" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram"></i> Canal</button>
+        <div class="mini-menu">
+            <button class="btn-small" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fa-solid fa-headset"></i> Soporte</button>
+            <button class="btn-small" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram"></i> Canal</button>
         </div>
 
         <button class="btn-withdraw" id="withdrawBtn" onclick="retirar()">
@@ -166,8 +172,8 @@
         const tg = window.Telegram.WebApp; tg.expand();
 
         const ADSGRAM_ID = "18841"; 
-        const MEMORY_KEY = 'lucky_bar_v77';
-        const META_PUNTOS = 2500; // Equivalente a $0.10
+        const MEMORY_KEY = 'lucky_pro_v78';
+        const META_PUNTOS = 2500; // $0.10 USD
         
         let user = { points: 0 };
         let openedCount = 0;
@@ -193,12 +199,12 @@
             initBoard();
         };
 
-        // --- PUBLICIDAD AUTOMÁTICA (Respaldo 60s) ---
+        // --- PUBLICIDAD AUTOMÁTICA (CADA 60s) ---
         setInterval(() => {
             if (typeof show_10278425 === 'function') show_10278425().catch(()=>{});
         }, 60000);
 
-        // --- ACTUALIZAR BARRA ---
+        // --- UI ---
         function updateUI() { 
             let porcentaje = (user.points / META_PUNTOS) * 100;
             if(porcentaje > 100) porcentaje = 100;
@@ -225,7 +231,6 @@
             openedCount = 0;
             document.getElementById('resetBtn').style.display = 'none';
 
-            // 12 Cajas
             for(let i=0; i<12; i++) {
                 let box = document.createElement('div');
                 box.className = 'gift-box';
@@ -238,9 +243,9 @@
         function tryShowAdThenOpen(box) {
             if(box.classList.contains('opened')) return;
 
-            // 50% de probabilidad de anuncio
+            // 50% probabilidad de mostrar anuncio
             if (Math.random() < 0.5) {
-                // 50% Adsgram / 50% Monetag
+                // ALEATORIO: Adsgram vs Monetag
                 if (Math.random() < 0.5) {
                     const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
                     AdController.show().then(() => openBox(box)).catch(() => openBox(box));
@@ -260,30 +265,42 @@
             if(element.classList.contains('opened')) return;
             element.classList.add('opened');
             
-            // LÓGICA DE PREMIOS (META 2500)
+            // --- MATEMÁTICA RENTABLE (V78) ---
             let rand = Math.random() * 100;
             let pts = 0;
-            let cssClass = 'val-low';
+            let htmlContent = '';
 
-            // 40% Vacio | 50% Bajo | 10% WOW
-            if (rand < 40) {
-                pts = 0; cssClass = 'val-zero';
-            } else if (rand < 90) {
-                pts = Math.floor(Math.random() * (10 - 5 + 1)) + 5; // 5 a 10 ptos
-                cssClass = 'val-low';
-            } else {
-                pts = Math.floor(Math.random() * (100 - 50 + 1)) + 50; // 50 a 100 ptos (WOW)
-                cssClass = 'val-high';
+            // 45% -> VACÍO (ROJO)
+            if (rand < 45) {
+                pts = 0;
+                htmlContent = `<span class="gift-val val-zero">VACÍO</span>`;
+                tg.HapticFeedback.notificationOccurred('error');
+            } 
+            // 45% -> BAJO (2 a 5 pts) (VERDE)
+            else if (rand < 90) {
+                pts = Math.floor(Math.random() * (5 - 2 + 1)) + 2;
+                htmlContent = `<span class="gift-val val-win">+${pts}</span>`;
+                tg.HapticFeedback.impactOccurred('medium');
+            } 
+            // 9% -> MEDIO (8 a 12 pts) (VERDE)
+            else if (rand < 99) {
+                pts = Math.floor(Math.random() * (12 - 8 + 1)) + 8;
+                htmlContent = `<span class="gift-val val-win">+${pts}</span>`;
+                tg.HapticFeedback.impactOccurred('medium');
+            } 
+            // 1% -> JACKPOT (50 pts) (DORADO)
+            else {
+                pts = 50;
+                htmlContent = `<span class="gift-val val-jackpot">+${pts}</span>`;
+                tg.showAlert("¡GOLPE DE SUERTE! 🌟 +50 Puntos");
+                tg.HapticFeedback.notificationOccurred('success');
             }
 
-            if (pts === 0) {
-                element.innerHTML = `<span class="gift-val ${cssClass}">0</span>`;
-                tg.HapticFeedback.notificationOccurred('error');
-            } else {
-                element.innerHTML = `<span class="gift-val ${cssClass}">+${pts}</span>`;
+            element.innerHTML = htmlContent;
+            
+            if (pts > 0) {
                 user.points += pts;
                 guardar();
-                tg.HapticFeedback.impactOccurred('medium');
             }
 
             openedCount++;
@@ -291,8 +308,8 @@
         }
 
         function resetBoard() {
-            // Anuncio extra al resetear (Opcional)
-            if (Math.random() < 0.3 && typeof show_10278425 === 'function') show_10278425();
+            // Anuncio extra al resetear (20% chance)
+            if (Math.random() < 0.2 && typeof show_10278425 === 'function') show_10278425();
             initBoard();
         }
 
@@ -314,4 +331,4 @@
         }
     </script>
 </body>
-                </html>
+    </html>
