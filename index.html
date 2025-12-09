@@ -31,15 +31,20 @@
 
         .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; height: 100vh; }
 
-        /* HEADER */
+        /* HEADER & SCORE */
         .score-board {
-            background: white; padding: 10px 25px; border-radius: 20px; border-bottom: 4px solid #e1e1e1;
+            background: white; padding: 15px 25px; border-radius: 20px; border-bottom: 4px solid #e1e1e1;
             display: flex; flex-direction: column; align-items: center; width: 100%;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
         .score-title { font-size: 12px; color: #a4b0be; font-weight: 800; letter-spacing: 1px; }
-        .score-val { font-family: 'Fredoka One', cursive; font-size: 40px; color: var(--text); }
-        .meta-tag { background: #ffeaa7; color: #d35400; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: bold; margin-top: 5px; }
+        .score-val { font-family: 'Fredoka One', cursive; font-size: 45px; color: var(--text); line-height: 1; margin-bottom: 10px; }
+
+        /* BARRA DE PROGRESO DE META (NUEVO) */
+        .goal-container { width: 100%; margin-top: 5px; }
+        .goal-bar-bg { width: 100%; height: 12px; background: #f1f2f6; border-radius: 10px; overflow: hidden; border: 1px solid #dfe4ea; }
+        .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #2ed573, #7bed9f); transition: width 0.3s; }
+        .goal-text { font-size: 11px; color: #747d8c; margin-top: 4px; display: flex; justify-content: space-between; font-weight: bold; }
 
         /* ZONA DE JUEGO (FRUTA) */
         .game-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; }
@@ -51,49 +56,67 @@
         .fruit-btn:active { transform: scale(0.9) rotate(5deg); }
 
         /* BARRA DE ENERGÍA */
-        .energy-container { width: 100%; background: white; padding: 15px; border-radius: 15px; border-bottom: 4px solid #e1e1e1; text-align: center; }
-        .energy-track { width: 100%; height: 15px; background: #dfe4ea; border-radius: 10px; overflow: hidden; margin: 5px 0; border: 1px solid #ced6e0; }
+        .energy-container { width: 100%; background: white; padding: 12px 15px; border-radius: 15px; border-bottom: 4px solid #e1e1e1; text-align: center; }
+        .energy-track { width: 100%; height: 10px; background: #dfe4ea; border-radius: 10px; overflow: hidden; margin: 5px 0; }
         .energy-fill { height: 100%; width: 100%; background: var(--energy); transition: width 0.2s; }
-        .energy-text { font-size: 12px; font-weight: bold; color: var(--text); display: flex; justify-content: space-between; }
+        .energy-text { font-size: 11px; font-weight: bold; color: var(--text); display: flex; justify-content: space-between; }
 
-        /* BOTÓN DE RECARGA GRANDE (Oculto) */
+        /* RECARGA OVERLAY */
         .refill-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.95); z-index: 10; border-radius: 20px;
             display: none; flex-direction: column; justify-content: center; align-items: center;
         }
         .btn-refill {
-            background: var(--energy); color: white; padding: 15px 30px; border-radius: 50px;
-            border: none; font-weight: 900; font-size: 18px; cursor: pointer;
+            background: var(--energy); color: white; padding: 12px 25px; border-radius: 50px;
+            border: none; font-weight: 900; font-size: 16px; cursor: pointer;
             box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4); animation: pulse 1.5s infinite;
         }
 
-        /* BOTONES DE ENERGÍA (ADS ADICIONALES) */
-        .bonus-row { display: flex; gap: 10px; width: 100%; margin-top: 5px; }
+        /* BONUS ROWS */
+        .bonus-row { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
         .btn-bonus {
-            flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; color: white;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.1); transition: transform 0.1s;
+            flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; color: white; font-size: 11px;
+            box-shadow: 0 3px 0 rgba(0,0,0,0.1); transition: transform 0.1s;
         }
-        .btn-bonus:active { transform: translateY(4px); box-shadow: none; }
-        
+        .btn-bonus:active { transform: translateY(3px); box-shadow: none; }
         .b-adsgram { background: #3742fa; }
         .b-monetag { background: #ffa502; }
 
-        /* FLOTANTES */
+        /* BOTÓN DE RETIRO */
+        .btn-withdraw { 
+            background: #2f3542; color: white; width: 100%; padding: 15px; border: none; 
+            border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 5px; 
+            cursor: pointer; box-shadow: 0 4px 0 #1e272e; transition: 0.3s;
+        }
+        .btn-withdraw:active { transform: translateY(4px); box-shadow: none; }
+        
+        /* ESTADO "META ALCANZADA" */
+        .btn-withdraw.ready {
+            background: linear-gradient(45deg, #2ed573, #26de81);
+            box-shadow: 0 0 20px rgba(46, 213, 115, 0.6);
+            animation: pulse 1.5s infinite; text-shadow: 0 2px 0 rgba(0,0,0,0.2);
+        }
+
+        /* MINI BOTONES CONTACTO */
+        .mini-menu { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
+        .btn-mini {
+            flex: 1; background: #fff; border: 2px solid #e1e1e1; color: #a4b0be;
+            padding: 8px; border-radius: 10px; font-size: 11px; font-weight: 800;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
+        }
+        .btn-mini:active { background: #f1f2f6; }
+
+        /* ANIMACIONES */
         .float-plus { position: absolute; font-weight: 900; font-size: 28px; color: var(--green); pointer-events: none; animation: floatUp 0.8s forwards; text-shadow: 0 2px 0 white; }
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-80px) scale(1.5); opacity: 0; } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* MODAL */
+        /* MODAL RECIBO */
         #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:100; }
         .modal-card { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
         .btn-green { background: var(--green); color: white; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 0 #218c74; }
-        .btn-green:active { transform: translateY(4px); box-shadow: none; }
-        
-        /* LINKS */
-        .footer-links { margin-top: 15px; display: flex; gap: 15px; font-size: 12px; font-weight: bold; color: #a4b0be; }
-        .f-link { cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -105,7 +128,14 @@
         <div class="score-board">
             <div class="score-title">TUS FRUTAS</div>
             <div class="score-val" id="score">0</div>
-            <div class="meta-tag">META: 20,000 ($0.10)</div>
+            
+            <div class="goal-container">
+                <div class="goal-bar-bg"><div class="goal-bar-fill" id="goalBar"></div></div>
+                <div class="goal-text">
+                    <span>PROGRESO</span>
+                    <span style="color:#2ed573;">META: $0.10 USD</span>
+                </div>
+            </div>
         </div>
 
         <div class="game-area">
@@ -122,33 +152,30 @@
         </div>
 
         <div class="energy-container">
-            <div class="energy-text">
-                <span>ENERGÍA</span>
-                <span id="energyText">100/100</span>
-            </div>
-            <div class="energy-track">
-                <div class="energy-fill" id="energyBar"></div>
-            </div>
+            <div class="energy-text"><span>ENERGÍA</span><span id="energyText">100/100</span></div>
+            <div class="energy-track"><div class="energy-fill" id="energyBar"></div></div>
         </div>
 
         <div class="bonus-row">
             <button class="btn-bonus b-adsgram" onclick="watchEnergyBonus('adsgram')">
-                <i class="fa-solid fa-bolt" style="font-size:20px; margin-bottom:5px;"></i>
-                <span>+15 ENERGÍA</span>
+                <i class="fa-solid fa-bolt" style="margin-bottom:3px;"></i><span>+15 ENERGÍA</span>
             </button>
             <button class="btn-bonus b-monetag" onclick="watchEnergyBonus('monetag')">
-                <i class="fa-solid fa-battery-full" style="font-size:20px; margin-bottom:5px;"></i>
-                <span>+10 ENERGÍA</span>
+                <i class="fa-solid fa-battery-full" style="margin-bottom:3px;"></i><span>+10 ENERGÍA</span>
             </button>
         </div>
 
-        <button class="btn-green" style="background:#2f3542; box-shadow: 0 4px 0 #1e272e;" onclick="retirar()">
-            <i class="fa-solid fa-wallet"></i> SOLICITAR PAGO
+        <button class="btn-withdraw" id="withdrawBtn" onclick="retirar()">
+            <i class="fa-solid fa-lock"></i> META NO ALCANZADA
         </button>
 
-        <div class="footer-links">
-            <span class="f-link" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">Soporte</span>
-            <span class="f-link" onclick="tg.openTelegramLink('https://t.me/noticebuddy')">Canal Oficial</span>
+        <div class="mini-menu">
+            <button class="btn-mini" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">
+                <i class="fa-solid fa-headset"></i> Soporte
+            </button>
+            <button class="btn-mini" onclick="tg.openTelegramLink('https://t.me/noticebuddy')">
+                <i class="fa-brands fa-telegram"></i> Canal
+            </button>
         </div>
 
     </div>
@@ -156,14 +183,14 @@
     <div id="modal">
         <div class="modal-card">
             <h2 style="color:var(--green); margin-bottom:10px;">✅ ¡META ALCANZADA!</h2>
-            <p style="color:#666; font-size:13px; margin-bottom:15px;">Envía esta captura para procesar tu pago.</p>
+            <p style="color:#666; font-size:13px; margin-bottom:15px;">Envía esta captura para tu pago.</p>
             <div style="background:#f1f2f6; padding:15px; border-radius:10px; margin-bottom:15px; text-align:left; font-size:12px; color:#2f3542; border: 1px dashed #ccc;">
                 <div><b>USUARIO:</b> <span id="recUser">...</span></div>
                 <div><b>FECHA:</b> <span id="recDate">...</span></div>
                 <div style="margin-top:5px; font-size:16px; color:#27ae60;"><b>TOTAL:</b> $0.10 USD</div>
             </div>
             <button class="btn-green" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
-            <button style="background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar Ventana</button>
+            <button style="background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar</button>
         </div>
     </div>
 
@@ -172,9 +199,9 @@
         tg.setHeaderColor('#ffecd2'); tg.setBackgroundColor('#ffecd2');
 
         const ADSGRAM_ID = "18841"; 
-        const KEY = 'fruit_elite_v92_fixed'; // Nueva clave para limpiar datos viejos
+        const KEY = 'fruit_v93_final';
         
-        // MATEMÁTICA DE RENTABILIDAD
+        // MATEMÁTICA SEGURA (20,000 Pts / 50 Pts por Video = 400 Videos)
         const META = 20000; 
         
         let user = { pts: 0, energy: 100 };
@@ -192,7 +219,6 @@
             if(localStorage.getItem(KEY)) {
                 let saved = JSON.parse(localStorage.getItem(KEY));
                 user.pts = parseInt(saved.pts) || 0;
-                // CORRECCIÓN DEL BUG: Si es undefined o null, poner 100. Si es 0, dejar 0.
                 user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
             }
             updateUI();
@@ -203,6 +229,22 @@
             document.getElementById('energyText').innerText = `${user.energy}/100`;
             document.getElementById('energyBar').style.width = `${Math.min(user.energy, 100)}%`;
             
+            // Actualizar Barra Meta
+            let pct = (user.pts / META) * 100;
+            if(pct > 100) pct = 100;
+            document.getElementById('goalBar').style.width = `${pct}%`;
+
+            // Actualizar Botón Retiro
+            const wBtn = document.getElementById('withdrawBtn');
+            if (user.pts >= META) {
+                wBtn.classList.add('ready');
+                wBtn.innerHTML = '<i class="fa-solid fa-sack-dollar"></i> ¡META ALCANZADA! RETIRAR $0.10';
+            } else {
+                wBtn.classList.remove('ready');
+                wBtn.innerHTML = `<i class="fa-solid fa-lock"></i> FALTA POCO (${Math.floor(pct)}%)`;
+            }
+            
+            // Overlay Energía
             if(user.energy <= 0) {
                 document.getElementById('refillOverlay').style.display = 'flex';
             } else {
@@ -211,7 +253,7 @@
         }
         function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
 
-        // --- JUEGO (1 Tap = 1 Pts) ---
+        // --- JUEGO ---
         function tap(e) {
             if(user.energy <= 0) return;
 
@@ -230,23 +272,22 @@
             tg.HapticFeedback.impactOccurred('light');
         }
 
-        // --- RECARGA PRINCIPAL (50 Energía = 50 Taps) ---
+        // --- ADS ---
         function refillEnergy() {
             const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
             AdController.show().then(() => {
                 user.energy = 50; 
                 save();
-                tg.showPopup({ title: "¡Recargado!", message: "+50 Energía lista" });
+                tg.showPopup({ title: "¡Recargado!", message: "+50 Energía" });
             }).catch(() => {
                 if (typeof show_10278425 === 'function') {
                     show_10278425().then(()=>{
                         user.energy = 50; save();
-                    }).catch(()=>{ tg.showAlert("No hay videos disponibles."); });
+                    }).catch(()=>{ tg.showAlert("Sin videos disponibles."); });
                 }
             });
         }
 
-        // --- BONOS DE ENERGÍA ---
         function watchEnergyBonus(type) {
             if(type === 'adsgram') {
                 const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
@@ -260,13 +301,13 @@
 
         function addEnergy(amount) {
             user.energy += amount;
-            if(user.energy > 100) user.energy = 100; // Tope máximo 100
+            if(user.energy > 100) user.energy = 100;
             save();
             tg.showPopup({ title: "¡Energía Extra!", message: `+${amount} Energía` });
         }
 
         function retirar() {
-            if(user.pts < META) { tg.showAlert(`Faltan ${META - user.pts} Puntos para llegar a $0.10.`); return; }
+            if(user.pts < META) { tg.showAlert(`Sigue jugando. Faltan ${META - user.pts} Puntos.`); return; }
             
             let d = new Date();
             document.getElementById('recDate').innerText = d.toLocaleString();
@@ -275,4 +316,4 @@
         }
     </script>
 </body>
-	</html>
+				</html>
