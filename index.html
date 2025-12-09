@@ -3,203 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Task Hub DAILY</title>
+    <title>Neon Clicker PRO</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA NEÓN FUTURE */
-        :root { --bg: #050505; --card: #111; --primary: #00ffcc; --secondary: #d500f9; --bonus: #ffd700; --text: #fff; }
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { 
-            background-color: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; 
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
-            background-image: linear-gradient(180deg, #0a0a12 0%, #000 100%);
-            padding: 15px; padding-bottom: 50px;
+        :root { --bg: #000; --primary: #00ffcc; --secondary: #d500f9; --card: #111; }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background: var(--bg); color: white; font-family: 'Rajdhani', sans-serif;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            background-image: radial-gradient(circle, #1a1a2e 0%, #000 100%);
+            margin: 0; padding: 20px; overflow: hidden;
         }
 
         #banScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; 
-            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 30px;
+            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
-        .ban-icon { font-size: 60px; color: #ff3333; margin-bottom: 20px; }
 
-        .app-container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 15px; }
+        /* HEADER */
+        .header { width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .score-box { text-align: left; }
+        .score-label { font-size: 12px; color: #888; letter-spacing: 1px; }
+        .score-val { font-size: 32px; font-weight: 900; color: var(--primary); text-shadow: 0 0 10px rgba(0,255,204,0.4); }
 
-        /* BARRA DE PROGRESO */
-        .progress-box {
-            background: var(--card); border: 1px solid #333; border-radius: 20px; padding: 15px;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.1); text-align: center;
+        /* CIRCULO PRINCIPAL (CLICKER) */
+        .clicker-zone {
+            flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; position: relative;
         }
-        .prog-track { width: 100%; height: 20px; background: #222; border-radius: 10px; overflow: hidden; margin: 10px 0; border: 1px solid #444; }
-        .prog-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--secondary)); transition: 0.5s; }
-        .prog-text { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; color: var(--primary); }
-
-        /* TARJETA DE BONO DIARIO */
-        .daily-card {
-            background: linear-gradient(135deg, #222, #111); border: 1px solid var(--bonus);
-            border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; 
-            align-items: center; position: relative; overflow: hidden;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        .main-btn {
+            width: 240px; height: 240px; border-radius: 50%;
+            background: radial-gradient(circle, #222, #000);
+            border: 4px solid var(--secondary);
+            box-shadow: 0 0 30px rgba(213,0,249,0.3);
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: transform 0.1s; position: relative; z-index: 10;
         }
-        .daily-left { display: flex; align-items: center; gap: 15px; z-index: 2; }
-        .daily-icon { font-size: 30px; color: var(--bonus); animation: bounce 2s infinite; }
-        .daily-info h3 { font-size: 16px; margin: 0; color: var(--bonus); font-weight: 900; }
-        .daily-info p { font-size: 11px; margin: 2px 0 0 0; color: #aaa; }
-        
-        .btn-claim {
-            background: var(--bonus); color: black; border: none; padding: 10px 20px;
-            border-radius: 20px; font-weight: 900; cursor: pointer; z-index: 2;
-            box-shadow: 0 0 10px var(--bonus); transition: 0.2s;
-        }
-        .btn-claim:active { transform: scale(0.95); }
-        .btn-claim:disabled { background: #333; color: #666; box-shadow: none; cursor: not-allowed; border: 1px solid #444; }
+        .main-btn:active { transform: scale(0.95); box-shadow: 0 0 15px rgba(213,0,249,0.6); }
+        .tap-text { font-size: 24px; font-weight: 900; color: white; pointer-events: none; }
 
-        /* LISTA DE 7 BOTONES */
-        .tasks-list { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px; }
-        .section-title { font-size: 12px; color: #666; font-weight: bold; margin-left: 5px; letter-spacing: 1px; }
-        
-        .task-btn {
-            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #222;
-            background: #111; color: white; cursor: pointer; position: relative;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: 0.2s;
+        /* EFECTO DE NÚMERO FLOTANTE */
+        .float-num {
+            position: absolute; color: white; font-weight: bold; font-size: 20px;
+            animation: floatUp 1s ease-out forwards; pointer-events: none;
         }
-        .task-btn:active { transform: scale(0.98); background: #222; }
-        
-        .type-adsgram { border-left: 3px solid var(--primary); }
-        .type-monetag { border-left: 3px solid var(--secondary); }
-        
-        .btn-left { display: flex; align-items: center; gap: 12px; }
-        .btn-icon { font-size: 18px; width: 25px; text-align: center; }
-        .type-adsgram .btn-icon { color: var(--primary); }
-        .type-monetag .btn-icon { color: var(--secondary); }
-        
-        .btn-info { text-align: left; }
-        .btn-title { font-weight: bold; font-size: 15px; }
-        .btn-sub { font-size: 11px; color: #666; margin-top: 2px; }
-        .btn-reward { font-size: 12px; font-weight: bold; color: #888; background: #000; padding: 5px 8px; border-radius: 6px; }
+        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100px); opacity: 0; } }
 
-        .task-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #080808; border-color: #111; }
-        .timer-text { color: var(--secondary); font-size: 11px; font-weight: bold; }
-
-        /* FOOTER */
-        .btn-withdraw { 
-            width: 100%; padding: 18px; border-radius: 15px; font-weight: 900; border: none; margin-top: 10px;
-            cursor: pointer; background: linear-gradient(90deg, var(--primary), #0099ff); 
-            color: #000; font-size: 16px; text-transform: uppercase; 
+        /* BOTONES DE BOOST (PUBLICIDAD) */
+        .boost-menu { width: 100%; max-width: 400px; display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-boost {
+            flex: 1; background: linear-gradient(135deg, #111, #222); border: 1px solid #333;
+            padding: 15px; border-radius: 15px; text-align: center; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
         }
-        .mini-links { display: flex; gap: 10px; margin-top: 5px; }
-        .link-btn { flex: 1; background: #151515; border: 1px solid #333; color: #aaa; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 12px; }
+        .btn-boost i { font-size: 20px; color: var(--secondary); margin-bottom: 5px; }
+        .boost-title { font-size: 12px; font-weight: bold; color: #ccc; }
+        .boost-val { font-size: 10px; color: var(--primary); }
+
+        /* RETIRO */
+        .footer { width: 100%; max-width: 400px; }
+        .btn-withdraw {
+            background: var(--primary); color: #000; width: 100%; padding: 18px; border: none;
+            border-radius: 12px; font-weight: 900; font-size: 16px; cursor: pointer;
+            box-shadow: 0 0 15px rgba(0,255,204,0.3);
+        }
+        .prog-bar { width: 100%; height: 5px; background: #333; margin-bottom: 10px; border-radius: 5px; overflow: hidden; }
+        .prog-fill { height: 100%; width: 0%; background: var(--primary); transition: 0.3s; }
 
         /* MODAL */
         #receiptModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; flex-direction:column; z-index:100; padding: 30px; }
         .modal-box { background: #151515; padding: 30px; border-radius: 20px; border: 1px solid var(--primary); width: 100%; text-align: center; }
         .receipt-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #444; padding: 10px 0; font-size: 13px; color: #ccc; }
         .receipt-val { color: var(--primary); font-weight: bold; }
-
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     </style>
 </head>
 <body>
 
     <div id="banScreen">
-        <i class="fa-solid fa-ban ban-icon"></i>
-        <h2 style="color:white; margin-bottom:10px;">ACCESO DENEGADO</h2>
-        <p style="color:#888;">Multicuenta detectada.</p>
+        <h2 style="color:white;">ACCESO DENEGADO</h2>
+        <p style="color:#888;">ID: <span id="linkedID">...</span></p>
     </div>
 
-    <div class="app-container" id="appContent">
-        
-        <div class="progress-box">
-            <div style="font-size:12px; color:#888; letter-spacing:1px; margin-bottom:5px;">META DE RETIRO</div>
-            <div style="font-size:35px; font-weight:900; color:#fff;"><span id="saldo">0</span> Pts</div>
-            
-            <div class="prog-track"><div class="prog-fill" id="progBar"></div></div>
-            <div class="prog-text">
-                <span>0%</span>
-                <span style="color:#fff;">META: 2,500 Pts ($0.10)</span>
-                <span>100%</span>
-            </div>
+    <div class="header">
+        <div class="score-box">
+            <div class="score-label">SALDO TOTAL</div>
+            <div class="score-val"><span id="score">0</span></div>
         </div>
-
-        <div class="daily-card">
-            <div class="daily-left">
-                <i class="fa-solid fa-calendar-check daily-icon"></i>
-                <div class="daily-info">
-                    <h3>BONO DIARIO</h3>
-                    <p id="bonusStatus">Disponible cada 24h</p>
-                </div>
-            </div>
-            <button class="btn-claim" id="btnBonus" onclick="claimDailyBonus()">RECLAMAR</button>
+        <div style="text-align:right;">
+            <div class="score-label">META</div>
+            <div style="font-weight:bold;">2,500 ($0.10)</div>
         </div>
+    </div>
 
-        <div class="tasks-list">
-            <div class="section-title">MISIONES (Pago Aleatorio)</div>
-
-            <button class="task-btn type-adsgram" id="btn1" onclick="watchTask(1, 'adsgram')">
-                <div class="btn-left"><i class="fa-solid fa-play btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Ads #1</div><div class="btn-sub" id="t1">Disponible</div></div>
-                </div><div class="btn-reward">??? Pts</div>
-            </button>
-
-            <button class="task-btn type-monetag" id="btn2" onclick="watchTask(2, 'monetag')">
-                <div class="btn-left"><i class="fa-solid fa-circle-play btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Ads #2</div><div class="btn-sub" id="t2">Disponible</div></div>
-                </div><div class="btn-reward">??? Pts</div>
-            </button>
-
-            <button class="task-btn type-adsgram" id="btn3" onclick="watchTask(3, 'adsgram')">
-                <div class="btn-left"><i class="fa-solid fa-play btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Ads #3</div><div class="btn-sub" id="t3">Disponible</div></div>
-                </div><div class="btn-reward">??? Pts</div>
-            </button>
-
-            <button class="task-btn type-monetag" id="btn4" onclick="watchTask(4, 'monetag')">
-                <div class="btn-left"><i class="fa-solid fa-circle-play btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Ads #4</div><div class="btn-sub" id="t4">Disponible</div></div>
-                </div><div class="btn-reward">??? Pts</div>
-            </button>
-
-            <button class="task-btn type-adsgram" id="btn5" onclick="watchTask(5, 'adsgram')">
-                <div class="btn-left"><i class="fa-solid fa-play btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Ads #5</div><div class="btn-sub" id="t5">Disponible</div></div>
-                </div><div class="btn-reward">??? Pts</div>
-            </button>
-
-            <button class="task-btn type-monetag" id="btn6" onclick="watchTask(6, 'monetag')">
-                <div class="btn-left"><i class="fa-solid fa-circle-play btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Ads #6</div><div class="btn-sub" id="t6">Disponible</div></div>
-                </div><div class="btn-reward">??? Pts</div>
-            </button>
-
-            <button class="task-btn type-adsgram" id="btn7" onclick="watchTask(7, 'adsgram')">
-                <div class="btn-left"><i class="fa-solid fa-play btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Ads #7</div><div class="btn-sub" id="t7">Disponible</div></div>
-                </div><div class="btn-reward">??? Pts</div>
-            </button>
+    <div class="clicker-zone">
+        <div class="main-btn" id="tapBtn" onclick="tap(event)">
+            <div class="tap-text">TAP</div>
         </div>
+    </div>
 
-        <button class="btn-withdraw" onclick="retirar()">
-            <i class="fa-solid fa-money-bill-transfer"></i> SOLICITAR PAGO ($0.10)
+    <div class="boost-menu">
+        <button class="btn-boost" onclick="watchAd('turbo')">
+            <i class="fa-solid fa-bolt"></i>
+            <span class="boost-title">TURBO</span>
+            <span class="boost-val">+50 Pts (Video)</span>
         </button>
+        <button class="btn-boost" onclick="watchAd('mega')">
+            <i class="fa-solid fa-gem"></i>
+            <span class="boost-title">MEGA</span>
+            <span class="boost-val">+30 Pts (Bonus)</span>
+        </button>
+        <button class="btn-boost" onclick="watchAd('lucky')">
+            <i class="fa-solid fa-gift"></i>
+            <span class="boost-title">LUCKY</span>
+            <span class="boost-val">??? Pts</span>
+        </button>
+    </div>
 
-        <div class="mini-links">
-            <button class="link-btn" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">Soporte</button>
-            <button class="link-btn" onclick="tg.openTelegramLink('https://t.me/noticebuddy')">Canal Oficial</button>
+    <div class="footer">
+        <div style="display:flex; justify-content:space-between; font-size:10px; color:#666; margin-bottom:5px;">
+            <span>Progreso</span>
+            <span id="pctText">0%</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+        
+        <button class="btn-withdraw" onclick="retirar()">SOLICITAR PAGO</button>
+        
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button style="flex:1; padding:10px; background:#111; border:1px solid #333; color:#888; border-radius:8px;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">Soporte</button>
+            <button style="flex:1; padding:10px; background:#111; border:1px solid #333; color:#888; border-radius:8px;" onclick="tg.openTelegramLink('https://t.me/noticebuddy')">Canal</button>
         </div>
     </div>
 
     <div id="receiptModal">
         <div class="modal-box">
-            <h2 style="color:var(--primary); margin-bottom:15px;">✅ SOLICITUD CREADA</h2>
+            <h2 style="color:var(--primary); margin-bottom:15px;">✅ META COMPLETADA</h2>
             <div class="receipt-row"><span>USUARIO:</span><span class="receipt-val" id="recUser">...</span></div>
             <div class="receipt-row"><span>FECHA:</span><span class="receipt-val" id="recDate">...</span></div>
-            <div class="receipt-row"><span>HORA:</span><span class="receipt-val" id="recTime">...</span></div>
             <div class="receipt-row"><span>MONTO:</span><span class="receipt-val">$0.10 USD</span></div>
             <button style="background:var(--primary); color:#000; width:100%; padding:15px; border-radius:10px; margin-top:20px; font-weight:bold;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
             <button style="background:transparent; border:none; color:#666; margin-top:10px;" onclick="location.reload()">Cerrar</button>
@@ -208,146 +153,85 @@
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        tg.setHeaderColor('#050505'); tg.setBackgroundColor('#050505');
+        tg.setHeaderColor('#000000'); tg.setBackgroundColor('#000000');
 
         const ADSGRAM_ID = "18841"; 
-        const MEMORY_KEY = 'daily_hub_v85';
+        const KEY = 'neon_clicker_v86';
         const META = 2500;
-        const COOLDOWN = 24 * 60 * 60 * 1000; // 24H
+        
+        let user = { pts: 0 };
 
-        let user = { balance: 0, timers: {}, lastBonus: 0 };
-        for(let i=1; i<=7; i++) { if(!user.timers[i]) user.timers[i] = 0; }
-
-        // --- INIT ---
         window.onload = function() {
-            // Anti-Multi
             const cid = tg.initDataUnsafe?.user?.id || 12345; 
             const sid = localStorage.getItem('did');
             if (sid && sid != cid) {
-                document.getElementById('appContent').style.display = 'none';
                 document.getElementById('banScreen').style.display = 'flex';
+                document.getElementById('linkedID').innerText = sid;
                 return;
             } 
             if (!sid) localStorage.setItem('did', cid);
-
-            if(localStorage.getItem(MEMORY_KEY)) { 
-                let saved = JSON.parse(localStorage.getItem(MEMORY_KEY));
-                user.balance = parseInt(saved.balance) || 0;
-                user.timers = saved.timers || user.timers;
-                user.lastBonus = parseInt(saved.lastBonus) || 0;
-            }
+            if(localStorage.getItem(KEY)) user = JSON.parse(localStorage.getItem(KEY));
             updateUI();
-            setInterval(checkTimers, 1000);
         };
 
-        function updateUI() { 
-            document.getElementById('saldo').innerText = user.balance;
-            let pct = (user.balance / META) * 100;
+        function updateUI() {
+            document.getElementById('score').innerText = user.pts;
+            let pct = (user.pts / META) * 100;
             if(pct > 100) pct = 100;
-            document.getElementById('progBar').style.width = pct + "%";
-            checkTimers(); 
+            document.getElementById('progFill').style.width = pct + "%";
+            document.getElementById('pctText').innerText = Math.floor(pct) + "%";
         }
-        function save() { localStorage.setItem(MEMORY_KEY, JSON.stringify(user)); updateUI(); }
+        function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
 
-        function checkTimers() {
-            const now = Date.now();
+        // --- FUNCIÓN BÁSICA (SIN ANUNCIOS) ---
+        function tap(e) {
+            user.pts += 1; // 1 Punto por click
+            save();
             
-            // CHECK BONO
-            const btnBonus = document.getElementById('btnBonus');
-            const txtBonus = document.getElementById('bonusStatus');
-            if(now < user.lastBonus) {
-                const h = Math.floor((user.lastBonus - now) / 3600000);
-                const m = Math.floor(((user.lastBonus - now) % 3600000) / 60000);
-                btnBonus.disabled = true;
-                btnBonus.innerText = `${h}h ${m}m`;
-                txtBonus.innerText = "Vuelve mañana";
-            } else {
-                btnBonus.disabled = false;
-                btnBonus.innerText = "RECLAMAR";
-                txtBonus.innerText = "+20 Puntos disponibles";
-            }
-
-            // CHECK TASKS
-            for(let i=1; i<=7; i++) {
-                const btn = document.getElementById('btn'+i);
-                const txt = document.getElementById('t'+i);
-                if(now < user.timers[i]) {
-                    const h = Math.floor((user.timers[i] - now) / 3600000);
-                    const m = Math.floor(((user.timers[i] - now) % 3600000) / 60000);
-                    btn.disabled = true;
-                    txt.innerText = `Espera ${h}h ${m}m`;
-                    txt.classList.add('timer-text');
-                } else {
-                    btn.disabled = false;
-                    txt.innerText = "Disponible";
-                    txt.classList.remove('timer-text');
-                }
-            }
+            // Efecto visual
+            const el = document.createElement('div');
+            el.className = 'float-num';
+            el.innerText = '+1';
+            el.style.left = e.clientX + 'px';
+            el.style.top = e.clientY + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+            
+            tg.HapticFeedback.impactOccurred('light');
         }
 
-        // --- BONO DIARIO (20 Puntos) ---
-        function claimDailyBonus() {
-            const btn = document.getElementById('btnBonus');
-            if(btn.disabled) return;
-            
-            // Ver video obligatorio para el bono
+        // --- FUNCIÓN BONO (CON ANUNCIOS) ---
+        function watchAd(type) {
+            // ADSGRAM PRIORITARIO
             const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-            AdController.show().then(()=>{ 
-                user.balance += 20;
-                user.lastBonus = Date.now() + COOLDOWN;
-                save();
-                tg.showPopup({ title:"¡Bono Diario!", message:`+20 Puntos` });
-            }).catch(()=>{ 
-                tg.showAlert("Debes ver el anuncio para recibir el bono.");
+            AdController.show().then(() => {
+                giveReward(type);
+            }).catch(() => {
+                // Fallback Monetag
+                if (typeof show_10278425 === 'function') {
+                    show_10278425().then(()=>{ giveReward(type); }).catch(()=>{ tg.showAlert("No disponible"); });
+                } else { tg.showAlert("Cargando anuncios..."); }
             });
         }
 
-        // --- TASKS (3 a 12 Puntos) ---
-        function watchTask(id, provider) {
-            const btn = document.getElementById('btn'+id);
-            if(btn.disabled) return;
+        function giveReward(type) {
+            let pts = 0;
+            if(type === 'turbo') pts = 50; // Pago alto
+            else if(type === 'mega') pts = 30; // Pago medio
+            else pts = Math.floor(Math.random() * (40 - 10 + 1)) + 10; // Aleatorio
             
-            btn.style.opacity = "0.5";
-            if(provider === 'adsgram') {
-                const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-                AdController.show().then(()=>{ payTask(id); }).catch(()=>{ tryMonetagTask(id); });
-            } else {
-                tryMonetagTask(id);
-            }
-        }
-
-        function tryMonetagTask(id) {
-            if (typeof show_10278425 === 'function') {
-                show_10278425().then(()=>{ payTask(id); }).catch(()=>{ error(); });
-            } else { error(); }
-        }
-
-        function payTask(id) {
-            const btn = document.getElementById('btn'+id);
-            btn.style.opacity = "1";
-            // Random Reward: 3 a 12 puntos
-            let pts = Math.floor(Math.random() * (12 - 3 + 1)) + 3;
-            user.balance += pts;
-            user.timers[id] = Date.now() + COOLDOWN;
+            user.pts += pts;
             save();
-            tg.showPopup({ title:"¡Completado!", message:`+${pts} Puntos` });
+            tg.showPopup({ title: "¡BONO ACTIVADO!", message: `+${pts} Puntos` });
         }
-
-        function error() { tg.showAlert("Video no disponible. Intenta más tarde."); }
 
         function retirar() {
-            if(user.balance < META) { tg.showAlert(`Faltan ${META - user.balance} Puntos.`); return; }
-            tg.showConfirm("¿Retirar $0.10?", (ok)=>{
-                if(ok) {
-                    user.balance -= META; save();
-                    let d = new Date();
-                    document.getElementById('recDate').innerText = d.toLocaleDateString();
-                    document.getElementById('recTime').innerText = d.toLocaleTimeString();
-                    document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "User";
-                    document.getElementById('receiptModal').style.display = 'flex';
-                }
-            });
+            if(user.pts < META) { tg.showAlert(`Faltan ${META - user.pts} Puntos.`); return; }
+            let d = new Date();
+            document.getElementById('recDate').innerText = d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+            document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "User";
+            document.getElementById('receiptModal').style.display = 'flex';
         }
     </script>
 </body>
-        </html>
+                </html>
