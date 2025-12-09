@@ -3,279 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Task Hub PRO</title>
+    <title>Spin Win PRO</title>
     
-    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA NEÓN CYBERPUNK */
-        :root { --bg: #0a0a12; --card-bg: #121225; --primary: #00f2ea; --secondary: #ff00ff; --text-light: #e0e0ff; }
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
-        body { 
-            background-color: var(--bg); color: var(--text-light); font-family: 'Rajdhani', sans-serif; 
-            min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
-            background-image: linear-gradient(45deg, #0a0a12 0%, #1a1a2e 100%);
-            padding: 20px; padding-bottom: 40px;
+        :root { --bg: #09090b; --primary: #00f3ff; --secondary: #ff00ff; --card: #18181b; }
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background: var(--bg); color: white; font-family: 'Rajdhani', sans-serif;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, #000 100%);
+            margin: 0; padding: 20px; overflow-x: hidden;
         }
 
+        /* PANTALLA ANTI-MULTI */
         #banScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; 
             display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 30px;
         }
-        .ban-icon { font-size: 60px; color: var(--secondary); margin-bottom: 20px; }
-        .ban-title { font-size: 24px; color: var(--secondary); font-weight: bold; margin-bottom: 10px; }
+        .ban-icon { font-size: 60px; color: #ff3333; margin-bottom: 20px; }
 
-        .app-container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 20px; }
-
-        .balance-card { 
-            background: var(--card-bg); width: 100%; border-radius: 20px; padding: 25px; 
-            border: 1px solid rgba(0, 242, 234, 0.3); text-align: center;
-            box-shadow: 0 0 25px rgba(0, 242, 234, 0.1);
+        .header { width: 100%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .balance-box { 
+            background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 15px; 
+            border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column;
         }
-        .stat-num { font-size: 48px; font-weight: 900; color: #fff; text-shadow: 0 0 10px var(--primary); margin: 10px 0; }
-        .meta-text { color: #888; font-size: 13px; }
+        .bal-label { font-size: 10px; color: #aaa; letter-spacing: 1px; }
+        .bal-num { font-size: 24px; font-weight: 900; color: var(--primary); text-shadow: 0 0 10px rgba(0,243,255,0.3); }
 
-        .tasks-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        .energy-badge {
+            background: #222; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--secondary);
+            color: var(--secondary); font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 8px;
+        }
+
+        /* CONTENEDOR DE LA RULETA */
+        .wheel-container {
+            position: relative; width: 320px; height: 320px; margin: 20px 0;
+        }
         
-        .task-btn {
-            width: 100%; padding: 16px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.03); color: white; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.3s ease; backdrop-filter: blur(5px);
-        }
-        .task-btn:active { transform: scale(0.98); background: rgba(0, 242, 234, 0.1); }
-        .type-adsgram { border-left: 3px solid var(--primary); }
-        .type-monetag { border-left: 3px solid var(--secondary); }
-        .btn-left { display: flex; align-items: center; gap: 15px; }
-        .btn-icon { font-size: 24px; color: var(--text-light); }
-        .type-adsgram .btn-icon { color: var(--primary); }
-        .type-monetag .btn-icon { color: var(--secondary); }
-        .btn-title { font-weight: bold; font-size: 16px; }
-        .btn-sub { font-size: 12px; color: #888; margin-top: 4px; display: flex; align-items: center; gap: 5px;}
-        .btn-reward { 
-            background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 20px; 
-            font-size: 14px; font-weight: bold; color: var(--primary); border: 1px solid var(--primary);
-        }
-        .task-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #080808; border-color: #222; }
-        .task-btn:disabled .btn-reward { display: none; }
-        .timer-text { color: var(--secondary); font-weight: bold; font-size: 12px; }
-
-        .bottom-menu { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .links-row { display: flex; gap: 10px; }
-        .btn-link { 
-            flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid #333; 
-            color: #ccc; border-radius: 10px; cursor: pointer; display: flex; justify-content: center; 
-            align-items: center; gap: 8px; font-size: 13px; font-weight: bold;
+        .wheel-outer {
+            width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--secondary);
+            box-shadow: 0 0 20px rgba(255,0,255,0.2); position: relative; overflow: hidden;
+            background: #111; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1);
         }
 
-        .btn-withdraw { 
-            width: 100%; padding: 20px; border-radius: 15px; font-weight: 900; border: none; 
-            cursor: pointer; background: linear-gradient(90deg, var(--primary), var(--secondary)); 
-            color: white; font-size: 18px; text-transform: uppercase; 
-            box-shadow: 0 5px 20px rgba(0, 242, 234, 0.4); display: flex; justify-content: center; align-items: center; gap: 10px;
+        /* SECCIONES DE LA RULETA (CSS PURO) */
+        .wheel-section {
+            position: absolute; width: 50%; height: 50%; top: 0; right: 0;
+            transform-origin: 0% 100%;
+            display: flex; justify-content: center; align-items: center;
+        }
+        
+        /* Definimos 8 segmentos */
+        .sec:nth-child(1) { transform: rotate(0deg) skewY(0deg); background: #222; }
+        .sec:nth-child(2) { transform: rotate(45deg) skewY(0deg); background: #333; }
+        .sec:nth-child(3) { transform: rotate(90deg) skewY(0deg); background: #222; }
+        .sec:nth-child(4) { transform: rotate(135deg) skewY(0deg); background: #333; }
+        .sec:nth-child(5) { transform: rotate(180deg) skewY(0deg); background: #222; }
+        .sec:nth-child(6) { transform: rotate(225deg) skewY(0deg); background: #333; }
+        .sec:nth-child(7) { transform: rotate(270deg) skewY(0deg); background: #222; }
+        .sec:nth-child(8) { transform: rotate(315deg) skewY(0deg); background: #333; }
+
+        .sec-content {
+            position: absolute; left: -100%; width: 200%; height: 200%; text-align: center;
+            transform: skewY(0deg) rotate(22.5deg); padding-top: 20px; font-weight: bold; font-size: 18px;
+        }
+        /* Ajuste manual de texto en la rueda */
+        .s1 { transform: rotate(22.5deg) translate(0, -110px); }
+        .s2 { transform: rotate(67.5deg) translate(0, -110px); }
+        .s3 { transform: rotate(112.5deg) translate(0, -110px); }
+        .s4 { transform: rotate(157.5deg) translate(0, -110px); }
+        .s5 { transform: rotate(202.5deg) translate(0, -110px); }
+        .s6 { transform: rotate(247.5deg) translate(0, -110px); }
+        .s7 { transform: rotate(292.5deg) translate(0, -110px); }
+        .s8 { transform: rotate(337.5deg) translate(0, -110px); }
+
+        .wheel-text { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
+        .text-val { position: absolute; transform: translate(-50%, -120px); white-space: nowrap; width: 50px; text-align: center; }
+
+        /* PUNTERO */
+        .pointer {
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 40px; background: var(--primary);
+            clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10;
+            filter: drop-shadow(0 0 5px var(--primary));
+        }
+        
+        /* BOTÓN CENTRAL */
+        .spin-btn {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 70px; height: 70px; background: linear-gradient(135deg, var(--primary), #00aaff);
+            border-radius: 50%; border: 3px solid #fff; z-index: 5;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 900; color: #000; cursor: pointer; font-size: 14px;
+            box-shadow: 0 0 15px var(--primary);
+        }
+        .spin-btn:active { transform: translate(-50%, -50%) scale(0.95); }
+
+        /* CONTROLES */
+        .controls { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; }
+        
+        .btn-ad {
+            background: linear-gradient(90deg, #aa00aa, #6600cc); width: 100%; padding: 15px;
+            border: none; border-radius: 12px; color: white; font-weight: bold;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(255,0,255,0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        .btn-withdraw {
+            background: #111; border: 1px solid var(--primary); color: var(--primary);
+            width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer;
         }
 
-        #receiptModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; flex-direction:column; z-index:100; padding: 30px; backdrop-filter: blur(10px); }
-        .modal-box { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 2px solid var(--primary); width: 100%; text-align: center; }
-        .receipt-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #444; padding: 10px 0; font-size: 14px; color: #ccc; }
-        .receipt-val { color: var(--primary); font-weight: bold; }
+        .mini-menu { width:100%; max-width: 400px; display:flex; gap:10px; margin-top:10px; }
+        .btn-small { flex:1; padding:12px; background:#111; border:1px solid #333; color:#ccc; border-radius:8px; cursor: pointer; display: flex; justify-content: center; gap: 5px; font-size: 12px; font-weight: bold;}
+
+        /* MODAL */
+        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; justify-content:center; align-items:center; z-index:100; backdrop-filter: blur(5px); }
+        .modal-card { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 1px solid var(--primary); text-align: center; width: 85%; max-width: 350px; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
     <div id="banScreen">
-        <i class="fa-solid fa-shield-halved ban-icon"></i>
-        <div class="ban-title">DISPOSITIVO BLOQUEADO</div>
-        <p style="color:#fff;">Multicuenta detectada.<br>ID: <span id="linkedID" style="color:var(--primary)">...</span></p>
+        <i class="fa-solid fa-ban ban-icon"></i>
+        <h2 style="color:white;">ACCESO DENEGADO</h2>
+        <p style="color:#888;">ID: <span id="linkedID">...</span></p>
     </div>
 
-    <div class="app-container" id="appContent">
-        <div class="balance-card">
-            <div style="color:var(--primary); font-size:14px; font-weight:bold;">BALANCE ACTUAL</div>
-            <div class="stat-num"><span id="saldo">0</span> Pts</div>
-            <div class="meta-text">META: 2,500 PUNTOS ($0.10 USD)</div>
+    <div class="header">
+        <div class="balance-box">
+            <span class="bal-label">TU SALDO</span>
+            <span class="bal-num"><span id="score">0</span></span>
         </div>
+        <div class="energy-box">
+            <div class="energy-badge"><i class="fa-solid fa-bolt"></i> <span id="spins">1</span> GIROS</div>
+        </div>
+    </div>
 
-        <div class="tasks-list">
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <div class="wheel-outer" id="wheel">
+            <div style="position:absolute; width:100%; height:100%; transform:rotate(0deg); clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 50%); background:#222;"></div>
+            <div style="position:absolute; width:100%; height:100%; transform:rotate(90deg); clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 50%); background:#1a1a1a;"></div>
+            <div style="position:absolute; width:100%; height:100%; transform:rotate(180deg); clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 50%); background:#222;"></div>
+            <div style="position:absolute; width:100%; height:100%; transform:rotate(270deg); clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 50%); background:#1a1a1a;"></div>
             
-            <button class="task-btn type-adsgram" id="btn1" onclick="watchVideo(1, 'adsgram')">
-                <div class="btn-left"><i class="fa-solid fa-play-circle btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Video #1</div><div class="btn-sub" id="timer1">Listo</div></div>
-                </div><div class="btn-reward">+5 Pts</div>
-            </button>
-
-            <button class="task-btn type-monetag" id="btn2" onclick="watchVideo(2, 'monetag')">
-                <div class="btn-left"><i class="fa-solid fa-circle-play btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Video #2</div><div class="btn-sub" id="timer2">Listo</div></div>
-                </div><div class="btn-reward">+5 Pts</div>
-            </button>
-
-            <button class="task-btn type-adsgram" id="btn3" onclick="watchVideo(3, 'adsgram')">
-                <div class="btn-left"><i class="fa-solid fa-play-circle btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Video #3</div><div class="btn-sub" id="timer3">Listo</div></div>
-                </div><div class="btn-reward">+5 Pts</div>
-            </button>
-
-            <button class="task-btn type-monetag" id="btn4" onclick="watchVideo(4, 'monetag')">
-                <div class="btn-left"><i class="fa-solid fa-circle-play btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Video #4</div><div class="btn-sub" id="timer4">Listo</div></div>
-                </div><div class="btn-reward">+5 Pts</div>
-            </button>
-
-            <button class="task-btn type-adsgram" id="btn5" onclick="watchVideo(5, 'adsgram')">
-                <div class="btn-left"><i class="fa-solid fa-play-circle btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Video #5</div><div class="btn-sub" id="timer5">Listo</div></div>
-                </div><div class="btn-reward">+5 Pts</div>
-            </button>
-
-            <button class="task-btn type-monetag" id="btn6" onclick="watchVideo(6, 'monetag')">
-                <div class="btn-left"><i class="fa-solid fa-circle-play btn-icon"></i>
-                    <div class="btn-info"><div class="btn-title">Video #6</div><div class="btn-sub" id="timer6">Listo</div></div>
-                </div><div class="btn-reward">+5 Pts</div>
-            </button>
-
-            <button class="task-btn" id="btn7" onclick="watchVideo(7, 'random')" style="border-left: 3px solid #fff;">
-                <div class="btn-left"><i class="fa-solid fa-gift btn-icon" style="color:#fff;"></i>
-                    <div class="btn-info"><div class="btn-title">Sorpresa #7</div><div class="btn-sub" id="timer7">Listo</div></div>
-                </div><div class="btn-reward" style="border-color:#fff; color:#fff;">+5 Pts</div>
-            </button>
+            <div class="wheel-text s1"><div class="text-val" style="color:var(--primary)">1 Pt</div></div>
+            <div class="wheel-text s2"><div class="text-val" style="color:#fff">0</div></div>
+            <div class="wheel-text s3"><div class="text-val" style="color:var(--secondary)">5 Pts</div></div>
+            <div class="wheel-text s4"><div class="text-val" style="color:#fff">2 Pts</div></div>
+            <div class="wheel-text s5"><div class="text-val" style="color:var(--primary)">1 Pt</div></div>
+            <div class="wheel-text s6"><div class="text-val" style="color:gold; font-size:18px;">$1</div></div> <div class="wheel-text s7"><div class="text-val" style="color:var(--secondary)">5 Pts</div></div>
+            <div class="wheel-text s8"><div class="text-val" style="color:#fff">2 Pts</div></div>
         </div>
-
-        <div class="bottom-menu">
-            <div class="links-row">
-                <button class="btn-link" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fa-solid fa-headset"></i> Soporte</button>
-                <button class="btn-link" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram"></i> Canal</button>
-            </div>
-            <button class="btn-withdraw" onclick="retirar()">
-                <i class="fa-solid fa-money-bill-transfer"></i> RETIRAR $0.10 USD
-            </button>
-        </div>
+        <div class="spin-btn" onclick="spin()">GIRAR</div>
     </div>
 
-    <div id="receiptModal">
-        <div class="modal-box">
-            <h2 style="color:var(--primary); margin-bottom:20px;">✅ SOLICITUD CREADA</h2>
-            <div class="receipt-row"><span>USUARIO:</span><span class="receipt-val" id="recUser">...</span></div>
-            <div class="receipt-row"><span>FECHA:</span><span class="receipt-val" id="recDate">...</span></div>
-            <div class="receipt-row"><span>HORA:</span><span class="receipt-val" id="recTime">...</span></div>
-            <div class="receipt-row"><span>MONTO:</span><span class="receipt-val">$0.10 USD</span></div>
-            <button style="background:var(--primary); color:#000; width:100%; padding:15px; border-radius:10px; margin-top:25px; font-weight:bold;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
-            <button style="background:transparent; border:none; color:#888; margin-top:15px;" onclick="location.reload()">Cerrar</button>
+    <div class="controls">
+        <div style="text-align:center; color:#666; font-size:12px; margin-bottom:5px;">META: 2,500 Puntos ($0.10)</div>
+        
+        <button class="btn-ad" id="adBtn" onclick="watchAd()">
+            <i class="fa-solid fa-video"></i> VER VIDEO = +2 GIROS
+        </button>
+        
+        <button class="btn-withdraw" onclick="retirar()">
+            <i class="fa-solid fa-wallet"></i> SOLICITAR PAGO
+        </button>
+    </div>
+
+    <div class="mini-menu">
+        <button class="btn-small" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">Soporte</button>
+        <button class="btn-small" onclick="tg.openTelegramLink('https://t.me/noticebuddy')">Canal</button>
+    </div>
+
+    <div id="modal">
+        <div class="modal-card">
+            <h2 id="modalTitle" style="color:white; margin-bottom:10px;">¡GANASTE!</h2>
+            <div id="modalMsg" style="font-size:30px; font-weight:bold; color:var(--primary); margin-bottom:20px;">+5 Pts</div>
+            <button class="btn-ad" style="background:#333; animation:none;" onclick="closeModal()">Seguir Jugando</button>
+            <button id="claimBtn" style="display:none; background:var(--primary); color:black; width:100%; padding:15px; border:none; border-radius:10px; margin-top:10px; font-weight:bold;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">ENVIAR CAPTURA</button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        tg.setHeaderColor('#0a0a12'); tg.setBackgroundColor('#0a0a12');
+        tg.setHeaderColor('#09090b'); tg.setBackgroundColor('#09090b');
 
         const ADSGRAM_ID = "18841"; 
-        const MEMORY_KEY = 'neon_profit_v81'; // Clave nueva
-        const META_PUNTOS = 2500; 
-        const REWARD_PER_AD = 5; // ✅ 5 PUNTOS (RENTABLE)
-        const COOLDOWN = 60 * 60 * 1000; // ✅ 1 HORA DE ESPERA (Equilibrio)
-        // NOTA: Puse 1 hora en vez de 24h para que la gente no tarde 2 meses en cobrar,
-        // pero con 5 puntos sigues ganando dinero.
+        const KEY = 'spin_v83';
+        const META = 2500;
+        
+        let user = { pts: 0, spins: 1 }; // 1 Giro gratis diario
+        let isSpinning = false;
 
-        let user = { balance: 0, timers: {} };
-        for(let i=1; i<=7; i++) { if(!user.timers[i]) user.timers[i] = 0; }
-
+        // SEGURIDAD
         window.onload = function() {
-            const currentID = tg.initDataUnsafe?.user?.id || 12345; 
-            const savedID = localStorage.getItem('device_owner_id');
-            if (savedID && savedID != currentID) {
-                document.getElementById('appContent').style.display = 'none';
+            const cid = tg.initDataUnsafe?.user?.id || 12345; 
+            const sid = localStorage.getItem('did');
+            if (sid && sid != cid) {
                 document.getElementById('banScreen').style.display = 'flex';
-                document.getElementById('linkedID').innerText = savedID;
-                return; 
+                document.getElementById('linkedID').innerText = sid;
+                return;
             } 
-            if (!savedID) { localStorage.setItem('device_owner_id', currentID); }
+            if (!sid) localStorage.setItem('did', cid);
 
-            if(localStorage.getItem(MEMORY_KEY)) { 
-                let saved = JSON.parse(localStorage.getItem(MEMORY_KEY));
-                user.balance = parseInt(saved.balance) || 0;
-                user.timers = saved.timers || user.timers;
-            }
+            if(localStorage.getItem(KEY)) user = JSON.parse(localStorage.getItem(KEY));
             updateUI();
-            setInterval(updateTimers, 1000);
         };
 
-        function updateUI() { document.getElementById('saldo').innerText = user.balance; updateTimers(); }
-        function guardar() { localStorage.setItem(MEMORY_KEY, JSON.stringify(user)); updateUI(); }
-
-        function updateTimers() {
-            const now = Date.now();
-            for(let i=1; i<=7; i++) {
-                const btn = document.getElementById('btn'+i);
-                const label = document.getElementById('timer'+i);
-                const readyTime = user.timers[i] || 0;
-
-                if(now < readyTime) {
-                    const diff = readyTime - now;
-                    const m = Math.floor(diff / 60000);
-                    const s = Math.floor((diff % 60000) / 1000);
-                    btn.disabled = true;
-                    label.innerHTML = `<i class="fa-solid fa-lock"></i> ${m}m ${s}s`;
-                    label.className = "timer-text";
-                } else {
-                    btn.disabled = false;
-                    label.innerHTML = `<i class="fa-regular fa-clock"></i> Disponible`;
-                    label.className = "btn-sub";
-                }
+        function updateUI() {
+            document.getElementById('score').innerText = user.pts;
+            document.getElementById('spins').innerText = user.spins;
+            
+            // Ocultar botón de video si tiene giros
+            const adBtn = document.getElementById('adBtn');
+            if(user.spins > 0) {
+                adBtn.style.display = 'none';
+                adBtn.innerText = "TIENES GIROS DISPONIBLES";
+            } else {
+                adBtn.style.display = 'flex';
+                adBtn.innerHTML = '<i class="fa-solid fa-video"></i> SIN ENERGÍA: VER VIDEO (+2)';
             }
         }
+        function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
 
-        function watchVideo(id, type) {
-            const btn = document.getElementById('btn'+id);
-            if(btn.disabled) return;
-            if (type === 'random') type = Math.random() < 0.5 ? 'adsgram' : 'monetag';
+        // --- LÓGICA DE GIRO ---
+        function spin() {
+            if(isSpinning) return;
+            if(user.spins <= 0) {
+                tg.HapticFeedback.notificationOccurred('warning');
+                tg.showAlert("¡Sin energía! Mira un video para girar.");
+                return;
+            }
+
+            user.spins--;
+            save(); // Guardar resta de giro
+            isSpinning = true;
             
-            btn.style.opacity = "0.5";
-            if (type === 'adsgram') {
-                const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-                AdController.show().then(() => { pagoExitoso(id); }).catch(() => { intentarMonetag(id, btn); });
-            } else { intentarMonetag(id, btn); }
+            // RESULTADO PREDEFINIDO (RIGGED MATH)
+            // La rueda tiene 360 grados. 
+            // 0-45: 1pt | 45-90: 0 | 90-135: 5 | 135-180: 2
+            // 180-225: 1 | 225-270: $1 | 270-315: 5 | 315-360: 2
+            
+            let rand = Math.random() * 100;
+            let degree = 0;
+            let prize = 0;
+            
+            // 40% -> 1 o 2 Pts
+            if(rand < 40) {
+                prize = 2; degree = 340 + 1440; // Cae en 2
+            } 
+            // 30% -> 0 (Vacío)
+            else if(rand < 70) {
+                prize = 0; degree = 70 + 1440; // Cae en 0
+            }
+            // 25% -> 5 Pts
+            else if(rand < 95) {
+                prize = 5; degree = 110 + 1440; // Cae en 5
+            }
+            // 5% -> 1 Pt
+            else if(rand < 99.9) {
+                prize = 1; degree = 20 + 1440; // Cae en 1
+            }
+            // 0.1% -> $1 (JACKPOT)
+            else {
+                prize = 1000; // Jackpot visual
+                degree = 250 + 1440; // Cae en $1
+            }
+
+            // Animación
+            // Añadimos un poco de aleatoriedad al grado para que no caiga siempre en el mismo pixel
+            degree += Math.floor(Math.random() * 20) - 10; 
+            
+            const wheel = document.getElementById('wheel');
+            wheel.style.transform = `rotate(-${degree}deg)`; // Girar en contra
+
+            setTimeout(() => {
+                isSpinning = false;
+                showResult(prize);
+                // Resetear rotación (truco visual si quieres, o dejarlo así)
+                wheel.style.transition = 'none';
+                wheel.style.transform = `rotate(-${degree % 360}deg)`;
+                setTimeout(() => { wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)'; }, 50);
+            }, 4000);
         }
 
-        function intentarMonetag(id, btn) {
-            if (typeof show_10278425 === 'function') {
-                show_10278425().then(() => { pagoExitoso(id); }).catch(() => { errorAd(btn); });
-            } else { errorAd(btn); }
+        function showResult(prize) {
+            const mTitle = document.getElementById('modalTitle');
+            const mMsg = document.getElementById('modalMsg');
+            
+            if(prize === 0) {
+                mTitle.innerText = "¡UPS!";
+                mTitle.style.color = "#888";
+                mMsg.innerText = "Intenta de nuevo";
+                tg.HapticFeedback.notificationOccurred('error');
+            } else if (prize === 1000) {
+                mTitle.innerText = "¡JACKPOT!";
+                mTitle.style.color = "gold";
+                mMsg.innerText = "Ganaste $1.00"; // Visual
+                user.pts += 2500; // Puntos equivalentes
+                tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                mTitle.innerText = "¡GANASTE!";
+                mTitle.style.color = "white";
+                mMsg.innerText = `+${prize} Puntos`;
+                user.pts += prize;
+                tg.HapticFeedback.impactOccurred('medium');
+            }
+            
+            save();
+            document.getElementById('modal').style.display = 'flex';
         }
 
-        function pagoExitoso(id) {
-            const btn = document.getElementById('btn'+id);
-            btn.style.opacity = "1";
-            user.balance += REWARD_PER_AD;
-            user.timers[id] = Date.now() + COOLDOWN;
-            guardar();
-            tg.showPopup({ title: "¡Bien hecho!", message: `+${REWARD_PER_AD} Puntos` });
-        }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
-        function errorAd(btn) {
-            btn.style.opacity = "1";
-            tg.showAlert("No hay anuncio disponible.");
+        // --- PUBLICIDAD ---
+        function watchAd() {
+            // ADSGRAM PRIORIDAD
+            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+            AdController.show().then(() => {
+                user.spins += 2;
+                save();
+                tg.showPopup({title:"¡Recarga!", message:"+2 Giros"});
+            }).catch(() => {
+                // Si falla, Monetag (Smartlink si quisieras, pero video es mejor aqui)
+                if (typeof show_10278425 === 'function') {
+                    show_10278425().then(()=>{
+                         user.spins += 2; save();
+                         tg.showPopup({title:"¡Recarga!", message:"+2 Giros"});
+                    });
+                } else {
+                    tg.showAlert("Video no disponible.");
+                }
+            });
         }
 
         function retirar() {
-            if (user.balance < META_PUNTOS) {
-                tg.showAlert(`Faltan ${(META_PUNTOS - user.balance)} Puntos.`);
-                return;
-            }
-            tg.showConfirm(`¿Retirar 2,500 Puntos?`, (ok) => {
-                if(ok) {
-                    user.balance -= META_PUNTOS;
-                    guardar();
-                    let now = new Date();
-                    document.getElementById('recDate').innerText = now.toLocaleDateString();
-                    document.getElementById('recTime').innerText = now.toLocaleTimeString();
-                    document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Usuario";
-                    document.getElementById('receiptModal').style.display = 'flex';
-                }
-            });
+            if(user.pts < META) { tg.showAlert(`Faltan ${META - user.pts} Puntos.`); return; }
+            
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('modalTitle').innerText = "✅ RETIRO";
+            document.getElementById('modalMsg').innerText = "$0.10 USD";
+            document.getElementById('claimBtn').style.display = 'block';
         }
     </script>
 </body>
