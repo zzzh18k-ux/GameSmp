@@ -172,10 +172,9 @@
         tg.setHeaderColor('#ffecd2'); tg.setBackgroundColor('#ffecd2');
 
         const ADSGRAM_ID = "18841"; 
-        const KEY = 'fruit_elite_v91';
+        const KEY = 'fruit_elite_v92_fixed'; // Nueva clave para limpiar datos viejos
         
-        // MATEMÁTICA DE RENTABILIDAD (1 Tap = 1 Pts / 1 Video = 50 Energía)
-        // Meta 20,000 / 50 = 400 Videos = $0.20 Ingreso (Costo $0.10) => GANANCIA SEGURA
+        // MATEMÁTICA DE RENTABILIDAD
         const META = 20000; 
         
         let user = { pts: 0, energy: 100 };
@@ -193,7 +192,8 @@
             if(localStorage.getItem(KEY)) {
                 let saved = JSON.parse(localStorage.getItem(KEY));
                 user.pts = parseInt(saved.pts) || 0;
-                user.energy = parseInt(saved.energy) || 100;
+                // CORRECCIÓN DEL BUG: Si es undefined o null, poner 100. Si es 0, dejar 0.
+                user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
             }
             updateUI();
         };
@@ -219,7 +219,6 @@
             user.energy -= 1;
             save();
 
-            // Animación
             const el = document.createElement('div');
             el.className = 'float-plus';
             el.innerText = '+1';
@@ -235,11 +234,10 @@
         function refillEnergy() {
             const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
             AdController.show().then(() => {
-                user.energy = 50; // Damos 50 para obligar a ver más videos
+                user.energy = 50; 
                 save();
                 tg.showPopup({ title: "¡Recargado!", message: "+50 Energía lista" });
             }).catch(() => {
-                // Fallback Monetag
                 if (typeof show_10278425 === 'function') {
                     show_10278425().then(()=>{
                         user.energy = 50; save();
@@ -248,9 +246,8 @@
             });
         }
 
-        // --- BONOS DE ENERGÍA (NO PUNTOS) ---
+        // --- BONOS DE ENERGÍA ---
         function watchEnergyBonus(type) {
-            // Estos botones ahora dan ENERGÍA EXTRA, cumpliendo las reglas
             if(type === 'adsgram') {
                 const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
                 AdController.show().then(() => { addEnergy(15); }).catch(() => { tg.showAlert("Video no listo"); });
@@ -263,7 +260,7 @@
 
         function addEnergy(amount) {
             user.energy += amount;
-            if(user.energy > 100) user.energy = 100; // Cap en 100
+            if(user.energy > 100) user.energy = 100; // Tope máximo 100
             save();
             tg.showPopup({ title: "¡Energía Extra!", message: `+${amount} Energía` });
         }
@@ -272,7 +269,6 @@
             if(user.pts < META) { tg.showAlert(`Faltan ${META - user.pts} Puntos para llegar a $0.10.`); return; }
             
             let d = new Date();
-            // Formato de fecha seguro
             document.getElementById('recDate').innerText = d.toLocaleString();
             document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Jugador";
             document.getElementById('modal').style.display = 'flex';
