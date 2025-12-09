@@ -3,186 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Lucky Gift PRO</title>
+    <title>Task Hub PRO</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA DARK GOLD */
-        :root { --bg: #000000; --card: #151515; --gold: #FFD700; --bar-bg: #333; }
+        /* TEMA NEÓN CYBERPUNK */
+        :root { 
+            --bg: #0a0a12; 
+            --card-bg: #121225; 
+            --primary: #00f2ea; /* Cian */
+            --secondary: #ff00ff; /* Magenta */
+            --text-light: #e0e0ff;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
         body { 
-            background-color: var(--bg); color: white; font-family: 'Montserrat', sans-serif; 
+            background-color: var(--bg); color: var(--text-light); font-family: 'Rajdhani', sans-serif; 
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
-            padding-bottom: 30px;
+            background-image: linear-gradient(45deg, #0a0a12 0%, #1a1a2e 100%);
+            padding: 20px; padding-bottom: 40px;
         }
 
-        /* PANTALLA DE BANEO */
+        /* PANTALLA ANTI-MULTI */
         #banScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 99999; display: none;
             flex-direction: column; justify-content: center; align-items: center;
             text-align: center; padding: 30px;
         }
-        .ban-icon { font-size: 60px; color: #dc2626; margin-bottom: 20px; }
-        .ban-title { font-size: 24px; color: #dc2626; font-weight: bold; margin-bottom: 10px; }
+        .ban-icon { font-size: 60px; color: var(--secondary); margin-bottom: 20px; }
+        .ban-title { font-size: 24px; color: var(--secondary); font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;}
         .ban-text { color: #fff; font-size: 14px; line-height: 1.5; }
 
-        .app-container { width: 100%; max-width: 450px; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .app-container { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 20px; }
 
-        /* BARRA DE PROGRESO */
-        .progress-container {
-            width: 100%; background: var(--card); padding: 20px; border-radius: 20px;
-            border: 1px solid #333; margin-bottom: 25px; margin-top: 15px;
-            text-align: center;
+        /* TARJETA DE BALANCE NEÓN */
+        .balance-card { 
+            background: var(--card-bg); width: 100%; border-radius: 20px; padding: 25px; 
+            border: 1px solid rgba(0, 242, 234, 0.3); text-align: center;
+            box-shadow: 0 0 25px rgba(0, 242, 234, 0.1);
+            position: relative; overflow: hidden;
         }
-        .progress-label { font-size: 12px; color: #888; margin-bottom: 10px; letter-spacing: 1px; }
+        .balance-card::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,0,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .stat-label { color: var(--primary); font-size: 14px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; position: relative;}
+        .stat-num { font-size: 48px; font-weight: 900; color: #fff; text-shadow: 0 0 10px var(--primary); margin: 10px 0; position: relative;}
+        .meta-text { color: #888; font-size: 13px; position: relative; }
+
+        /* LISTA DE TAREAS */
+        .tasks-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         
-        .progress-track {
-            width: 100%; height: 25px; background: #222; border-radius: 15px;
-            overflow: hidden; position: relative; border: 1px solid #444;
+        .task-btn {
+            width: 100%; padding: 16px; border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03); color: white; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
+            backdrop-filter: blur(5px);
         }
-        .progress-fill {
-            height: 100%; width: 0%; 
-            background: linear-gradient(90deg, #fbbf24, #d97706);
-            transition: width 0.5s ease;
-            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
-        }
-        .progress-text {
-            margin-top: 8px; font-size: 14px; font-weight: bold; color: var(--gold);
-            display: flex; justify-content: space-between;
+        .task-btn:active { transform: scale(0.98); background: rgba(0, 242, 234, 0.1); }
+        
+        /* Colores según tipo de anuncio (sutil) */
+        .type-adsgram { border-left: 3px solid var(--primary); }
+        .type-monetag { border-left: 3px solid var(--secondary); }
+
+        .btn-left { display: flex; align-items: center; gap: 15px; }
+        .btn-icon { font-size: 24px; color: var(--text-light); }
+        .type-adsgram .btn-icon { color: var(--primary); }
+        .type-monetag .btn-icon { color: var(--secondary); }
+        
+        .btn-info { text-align: left; }
+        .btn-title { font-weight: bold; font-size: 16px; letter-spacing: 0.5px; }
+        .btn-sub { font-size: 12px; color: #888; margin-top: 4px; display: flex; align-items: center; gap: 5px;}
+        
+        .btn-reward { 
+            background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 20px; 
+            font-size: 14px; font-weight: bold; color: var(--primary); 
+            border: 1px solid var(--primary); box-shadow: 0 0 10px rgba(0, 242, 234, 0.2);
         }
 
-        /* TABLERO DE REGALOS (GRILLA 3x4) */
-        .game-board { 
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; 
-            width: 100%; margin-bottom: 25px; 
-        }
-        
-        .gift-box {
-            aspect-ratio: 1/1; 
-            background: #1a1a1a; border-radius: 12px; border: 2px solid #333;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; position: relative; overflow: hidden;
-            transition: transform 0.1s;
-        }
-        .gift-box:active { transform: scale(0.95); }
-        .gift-icon { font-size: 32px; color: #555; transition: color 0.3s;}
-        
-        /* ESTADOS DE LA CAJA */
-        .gift-box:hover .gift-icon { color: var(--gold); }
-        .gift-box.opened { background: #111; border-color: #222; }
-        .gift-val { font-size: 16px; font-weight: 900; animation: popIn 0.3s ease; }
-        
-        /* COLORES DE RESULTADO */
-        .val-zero { color: #ef4444; text-shadow: 0 0 5px rgba(239, 68, 68, 0.5); } /* ROJO VACÍO */
-        .val-win { color: #4ade80; text-shadow: 0 0 5px rgba(74, 222, 128, 0.5); } /* VERDE PUNTOS */
-        .val-jackpot { color: #FFD700; font-size: 20px; text-shadow: 0 0 15px #FFD700; } /* DORADO WOW */
+        /* ESTADO BLOQUEADO (24H) */
+        .task-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #080808; border-color: #222; }
+        .task-btn:disabled .btn-reward { display: none; }
+        .timer-text { color: var(--secondary); font-weight: bold; font-size: 12px; }
 
-        @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-
-        /* BOTONES */
-        .btn-reset { 
-            width: 100%; padding: 15px; background: #333; color: white; border: none; 
-            border-radius: 10px; font-weight: bold; margin-bottom: 10px; cursor: pointer;
-            display: none; 
+        /* MENÚ INFERIOR */
+        .bottom-menu { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .links-row { display: flex; gap: 10px; }
+        .btn-link { 
+            flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid #333; 
+            color: #ccc; border-radius: 10px; cursor: pointer; display: flex; justify-content: center; 
+            align-items: center; gap: 8px; font-size: 13px; font-weight: bold; transition: 0.2s;
         }
+        .btn-link:hover { background: rgba(255,255,255,0.1); color: white; }
+
         .btn-withdraw { 
-            width: 100%; padding: 18px; border-radius: 12px; font-weight: 900; border: none; 
-            cursor: pointer; background: #444; color: #888; /* Desactivado por defecto */
-            font-size: 16px; text-transform: uppercase; 
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-            pointer-events: none; /* No clickable */
+            width: 100%; padding: 20px; border-radius: 15px; font-weight: 900; border: none; 
+            cursor: pointer; background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+            color: white; font-size: 18px; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 5px 20px rgba(0, 242, 234, 0.4); display: flex; justify-content: center; align-items: center; gap: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        
-        /* Botón Activo cuando llega a la meta */
-        .btn-withdraw.active {
-            background: linear-gradient(90deg, #10b981, #059669); color: white;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-            pointer-events: all; cursor: pointer;
-        }
-        
-        /* BOTONES PEQUEÑOS */
-        .mini-menu { width:100%; display:flex; gap:10px; margin-bottom:15px; }
-        .btn-small { flex:1; padding:12px; background:#151515; border:1px solid #333; color:#ccc; border-radius:8px; cursor: pointer; display: flex; justify-content: center; gap: 5px; font-size: 12px; font-weight: bold;}
+        .btn-withdraw:active { transform: scale(0.98); box-shadow: 0 2px 10px rgba(0, 242, 234, 0.4); }
 
-        /* MODAL RECIBO */
-        #receiptModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; flex-direction:column; z-index:100; padding: 30px; }
-        .modal-box { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 1px solid var(--gold); width: 100%; text-align: center; }
-        .receipt-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #444; padding: 8px 0; font-size: 13px; color: #ccc; }
-        .receipt-val { color: var(--gold); font-weight: bold; }
+        /* MODAL RECIBO NEÓN */
+        #receiptModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; flex-direction:column; z-index:100; padding: 30px; backdrop-filter: blur(10px); }
+        .modal-box { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 2px solid var(--primary); width: 100%; text-align: center; box-shadow: 0 0 30px rgba(0, 242, 234, 0.2); }
+        .receipt-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #444; padding: 10px 0; font-size: 14px; color: #ccc; }
+        .receipt-val { color: var(--primary); font-weight: bold; text-shadow: 0 0 5px var(--primary); }
     </style>
 </head>
 <body>
 
     <div id="banScreen">
-        <i class="fa-solid fa-ban ban-icon"></i>
-        <div class="ban-title">ACCESO DENEGADO</div>
-        <p class="ban-text">Dispositivo vinculado a otra cuenta.<br>ID: <span id="linkedID" style="color:#fbbf24">...</span></p>
+        <i class="fa-solid fa-shield-halved ban-icon"></i>
+        <div class="ban-title">DISPOSITIVO BLOQUEADO</div>
+        <p class="ban-text">Multicuenta detectada.<br>ID vinculado: <span id="linkedID" style="color:var(--primary)">...</span></p>
     </div>
 
     <div class="app-container" id="appContent">
-        
-        <div class="progress-container">
-            <div class="progress-label">TU PROGRESO PARA RETIRAR</div>
-            <div class="progress-track">
-                <div class="progress-fill" id="progBar"></div>
-            </div>
-            <div class="progress-text">
-                <span id="ptsDisplay">0 Pts</span>
-                <span style="color:#4ade80; font-weight:900;">$0.10 <i class="fa-solid fa-flag-checkered"></i></span>
-            </div>
+        <div class="balance-card">
+            <div class="stat-label">BALANCE ACTUAL</div>
+            <div class="stat-num"><span id="saldo">0</span> Pts</div>
+            <div class="meta-text">META: 2,500 PUNTOS ($0.10 USD)</div>
         </div>
 
-        <div class="game-board" id="board"></div>
+        <div class="tasks-list">
+            
+            <button class="task-btn type-adsgram" id="btn1" onclick="watchVideo(1, 'adsgram')">
+                <div class="btn-left">
+                    <i class="fa-solid fa-play-circle btn-icon"></i>
+                    <div class="btn-info">
+                        <div class="btn-title">Ver Anuncio #1</div>
+                        <div class="btn-sub" id="timer1"><i class="fa-regular fa-clock"></i> Listo</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50 Pts</div>
+            </button>
 
-        <button class="btn-reset" id="resetBtn" onclick="resetBoard()">
-            <i class="fa-solid fa-rotate-right"></i> JUGAR DE NUEVO
-        </button>
+            <button class="task-btn type-monetag" id="btn2" onclick="watchVideo(2, 'monetag')">
+                <div class="btn-left">
+                    <i class="fa-solid fa-circle-play btn-icon"></i>
+                    <div class="btn-info">
+                        <div class="btn-title">Ver Anuncio #2</div>
+                        <div class="btn-sub" id="timer2"><i class="fa-regular fa-clock"></i> Listo</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50 Pts</div>
+            </button>
 
-        <div class="mini-menu">
-            <button class="btn-small" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fa-solid fa-headset"></i> Soporte</button>
-            <button class="btn-small" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram"></i> Canal</button>
+            <button class="task-btn type-adsgram" id="btn3" onclick="watchVideo(3, 'adsgram')">
+                <div class="btn-left">
+                    <i class="fa-solid fa-play-circle btn-icon"></i>
+                    <div class="btn-info">
+                        <div class="btn-title">Ver Anuncio #3</div>
+                        <div class="btn-sub" id="timer3"><i class="fa-regular fa-clock"></i> Listo</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50 Pts</div>
+            </button>
+
+            <button class="task-btn type-monetag" id="btn4" onclick="watchVideo(4, 'monetag')">
+                <div class="btn-left">
+                    <i class="fa-solid fa-circle-play btn-icon"></i>
+                    <div class="btn-info">
+                        <div class="btn-title">Ver Anuncio #4</div>
+                        <div class="btn-sub" id="timer4"><i class="fa-regular fa-clock"></i> Listo</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50 Pts</div>
+            </button>
+
+            <button class="task-btn type-adsgram" id="btn5" onclick="watchVideo(5, 'adsgram')">
+                <div class="btn-left">
+                    <i class="fa-solid fa-play-circle btn-icon"></i>
+                    <div class="btn-info">
+                        <div class="btn-title">Ver Anuncio #5</div>
+                        <div class="btn-sub" id="timer5"><i class="fa-regular fa-clock"></i> Listo</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50 Pts</div>
+            </button>
+
+            <button class="task-btn type-monetag" id="btn6" onclick="watchVideo(6, 'monetag')">
+                <div class="btn-left">
+                    <i class="fa-solid fa-circle-play btn-icon"></i>
+                    <div class="btn-info">
+                        <div class="btn-title">Ver Anuncio #6</div>
+                        <div class="btn-sub" id="timer6"><i class="fa-regular fa-clock"></i> Listo</div>
+                    </div>
+                </div>
+                <div class="btn-reward">+50 Pts</div>
+            </button>
+
+            <button class="task-btn" id="btn7" onclick="watchVideo(7, 'random')" style="border-left: 3px solid #fff;">
+                <div class="btn-left">
+                    <i class="fa-solid fa-gift btn-icon" style="color:#fff;"></i>
+                    <div class="btn-info">
+                        <div class="btn-title">Anuncio Sorpresa #7</div>
+                        <div class="btn-sub" id="timer7"><i class="fa-regular fa-clock"></i> Listo</div>
+                    </div>
+                </div>
+                <div class="btn-reward" style="border-color:#fff; color:#fff;">+50 Pts</div>
+            </button>
+
         </div>
 
-        <button class="btn-withdraw" id="withdrawBtn" onclick="retirar()">
-            <i class="fa-solid fa-lock"></i> META NO ALCANZADA
-        </button>
+        <div class="bottom-menu">
+            <div class="links-row">
+                <button class="btn-link" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fa-solid fa-headset"></i> Soporte</button>
+                <button class="btn-link" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram"></i> Canal</button>
+            </div>
+            <button class="btn-withdraw" onclick="retirar()">
+                <i class="fa-solid fa-money-bill-transfer"></i> RETIRAR $0.10 USD
+            </button>
+        </div>
+
     </div>
 
     <div id="receiptModal">
         <div class="modal-box">
-            <h2 style="color:#10b981; margin-bottom:15px;">✅ META COMPLETADA</h2>
-            <p style="color:#fff; font-size:12px; margin-bottom:15px;">¡Felicidades! Envía la captura para cobrar.</p>
+            <h2 style="color:var(--primary); margin-bottom:20px; text-transform:uppercase; letter-spacing:1px;">✅ Retiro Solicitado</h2>
+            <p style="color:#fff; font-size:14px; margin-bottom:20px;">⚠️ Envía esta captura al soporte.</p>
             <div class="receipt-row"><span>USUARIO:</span><span class="receipt-val" id="recUser">...</span></div>
             <div class="receipt-row"><span>FECHA:</span><span class="receipt-val" id="recDate">...</span></div>
             <div class="receipt-row"><span>HORA:</span><span class="receipt-val" id="recTime">...</span></div>
-            <div class="receipt-row"><span>MONTO:</span><span class="receipt-val">$0.10 USD</span></div>
-            <button style="background:#10b981; color:white; width:100%; padding:15px; border:none; border-radius:10px; margin-top:15px; font-weight:bold;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 COBRAR AHORA</button>
-            <button style="background:transparent; border:none; color:#666; margin-top:15px;" onclick="location.reload()">Cerrar</button>
+            <div class="receipt-row"><span>TOTAL:</span><span class="receipt-val">$0.10 USD</span></div>
+            <button style="background:var(--primary); color:#000; width:100%; padding:15px; border:none; border-radius:10px; margin-top:25px; font-weight:900; font-size:16px;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
+            <button style="background:transparent; border:none; color:#888; margin-top:15px; font-size:14px;" onclick="location.reload()">Cerrar Ventana</button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
+        // Ajustar colores de la barra de estado de Telegram
+        tg.setHeaderColor('#0a0a12'); tg.setBackgroundColor('#0a0a12');
 
         const ADSGRAM_ID = "18841"; 
-        const MEMORY_KEY = 'lucky_pro_v78';
-        const META_PUNTOS = 2500; // $0.10 USD
-        
-        let user = { points: 0 };
-        let openedCount = 0;
+        const MEMORY_KEY = 'neon_tasks_v80';
+        const META_PUNTOS = 2500; 
+        const REWARD_PER_AD = 50; // 50 Puntos fijos por anuncio
+        const COOLDOWN = 24 * 60 * 60 * 1000; // 24 HORAS EXACTAS
+
+        let user = { balance: 0, timers: {} };
+        for(let i=1; i<=7; i++) { if(!user.timers[i]) user.timers[i] = 0; }
 
         // --- SEGURIDAD ---
         window.onload = function() {
             const currentID = tg.initDataUnsafe?.user?.id || 12345; 
             const savedID = localStorage.getItem('device_owner_id');
-
             if (savedID && savedID != currentID) {
                 document.getElementById('appContent').style.display = 'none';
                 document.getElementById('banScreen').style.display = 'flex';
@@ -193,134 +271,95 @@
 
             if(localStorage.getItem(MEMORY_KEY)) { 
                 let saved = JSON.parse(localStorage.getItem(MEMORY_KEY));
-                user.points = parseFloat(saved.points) || 0;
+                user.balance = parseInt(saved.balance) || 0;
+                user.timers = saved.timers || user.timers;
             }
             updateUI();
-            initBoard();
+            setInterval(updateTimers, 1000);
         };
 
-        // --- PUBLICIDAD AUTOMÁTICA (CADA 60s) ---
-        setInterval(() => {
-            if (typeof show_10278425 === 'function') show_10278425().catch(()=>{});
-        }, 60000);
-
-        // --- UI ---
-        function updateUI() { 
-            let porcentaje = (user.points / META_PUNTOS) * 100;
-            if(porcentaje > 100) porcentaje = 100;
-
-            document.getElementById('progBar').style.width = porcentaje + "%";
-            document.getElementById('ptsDisplay').innerText = Math.floor(user.points) + " / " + META_PUNTOS;
-
-            const btn = document.getElementById('withdrawBtn');
-            if (user.points >= META_PUNTOS) {
-                btn.classList.add('active');
-                btn.innerHTML = '<i class="fa-solid fa-sack-dollar"></i> SOLICITAR $0.10';
-            } else {
-                btn.classList.remove('active');
-                btn.innerHTML = `<i class="fa-solid fa-lock"></i> FALTA ${Math.floor(100 - porcentaje)}%`;
-            }
-        }
-
+        function updateUI() { document.getElementById('saldo').innerText = user.balance; updateTimers(); }
         function guardar() { localStorage.setItem(MEMORY_KEY, JSON.stringify(user)); updateUI(); }
 
-        // --- JUEGO ---
-        function initBoard() {
-            const board = document.getElementById('board');
-            board.innerHTML = '';
-            openedCount = 0;
-            document.getElementById('resetBtn').style.display = 'none';
+        // --- SISTEMA DE TIEMPO (24H) ---
+        function updateTimers() {
+            const now = Date.now();
+            for(let i=1; i<=7; i++) {
+                const btn = document.getElementById('btn'+i);
+                const label = document.getElementById('timer'+i);
+                const readyTime = user.timers[i] || 0;
 
-            for(let i=0; i<12; i++) {
-                let box = document.createElement('div');
-                box.className = 'gift-box';
-                box.innerHTML = '<i class="fa-solid fa-gift gift-icon"></i>';
-                box.onclick = () => tryShowAdThenOpen(box);
-                board.appendChild(box);
-            }
-        }
-
-        function tryShowAdThenOpen(box) {
-            if(box.classList.contains('opened')) return;
-
-            // 50% probabilidad de mostrar anuncio
-            if (Math.random() < 0.5) {
-                // ALEATORIO: Adsgram vs Monetag
-                if (Math.random() < 0.5) {
-                    const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-                    AdController.show().then(() => openBox(box)).catch(() => openBox(box));
-                } else {
-                    if (typeof show_10278425 === 'function') {
-                        show_10278425().then(() => openBox(box)).catch(() => openBox(box));
-                    } else {
-                        openBox(box);
-                    }
-                }
-            } else {
-                openBox(box);
-            }
-        }
-
-        function openBox(element) {
-            if(element.classList.contains('opened')) return;
-            element.classList.add('opened');
-            
-            // --- MATEMÁTICA RENTABLE (V78) ---
-            let rand = Math.random() * 100;
-            let pts = 0;
-            let htmlContent = '';
-
-            // 45% -> VACÍO (ROJO)
-            if (rand < 45) {
-                pts = 0;
-                htmlContent = `<span class="gift-val val-zero">VACÍO</span>`;
-                tg.HapticFeedback.notificationOccurred('error');
-            } 
-            // 45% -> BAJO (2 a 5 pts) (VERDE)
-            else if (rand < 90) {
-                pts = Math.floor(Math.random() * (5 - 2 + 1)) + 2;
-                htmlContent = `<span class="gift-val val-win">+${pts}</span>`;
-                tg.HapticFeedback.impactOccurred('medium');
-            } 
-            // 9% -> MEDIO (8 a 12 pts) (VERDE)
-            else if (rand < 99) {
-                pts = Math.floor(Math.random() * (12 - 8 + 1)) + 8;
-                htmlContent = `<span class="gift-val val-win">+${pts}</span>`;
-                tg.HapticFeedback.impactOccurred('medium');
-            } 
-            // 1% -> JACKPOT (50 pts) (DORADO)
-            else {
-                pts = 50;
-                htmlContent = `<span class="gift-val val-jackpot">+${pts}</span>`;
-                tg.showAlert("¡GOLPE DE SUERTE! 🌟 +50 Puntos");
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-
-            element.innerHTML = htmlContent;
-            
-            if (pts > 0) {
-                user.points += pts;
-                guardar();
-            }
-
-            openedCount++;
-            if(openedCount >= 12) document.getElementById('resetBtn').style.display = 'block';
-        }
-
-        function resetBoard() {
-            // Anuncio extra al resetear (20% chance)
-            if (Math.random() < 0.2 && typeof show_10278425 === 'function') show_10278425();
-            initBoard();
-        }
-
-        function retirar() {
-            if (user.points < META_PUNTOS) return;
-            
-            tg.showConfirm(`¿Cobrar $0.10 ahora?`, (ok) => {
-                if(ok) {
-                    user.points -= META_PUNTOS;
-                    guardar();
+                if(now < readyTime) {
+                    const diff = readyTime - now;
+                    // Cálculo de horas para 24h
+                    const h = Math.floor(diff / (1000 * 60 * 60));
+                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                     
+                    btn.disabled = true;
+                    // Muestra horas y minutos
+                    label.innerHTML = `<i class="fa-solid fa-lock"></i> Espera ${h}h ${m}m`;
+                    label.className = "timer-text";
+                } else {
+                    btn.disabled = false;
+                    label.innerHTML = `<i class="fa-regular fa-clock"></i> Disponible`;
+                    label.className = "btn-sub";
+                }
+            }
+        }
+
+        // --- REPRODUCTOR ---
+        function watchVideo(id, type) {
+            const btn = document.getElementById('btn'+id);
+            if(btn.disabled) return;
+
+            if (type === 'random') type = Math.random() < 0.5 ? 'adsgram' : 'monetag';
+
+            btn.style.opacity = "0.5";
+            tg.HapticFeedback.selectionChanged();
+
+            if (type === 'adsgram') {
+                const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+                AdController.show().then(() => { pagoExitoso(id); }).catch(() => { intentarMonetag(id, btn); });
+            } 
+            else if (type === 'monetag') {
+                intentarMonetag(id, btn);
+            }
+        }
+
+        function intentarMonetag(id, btn) {
+            if (typeof show_10278425 === 'function') {
+                show_10278425().then(() => { pagoExitoso(id); }).catch(() => { errorAd(btn); });
+            } else {
+                errorAd(btn);
+            }
+        }
+
+        function pagoExitoso(id) {
+            const btn = document.getElementById('btn'+id);
+            btn.style.opacity = "1";
+            user.balance += REWARD_PER_AD;
+            user.timers[id] = Date.now() + COOLDOWN;
+            guardar();
+            tg.HapticFeedback.notificationOccurred('success');
+            tg.showPopup({ title: "¡Excelente!", message: `+${REWARD_PER_AD} Puntos añadidos.` });
+        }
+
+        function errorAd(btn) {
+            btn.style.opacity = "1";
+            tg.HapticFeedback.notificationOccurred('error');
+            tg.showAlert("No hay anuncio disponible. Intenta más tarde.");
+        }
+
+        // --- RETIRO ---
+        function retirar() {
+            if (user.balance < META_PUNTOS) {
+                tg.showAlert(`Faltan ${(META_PUNTOS - user.balance)} Puntos para llegar a $0.10.`);
+                return;
+            }
+            tg.showConfirm(`¿Retirar 2,500 Puntos ($0.10)?`, (ok) => {
+                if(ok) {
+                    user.balance -= META_PUNTOS;
+                    guardar();
                     let now = new Date();
                     document.getElementById('recDate').innerText = now.toLocaleDateString();
                     document.getElementById('recTime').innerText = now.toLocaleTimeString();
@@ -331,4 +370,4 @@
         }
     </script>
 </body>
-    </html>
+      </html>
