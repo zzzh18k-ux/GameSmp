@@ -7,7 +7,9 @@
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -19,10 +21,9 @@
         body {
             background-color: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
-            /* CORRECCIÓN DE SCROLL */
-            padding: 20px; padding-bottom: 100px; 
+            /* CORRECCIÓN DE SCROLL PARA VER TODO EL CONTENIDO */
+            padding: 20px; padding-bottom: 120px; 
             overflow-y: auto; 
-            /* FIN CORRECCIÓN */
             background-image: radial-gradient(#ffdfba 20%, transparent 20%), radial-gradient(#ffdfba 20%, transparent 20%);
             background-position: 0 0, 50px 50px; background-size: 100px 100px;
         }
@@ -32,7 +33,7 @@
             display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;
         }
 
-        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; height: 100vh; }
+        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 
         /* HEADER & SCORE */
         .score-board {
@@ -50,7 +51,7 @@
         .goal-text { font-size: 11px; color: #747d8c; margin-top: 4px; display: flex; justify-content: space-between; font-weight: bold; }
 
         /* ZONA DE JUEGO (FRUTA) */
-        .game-area { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100%; }
+        .game-area { width: 100%; height: 300px; display: flex; justify-content: center; align-items: center; position: relative; }
         
         .fruit-btn {
             font-size: 140px; cursor: pointer; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -64,7 +65,7 @@
         .energy-fill { height: 100%; width: 100%; background: var(--energy); transition: width 0.2s; }
         .energy-text { font-size: 11px; font-weight: bold; color: var(--text); display: flex; justify-content: space-between; }
 
-        /* RECARGA OVERLAY */
+        /* RECARGA OVERLAY (EL BLOQUEO) */
         .refill-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(255,255,255,0.95); z-index: 10; border-radius: 20px;
@@ -90,7 +91,7 @@
         /* FOOTER */
         .btn-withdraw { 
             background: #2f3542; color: white; width: 100%; padding: 15px; border: none; 
-            border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 15px; /* Más margen arriba */
+            border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 15px; 
             cursor: pointer; box-shadow: 0 4px 0 #1e272e; transition: 0.3s;
         }
         .btn-withdraw.ready {
@@ -101,7 +102,7 @@
         .btn-withdraw:active { transform: translateY(4px); box-shadow: none; }
 
         /* MINI BOTONES CONTACTO */
-        .mini-menu { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
+        .mini-menu { display: flex; gap: 8px; width: 100%; margin-top: 10px; }
         .btn-mini {
             flex: 1; background: #fff; border: 2px solid #e1e1e1; color: #a4b0be;
             padding: 8px; border-radius: 10px; font-size: 11px; font-weight: 800;
@@ -122,7 +123,7 @@
 </head>
 <body>
 
-    <div id="banScreen"><h2>Acceso Denegado</h2><p>Multicuenta</p></div>
+    <div id="banScreen"><h2>Acceso Denegado</h2><p>Dispositivo vinculado a otra cuenta.</p></div>
 
     <div class="app-container" id="appContent">
         
@@ -166,10 +167,6 @@
             </button>
         </div>
 
-        <button class="btn-withdraw" id="withdrawBtn" onclick="retirar()">
-            <i class="fa-solid fa-lock"></i> META NO ALCANZADA
-        </button>
-
         <div class="mini-menu">
             <button class="btn-mini" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">
                 <i class="fa-solid fa-headset"></i> Soporte
@@ -178,6 +175,10 @@
                 <i class="fa-brands fa-telegram"></i> Canal
             </button>
         </div>
+
+        <button class="btn-withdraw" id="withdrawBtn" onclick="retirar()">
+            <i class="fa-solid fa-lock"></i> META NO ALCANZADA
+        </button>
 
     </div>
 
@@ -191,7 +192,7 @@
                 <div style="margin-top:5px; font-size:16px; color:#27ae60;"><b>TOTAL:</b> $0.10 USD</div>
             </div>
             <button class="btn-green" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
-            <button style="background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar</button>
+            <button style="background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar Ventana</button>
         </div>
     </div>
 
@@ -199,16 +200,16 @@
         const tg = window.Telegram.WebApp; tg.expand();
         tg.setHeaderColor('#ffecd2'); tg.setBackgroundColor('#ffecd2');
 
-        const ADSGRAM_ID = "18841"; 
-        const KEY = 'fruit_elite_v93_final';
+        // --- ID OFICIAL APROBADO ---
+        const ADSGRAM_ID = "18897"; 
         
-        // MATEMÁTICA DE RENTABILIDAD
-        const META = 20000; 
+        const KEY = 'fruit_v95_prod'; // Clave de producción
+        const META = 20000; // Matemática Rentable (400 videos)
         
         let user = { pts: 0, energy: 100 };
 
         window.onload = function() {
-            // Anti-Multi
+            // Anti-Multi (Seguridad)
             const cid = tg.initDataUnsafe?.user?.id || 12345; 
             const sid = localStorage.getItem('did');
             if (sid && sid != cid) {
@@ -262,6 +263,7 @@
             user.energy -= 1;
             save();
 
+            // Animación
             const el = document.createElement('div');
             el.className = 'float-plus';
             el.innerText = '+1';
@@ -273,7 +275,7 @@
             tg.HapticFeedback.impactOccurred('light');
         }
 
-        // --- ADS (RECARGAS) ---
+        // --- ADS (LA GANANCIA) ---
         function refillEnergy() {
             const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
             AdController.show().then(() => {
@@ -281,6 +283,7 @@
                 save();
                 tg.showPopup({ title: "¡Recargado!", message: "+50 Energía" });
             }).catch(() => {
+                // Respaldo Monetag
                 if (typeof show_10278425 === 'function') {
                     show_10278425().then(()=>{
                         user.energy = 50; save();
@@ -308,7 +311,7 @@
         }
 
         function retirar() {
-            if(user.pts < META) { tg.showAlert(`Sigue jugando. Faltan ${META - user.pts} Puntos.`); return; }
+            if(user.pts < META) { tg.showAlert(`Sigue jugando. Faltan ${META - user.pts} Puntos para llegar a $0.10.`); return; }
             
             let d = new Date();
             document.getElementById('recDate').innerText = d.toLocaleString();
