@@ -33,9 +33,14 @@
 
         .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
 
-        /* HEADER & SCORE */
-        .music-toggle { position: absolute; top: 0; right: 0; background: white; width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; z-index: 20; color: var(--text); }
+        /* BOTÓN DE MÚSICA */
+        .music-toggle {
+            position: absolute; top: 0; right: 0; background: white; width: 35px; height: 35px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; z-index: 20; color: var(--text);
+        }
 
+        /* HEADER & SCORE */
         .score-board {
             background: white; padding: 15px 25px; border-radius: 20px; border-bottom: 4px solid #e1e1e1;
             display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px;
@@ -44,83 +49,28 @@
         .score-title { font-size: 12px; color: #a4b0be; font-weight: 800; letter-spacing: 1px; }
         .score-val { font-family: 'Fredoka One', cursive; font-size: 45px; color: var(--text); line-height: 1; margin-bottom: 10px; }
 
+        /* BARRA DE PROGRESO DE META */
         .goal-container { width: 100%; margin-top: 5px; }
         .goal-bar-bg { width: 100%; height: 12px; background: #f1f2f6; border-radius: 10px; overflow: hidden; border: 1px solid #dfe4ea; }
         .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #2ed573, #7bed9f); transition: width 0.3s; }
         .goal-text { font-size: 11px; color: #747d8c; margin-top: 4px; display: flex; justify-content: space-between; font-weight: bold; }
 
-        /* --- ZONA DE JUEGO & PERSONAJE --- */
-        .game-area { width: 100%; height: 300px; display: flex; justify-content: center; align-items: center; position: relative; }
-
-        /* LA NARANJA REALISTA (CSS ART) */
-        #character {
-            width: 180px; height: 180px; position: relative; cursor: pointer; z-index: 5;
-            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        /* ZONA DE JUEGO */
+        .game-area { width: 100%; height: 280px; display: flex; justify-content: center; align-items: center; position: relative; }
         
-        .orange-body {
-            width: 100%; height: 100%; border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffbe76, #e67e22);
-            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2), 0 15px 25px rgba(0,0,0,0.15);
-            position: relative; overflow: hidden;
+        .fruit-btn {
+            font-size: 140px; cursor: pointer; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 10px 0 rgba(0,0,0,0.1)); position: relative; z-index: 5;
         }
-        /* Textura de piel de naranja */
-        .orange-body::after {
-            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
-            background-image: radial-gradient(#d35400 15%, transparent 16%);
-            background-size: 8px 8px; opacity: 0.1;
-        }
-        /* Hoja */
-        .leaf {
-            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-            width: 20px; height: 30px; background: #2ecc71; border-radius: 20px 0px 20px 0px;
-            z-index: 2; box-shadow: inset 2px 2px 5px rgba(255,255,255,0.3);
-        }
-
-        /* CARA */
-        .face { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 60px; z-index: 3; }
-        
-        .eyes { display: flex; justify-content: space-between; width: 100%; }
-        .eye {
-            width: 22px; height: 26px; background: white; border-radius: 50%; position: relative;
-            box-shadow: 0 2px 0 rgba(0,0,0,0.1); overflow: hidden; transition: 0.2s;
-        }
-        .pupil {
-            width: 10px; height: 10px; background: #2f3542; border-radius: 50%;
-            position: absolute; top: 8px; left: 6px;
-        }
-        
-        .mouth {
-            width: 30px; height: 15px; background: #eb4d4b; border-radius: 0 0 30px 30px;
-            margin: 5px auto 0; overflow: hidden; transition: 0.2s;
-        }
-        .mouth::after {
-            content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
-            width: 20px; height: 10px; background: #ff7675; border-radius: 50%;
-        }
-
-        /* ANIMACIONES Y ESTADOS */
-        /* Parpadeo */
-        @keyframes blink { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
-        .eye { animation: blink 4s infinite; }
-
-        /* Reacción al Tap */
-        #character.active { transform: scale(0.95) rotate(3deg); }
-        #character.active .mouth { height: 20px; width: 35px; }
-
-        /* Estado Dormido (Sin Energía) */
-        #character.sleep .eye { height: 4px; margin-top: 12px; background: #2f3542; animation: none; }
-        #character.sleep .pupil { display: none; }
-        #character.sleep .mouth { height: 5px; width: 15px; border-radius: 10px; background: #2f3542; margin-top: 15px; }
-        #character.sleep { filter: grayscale(0.3); }
+        .fruit-btn:active { transform: scale(0.9) rotate(5deg); }
 
         /* EFECTOS */
-        .particle { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: #ffbe76; pointer-events: none; animation: pop 0.6s ease-out forwards; }
+        .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--fruit); pointer-events: none; animation: pop 0.6s ease-out forwards; }
         @keyframes pop { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
-        .float-plus { position: absolute; font-weight: 900; font-size: 28px; color: var(--green); pointer-events: none; animation: floatUp 0.8s forwards; text-shadow: 0 2px 0 white; z-index:10; }
+        .float-plus { position: absolute; font-weight: 900; font-size: 28px; color: var(--green); pointer-events: none; animation: floatUp 0.8s forwards; text-shadow: 0 2px 0 white; }
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-80px) scale(1.5); opacity: 0; } }
 
-        /* INTERFAZ */
+        /* BARRA DE ENERGÍA */
         .energy-container { width: 100%; background: white; padding: 12px 15px; border-radius: 15px; border-bottom: 4px solid #e1e1e1; text-align: center; }
         .energy-track { width: 100%; height: 10px; background: #dfe4ea; border-radius: 10px; overflow: hidden; margin: 5px 0; }
         .energy-fill { height: 100%; width: 100%; background: var(--energy); transition: width 0.2s; }
@@ -129,9 +79,8 @@
         /* RECARGA OVERLAY */
         .refill-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8); z-index: 10; border-radius: 20px;
+            background: rgba(255,255,255,0.95); z-index: 10; border-radius: 20px;
             display: none; flex-direction: column; justify-content: center; align-items: center;
-            backdrop-filter: blur(2px);
         }
         .btn-refill {
             background: var(--energy); color: white; padding: 12px 25px; border-radius: 50px;
@@ -140,6 +89,7 @@
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
+        /* BONUS & FOOTER */
         .bonus-row { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
         .btn-bonus {
             flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;
@@ -169,6 +119,7 @@
             cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
         }
 
+        /* MODAL */
         #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:100; }
         .modal-card { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
         .btn-green { background: var(--green); color: white; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 0 #218c74; }
@@ -198,24 +149,14 @@
         </div>
 
         <div class="game-area">
-            <div id="character" onclick="tap(event)">
-                <div class="leaf"></div>
-                <div class="orange-body"></div>
-                <div class="face">
-                    <div class="eyes">
-                        <div class="eye"><div class="pupil"></div></div>
-                        <div class="eye"><div class="pupil"></div></div>
-                    </div>
-                    <div class="mouth"></div>
-                </div>
-            </div>
+            <div class="fruit-btn" id="fruit" onclick="tap(event)">🍊</div>
             
             <div class="refill-overlay" id="refillOverlay">
-                <div style="font-size:50px; margin-bottom:10px;">💤</div>
-                <h3 style="color:#2f3542; margin-bottom:5px;">DURMIENDO...</h3>
-                <p style="color:#747d8c; margin-bottom:20px; font-size:14px;">La naranja necesita energía.</p>
+                <div style="font-size:50px; margin-bottom:10px;">⚡</div>
+                <h3 style="color:#2f3542; margin-bottom:5px;">SIN ENERGÍA</h3>
+                <p style="color:#747d8c; margin-bottom:20px; font-size:14px;">Recarga para seguir jugando.</p>
                 <button class="btn-refill" onclick="refillEnergy()">
-                    <i class="fa-solid fa-play"></i> DESPERTAR (+50⚡)
+                    <i class="fa-solid fa-play"></i> VER VIDEO (+50⚡)
                 </button>
             </div>
         </div>
@@ -263,7 +204,9 @@
         tg.setHeaderColor('#ffecd2'); tg.setBackgroundColor('#ffecd2');
 
         const ADSGRAM_ID = "18897"; 
-        const KEY = 'fruit_v95_prod'; // Misma llave de seguridad
+        // ⚠️ ESTA ES LA CLAVE. MANTENLA ASÍ PARA RECUPERAR TUS PUNTOS
+        const KEY = 'fruit_v95_prod'; 
+        
         const META = 20000; 
         let user = { pts: 0, energy: 100 };
 
@@ -327,7 +270,9 @@
         };
 
         function updateUI() {
-            document.getElementById('score').innerText = user.pts;
+            const scoreEl = document.getElementById('score');
+            scoreEl.innerText = user.pts;
+            
             document.getElementById('energyText').innerText = `${user.energy}/100`;
             document.getElementById('energyBar').style.width = `${Math.min(user.energy, 100)}%`;
             
@@ -344,14 +289,10 @@
                 wBtn.innerHTML = `<i class="fa-solid fa-lock"></i> META NO ALCANZADA`;
             }
             
-            // LÓGICA DE DORMIR
-            const char = document.getElementById('character');
             if(user.energy <= 0) {
                 document.getElementById('refillOverlay').style.display = 'flex';
-                char.classList.add('sleep'); // Se duerme
             } else {
                 document.getElementById('refillOverlay').style.display = 'none';
-                char.classList.remove('sleep'); // Se despierta
             }
         }
         function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
@@ -366,12 +307,6 @@
             save();
             playSfx('tap');
 
-            // Animación de la mascota
-            const char = document.getElementById('character');
-            char.classList.add('active');
-            setTimeout(() => char.classList.remove('active'), 100);
-
-            // Efectos visuales
             const el = document.createElement('div');
             el.className = 'float-plus';
             el.innerText = '+1';
@@ -385,4 +320,61 @@
                 p.className = 'particle';
                 p.style.left = e.clientX + 'px';
                 p.style.top = e.clientY + 'px';
-                p.style.setProperty('--tx', (Math.random()*80 - 40)
+                p.style.setProperty('--tx', (Math.random()*80 - 40) + 'px');
+                p.style.setProperty('--ty', (Math.random()*80 - 40) + 'px');
+                p.style.backgroundColor = ['#ffa502', '#ff6b81', '#7bed9f'][Math.floor(Math.random()*3)];
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 600);
+            }
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function refillEnergy() {
+            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+            AdController.show().then(() => {
+                user.energy = 50; save();
+                playSfx('success');
+                tg.showPopup({ title: "¡Recargado!", message: "+50 Energía" });
+            }).catch(() => {
+                if (typeof show_10278425 === 'function') {
+                    show_10278425().then(()=>{
+                        user.energy = 50; save(); playSfx('success');
+                    }).catch(()=>{ tg.showAlert("Sin videos disponibles."); });
+                }
+            });
+        }
+
+        function watchEnergyBonus(type) {
+            if(type === 'adsgram') {
+                const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+                AdController.show().then(() => { addEnergy(15); }).catch(() => { tg.showAlert("Video no listo"); });
+            } else {
+                if (typeof show_10278425 === 'function') {
+                    show_10278425().then(()=>{ addEnergy(10); }).catch(()=>{ tg.showAlert("Video no listo"); });
+                }
+            }
+        }
+
+        function addEnergy(amount) {
+            user.energy += amount;
+            if(user.energy > 100) user.energy = 100;
+            save(); playSfx('success');
+            tg.showPopup({ title: "¡Energía Extra!", message: `+${amount} Energía` });
+        }
+
+        function retirar() {
+            if(user.pts < META) { tg.showAlert(`Sigue jugando. Faltan ${META - user.pts} Puntos.`); return; }
+            
+            user.pts -= META; // Seguridad: Restar puntos
+            save();
+            updateUI();
+            
+            let d = new Date();
+            document.getElementById('recDate').innerText = d.toLocaleString();
+            document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Jugador";
+            document.getElementById('modal').style.display = 'flex';
+            playSfx('success');
+        }
+    </script>
+</body>
+              </html>
