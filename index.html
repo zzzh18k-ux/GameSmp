@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Fruit Splash ELITE</title>
+    <title>Fruit Splash Navidad</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
@@ -13,17 +13,25 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA FRUTAL */
-        :root { --bg: #ffecd2; --fruit: #ff9966; --energy: #ff4757; --green: #2ed573; --text: #2f3542; }
+        /* TEMA NAVIDAD CON NARANJA 🍊🎄 */
+        :root { 
+            --bg: #0f3b25; /* Verde Pino Oscuro */
+            --fruit: #ff9f43; /* Naranja Fruta */
+            --energy: #f1c40f; /* Dorado Energía */
+            --green: #2ecc71; 
+            --text: #ffffff; 
+            --panel: #1e5236; /* Panel semitransparente */
+        }
         * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body {
             background-color: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
-            padding: 20px; padding-bottom: 120px; 
+            padding: 20px; padding-bottom: 50px; 
             overflow-y: auto; 
-            background-image: radial-gradient(#ffdfba 20%, transparent 20%), radial-gradient(#ffdfba 20%, transparent 20%);
-            background-position: 0 0, 50px 50px; background-size: 100px 100px;
+            /* Fondo con copos de nieve sutiles */
+            background-image: radial-gradient(white 2px, transparent 2px), radial-gradient(white 2px, transparent 2px);
+            background-position: 0 0, 25px 25px; background-size: 50px 50px;
         }
 
         #banScreen {
@@ -35,61 +43,54 @@
 
         /* BOTÓN DE MÚSICA */
         .music-toggle {
-            position: absolute; top: 0; right: 0; background: white; width: 35px; height: 35px;
+            position: absolute; top: 0; right: 0; background: rgba(255,255,255,0.2); width: 40px; height: 40px;
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); cursor: pointer; z-index: 20; color: var(--text);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); cursor: pointer; z-index: 20; color: white; border: 1px solid white;
         }
 
-        /* HEADER & SCORE */
         .score-board {
-            background: white; padding: 15px 25px; border-radius: 20px; border-bottom: 4px solid #e1e1e1;
+            background: var(--panel); padding: 15px 25px; border-radius: 20px; border-bottom: 4px solid #143d26;
             display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); color: white;
         }
-        .score-title { font-size: 12px; color: #a4b0be; font-weight: 800; letter-spacing: 1px; }
-        .score-val { font-family: 'Fredoka One', cursive; font-size: 45px; color: var(--text); line-height: 1; margin-bottom: 10px; }
+        .score-title { font-size: 12px; color: #81cea2; font-weight: 800; letter-spacing: 1px; }
+        .score-val { font-family: 'Fredoka One', cursive; font-size: 45px; color: white; line-height: 1; margin-bottom: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
-        /* BARRA DE PROGRESO DE META */
         .goal-container { width: 100%; margin-top: 5px; }
-        .goal-bar-bg { width: 100%; height: 12px; background: #f1f2f6; border-radius: 10px; overflow: hidden; border: 1px solid #dfe4ea; }
-        .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #2ed573, #7bed9f); transition: width 0.3s; }
-        .goal-text { font-size: 11px; color: #747d8c; margin-top: 4px; display: flex; justify-content: space-between; font-weight: bold; }
+        .goal-bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; }
+        .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #f1c40f, #f39c12); transition: width 0.3s; }
+        .goal-text { font-size: 11px; color: #bdc3c7; margin-top: 4px; display: flex; justify-content: space-between; font-weight: bold; }
 
-        /* ZONA DE JUEGO */
         .game-area { width: 100%; height: 280px; display: flex; justify-content: center; align-items: center; position: relative; }
         
         .fruit-btn {
             font-size: 140px; cursor: pointer; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 10px 0 rgba(0,0,0,0.1)); position: relative; z-index: 5;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3)); position: relative; z-index: 5;
         }
         .fruit-btn:active { transform: scale(0.9) rotate(5deg); }
 
-        /* EFECTOS */
-        .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--fruit); pointer-events: none; animation: pop 0.6s ease-out forwards; }
+        .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #fff; pointer-events: none; animation: pop 0.6s ease-out forwards; }
         @keyframes pop { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
-        .float-plus { position: absolute; font-weight: 900; font-size: 28px; color: var(--green); pointer-events: none; animation: floatUp 0.8s forwards; text-shadow: 0 2px 0 white; }
+        .float-plus { position: absolute; font-weight: 900; font-size: 28px; color: #f1c40f; pointer-events: none; animation: floatUp 0.8s forwards; text-shadow: 0 2px 0 #000; }
         @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-80px) scale(1.5); opacity: 0; } }
 
-        /* BARRA DE ENERGÍA */
-        .energy-container { width: 100%; background: white; padding: 12px 15px; border-radius: 15px; border-bottom: 4px solid #e1e1e1; text-align: center; }
-        .energy-track { width: 100%; height: 10px; background: #dfe4ea; border-radius: 10px; overflow: hidden; margin: 5px 0; }
-        .energy-fill { height: 100%; width: 100%; background: var(--energy); transition: width 0.2s; }
-        .energy-text { font-size: 11px; font-weight: bold; color: var(--text); display: flex; justify-content: space-between; }
+        .energy-container { width: 100%; background: var(--panel); padding: 12px 15px; border-radius: 15px; border-bottom: 4px solid #143d26; text-align: center; color: white; }
+        .energy-track { width: 100%; height: 10px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; margin: 5px 0; }
+        .energy-fill { height: 100%; width: 100%; background: var(--green); transition: width 0.2s; }
+        .energy-text { font-size: 11px; font-weight: bold; color: white; display: flex; justify-content: space-between; }
 
-        /* RECARGA OVERLAY */
         .refill-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.95); z-index: 10; border-radius: 20px;
+            background: rgba(15, 59, 37, 0.95); z-index: 10; border-radius: 20px;
             display: none; flex-direction: column; justify-content: center; align-items: center;
         }
         .btn-refill {
-            background: var(--energy); color: white; padding: 12px 25px; border-radius: 50px;
+            background: var(--energy); color: #c0392b; padding: 12px 25px; border-radius: 50px;
             border: none; font-weight: 900; font-size: 16px; cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4); animation: pulse 1.5s infinite;
+            box-shadow: 0 5px 20px rgba(241, 196, 15, 0.4); animation: pulse 1.5s infinite;
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* BONUS & FOOTER */
         .bonus-row { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
         .btn-bonus {
             flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;
@@ -97,16 +98,16 @@
             box-shadow: 0 3px 0 rgba(0,0,0,0.1); transition: transform 0.1s;
         }
         .btn-bonus:active { transform: translateY(3px); box-shadow: none; }
-        .b-adsgram { background: #3742fa; }
-        .b-monetag { background: #ffa502; }
+        .b-adsgram { background: #c0392b; }
+        .b-monetag { background: #d35400; }
 
         .btn-withdraw { 
-            background: #2f3542; color: white; width: 100%; padding: 15px; border: none; 
+            background: rgba(255,255,255,0.1); color: white; width: 100%; padding: 15px; border: 1px solid white;
             border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 15px; 
-            cursor: pointer; box-shadow: 0 4px 0 #1e272e; transition: 0.3s;
+            cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: 0.3s;
         }
         .btn-withdraw.ready {
-            background: linear-gradient(45deg, #2ed573, #26de81);
+            background: linear-gradient(45deg, #2ed573, #26de81); border: none;
             box-shadow: 0 0 20px rgba(46, 213, 115, 0.6);
             animation: pulse 1.5s infinite; text-shadow: 0 2px 0 rgba(0,0,0,0.2);
         }
@@ -114,14 +115,13 @@
 
         .mini-menu { display: flex; gap: 8px; width: 100%; margin-top: 10px; }
         .btn-mini {
-            flex: 1; background: #fff; border: 2px solid #e1e1e1; color: #a4b0be;
+            flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white;
             padding: 8px; border-radius: 10px; font-size: 11px; font-weight: 800;
             cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
         }
 
-        /* MODAL */
         #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:100; }
-        .modal-card { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
+        .modal-card { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; color: #2f3542; }
         .btn-green { background: var(--green); color: white; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 0 #218c74; }
     </style>
 </head>
@@ -130,21 +130,21 @@
     <div id="banScreen"><h2>Acceso Denegado</h2><p>Dispositivo vinculado.</p></div>
 
     <audio id="bgMusic" loop>
-        <source src="https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" type="audio/mp3">
+        <source src="https://cdn.pixabay.com/audio/2022/11/22/audio_c5c9d19126.mp3" type="audio/mp3">
     </audio>
 
     <div class="app-container" id="appContent">
         
         <div class="music-toggle" onclick="toggleMusic()">
-            <i class="fa-solid fa-volume-xmark" id="musicIcon"></i>
+            <i class="fa-solid fa-volume-high" id="musicIcon"></i>
         </div>
 
         <div class="score-board">
-            <div class="score-title">TUS FRUTAS</div>
+            <div class="score-title">TUS NARANJAS</div>
             <div class="score-val" id="score">0</div>
             <div class="goal-container">
                 <div class="goal-bar-bg"><div class="goal-bar-fill" id="goalBar"></div></div>
-                <div class="goal-text"><span>PROGRESO</span><span style="color:#2ed573;">META: $0.10 USD</span></div>
+                <div class="goal-text"><span>PROGRESO</span><span style="color:#2ecc71;">META: $0.10 USD</span></div>
             </div>
         </div>
 
@@ -153,8 +153,8 @@
             
             <div class="refill-overlay" id="refillOverlay">
                 <div style="font-size:50px; margin-bottom:10px;">⚡</div>
-                <h3 style="color:#2f3542; margin-bottom:5px;">SIN ENERGÍA</h3>
-                <p style="color:#747d8c; margin-bottom:20px; font-size:14px;">Recarga para seguir jugando.</p>
+                <h3 style="color:white; margin-bottom:5px;">SIN ENERGÍA</h3>
+                <p style="color:#bdc3c7; margin-bottom:20px; font-size:14px;">Recarga para seguir jugando.</p>
                 <button class="btn-refill" onclick="refillEnergy()">
                     <i class="fa-solid fa-play"></i> VER VIDEO (+50⚡)
                 </button>
@@ -201,19 +201,57 @@
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        tg.setHeaderColor('#ffecd2'); tg.setBackgroundColor('#ffecd2');
+        tg.setHeaderColor('#0f3b25'); tg.setBackgroundColor('#0f3b25');
 
         const ADSGRAM_ID = "18897"; 
-        // ⚠️ ESTA ES LA CLAVE. MANTENLA ASÍ PARA RECUPERAR TUS PUNTOS
+        // ⚠️ IMPORTANTE: No cambies este 'KEY'. Es lo que guarda los puntos.
+        // Si lo cambias, se borra el progreso de los usuarios antiguos.
         const KEY = 'fruit_v95_prod'; 
         
         const META = 20000; 
         let user = { pts: 0, energy: 100 };
 
-        // SONIDOS
         const bgMusic = document.getElementById('bgMusic');
         bgMusic.volume = 0.4;
-        let isMusicPlaying = false;
+        let isMusicPlaying = true; 
+
+        function tryPlayMusic() {
+            let promise = bgMusic.play();
+            if (promise !== undefined) {
+                promise.catch(error => {
+                    console.log("Autoplay bloqueado, esperando interacción.");
+                    isMusicPlaying = false; 
+                    updateMusicIcon();
+                    document.body.addEventListener('click', enableMusicOnFirstInteraction, { once: true });
+                });
+            }
+        }
+
+        function enableMusicOnFirstInteraction() {
+            bgMusic.play();
+            isMusicPlaying = true;
+            updateMusicIcon();
+        }
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                isMusicPlaying = false;
+            } else {
+                bgMusic.play();
+                isMusicPlaying = true;
+            }
+            updateMusicIcon();
+        }
+
+        function updateMusicIcon() {
+            const icon = document.getElementById('musicIcon');
+            if(isMusicPlaying) {
+                icon.className = 'fa-solid fa-volume-high';
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark';
+            }
+        }
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSfx(type) {
@@ -240,18 +278,6 @@
             }
         }
 
-        function toggleMusic() {
-            if (isMusicPlaying) {
-                bgMusic.pause();
-                document.getElementById('musicIcon').className = 'fa-solid fa-volume-xmark';
-                isMusicPlaying = false;
-            } else {
-                bgMusic.play().catch(e => console.log("Autoplay bloq"));
-                document.getElementById('musicIcon').className = 'fa-solid fa-music';
-                isMusicPlaying = true;
-            }
-        }
-
         window.onload = function() {
             const cid = tg.initDataUnsafe?.user?.id || 12345; 
             const sid = localStorage.getItem('did');
@@ -261,12 +287,17 @@
             } 
             if (!sid) localStorage.setItem('did', cid);
 
+            // --- CÓDIGO DE PERSISTENCIA (GUARDADO) ---
+            // Aquí cargamos los puntos guardados en el teléfono.
             if(localStorage.getItem(KEY)) {
                 let saved = JSON.parse(localStorage.getItem(KEY));
                 user.pts = parseInt(saved.pts) || 0;
                 user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
             }
+            // ------------------------------------------
+
             updateUI();
+            tryPlayMusic(); 
         };
 
         function updateUI() {
@@ -295,16 +326,21 @@
                 document.getElementById('refillOverlay').style.display = 'none';
             }
         }
-        function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
+
+        // Esta función 'save()' se llama CADA VEZ que el usuario toca la naranja.
+        // Actualiza el 'localStorage' instantáneamente.
+        function save() { 
+            localStorage.setItem(KEY, JSON.stringify(user)); 
+            updateUI(); 
+        }
 
         function tap(e) {
             if(user.energy <= 0) return;
-
-            if (!isMusicPlaying) toggleMusic();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
 
             user.pts += 1;
             user.energy -= 1;
-            save();
+            save(); // <--- AQUÍ SE GUARDA EL PROGRESO
             playSfx('tap');
 
             const el = document.createElement('div');
@@ -322,7 +358,7 @@
                 p.style.top = e.clientY + 'px';
                 p.style.setProperty('--tx', (Math.random()*80 - 40) + 'px');
                 p.style.setProperty('--ty', (Math.random()*80 - 40) + 'px');
-                p.style.backgroundColor = ['#ffa502', '#ff6b81', '#7bed9f'][Math.floor(Math.random()*3)];
+                p.style.backgroundColor = ['#fff', '#f1c40f', '#e67e22'][Math.floor(Math.random()*3)];
                 document.body.appendChild(p);
                 setTimeout(() => p.remove(), 600);
             }
@@ -363,18 +399,4 @@
         }
 
         function retirar() {
-            if(user.pts < META) { tg.showAlert(`Sigue jugando. Faltan ${META - user.pts} Puntos.`); return; }
-            
-            user.pts -= META; // Seguridad: Restar puntos
-            save();
-            updateUI();
-            
-            let d = new Date();
-            document.getElementById('recDate').innerText = d.toLocaleString();
-            document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Jugador";
-            document.getElementById('modal').style.display = 'flex';
-            playSfx('success');
-        }
-    </script>
-</body>
-              </html>
+   
