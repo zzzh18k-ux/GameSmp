@@ -21,7 +21,6 @@
         body {
             background-color: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
-            /* CORRECCIÓN DE SCROLL PARA VER TODO EL CONTENIDO */
             padding: 20px; padding-bottom: 120px; 
             overflow-y: auto; 
             background-image: radial-gradient(#ffdfba 20%, transparent 20%), radial-gradient(#ffdfba 20%, transparent 20%);
@@ -200,16 +199,16 @@
         const tg = window.Telegram.WebApp; tg.expand();
         tg.setHeaderColor('#ffecd2'); tg.setBackgroundColor('#ffecd2');
 
-        // --- ID OFICIAL APROBADO ---
-        const ADSGRAM_ID = "18897"; 
+        const ADSGRAM_ID = "18897"; // TU ID OFICIAL
         
-        const KEY = 'fruit_v95_prod'; // Clave de producción
-        const META = 20000; // Matemática Rentable (400 videos)
+        // ⚠️ IMPORTANTE: MANTENEMOS EL NOMBRE DE LA KEY PARA QUE NO SE BORREN LOS DATOS
+        const KEY = 'fruit_v95_prod'; 
+        
+        const META = 20000; 
         
         let user = { pts: 0, energy: 100 };
 
         window.onload = function() {
-            // Anti-Multi (Seguridad)
             const cid = tg.initDataUnsafe?.user?.id || 12345; 
             const sid = localStorage.getItem('did');
             if (sid && sid != cid) {
@@ -263,7 +262,6 @@
             user.energy -= 1;
             save();
 
-            // Animación
             const el = document.createElement('div');
             el.className = 'float-plus';
             el.innerText = '+1';
@@ -275,7 +273,7 @@
             tg.HapticFeedback.impactOccurred('light');
         }
 
-        // --- ADS (LA GANANCIA) ---
+        // --- ADS ---
         function refillEnergy() {
             const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
             AdController.show().then(() => {
@@ -312,6 +310,11 @@
 
         function retirar() {
             if(user.pts < META) { tg.showAlert(`Sigue jugando. Faltan ${META - user.pts} Puntos para llegar a $0.10.`); return; }
+            
+            // 🔥 AQUÍ ESTÁ EL ARREGLO DE SEGURIDAD 🔥
+            user.pts -= META; // RESTA LOS PUNTOS
+            save(); // GUARDA QUE YA SE GASTARON
+            updateUI(); // ACTUALIZA LA BARRA
             
             let d = new Date();
             document.getElementById('recDate').innerText = d.toLocaleString();
