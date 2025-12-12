@@ -13,14 +13,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA NAVIDAD CON NARANJA 🍊🎄 */
+        /* ESTILOS (Mismos que te gustaron) */
         :root { 
-            --bg: #0f3b25; /* Verde Pino Oscuro */
-            --fruit: #ff9f43; /* Naranja Fruta */
-            --energy: #f1c40f; /* Dorado Energía */
+            --bg: #0f3b25; 
+            --fruit: #ff9f43; 
+            --energy: #f1c40f; 
             --green: #2ecc71; 
             --text: #ffffff; 
-            --panel: #1e5236; /* Panel semitransparente */
+            --panel: #1e5236; 
         }
         * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         
@@ -29,7 +29,6 @@
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
             padding: 20px; padding-bottom: 50px; 
             overflow-y: auto; 
-            /* Fondo con copos de nieve sutiles */
             background-image: radial-gradient(white 2px, transparent 2px), radial-gradient(white 2px, transparent 2px);
             background-position: 0 0, 25px 25px; background-size: 50px 50px;
         }
@@ -41,7 +40,6 @@
 
         .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
 
-        /* BOTÓN DE MÚSICA */
         .music-toggle {
             position: absolute; top: 0; right: 0; background: rgba(255,255,255,0.2); width: 40px; height: 40px;
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
@@ -140,7 +138,7 @@
         </div>
 
         <div class="score-board">
-            <div class="score-title">TUS NARANJAS</div>
+            <div class="score-title">TUS NARANJAS 🍊</div>
             <div class="score-val" id="score">0</div>
             <div class="goal-container">
                 <div class="goal-bar-bg"><div class="goal-bar-fill" id="goalBar"></div></div>
@@ -200,40 +198,87 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp; tg.expand();
-        tg.setHeaderColor('#0f3b25'); tg.setBackgroundColor('#0f3b25');
+        // --- INICIALIZACIÓN SEGURA ---
+        const tg = window.Telegram?.WebApp || {}; 
+        if(tg.expand) tg.expand();
+        if(tg.setHeaderColor) tg.setHeaderColor('#0f3b25');
 
         const ADSGRAM_ID = "18897"; 
-        // ⚠️ IMPORTANTE: No cambies este 'KEY'. Es lo que guarda los puntos.
-        // Si lo cambias, se borra el progreso de los usuarios antiguos.
         const KEY = 'fruit_v95_prod'; 
         
         const META = 20000; 
         let user = { pts: 0, energy: 100 };
 
+        // Variables de Audio
         const bgMusic = document.getElementById('bgMusic');
-        bgMusic.volume = 0.4;
+        if(bgMusic) bgMusic.volume = 0.4;
         let isMusicPlaying = true; 
+        let audioCtx = null; // No lo iniciamos todavía para evitar bloqueos
+
+        // --- FUNCIONES DE INICIO ---
+        window.onload = function() {
+            try {
+                // 1. Anti-Multicuenta (Seguro)
+                const cid = tg.initDataUnsafe?.user?.id || 12345; 
+                const sid = localStorage.getItem('did');
+                if (sid && sid != cid) {
+                    document.getElementById('banScreen').style.display = 'flex';
+                    return; // Detener ejecución si está baneado
+                } 
+                if (!sid) localStorage.setItem('did', cid);
+
+                // 2. Cargar Datos Guardados
+                if(localStorage.getItem(KEY)) {
+                    let saved = JSON.parse(localStorage.getItem(KEY));
+                    user.pts = parseInt(saved.pts) || 0;
+                    user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+                    console.log("Datos cargados:", user);
+                }
+
+                // 3. Actualizar Interfaz
+                updateUI();
+                
+                // 4. Intentar música suavemente
+                tryPlayMusic();
+            } catch (error) {
+                console.error("Error crítico:", error);
+                // Si falla, al menos mostramos la UI
+                updateUI();
+            }
+        };
+
+        // --- SISTEMA DE AUDIO (Modo Seguro) ---
+        function initAudioContext() {
+            // Solo creamos el contexto de audio cuando el usuario TOCA la pantalla
+            if (!audioCtx) {
+                try {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch(e) { console.log("AudioContext no soportado"); }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
 
         function tryPlayMusic() {
+            if(!bgMusic) return;
             let promise = bgMusic.play();
             if (promise !== undefined) {
                 promise.catch(error => {
-                    console.log("Autoplay bloqueado, esperando interacción.");
+                    console.log("Autoplay bloqueado. Esperando toque.");
                     isMusicPlaying = false; 
                     updateMusicIcon();
-                    document.body.addEventListener('click', enableMusicOnFirstInteraction, { once: true });
+                    document.body.addEventListener('click', () => {
+                        bgMusic.play();
+                        isMusicPlaying = true;
+                        updateMusicIcon();
+                    }, { once: true });
                 });
             }
         }
 
-        function enableMusicOnFirstInteraction() {
-            bgMusic.play();
-            isMusicPlaying = true;
-            updateMusicIcon();
-        }
-
         function toggleMusic() {
+            if(!bgMusic) return;
             if (isMusicPlaying) {
                 bgMusic.pause();
                 isMusicPlaying = false;
@@ -246,103 +291,87 @@
 
         function updateMusicIcon() {
             const icon = document.getElementById('musicIcon');
-            if(isMusicPlaying) {
-                icon.className = 'fa-solid fa-volume-high';
-            } else {
-                icon.className = 'fa-solid fa-volume-xmark';
-            }
+            if(icon) icon.className = isMusicPlaying ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
         }
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSfx(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+            initAudioContext(); // Asegurar que el audio está listo
+            if (!audioCtx) return; // Si falla el audio, salimos (pero el juego sigue)
+
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
 
+            const now = audioCtx.currentTime;
             if (type === 'tap') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(); osc.stop(now + 0.1);
             } else if (type === 'success') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                osc.frequency.linearRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.linearRampToValueAtTime(1200, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                osc.start(); osc.stop(now + 0.5);
             }
         }
 
-        window.onload = function() {
-            const cid = tg.initDataUnsafe?.user?.id || 12345; 
-            const sid = localStorage.getItem('did');
-            if (sid && sid != cid) {
-                document.getElementById('banScreen').style.display = 'flex';
-                return;
-            } 
-            if (!sid) localStorage.setItem('did', cid);
-
-            // --- CÓDIGO DE PERSISTENCIA (GUARDADO) ---
-            // Aquí cargamos los puntos guardados en el teléfono.
-            if(localStorage.getItem(KEY)) {
-                let saved = JSON.parse(localStorage.getItem(KEY));
-                user.pts = parseInt(saved.pts) || 0;
-                user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
-            }
-            // ------------------------------------------
-
-            updateUI();
-            tryPlayMusic(); 
-        };
-
+        // --- LÓGICA DEL JUEGO ---
         function updateUI() {
             const scoreEl = document.getElementById('score');
-            scoreEl.innerText = user.pts;
+            if(scoreEl) scoreEl.innerText = user.pts;
             
-            document.getElementById('energyText').innerText = `${user.energy}/100`;
-            document.getElementById('energyBar').style.width = `${Math.min(user.energy, 100)}%`;
+            const enTxt = document.getElementById('energyText');
+            if(enTxt) enTxt.innerText = `${user.energy}/100`;
             
-            let pct = (user.pts / META) * 100;
-            if(pct > 100) pct = 100;
-            document.getElementById('goalBar').style.width = `${pct}%`;
+            const enBar = document.getElementById('energyBar');
+            if(enBar) enBar.style.width = `${Math.min(user.energy, 100)}%`;
+            
+            const gBar = document.getElementById('goalBar');
+            if(gBar) {
+                let pct = (user.pts / META) * 100;
+                if(pct > 100) pct = 100;
+                gBar.style.width = `${pct}%`;
+            }
 
             const wBtn = document.getElementById('withdrawBtn');
-            if (user.pts >= META) {
-                wBtn.classList.add('ready');
-                wBtn.innerHTML = '<i class="fa-solid fa-sack-dollar"></i> ¡META ALCANZADA! RETIRAR $0.10';
-            } else {
-                wBtn.classList.remove('ready');
-                wBtn.innerHTML = `<i class="fa-solid fa-lock"></i> META NO ALCANZADA`;
+            if(wBtn) {
+                if (user.pts >= META) {
+                    wBtn.classList.add('ready');
+                    wBtn.innerHTML = '<i class="fa-solid fa-sack-dollar"></i> ¡META ALCANZADA! RETIRAR $0.10';
+                } else {
+                    wBtn.classList.remove('ready');
+                    wBtn.innerHTML = `<i class="fa-solid fa-lock"></i> META NO ALCANZADA`;
+                }
             }
             
-            if(user.energy <= 0) {
-                document.getElementById('refillOverlay').style.display = 'flex';
-            } else {
-                document.getElementById('refillOverlay').style.display = 'none';
+            const overlay = document.getElementById('refillOverlay');
+            if(overlay) {
+                overlay.style.display = (user.energy <= 0) ? 'flex' : 'none';
             }
         }
 
-        // Esta función 'save()' se llama CADA VEZ que el usuario toca la naranja.
-        // Actualiza el 'localStorage' instantáneamente.
         function save() { 
-            localStorage.setItem(KEY, JSON.stringify(user)); 
-            updateUI(); 
+            try {
+                localStorage.setItem(KEY, JSON.stringify(user)); 
+                updateUI(); 
+            } catch(e) { console.error("Error guardando", e); }
         }
 
         function tap(e) {
             if(user.energy <= 0) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
+            
+            // Lógica principal (funciona incluso si el audio falla)
             user.pts += 1;
             user.energy -= 1;
-            save(); // <--- AQUÍ SE GUARDA EL PROGRESO
-            playSfx('tap');
-
+            save();
+            
+            // Efectos visuales
             const el = document.createElement('div');
             el.className = 'float-plus';
             el.innerText = '+1';
@@ -362,41 +391,20 @@
                 document.body.appendChild(p);
                 setTimeout(() => p.remove(), 600);
             }
-            tg.HapticFeedback.impactOccurred('light');
+            
+            // Intentar Audio y Vibración (si falla, no rompe el juego)
+            try { playSfx('tap'); } catch(err){}
+            try { tg.HapticFeedback.impactOccurred('light'); } catch(err){}
         }
 
         function refillEnergy() {
-            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-            AdController.show().then(() => {
-                user.energy = 50; save();
-                playSfx('success');
-                tg.showPopup({ title: "¡Recargado!", message: "+50 Energía" });
-            }).catch(() => {
-                if (typeof show_10278425 === 'function') {
-                    show_10278425().then(()=>{
-                        user.energy = 50; save(); playSfx('success');
-                    }).catch(()=>{ tg.showAlert("Sin videos disponibles."); });
-                }
-            });
-        }
-
-        function watchEnergyBonus(type) {
-            if(type === 'adsgram') {
+            if(window.Adsgram) {
                 const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-                AdController.show().then(() => { addEnergy(15); }).catch(() => { tg.showAlert("Video no listo"); });
-            } else {
-                if (typeof show_10278425 === 'function') {
-                    show_10278425().then(()=>{ addEnergy(10); }).catch(()=>{ tg.showAlert("Video no listo"); });
-                }
-            }
-        }
-
-        function addEnergy(amount) {
-            user.energy += amount;
-            if(user.energy > 100) user.energy = 100;
-            save(); playSfx('success');
-            tg.showPopup({ title: "¡Energía Extra!", message: `+${amount} Energía` });
-        }
-
-        function retirar() {
+                AdController.show().then(() => {
+                    user.energy = 50; save();
+                    try { playSfx('success'); } catch(e){}
+                    tg.showPopup({ title: "¡Recargado!", message: "+50 Energía" });
+                }).catch(() => {
+                    fallbackAd();
+                });
    
