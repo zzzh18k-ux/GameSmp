@@ -13,7 +13,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA ORIGINAL (Naranja/Fresco) - SIN CAMBIOS */
+        /* TEMA ORIGINAL (Naranja/Fresco) */
         :root { 
             --bg: #ffecd2; /* Crema Claro */
             --fruit: #ff9966; /* Naranja */
@@ -240,18 +240,29 @@
             } 
             if (!sid) localStorage.setItem('did', cid);
 
-            // 🛡️ Recuperar Saldo con SEGURIDAD (Desencriptado)
+            // 🚑 SISTEMA DE RECUPERACIÓN INTELIGENTE (FIX)
             if(localStorage.getItem(KEY)) {
+                let rawData = localStorage.getItem(KEY);
                 try {
-                    // atob() decodifica la cadena encriptada
-                    let rawData = atob(localStorage.getItem(KEY));
-                    let saved = JSON.parse(rawData);
-                    
-                    user.pts = parseInt(saved.pts) || 0;
-                    user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+                    // PASO 1: ¿Detecta datos viejos (sin encriptar)?
+                    if (rawData.trim().startsWith("{")) {
+                        console.log("Detectados datos antiguos. Migrando...");
+                        let saved = JSON.parse(rawData);
+                        user.pts = parseInt(saved.pts) || 0;
+                        user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+                        
+                        // ¡IMPORTANTE! Guardar inmediatamente en formato NUEVO seguro
+                        save(); 
+                    } 
+                    // PASO 2: Son datos nuevos (encriptados)
+                    else {
+                        let decoded = atob(rawData); // Desencriptar
+                        let saved = JSON.parse(decoded);
+                        user.pts = parseInt(saved.pts) || 0;
+                        user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+                    }
                 } catch(e) {
-                    console.log("Datos corruptos o manipulados. Reiniciando por seguridad.");
-                    user = { pts: 0, energy: 100 };
+                    console.log("Error de lectura: ", e);
                 }
             }
             updateUI();
@@ -374,4 +385,4 @@
         }
     </script>
 </body>
-    </html>
+                    </html>
