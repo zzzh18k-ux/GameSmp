@@ -9,7 +9,7 @@
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght=700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
@@ -202,8 +202,7 @@
         const META = 20000; 
         let user = { pts: 0, energy: 100 };
 
-        // Efectos de sonido SIMPLES (Tap y éxito)
-        // No hay música de fondo para evitar errores.
+        // Efectos de sonido
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSfx(type) {
             try {
@@ -228,9 +227,7 @@
                     gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.5);
                 }
-            } catch(e) {
-                // Si falla el audio, no pasa nada, el juego sigue
-            }
+            } catch(e) {}
         }
 
         window.onload = function() {
@@ -243,13 +240,30 @@
             } 
             if (!sid) localStorage.setItem('did', cid);
 
-            // Recuperar Saldo
+            // 🚑 SISTEMA DE RECUPERACIÓN INTELIGENTE (MIGRACIÓN SEGURA)
             if(localStorage.getItem(KEY)) {
+                let rawData = localStorage.getItem(KEY);
                 try {
-                    let saved = JSON.parse(localStorage.getItem(KEY));
-                    user.pts = parseInt(saved.pts) || 0;
-                    user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
-                } catch(e) {}
+                    // Intento 1: Leer el formato Antiguo (no encriptado)
+                    if (rawData.trim().startsWith("{")) {
+                        console.log("Detectados datos antiguos (600 puntos). Migrando a formato seguro.");
+                        let saved = JSON.parse(rawData);
+                        user.pts = parseInt(saved.pts) || 0;
+                        user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+                        // Guardamos inmediatamente en formato NUEVO seguro
+                        save(); 
+                    } 
+                    // Intento 2: Leer el formato Nuevo (encriptado)
+                    else {
+                        let decoded = atob(rawData); // Desencriptar
+                        let saved = JSON.parse(decoded);
+                        user.pts = parseInt(saved.pts) || 0;
+                        user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+                    }
+                } catch(e) {
+                    console.log("Error de lectura o datos corruptos después del clic. Reiniciando a 0.", e);
+                    // Si falla la lectura, no hay más opción que empezar de 0
+                }
             }
             updateUI();
         };
@@ -280,7 +294,18 @@
                 document.getElementById('refillOverlay').style.display = 'none';
             }
         }
-        function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
+
+        // 🛡️ Guardar con SEGURIDAD (Encriptado)
+        function save() { 
+            try {
+                // btoa() encripta los datos a Base64
+                let encrypted = btoa(JSON.stringify(user));
+                localStorage.setItem(KEY, encrypted); 
+            } catch(e) {
+                console.error("Error al guardar");
+            }
+            updateUI(); 
+        }
 
         function tap(e) {
             if(user.energy <= 0) return;
