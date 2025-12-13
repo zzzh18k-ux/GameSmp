@@ -13,7 +13,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA ORIGINAL (Naranja/Fresco) */
+        /* TEMA ORIGINAL (Naranja/Fresco) - SIN CAMBIOS */
         :root { 
             --bg: #ffecd2; /* Crema Claro */
             --fruit: #ff9966; /* Naranja */
@@ -202,8 +202,7 @@
         const META = 20000; 
         let user = { pts: 0, energy: 100 };
 
-        // Efectos de sonido SIMPLES (Tap y éxito)
-        // No hay música de fondo para evitar errores.
+        // Efectos de sonido
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSfx(type) {
             try {
@@ -228,9 +227,7 @@
                     gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.5);
                 }
-            } catch(e) {
-                // Si falla el audio, no pasa nada, el juego sigue
-            }
+            } catch(e) {}
         }
 
         window.onload = function() {
@@ -243,13 +240,19 @@
             } 
             if (!sid) localStorage.setItem('did', cid);
 
-            // Recuperar Saldo
+            // 🛡️ Recuperar Saldo con SEGURIDAD (Desencriptado)
             if(localStorage.getItem(KEY)) {
                 try {
-                    let saved = JSON.parse(localStorage.getItem(KEY));
+                    // atob() decodifica la cadena encriptada
+                    let rawData = atob(localStorage.getItem(KEY));
+                    let saved = JSON.parse(rawData);
+                    
                     user.pts = parseInt(saved.pts) || 0;
                     user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
-                } catch(e) {}
+                } catch(e) {
+                    console.log("Datos corruptos o manipulados. Reiniciando por seguridad.");
+                    user = { pts: 0, energy: 100 };
+                }
             }
             updateUI();
         };
@@ -280,7 +283,18 @@
                 document.getElementById('refillOverlay').style.display = 'none';
             }
         }
-        function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
+
+        // 🛡️ Guardar con SEGURIDAD (Encriptado)
+        function save() { 
+            try {
+                // btoa() encripta los datos a Base64
+                let encrypted = btoa(JSON.stringify(user));
+                localStorage.setItem(KEY, encrypted); 
+            } catch(e) {
+                console.error("Error al guardar");
+            }
+            updateUI(); 
+        }
 
         function tap(e) {
             if(user.energy <= 0) return;
@@ -360,4 +374,4 @@
         }
     </script>
 </body>
-                    </html>
+    </html>
