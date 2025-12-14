@@ -3,139 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Fruit Splash ELITE</title>
+    <title>FRUIT COIN ARCADE</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght=700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@700&family=Nunito:wght@700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA ORIGINAL (Naranja/Fresco) */
+        /* === TEMA ARCADE NEÓN === */
         :root { 
-            --bg: #ffecd2; /* Crema Claro */
-            --fruit: #ff9966; /* Naranja */
-            --energy: #ff4757; /* Rojo Energético */
-            --green: #2ed573; /* Verde Dinero */
-            --text: #2f3542; /* Texto Oscuro */
+            --bg-dark: #0a001a;
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ff;
+            --neon-gold: #ffd700;
+            --text-glow: #fff;
+            --panel-bg: rgba(20, 20, 40, 0.9);
         }
         * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background-color: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-dark); 
+            background-image: 
+                linear-gradient(rgba(10,0,26,0.9), rgba(10,0,26,0.9)),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 243, 255, 0.1) 2px, rgba(0, 243, 255, 0.1) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 0, 255, 0.1) 2px, rgba(255, 0, 255, 0.1) 4px);
+            background-size: 100% 100%, 20px 20px, 20px 20px;
+            color: var(--text-glow); 
+            font-family: 'Nunito', sans-serif;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
             padding: 20px; padding-bottom: 120px; 
-            overflow-y: auto; 
-            background-image: radial-gradient(#ffdfba 20%, transparent 20%), radial-gradient(#ffdfba 20%, transparent 20%);
-            background-position: 0 0, 50px 50px; background-size: 100px 100px;
+            overflow-y: auto;
         }
 
-        #banScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2f3542; z-index: 99999; 
-            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;
+        /* Marco de la Máquina Arcade */
+        .app-container { 
+            width: 100%; max-width: 400px; 
+            display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative;
+            border: 4px solid var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue), inset 0 0 20px var(--neon-blue);
+            border-radius: 20px;
+            padding: 20px;
+            background: var(--panel-bg);
+            animation: borderPulse 4s infinite alternate;
         }
+        @keyframes borderPulse { 0% { border-color: var(--neon-blue); box-shadow: 0 0 20px var(--neon-blue), inset 0 0 10px var(--neon-blue); } 100% { border-color: var(--neon-pink); box-shadow: 0 0 25px var(--neon-pink), inset 0 0 15px var(--neon-pink); } }
 
-        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+        #banScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99999; display: none; justify-content: center; align-items: center; text-align: center; color: red; font-family: 'Press Start 2P'; }
 
         /* HEADER & SCORE */
+        .main-title { font-family: 'Orbitron', sans-serif; font-size: 24px; color: var(--neon-gold); text-shadow: 0 0 10px var(--neon-gold); text-align: center; margin-bottom: 10px; letter-spacing: 2px; }
+
         .score-board {
-            background: white; padding: 15px 25px; border-radius: 20px; border-bottom: 4px solid #e1e1e1;
-            display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background: linear-gradient(180deg, #222, #111);
+            padding: 15px 25px; border-radius: 15px; border: 2px solid var(--neon-blue);
+            display: flex; flex-direction: column; align-items: center; width: 100%;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
         }
-        .score-title { font-size: 12px; color: #a4b0be; font-weight: 800; letter-spacing: 1px; }
-        .score-val { font-family: 'Fredoka One', cursive; font-size: 45px; color: var(--text); line-height: 1; margin-bottom: 10px; }
+        .score-title { font-family: 'Press Start 2P'; font-size: 10px; color: var(--neon-blue); margin-bottom: 5px; }
+        .score-val { font-family: 'Press Start 2P', cursive; font-size: 35px; color: var(--neon-gold); line-height: 1; margin-bottom: 10px; text-shadow: 0 0 10px var(--neon-gold); }
 
-        /* BARRA DE PROGRESO DE META */
+        /* BARRA DE PROGRESO NEÓN */
         .goal-container { width: 100%; margin-top: 5px; }
-        .goal-bar-bg { width: 100%; height: 12px; background: #f1f2f6; border-radius: 10px; overflow: hidden; border: 1px solid #dfe4ea; }
-        .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #2ed573, #7bed9f); transition: width 0.3s; }
-        .goal-text { font-size: 11px; color: #747d8c; margin-top: 4px; display: flex; justify-content: space-between; font-weight: bold; }
+        .goal-bar-bg { width: 100%; height: 14px; background: #000; border-radius: 10px; overflow: hidden; border: 2px solid #333; box-shadow: inset 0 0 5px #000; }
+        .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink)); transition: width 0.3s; box-shadow: 0 0 10px var(--neon-blue); }
+        .goal-text { font-family: 'Orbitron'; font-size: 10px; color: #aaa; margin-top: 6px; display: flex; justify-content: space-between; font-weight: bold; }
 
-        /* ZONA DE JUEGO */
-        .game-area { width: 100%; height: 280px; display: flex; justify-content: center; align-items: center; position: relative; }
+        /* ZONA DE JUEGO ARCADE */
+        .game-area { 
+            width: 100%; height: 260px; display: flex; justify-content: center; align-items: center; position: relative; 
+            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+            border-radius: 15px; border: 2px dashed rgba(255,255,255,0.1);
+        }
         
         .fruit-btn {
-            font-size: 140px; cursor: pointer; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 10px 0 rgba(0,0,0,0.1)); position: relative; z-index: 5;
+            font-size: 130px; cursor: pointer; transition: transform 0.1s; position: relative; z-index: 5;
+            filter: drop-shadow(0 0 20px var(--neon-gold));
+            animation: floatFruit 3s ease-in-out infinite;
         }
-        .fruit-btn:active { transform: scale(0.9) rotate(5deg); }
+        @keyframes floatFruit { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.02); } }
+        .fruit-btn:active { transform: scale(0.9) rotate(5deg) !important; filter: drop-shadow(0 0 30px red); }
 
-        /* EFECTOS */
-        .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--fruit); pointer-events: none; animation: pop 0.6s ease-out forwards; }
-        @keyframes pop { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
-        .float-plus { position: absolute; font-weight: 900; font-size: 28px; color: var(--green); pointer-events: none; animation: floatUp 0.8s forwards; text-shadow: 0 2px 0 white; }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-80px) scale(1.5); opacity: 0; } }
+        /* EFECTOS DE PARTÍCULAS DIGITALES */
+        .particle { position: absolute; width: 6px; height: 6px; background: var(--neon-gold); box-shadow: 0 0 5px var(--neon-gold); pointer-events: none; animation: popDigital 0.6s ease-out forwards; }
+        @keyframes popDigital { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
+        .float-plus { position: absolute; font-family: 'Press Start 2P'; font-size: 20px; color: var(--neon-blue); pointer-events: none; animation: floatUpDigital 0.8s forwards; text-shadow: 0 0 5px var(--neon-blue); }
+        @keyframes floatUpDigital { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-80px) scale(1.2); opacity: 0; } }
 
-        /* BARRA DE ENERGÍA */
-        .energy-container { width: 100%; background: white; padding: 12px 15px; border-radius: 15px; border-bottom: 4px solid #e1e1e1; text-align: center; }
-        .energy-track { width: 100%; height: 10px; background: #dfe4ea; border-radius: 10px; overflow: hidden; margin: 5px 0; }
-        .energy-fill { height: 100%; width: 100%; background: var(--energy); transition: width 0.2s; }
-        .energy-text { font-size: 11px; font-weight: bold; color: var(--text); display: flex; justify-content: space-between; }
+        /* BARRA DE ENERGÍA CIBERNÉTICA */
+        .energy-container { width: 100%; background: linear-gradient(180deg, #222, #111); padding: 12px 15px; border-radius: 15px; border: 2px solid var(--neon-pink); text-align: center; box-shadow: 0 0 10px rgba(255, 0, 255, 0.3); }
+        .energy-track { width: 100%; height: 10px; background: #000; border-radius: 10px; overflow: hidden; margin: 5px 0; border: 1px solid #333; }
+        .energy-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #ff4757, var(--neon-pink)); transition: width 0.2s; box-shadow: 0 0 5px var(--neon-pink); }
+        .energy-text { font-family: 'Orbitron'; font-size: 10px; font-weight: bold; color: var(--text-glow); display: flex; justify-content: space-between; }
 
-        /* RECARGA OVERLAY */
+        /* OVERLAY DE RECARGA "GAME OVER" */
         .refill-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.95); z-index: 10; border-radius: 20px;
+            background: rgba(0,0,0,0.9); z-index: 10; border-radius: 15px;
             display: none; flex-direction: column; justify-content: center; align-items: center;
+            border: 3px solid red; box-shadow: inset 0 0 20px red;
         }
         .btn-refill {
-            background: var(--energy); color: white; padding: 12px 25px; border-radius: 50px;
-            border: none; font-weight: 900; font-size: 16px; cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4); animation: pulse 1.5s infinite;
+            background: red; color: white; padding: 15px 30px; border-radius: 5px;
+            border: 3px solid #ff0000; font-family: 'Orbitron'; font-weight: 900; font-size: 16px; cursor: pointer;
+            box-shadow: 0 0 20px red; animation: pulseRed 1s infinite; text-transform: uppercase;
         }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 20px red; scale: 1; } 50% { box-shadow: 0 0 40px red; scale: 1.05; } 100% { box-shadow: 0 0 20px red; scale: 1; } }
 
-        /* BONUS & FOOTER */
-        .bonus-row { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
+        /* BOTONES DE BONUS METÁLICOS */
+        .bonus-row { display: flex; gap: 10px; width: 100%; margin-top: 5px; }
         .btn-bonus {
-            flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; color: white; font-size: 11px;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.1); transition: transform 0.1s;
+            flex: 1; padding: 12px; border-radius: 10px; border: 2px solid #555; 
+            background: linear-gradient(180deg, #333, #111); color: #fff; font-family: 'Orbitron'; font-size: 10px;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 4px 0 #000; transition: all 0.1s; text-shadow: 0 0 5px rgba(255,255,255,0.3);
         }
-        .btn-bonus:active { transform: translateY(3px); box-shadow: none; }
-        .b-adsgram { background: #3742fa; }
-        .b-monetag { background: #ffa502; }
+        .btn-bonus:active { transform: translateY(4px); box-shadow: none; }
+        .b-adsgram { border-color: var(--neon-blue); color: var(--neon-blue); }
+        .b-monetag { border-color: var(--neon-gold); color: var(--neon-gold); }
 
+        /* BOTÓN DE RETIRO ARCADE */
         .btn-withdraw { 
-            background: #2f3542; color: white; width: 100%; padding: 15px; border: none; 
-            border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 15px; 
-            cursor: pointer; box-shadow: 0 4px 0 #1e272e; transition: 0.3s;
+            background: #333; color: #777; width: 100%; padding: 18px; border: 3px solid #555; 
+            border-radius: 12px; font-family: 'Press Start 2P'; font-size: 12px; margin-top: 15px; 
+            cursor: not-allowed; box-shadow: inset 0 0 10px #000; transition: 0.3s; text-align: center;
         }
         .btn-withdraw.ready {
-            background: linear-gradient(45deg, #2ed573, #26de81);
-            box-shadow: 0 0 20px rgba(46, 213, 115, 0.6);
-            animation: pulse 1.5s infinite; text-shadow: 0 2px 0 rgba(0,0,0,0.2);
+            background: linear-gradient(45deg, var(--neon-green), #00ff00); color: #000;
+            border-color: #00ff00; cursor: pointer;
+            box-shadow: 0 0 30px #00ff00; animation: pulseGreen 1.5s infinite; 
+            text-shadow: none;
         }
-        .btn-withdraw:active { transform: translateY(4px); box-shadow: none; }
+        @keyframes pulseGreen { 0% { box-shadow: 0 0 20px #00ff00; } 50% { box-shadow: 0 0 40px #00ff00; } 100% { box-shadow: 0 0 20px #00ff00; } }
 
         .mini-menu { display: flex; gap: 8px; width: 100%; margin-top: 10px; }
         .btn-mini {
-            flex: 1; background: #fff; border: 2px solid #e1e1e1; color: #a4b0be;
-            padding: 8px; border-radius: 10px; font-size: 11px; font-weight: 800;
-            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
+            flex: 1; background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue);
+            padding: 8px; border-radius: 5px; font-size: 10px; font-family: 'Orbitron';
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; transition: 0.2s;
         }
+        .btn-mini:hover { background: var(--neon-blue); color: #000; box-shadow: 0 0 10px var(--neon-blue); }
 
-        /* MODAL */
-        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:100; }
-        .modal-card { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
-        .btn-green { background: var(--green); color: white; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 0 #218c74; }
+        /* MODAL CIBERNÉTICO */
+        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; z-index:100; }
+        .modal-card { background: #111; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; border: 3px solid var(--neon-green); box-shadow: 0 0 30px var(--neon-green); }
+        .btn-green { background: var(--neon-green); color: #000; width: 100%; padding: 15px; border-radius: 5px; border: none; font-family: 'Press Start 2P'; font-size: 12px; margin-top: 15px; cursor: pointer; box-shadow: 0 0 15px var(--neon-green); }
     </style>
 </head>
 <body>
 
-    <div id="banScreen"><h2>Acceso Denegado</h2><p>Dispositivo vinculado.</p></div>
+    <div id="banScreen"><h2>GAME OVER</h2><p>Multicuenta Detectada</p></div>
 
     <div class="app-container" id="appContent">
+        <div class="main-title">FRUIT COIN BOT</div>
         
         <div class="score-board">
-            <div class="score-title">TUS FRUTAS</div>
+            <div class="score-title">SCORE</div>
             <div class="score-val" id="score">0</div>
             <div class="goal-container">
                 <div class="goal-bar-bg"><div class="goal-bar-fill" id="goalBar"></div></div>
-                <div class="goal-text"><span>PROGRESO</span><span style="color:#2ed573;">META: $0.10 USD</span></div>
+                <div class="goal-text"><span>PROGRESO</span><span style="color:var(--neon-blue);">META: $0.10 USD</span></div>
             </div>
         </div>
 
@@ -143,9 +172,9 @@
             <div class="fruit-btn" id="fruit" onclick="tap(event)">🍊</div>
             
             <div class="refill-overlay" id="refillOverlay">
-                <div style="font-size:50px; margin-bottom:10px;">⚡</div>
-                <h3 style="color:#2f3542; margin-bottom:5px;">SIN ENERGÍA</h3>
-                <p style="color:#747d8c; margin-bottom:20px; font-size:14px;">Recarga para seguir jugando.</p>
+                <div style="font-size:50px; margin-bottom:10px; color: red; text-shadow: 0 0 10px red;">⚡</div>
+                <h3 style="color:white; margin-bottom:5px; font-family:'Orbitron';">SIN ENERGÍA</h3>
+                <p style="color:#aaa; margin-bottom:20px; font-size:12px; font-family:'Orbitron';">INSERT COIN (Ver Video)</p>
                 <button class="btn-refill" onclick="refillEnergy()">
                     <i class="fa-solid fa-play"></i> VER VIDEO (+50⚡)
                 </button>
@@ -159,10 +188,10 @@
 
         <div class="bonus-row">
             <button class="btn-bonus b-adsgram" onclick="watchEnergyBonus('adsgram')">
-                <i class="fa-solid fa-bolt" style="margin-bottom:3px;"></i><span>+15 ENERGÍA</span>
+                <i class="fa-solid fa-bolt" style="margin-bottom:3px;"></i><span>+15 POWER</span>
             </button>
             <button class="btn-bonus b-monetag" onclick="watchEnergyBonus('monetag')">
-                <i class="fa-solid fa-battery-full" style="margin-bottom:3px;"></i><span>+10 ENERGÍA</span>
+                <i class="fa-solid fa-battery-full" style="margin-bottom:3px;"></i><span>+10 POWER</span>
             </button>
         </div>
 
@@ -178,21 +207,22 @@
 
     <div id="modal">
         <div class="modal-card">
-            <h2 style="color:var(--green); margin-bottom:10px;">✅ ¡META ALCANZADA!</h2>
-            <p style="color:#666; font-size:13px; margin-bottom:15px;">Envía esta captura para tu pago.</p>
-            <div style="background:#f1f2f6; padding:15px; border-radius:10px; margin-bottom:15px; text-align:left; font-size:12px; color:#2f3542; border: 1px dashed #ccc;">
-                <div><b>USUARIO:</b> <span id="recUser">...</span></div>
-                <div><b>FECHA:</b> <span id="recDate">...</span></div>
-                <div style="margin-top:5px; font-size:16px; color:#27ae60;"><b>TOTAL:</b> $0.10 USD</div>
+            <h2 style="color:var(--neon-green); margin-bottom:15px; font-family:'Orbitron'; text-shadow: 0 0 10px;">✅ ¡META ALCANZADA!</h2>
+            <p style="color:#ccc; font-size:13px; margin-bottom:15px; font-family:'Orbitron';">Toma captura para tu pago.</p>
+            <div style="background:#222; padding:15px; border-radius:10px; margin-bottom:15px; text-align:left; font-size:12px; color:#fff; border: 2px dashed var(--neon-blue); font-family: 'Orbitron';">
+                <div><b>USUARIO:</b> <span id="recUser" style="color:var(--neon-blue);">...</span></div>
+                <div><b>FECHA:</b> <span id="recDate" style="color:var(--neon-blue);">...</span></div>
+                <div style="margin-top:10px; font-size:16px; color:var(--neon-green); font-weight:bold;"><b>TOTAL: $0.10 USD</b></div>
             </div>
             <button class="btn-green" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
-            <button style="background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar Ventana</button>
+            <button style="background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer; font-family:'Orbitron';" onclick="location.reload()">Cerrar</button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        tg.setHeaderColor('#ffecd2'); tg.setBackgroundColor('#ffecd2');
+        // Colores de cabecera ajustados al tema oscuro
+        tg.setHeaderColor('#0a001a'); tg.setBackgroundColor('#0a001a');
 
         const ADSGRAM_ID = "18897"; 
         
@@ -282,7 +312,8 @@
             const wBtn = document.getElementById('withdrawBtn');
             if (user.pts >= META) {
                 wBtn.classList.add('ready');
-                wBtn.innerHTML = '<i class="fa-solid fa-sack-dollar"></i> ¡META ALCANZADA! RETIRAR $0.10';
+                // Icono de dinero y texto estilo arcade
+                wBtn.innerHTML = '<i class="fa-solid fa-coins"></i> ¡RETIRAR $0.10 USD!';
             } else {
                 wBtn.classList.remove('ready');
                 wBtn.innerHTML = `<i class="fa-solid fa-lock"></i> META NO ALCANZADA`;
@@ -318,71 +349,4 @@
             const el = document.createElement('div');
             el.className = 'float-plus';
             el.innerText = '+1';
-            el.style.left = e.clientX + 'px';
-            el.style.top = e.clientY + 'px';
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 800);
-
-            for(let i=0; i<3; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = e.clientX + 'px';
-                p.style.top = e.clientY + 'px';
-                p.style.setProperty('--tx', (Math.random()*80 - 40) + 'px');
-                p.style.setProperty('--ty', (Math.random()*80 - 40) + 'px');
-                p.style.backgroundColor = ['#ffa502', '#ff6b81', '#7bed9f'][Math.floor(Math.random()*3)];
-                document.body.appendChild(p);
-                setTimeout(() => p.remove(), 600);
-            }
-            tg.HapticFeedback.impactOccurred('light');
-        }
-
-        function refillEnergy() {
-            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-            AdController.show().then(() => {
-                user.energy = 50; save();
-                playSfx('success');
-                tg.showPopup({ title: "¡Recargado!", message: "+50 Energía" });
-            }).catch(() => {
-                if (typeof show_10278425 === 'function') {
-                    show_10278425().then(()=>{
-                        user.energy = 50; save(); playSfx('success');
-                    }).catch(()=>{ tg.showAlert("Sin videos disponibles."); });
-                }
-            });
-        }
-
-        function watchEnergyBonus(type) {
-            if(type === 'adsgram') {
-                const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-                AdController.show().then(() => { addEnergy(15); }).catch(() => { tg.showAlert("Video no listo"); });
-            } else {
-                if (typeof show_10278425 === 'function') {
-                    show_10278425().then(()=>{ addEnergy(10); }).catch(()=>{ tg.showAlert("Video no listo"); });
-                }
-            }
-        }
-
-        function addEnergy(amount) {
-            user.energy += amount;
-            if(user.energy > 100) user.energy = 100;
-            save(); playSfx('success');
-            tg.showPopup({ title: "¡Energía Extra!", message: `+${amount} Energía` });
-        }
-
-        function retirar() {
-            if(user.pts < META) { tg.showAlert(`Sigue jugando. Faltan ${META - user.pts} Puntos.`); return; }
-            
-            user.pts -= META; // Restar puntos
-            save();
-            updateUI();
-            
-            let d = new Date();
-            document.getElementById('recDate').innerText = d.toLocaleString();
-            document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Jugador";
-            document.getElementById('modal').style.display = 'flex';
-            playSfx('success');
-        }
-    </script>
-</body>
-        </html>
+            e
