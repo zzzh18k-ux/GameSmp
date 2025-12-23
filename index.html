@@ -9,133 +9,155 @@
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght=700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* TEMA ORIGINAL (Naranja/Fresco) */
+        /* TEMA FRESH PREMIUM (Sin Casino) */
         :root { 
-            --bg: #ffecd2; /* Crema Claro */
-            --fruit: #ff9966; /* Naranja */
-            --energy: #ff4757; /* Rojo Energético */
-            --green: #2ed573; /* Verde Dinero */
-            --text: #2f3542; /* Texto Oscuro */
+            --bg-gradient: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%); /* Cielo y Nubes suave */
+            --card-bg: rgba(255, 255, 255, 0.85); /* Efecto Cristal */
+            --orange-primary: #ff9f43;
+            --orange-dark: #ee5253;
+            --green-money: #10ac84;
+            --text-main: #222f3e;
+            --shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
+        
         * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background-color: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #ffd1ff);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main); font-family: 'Nunito', sans-serif;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
             padding: 20px; padding-bottom: 120px; 
-            overflow-y: auto; 
-            background-image: radial-gradient(#ffdfba 20%, transparent 20%), radial-gradient(#ffdfba 20%, transparent 20%);
-            background-position: 0 0, 50px 50px; background-size: 100px 100px;
+            overflow-y: auto;
         }
 
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* PANTALLA DE BLOQUEO DE PC (Roja discreta) */
         #banScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #2f3542; z-index: 99999; 
-            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #fff; z-index: 99999; 
+            display: none; flex-direction: column; justify-content: center; align-items: center; 
+            text-align: center; color: #ff6b6b;
         }
 
-        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; }
 
-        /* HEADER & SCORE */
-        .score-board {
-            background: white; padding: 15px 25px; border-radius: 20px; border-bottom: 4px solid #e1e1e1;
-            display: flex; flex-direction: column; align-items: center; width: 100%; margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        /* TARJETAS CON EFECTO CRISTAL */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 20px;
+            width: 100%;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.5);
+            display: flex; flex-direction: column; align-items: center;
         }
-        .score-title { font-size: 12px; color: #a4b0be; font-weight: 800; letter-spacing: 1px; }
-        .score-val { font-family: 'Fredoka One', cursive; font-size: 45px; color: var(--text); line-height: 1; margin-bottom: 10px; }
 
-        /* BARRA DE PROGRESO DE META */
-        .goal-container { width: 100%; margin-top: 5px; }
-        .goal-bar-bg { width: 100%; height: 12px; background: #f1f2f6; border-radius: 10px; overflow: hidden; border: 1px solid #dfe4ea; }
-        .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #2ed573, #7bed9f); transition: width 0.3s; }
-        .goal-text { font-size: 11px; color: #747d8c; margin-top: 4px; display: flex; justify-content: space-between; font-weight: bold; }
+        .score-title { font-size: 13px; color: #8395a7; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .score-val { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 50px; color: var(--text-main); line-height: 1; margin: 10px 0; }
 
-        /* ZONA DE JUEGO */
-        .game-area { width: 100%; height: 280px; display: flex; justify-content: center; align-items: center; position: relative; }
+        /* BARRA DE PROGRESO */
+        .goal-container { width: 100%; }
+        .goal-bar-bg { width: 100%; height: 14px; background: #dfe6e9; border-radius: 20px; overflow: hidden; }
+        .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #00b894, #55efc4); transition: width 0.3s; border-radius: 20px; }
+        .goal-text { font-size: 12px; color: #636e72; margin-top: 5px; display: flex; justify-content: space-between; font-weight: bold; }
+
+        /* ZONA DE JUEGO LIMPIA */
+        .game-area { width: 100%; height: 300px; display: flex; justify-content: center; align-items: center; position: relative; }
         
         .fruit-btn {
-            font-size: 140px; cursor: pointer; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 10px 0 rgba(0,0,0,0.1)); position: relative; z-index: 5;
+            font-size: 150px; cursor: pointer; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 15px 15px rgba(255, 159, 67, 0.4)); position: relative; z-index: 5;
+            -webkit-touch-callout: none;
         }
-        .fruit-btn:active { transform: scale(0.9) rotate(5deg); }
+        .fruit-btn:active { transform: scale(0.9); filter: drop-shadow(0 5px 5px rgba(255, 159, 67, 0.4)); }
 
-        /* EFECTOS */
-        .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--fruit); pointer-events: none; animation: pop 0.6s ease-out forwards; }
-        @keyframes pop { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
-        .float-plus { position: absolute; font-weight: 900; font-size: 28px; color: var(--green); pointer-events: none; animation: floatUp 0.8s forwards; text-shadow: 0 2px 0 white; }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-80px) scale(1.5); opacity: 0; } }
+        /* EFECTOS SUAVES */
+        .particle { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: var(--orange-primary); pointer-events: none; animation: pop 0.6s ease-out forwards; }
+        @keyframes pop { 0% { transform: translate(0, 0) scale(1); opacity: 0.8; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
+        
+        .float-plus { position: absolute; font-family:'Fredoka', sans-serif; font-weight: 600; font-size: 32px; color: var(--green-money); pointer-events: none; animation: floatUp 0.8s forwards; text-shadow: 0 2px 10px rgba(255,255,255,0.8); }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.2); opacity: 0; } }
 
-        /* BARRA DE ENERGÍA */
-        .energy-container { width: 100%; background: white; padding: 12px 15px; border-radius: 15px; border-bottom: 4px solid #e1e1e1; text-align: center; }
-        .energy-track { width: 100%; height: 10px; background: #dfe4ea; border-radius: 10px; overflow: hidden; margin: 5px 0; }
-        .energy-fill { height: 100%; width: 100%; background: var(--energy); transition: width 0.2s; }
-        .energy-text { font-size: 11px; font-weight: bold; color: var(--text); display: flex; justify-content: space-between; }
+        /* ENERGÍA */
+        .energy-track { width: 100%; height: 12px; background: #dfe6e9; border-radius: 20px; overflow: hidden; margin: 8px 0; }
+        .energy-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #ff7675, #d63031); transition: width 0.2s; border-radius: 20px; }
+        .energy-text { font-size: 12px; font-weight: bold; color: #636e72; display: flex; justify-content: space-between; }
 
-        /* RECARGA OVERLAY */
+        /* OVERLAY RECARGA */
         .refill-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.95); z-index: 10; border-radius: 20px;
+            background: rgba(255,255,255,0.9); z-index: 10; border-radius: 25px;
             display: none; flex-direction: column; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
         }
         .btn-refill {
-            background: var(--energy); color: white; padding: 12px 25px; border-radius: 50px;
-            border: none; font-weight: 900; font-size: 16px; cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4); animation: pulse 1.5s infinite;
+            background: linear-gradient(45deg, #ff6b6b, #ee5253); color: white; padding: 14px 30px; border-radius: 50px;
+            border: none; font-weight: 800; font-size: 16px; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(238, 82, 83, 0.4); animation: pulse 2s infinite;
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* BONUS & FOOTER */
-        .bonus-row { display: flex; gap: 8px; width: 100%; margin-top: 5px; }
+        /* BOTONES ESTILIZADOS */
+        .bonus-row { display: flex; gap: 15px; width: 100%; margin-top: 5px; }
         .btn-bonus {
-            flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; color: white; font-size: 11px;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.1); transition: transform 0.1s;
+            flex: 1; padding: 15px; border-radius: 18px; border: none; font-weight: bold; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; color: white; font-size: 12px;
+            transition: transform 0.2s; position: relative; overflow: hidden;
         }
-        .btn-bonus:active { transform: translateY(3px); box-shadow: none; }
-        .b-adsgram { background: #3742fa; }
-        .b-monetag { background: #ffa502; }
+        .btn-bonus:active { transform: scale(0.95); }
+        .b-adsgram { background: linear-gradient(45deg, #4834d4, #686de0); box-shadow: 0 8px 15px rgba(72, 52, 212, 0.3); }
+        .b-monetag { background: linear-gradient(45deg, #f0932b, #ffbe76); box-shadow: 0 8px 15px rgba(240, 147, 43, 0.3); }
 
         .btn-withdraw { 
-            background: #2f3542; color: white; width: 100%; padding: 15px; border: none; 
-            border-radius: 12px; font-weight: 900; font-size: 16px; margin-top: 15px; 
-            cursor: pointer; box-shadow: 0 4px 0 #1e272e; transition: 0.3s;
+            background: #2f3542; color: white; width: 100%; padding: 18px; border: none; 
+            border-radius: 18px; font-weight: 800; font-size: 16px; margin-top: 15px; 
+            cursor: pointer; box-shadow: 0 10px 0 #1e272e; transition: 0.3s;
         }
         .btn-withdraw.ready {
-            background: linear-gradient(45deg, #2ed573, #26de81);
-            box-shadow: 0 0 20px rgba(46, 213, 115, 0.6);
-            animation: pulse 1.5s infinite; text-shadow: 0 2px 0 rgba(0,0,0,0.2);
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            box-shadow: 0 10px 25px rgba(0, 184, 148, 0.5);
+            animation: pulse 1.5s infinite; text-shadow: none; border-bottom: none;
         }
-        .btn-withdraw:active { transform: translateY(4px); box-shadow: none; }
 
-        .mini-menu { display: flex; gap: 8px; width: 100%; margin-top: 10px; }
+        .mini-menu { display: flex; gap: 10px; width: 100%; margin-top: 15px; }
         .btn-mini {
-            flex: 1; background: #fff; border: 2px solid #e1e1e1; color: #a4b0be;
-            padding: 8px; border-radius: 10px; font-size: 11px; font-weight: 800;
+            flex: 1; background: white; border: none; color: #a4b0be;
+            padding: 10px; border-radius: 12px; font-size: 12px; font-weight: 800;
             cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.2s;
         }
+        .btn-mini:hover { color: var(--orange-primary); transform: translateY(-2px); }
 
-        /* MODAL */
-        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:100; }
-        .modal-card { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; }
-        .btn-green { background: var(--green); color: white; width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; box-shadow: 0 4px 0 #218c74; }
+        /* MODAL MODERNO */
+        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(5px); display:none; justify-content:center; align-items:center; z-index:100; }
+        .modal-card { background: white; padding: 30px; border-radius: 30px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .btn-green { background: var(--green-money); color: white; width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer; box-shadow: 0 10px 20px rgba(16, 172, 132, 0.3); }
     </style>
 </head>
 <body>
-
-    <div id="banScreen"><h2>Acceso Denegado</h2><p>Dispositivo vinculado.</p></div>
+    <div id="banScreen">
+        <div style="font-size: 60px; margin-bottom: 20px;">📱</div>
+        <h2 style="color:#2d3436; margin:0;">Solo Móviles</h2>
+        <p style="color:#636e72; margin-top:10px;">Por seguridad, esta app solo funciona en iOS y Android.</p>
+    </div>
 
     <div class="app-container" id="appContent">
         
-        <div class="score-board">
-            <div class="score-title">TUS FRUTAS</div>
+        <div class="glass-card score-board">
+            <div class="score-title">TUS FRUTAS RECOLECTADAS</div>
             <div class="score-val" id="score">0</div>
             <div class="goal-container">
+                <div class="goal-text" style="margin-bottom:5px;"><span>PROGRESO</span><span style="color:var(--green-money);">META: $0.10</span></div>
                 <div class="goal-bar-bg"><div class="goal-bar-fill" id="goalBar"></div></div>
-                <div class="goal-text"><span>PROGRESO</span><span style="color:#2ed573;">META: $0.10 USD</span></div>
             </div>
         </div>
 
@@ -144,25 +166,25 @@
             
             <div class="refill-overlay" id="refillOverlay">
                 <div style="font-size:50px; margin-bottom:10px;">⚡</div>
-                <h3 style="color:#2f3542; margin-bottom:5px;">SIN ENERGÍA</h3>
-                <p style="color:#747d8c; margin-bottom:20px; font-size:14px;">Recarga para seguir jugando.</p>
+                <h3 style="color:#2d3436; margin-bottom:5px;">¡Agotado!</h3>
+                <p style="color:#636e72; margin-bottom:20px; font-size:14px;">Recarga energía para seguir.</p>
                 <button class="btn-refill" onclick="refillEnergy()">
                     <i class="fa-solid fa-play"></i> VER VIDEO (+50⚡)
                 </button>
             </div>
         </div>
 
-        <div class="energy-container">
+        <div class="glass-card energy-container">
             <div class="energy-text"><span>ENERGÍA</span><span id="energyText">100/100</span></div>
             <div class="energy-track"><div class="energy-fill" id="energyBar"></div></div>
         </div>
 
         <div class="bonus-row">
             <button class="btn-bonus b-adsgram" onclick="watchEnergyBonus('adsgram')">
-                <i class="fa-solid fa-bolt" style="margin-bottom:3px;"></i><span>+15 ENERGÍA</span>
+                <i class="fa-solid fa-bolt" style="font-size: 20px; margin-bottom:5px;"></i><span>+15 FLASH</span>
             </button>
             <button class="btn-bonus b-monetag" onclick="watchEnergyBonus('monetag')">
-                <i class="fa-solid fa-battery-full" style="margin-bottom:3px;"></i><span>+10 ENERGÍA</span>
+                <i class="fa-solid fa-battery-full" style="font-size: 20px; margin-bottom:5px;"></i><span>+10 EXTRA</span>
             </button>
         </div>
 
@@ -178,31 +200,54 @@
 
     <div id="modal">
         <div class="modal-card">
-            <h2 style="color:var(--green); margin-bottom:10px;">✅ ¡META ALCANZADA!</h2>
-            <p style="color:#666; font-size:13px; margin-bottom:15px;">Envía esta captura para tu pago.</p>
-            <div style="background:#f1f2f6; padding:15px; border-radius:10px; margin-bottom:15px; text-align:left; font-size:12px; color:#2f3542; border: 1px dashed #ccc;">
+            <div style="font-size:50px; margin-bottom:10px;">🎉</div>
+            <h2 style="color:var(--green-money); margin-bottom:10px;">¡FELICIDADES!</h2>
+            <p style="color:#666; font-size:14px; margin-bottom:20px;">Meta completada. Envía tu captura.</p>
+            <div style="background:#f1f2f6; padding:15px; border-radius:15px; margin-bottom:15px; text-align:left; font-size:13px; color:#2f3542; border: 1px dashed #b2bec3;">
                 <div><b>USUARIO:</b> <span id="recUser">...</span></div>
                 <div><b>FECHA:</b> <span id="recDate">...</span></div>
-                <div style="margin-top:5px; font-size:16px; color:#27ae60;"><b>TOTAL:</b> $0.10 USD</div>
+                <div style="margin-top:10px; font-size:18px; color:#00b894; font-weight:bold; text-align:center;">$0.10 USD</div>
             </div>
-            <button class="btn-green" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR CAPTURA</button>
-            <button style="background:none; border:none; color:#aaa; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar Ventana</button>
+            <button class="btn-green" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR AHORA</button>
+            <button style="background:none; border:none; color:#b2bec3; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar</button>
         </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        tg.setHeaderColor('#ffecd2'); tg.setBackgroundColor('#ffecd2');
+        // Color del header igual al fondo suave
+        tg.setHeaderColor('#ff9a9e'); tg.setBackgroundColor('#ff9a9e');
 
         const ADSGRAM_ID = "18897"; 
-        
-        // 🛡️ LLAVE DE SEGURIDAD (Mantiene el saldo del usuario)
         const KEY = 'fruit_v95_prod'; 
-        
         const META = 20000; 
         let user = { pts: 0, energy: 100 };
 
-        // Efectos de sonido
+        // 🛡️ SEGURIDAD 1: BLOQUEAR CLICK DERECHO
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // 🛡️ SEGURIDAD 2: BLOQUEAR TECLAS HACKER
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false; 
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        }
+
+        // 🛡️ SEGURIDAD 3: DETECTOR DE PC
+        function checkPlatform() {
+            const platform = tg.platform;
+            // Si es PC o Web Desconocido -> Bloquear
+            if (!platform || platform === 'unknown' || platform === 'tdesktop' || platform === 'web' || platform === 'weba' || platform === 'macos') {
+                document.getElementById('banScreen').style.display = 'flex';
+                document.getElementById('appContent').style.display = 'none';
+                return false; 
+            }
+            return true; 
+        }
+
+        // SONIDOS SUAVES
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSfx(type) {
             try {
@@ -213,16 +258,17 @@
                 gain.connect(audioCtx.destination);
 
                 if (type === 'tap') {
+                    // Sonido más suave y "burbujeante"
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.start(); osc.stop(audioCtx.currentTime + 0.15);
                 } else if (type === 'success') {
                     osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                    osc.frequency.linearRampToValueAtTime(1200, audioCtx.currentTime + 0.3);
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.3);
                     gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                     gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
                     osc.start(); osc.stop(audioCtx.currentTime + 0.5);
@@ -231,47 +277,42 @@
         }
 
         window.onload = function() {
+            // 🛡️ PRIMERO: Verificamos plataforma
+            if (!checkPlatform()) return; 
+
             // Anti-Multicuenta
             const cid = tg.initDataUnsafe?.user?.id || 12345; 
             const sid = localStorage.getItem('did');
             if (sid && sid != cid) {
+                document.getElementById('banScreen').innerHTML = "<h2>Acceso Restringido</h2><p>Cuenta vinculada a otro ID.</p>";
                 document.getElementById('banScreen').style.display = 'flex';
+                document.getElementById('appContent').style.display = 'none';
                 return;
             } 
             if (!sid) localStorage.setItem('did', cid);
 
-            // 🚑 SISTEMA DE RECUPERACIÓN INTELIGENTE (MIGRACIÓN SEGURA)
+            // 🚑 SISTEMA DE RECUPERACIÓN (NO TOCAR - Mantiene el saldo)
             if(localStorage.getItem(KEY)) {
                 let rawData = localStorage.getItem(KEY);
                 try {
-                    // Intento 1: Leer el formato Antiguo (no encriptado)
                     if (rawData.trim().startsWith("{")) {
-                        console.log("Detectados datos antiguos (600 puntos). Migrando a formato seguro.");
                         let saved = JSON.parse(rawData);
                         user.pts = parseInt(saved.pts) || 0;
                         user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
-                        // Guardamos inmediatamente en formato NUEVO seguro
                         save(); 
-                    } 
-                    // Intento 2: Leer el formato Nuevo (encriptado)
-                    else {
-                        let decoded = atob(rawData); // Desencriptar
+                    } else {
+                        let decoded = atob(rawData);
                         let saved = JSON.parse(decoded);
                         user.pts = parseInt(saved.pts) || 0;
                         user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
                     }
-                } catch(e) {
-                    console.log("Error de lectura o datos corruptos después del clic. Reiniciando a 0.", e);
-                    // Si falla la lectura, no hay más opción que empezar de 0
-                }
+                } catch(e) { console.log("Reset datos corruptos"); }
             }
             updateUI();
         };
 
         function updateUI() {
-            const scoreEl = document.getElementById('score');
-            scoreEl.innerText = user.pts;
-            
+            document.getElementById('score').innerText = user.pts;
             document.getElementById('energyText').innerText = `${user.energy}/100`;
             document.getElementById('energyBar').style.width = `${Math.min(user.energy, 100)}%`;
             
@@ -282,28 +323,20 @@
             const wBtn = document.getElementById('withdrawBtn');
             if (user.pts >= META) {
                 wBtn.classList.add('ready');
-                wBtn.innerHTML = '<i class="fa-solid fa-sack-dollar"></i> ¡META ALCANZADA! RETIRAR $0.10';
+                wBtn.innerHTML = '<i class="fa-solid fa-gift"></i> ¡RECLAMAR RECOMPENSA!';
             } else {
                 wBtn.classList.remove('ready');
                 wBtn.innerHTML = `<i class="fa-solid fa-lock"></i> META NO ALCANZADA`;
             }
             
-            if(user.energy <= 0) {
-                document.getElementById('refillOverlay').style.display = 'flex';
-            } else {
-                document.getElementById('refillOverlay').style.display = 'none';
-            }
+            document.getElementById('refillOverlay').style.display = (user.energy <= 0) ? 'flex' : 'none';
         }
 
-        // 🛡️ Guardar con SEGURIDAD (Encriptado)
         function save() { 
             try {
-                // btoa() encripta los datos a Base64
                 let encrypted = btoa(JSON.stringify(user));
                 localStorage.setItem(KEY, encrypted); 
-            } catch(e) {
-                console.error("Error al guardar");
-            }
+            } catch(e) {}
             updateUI(); 
         }
 
@@ -323,6 +356,7 @@
             document.body.appendChild(el);
             setTimeout(() => el.remove(), 800);
 
+            // Partículas de jugo (Naranja/Amarillo)
             for(let i=0; i<3; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
@@ -330,7 +364,7 @@
                 p.style.top = e.clientY + 'px';
                 p.style.setProperty('--tx', (Math.random()*80 - 40) + 'px');
                 p.style.setProperty('--ty', (Math.random()*80 - 40) + 'px');
-                p.style.backgroundColor = ['#ffa502', '#ff6b81', '#7bed9f'][Math.floor(Math.random()*3)];
+                p.style.backgroundColor = ['#ff9f43', '#feca57', '#ff6b6b'][Math.floor(Math.random()*3)];
                 document.body.appendChild(p);
                 setTimeout(() => p.remove(), 600);
             }
@@ -342,12 +376,12 @@
             AdController.show().then(() => {
                 user.energy = 50; save();
                 playSfx('success');
-                tg.showPopup({ title: "¡Recargado!", message: "+50 Energía" });
+                tg.showPopup({ title: "¡Listo!", message: "+50 Energía" });
             }).catch(() => {
                 if (typeof show_10278425 === 'function') {
                     show_10278425().then(()=>{
                         user.energy = 50; save(); playSfx('success');
-                    }).catch(()=>{ tg.showAlert("Sin videos disponibles."); });
+                    }).catch(()=>{ tg.showAlert("No hay videos disponibles."); });
                 }
             });
         }
@@ -355,10 +389,10 @@
         function watchEnergyBonus(type) {
             if(type === 'adsgram') {
                 const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
-                AdController.show().then(() => { addEnergy(15); }).catch(() => { tg.showAlert("Video no listo"); });
+                AdController.show().then(() => { addEnergy(15); }).catch(() => { tg.showAlert("Video no cargó"); });
             } else {
                 if (typeof show_10278425 === 'function') {
-                    show_10278425().then(()=>{ addEnergy(10); }).catch(()=>{ tg.showAlert("Video no listo"); });
+                    show_10278425().then(()=>{ addEnergy(10); }).catch(()=>{ tg.showAlert("Video no cargó"); });
                 }
             }
         }
@@ -367,13 +401,13 @@
             user.energy += amount;
             if(user.energy > 100) user.energy = 100;
             save(); playSfx('success');
-            tg.showPopup({ title: "¡Energía Extra!", message: `+${amount} Energía` });
+            tg.showPopup({ title: "¡Energía Extra!", message: `+${amount}` });
         }
 
         function retirar() {
-            if(user.pts < META) { tg.showAlert(`Sigue jugando. Faltan ${META - user.pts} Puntos.`); return; }
+            if(user.pts < META) { tg.showAlert(`Faltan ${META - user.pts} Frutas.`); return; }
             
-            user.pts -= META; // Restar puntos
+            user.pts -= META; 
             save();
             updateUI();
             
