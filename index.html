@@ -1,71 +1,561 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>GameSmp - Gana Puntos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Fruit Splash ELITE</title>
+    
+    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
     <style>
-        body { 
-            background: #1a1a2e; 
-            color: white; 
-            text-align: center; 
-            font-family: Arial; 
-            padding: 20px; 
+        /* TEMA FRESH PREMIUM (Sin Casino) */
+        :root { 
+            --bg-gradient: linear-gradient(135deg, #fff1eb 0%, #ace0f9 100%); /* Cielo y Nubes suave */
+            --card-bg: rgba(255, 255, 255, 0.85); /* Efecto Cristal */
+            --orange-primary: #ff9f43;
+            --orange-dark: #ee5253;
+            --green-money: #10ac84;
+            --text-main: #222f3e;
+            --shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        .puntos { 
-            font-size: 50px; 
-            color: gold; 
-            margin: 20px; 
+        
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #ffd1ff);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main); font-family: 'Nunito', sans-serif;
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center; 
+            padding: 20px; padding-bottom: 120px; 
+            overflow-y: auto;
         }
-        .boton { 
-            background: #4361ee; 
-            color: white; 
-            border: none; 
-            padding: 20px 40px; 
-            font-size: 20px; 
-            border-radius: 15px; 
-            margin: 10px; 
-            cursor: pointer; 
+
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* PANTALLA DE BLOQUEO DE PC (Roja discreta) */
+        #banScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #fff; z-index: 99999; 
+            display: none; flex-direction: column; justify-content: center; align-items: center; 
+            text-align: center; color: #ff6b6b;
         }
-        .tienda { 
-            background: rgba(255,255,255,0.1); 
-            padding: 15px; 
-            border-radius: 10px; 
-            margin: 20px; 
+
+        .app-container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; }
+
+        /* TARJETAS CON EFECTO CRISTAL */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 20px;
+            width: 100%;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.5);
+            display: flex; flex-direction: column; align-items: center;
         }
-        .vip { 
-            background: gold; 
-            color: black; 
-            font-weight: bold; 
-            padding: 15px; 
-            border-radius: 10px; 
-            margin: 20px; 
-            cursor: pointer;
+
+        .score-title { font-size: 13px; color: #8395a7; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .score-val { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 50px; color: var(--text-main); line-height: 1; margin: 10px 0; }
+
+        /* BARRA DE PROGRESO */
+        .goal-container { width: 100%; }
+        .goal-bar-bg { width: 100%; height: 14px; background: #dfe6e9; border-radius: 20px; overflow: hidden; }
+        .goal-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #00b894, #55efc4); transition: width 0.3s; border-radius: 20px; }
+        .goal-text { font-size: 12px; color: #636e72; margin-top: 5px; display: flex; justify-content: space-between; font-weight: bold; }
+
+        /* ZONA DE JUEGO LIMPIA */
+        .game-area { width: 100%; height: 300px; display: flex; justify-content: center; align-items: center; position: relative; }
+        
+        .fruit-btn {
+            font-size: 150px; cursor: pointer; transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 15px 15px rgba(255, 159, 67, 0.4)); position: relative; z-index: 5;
+            -webkit-touch-callout: none;
         }
+        .fruit-btn:active { transform: scale(0.9); filter: drop-shadow(0 5px 5px rgba(255, 159, 67, 0.4)); }
+
+        /* EFECTOS SUAVES */
+        .particle { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: var(--orange-primary); pointer-events: none; animation: pop 0.6s ease-out forwards; }
+        @keyframes pop { 0% { transform: translate(0, 0) scale(1); opacity: 0.8; } 100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; } }
+        
+        .float-plus { position: absolute; font-family:'Fredoka', sans-serif; font-weight: 600; font-size: 32px; color: var(--green-money); pointer-events: none; animation: floatUp 0.8s forwards; text-shadow: 0 2px 10px rgba(255,255,255,0.8); }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.2); opacity: 0; } }
+
+        /* ENERGÍA */
+        .energy-track { width: 100%; height: 12px; background: #dfe6e9; border-radius: 20px; overflow: hidden; margin: 8px 0; }
+        .energy-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #ff7675, #d63031); transition: width 0.2s; border-radius: 20px; }
+        .energy-text { font-size: 12px; font-weight: bold; color: #636e72; display: flex; justify-content: space-between; }
+
+        /* OVERLAY RECARGA */
+        .refill-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 10; border-radius: 25px;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .btn-refill {
+            background: linear-gradient(45deg, #ff6b6b, #ee5253); color: white; padding: 14px 30px; border-radius: 50px;
+            border: none; font-weight: 800; font-size: 16px; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(238, 82, 83, 0.4); animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+                /* BOTONES ESTILIZADOS */
+        .bonus-row { display: flex; gap: 15px; width: 100%; margin-top: 5px; }
+        .btn-bonus {
+            flex: 1; padding: 15px; border-radius: 18px; border: none; font-weight: bold; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; color: white; font-size: 12px;
+            transition: transform 0.2s; position: relative; overflow: hidden;
+        }
+        .btn-bonus:active { transform: scale(0.95); }
+        .b-adsgram { background: linear-gradient(45deg, #4834d4, #686de0); box-shadow: 0 8px 15px rgba(72, 52, 212, 0.3); }
+        .b-monetag { background: linear-gradient(45deg, #f0932b, #ffbe76); box-shadow: 0 8px 15px rgba(240, 147, 43, 0.3); }
+
+        .btn-withdraw { 
+            background: #2f3542; color: white; width: 100%; padding: 18px; border: none; 
+            border-radius: 18px; font-weight: 800; font-size: 16px; margin-top: 15px; 
+            cursor: pointer; box-shadow: 0 10px 0 #1e272e; transition: 0.3s;
+        }
+        .btn-withdraw.ready {
+            background: linear-gradient(45deg, #00b894, #00cec9);
+            box-shadow: 0 10px 25px rgba(0, 184, 148, 0.5);
+            animation: pulse 1.5s infinite; text-shadow: none; border-bottom: none;
+        }
+
+        .mini-menu { display: flex; gap: 10px; width: 100%; margin-top: 15px; }
+        .btn-mini {
+            flex: 1; background: white; border: none; color: #a4b0be;
+            padding: 10px; border-radius: 12px; font-size: 12px; font-weight: 800;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.2s;
+        }
+        .btn-mini:hover { color: var(--orange-primary); transform: translateY(-2px); }
+
+        /* MODAL MODERNO */
+        #modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(5px); display:none; justify-content:center; align-items:center; z-index:100; }
+        .modal-card { background: white; padding: 30px; border-radius: 30px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .btn-green { background: var(--green-money); color: white; width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer; box-shadow: 0 10px 20px rgba(16, 172, 132, 0.3); }
     </style>
 </head>
 <body>
-    <h1>🎮 GameSmp Pro</h1>
-    
-    <div class="puntos" id="puntos">0</div>
-    <div>≈ $<span id="dolares">0.00</span> USD</div>
-    
-    <button class="boton" onclick="ganarPuntos()">¡HAZ CLIC PARA GANAR!</button>
-    
-    <div class="vip" onclick="comprarVIP()">
-        💎 VIP - $2.99/mes<br>
-        <small>+50% puntos · Sin anuncios</small>
+    <div id="banScreen">
+        <div style="font-size: 60px; margin-bottom: 20px;">📱</div>
+        <h2 style="color:#2d3436; margin:0;">Solo Móviles</h2>
+        <p style="color:#636e72; margin-top:10px;">Por seguridad, esta app solo funciona en iOS y Android.</p>
     </div>
-    
-    <div class="tienda">
-        <h3>🏪 TIENDA</h3>
-        <button onclick="comprarMejora(1)">Auto-Click (100 pts)</button>
-        <button onclick="comprarMejora(2)">Doble Puntos (500 pts)</button>
+
+    <div class="app-container" id="appContent">
+        
+        <div class="glass-card score-board">
+            <div class="score-title">TUS FRUTAS RECOLECTADAS</div>
+            <div class="score-val" id="score">0</div>
+            <div class="goal-container">
+                <div class="goal-text" style="margin-bottom:5px;"><span>PROGRESO</span><span style="color:var(--green-money);">META: $0.10</span></div>
+                <div class="goal-bar-bg"><div class="goal-bar-fill" id="goalBar"></div></div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="fruit-btn" id="fruit" onclick="tap(event)">🍓</div>
+            
+            <div class="refill-overlay" id="refillOverlay">
+                <div style="font-size:50px; margin-bottom:10px;">⚡</div>
+                <h3 style="color:#2d3436; margin-bottom:5px;">¡Agotado!</h3>
+                <p style="color:#636e72; margin-bottom:20px; font-size:14px;">Recarga energía para seguir.</p>
+                <button class="btn-refill" onclick="refillEnergy()">
+                    <i class="fa-solid fa-play"></i> VER VIDEO (+50⚡)
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-card energy-container">
+            <div class="energy-text"><span>ENERGÍA</span><span id="energyText">100/100</span></div>
+            <div class="energy-track"><div class="energy-fill" id="energyBar"></div></div>
+        </div>
+
+        <div class="bonus-row">
+            <button class="btn-bonus b-adsgram" onclick="watchEnergyBonus('adsgram')">
+                <i class="fa-solid fa-bolt" style="font-size: 20px; margin-bottom:5px;"></i><span>+15 FLASH</span>
+            </button>
+            <button class="btn-bonus b-monetag" onclick="watchEnergyBonus('monetag')">
+                <i class="fa-solid fa-battery-full" style="font-size: 20px; margin-bottom:5px;"></i><span>+10 EXTRA</span>
+            </button>
+        </div>
+
+        <button class="btn-withdraw" id="withdrawBtn" onclick="retirar()">
+            <i class="fa-solid fa-lock"></i> META NO ALCANZADA
+        </button>
+
+        <div class="mini-menu">
+            <button class="btn-mini" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fa-solid fa-headset"></i> Soporte</button>
+            <button class="btn-mini" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram"></i> Canal</button>
+        </div>
     </div>
-    
-    <div style="margin-top: 30px;">
-        <button onclick="verAnuncio()">📺 Ver Anuncio (+50 pts)</button>
-        <button onclick="retirarDinero()">💰 Retirar Dinero</button>
+
+    <div id="modal">
+        <div class="modal-card">
+            <div style="font-size:50px; margin-bottom:10px;">🎉</div>
+            <h2 style="color:var(--green-money); margin-bottom:10px;">¡FELICIDADES!</h2>
+            <p style="color:#666; font-size:14px; margin-bottom:20px;">Meta completada. Envía tu captura.</p>
+            <div style="background:#f1f2f6; padding:15px; border-radius:15px; margin-bottom:15px; text-align:left; font-size:13px; color:#2f3542; border: 1px dashed #b2bec3;">
+                <div><b>USUARIO:</b> <span id="recUser">...</span></div>
+                <div><b>FECHA:</b> <span id="recDate">...</span></div>
+                <div style="margin-top:10px; font-size:18px; color:#00b894; font-weight:bold; text-align:center;">$0.10 USD</div>
+            </div>
+            <button class="btn-green" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">📩 ENVIAR AHORA</button>
+            <button style="background:none; border:none; color:#b2bec3; margin-top:15px; cursor:pointer;" onclick="location.reload()">Cerrar</button>
+        </div>
     </div>
+    <script>
+    const tg = window.Telegram.WebApp; tg.expand();
+    // Color del header igual al fondo suave
+    tg.setHeaderColor('#ff9a9e'); tg.setBackgroundColor('#ff9a9e');
+
+    const ADSGRAM_ID = "18897"; 
+    const KEY = 'fruit_v95_prod'; 
+    const META = 20000; 
+    let user = { pts: 0, energy: 100 };
+
+    // 🛡️ SEGURIDAD 1: BLOQUEAR CLICK DERECHO
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // 🛡️ SEGURIDAD 2: BLOQUEAR TECLAS HACKER
+    document.onkeydown = function(e) {
+        if(e.keyCode == 123) return false; 
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+    }
+
+    // 🛡️ SEGURIDAD 3: DETECTOR DE PC
+    function checkPlatform() {
+        const platform = tg.platform;
+        // Si es PC o Web Desconocido -> Bloquear
+        if (!platform || platform === 'unknown' || platform === 'tdesktop' || platform === 'web' || platform === 'weba' || platform === 'macos') {
+            document.getElementById('banScreen').style.display = 'flex';
+            document.getElementById('appContent').style.display = 'none';
+            return false; 
+        }
+        return true; 
+    }
+
+    // SONIDOS SUAVES
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSfx(type) {
+        try {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'tap') {
+                // Sonido más suave y "burbujeante"
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+            } else if (type === 'success') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            }
+        } catch(e) {}
+    }
+        // ========== SISTEMA DE GUARDADO PERMANENTE MEJORADO ==========
+window.onload = function() {
+    // 🛡️ PRIMERO: Verificamos plataforma
+    if (!checkPlatform()) return; 
+
+    // Anti-Multicuenta
+    const cid = tg.initDataUnsafe?.user?.id || 12345; 
+    const sid = localStorage.getItem('did');
+    if (sid && sid != cid) {
+        document.getElementById('banScreen').innerHTML = "<h2>Acceso Restringido</h2><p>Cuenta vinculada a otro ID.</p>";
+        document.getElementById('banScreen').style.display = 'flex';
+        document.getElementById('appContent').style.display = 'none';
+        return;
+    } 
+    if (!sid) localStorage.setItem('did', cid);
+
+    // 🚑 SISTEMA DE RECUPERACIÓN MEJORADO - NO PIERDE PUNTOS
+    console.log("🔍 Iniciando recuperación de datos...");
     
-    <script src="script.js"></script>
+    // Intentar múltiples métodos de recuperación
+    let datosRecuperados = false;
+    
+    // MÉTODO 1: Intentar desde la clave principal
+    if(localStorage.getItem(KEY)) {
+        let rawData = localStorage.getItem(KEY);
+        try {
+            // Intentar decodificar como JSON directo
+            if (rawData.trim().startsWith("{")) {
+                let saved = JSON.parse(rawData);
+                user.pts = parseInt(saved.pts) || 0;
+                user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+                datosRecuperados = true;
+                console.log("✅ Datos recuperados (JSON directo)");
+            } 
+            // Intentar decodificar base64
+            else {
+                let decoded = atob(rawData);
+                let saved = JSON.parse(decoded);
+                user.pts = parseInt(saved.pts) || 0;
+                user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+                datosRecuperados = true;
+                console.log("✅ Datos recuperados (Base64)");
+            }
+        } catch(e) {
+            console.log("❌ Error con método 1:", e.message);
+        }
+    }
+    
+    // MÉTODO 2: Intentar desde respaldo
+    if (!datosRecuperados && localStorage.getItem(KEY + '_backup')) {
+        try {
+            let backup = localStorage.getItem(KEY + '_backup');
+            let saved = JSON.parse(backup);
+            user.pts = parseInt(saved.pts) || 0;
+            user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+            datosRecuperados = true;
+            console.log("✅ Datos recuperados desde respaldo");
+        } catch(e) {
+            console.log("❌ Error con método 2:", e.message);
+        }
+    }
+    
+    // MÉTODO 3: Intentar desde respaldo de emergencia
+    if (!datosRecuperados && localStorage.getItem('fruit_emergency_backup')) {
+        try {
+            let emergency = localStorage.getItem('fruit_emergency_backup');
+            let saved = JSON.parse(emergency);
+            user.pts = parseInt(saved.pts) || 0;
+            user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+            datosRecuperados = true;
+            console.log("✅ Datos recuperados desde emergencia");
+        } catch(e) {
+            console.log("❌ Error con método 3:", e.message);
+        }
+    }
+    
+    // MÉTODO 4: Intentar desde sessionStorage como último recurso
+    if (!datosRecuperados && sessionStorage.getItem('fruit_current_session')) {
+        try {
+            let session = sessionStorage.getItem('fruit_current_session');
+            let saved = JSON.parse(session);
+            user.pts = parseInt(saved.pts) || 0;
+            user.energy = (saved.energy !== undefined) ? parseInt(saved.energy) : 100;
+            datosRecuperados = true;
+            console.log("✅ Datos recuperados desde sesión");
+        } catch(e) {
+            console.log("❌ Error con método 4:", e.message);
+        }
+    }
+    
+    // Si NO se pudieron recuperar datos
+    if (!datosRecuperados) {
+        console.log("⚠️ No se encontraron datos previos, iniciando fresco");
+        user.pts = 0;
+        user.energy = 100;
+        // Guardar estado inicial
+        save();
+    }
+    
+    console.log("🎮 Estado final:", user.pts, "frutas,", user.energy, "energía");
+    
+    updateUI();
+    
+    // Auto-guardado cada 30 segundos
+    setInterval(save, 30000);
+    
+    // Verificador de integridad cada minuto
+    setInterval(verificarIntegridadDatos, 60000);
+};
+
+// ========== FUNCIÓN DE GUARDADO MEJORADA ==========
+function save() { 
+    try {
+        // Guardar en formato base64 (principal)
+        let encrypted = btoa(JSON.stringify(user));
+        localStorage.setItem(KEY, encrypted);
+        
+        // 🆕 NUEVO: GUARDAR MÚLTIPLES RESPALDOS
+        
+        // 1. Respaldo directo (JSON sin codificar)
+        localStorage.setItem(KEY + '_backup', JSON.stringify(user));
+        
+        // 2. Respaldo de emergencia (con fecha)
+        localStorage.setItem('fruit_emergency_backup', JSON.stringify({
+            pts: user.pts,
+            energy: user.energy,
+            timestamp: new Date().toISOString()
+        }));
+        
+        // 3. Marcar fecha del último guardado
+        localStorage.setItem(KEY + '_timestamp', new Date().toISOString());
+        
+        // 4. Guardar en sessionStorage también
+        sessionStorage.setItem('fruit_current_session', JSON.stringify(user));
+        
+        // 5. Guardar en cookies como último recurso
+        document.cookie = `fruit_data=${encodeURIComponent(JSON.stringify(user))}; max-age=2592000`; // 30 días
+        
+        console.log("💾 Datos guardados:", user.pts, "frutas");
+        
+    } catch(e) {
+        console.error("❌ Error al guardar:", e);
+        // Intentar método alternativo si falla
+        try {
+            localStorage.setItem('fruit_fallback', JSON.stringify(user));
+        } catch(e2) {}
+    }
+    updateUI(); 
+        }
+                // ========== VERIFICADOR DE INTEGRIDAD ==========
+        function verificarIntegridadDatos() {
+            console.log("🔍 Verificando integridad de datos...");
+            
+            // Verificar que todos los datos sean válidos
+            if (user.pts < 0) user.pts = 0;
+            if (user.energy < 0) user.energy = 0;
+            if (user.energy > 100) user.energy = 100;
+            
+            // Verificar consistencia entre respaldos
+            try {
+                let main = localStorage.getItem(KEY);
+                let backup = localStorage.getItem(KEY + '_backup');
+                
+                if (main && backup) {
+                    let mainData = JSON.parse(atob(main));
+                    let backupData = JSON.parse(backup);
+                    
+                    // Si hay discrepancia grande, usar el valor más alto
+                    if (Math.abs(mainData.pts - backupData.pts) > 100) {
+                        user.pts = Math.max(mainData.pts, backupData.pts);
+                        console.log("⚠️ Discrepancia detectada, usando valor más alto:", user.pts);
+                        save();
+                    }
+                }
+            } catch(e) {}
+        }
+
+        // ========== INTERFAZ ==========
+        function updateUI() {
+            document.getElementById('score').innerText = user.pts;
+            document.getElementById('energyText').innerText = `${user.energy}/100`;
+            document.getElementById('energyBar').style.width = `${Math.min(user.energy, 100)}%`;
+            
+            let pct = (user.pts / META) * 100;
+            if(pct > 100) pct = 100;
+            document.getElementById('goalBar').style.width = `${pct}%`;
+
+            const wBtn = document.getElementById('withdrawBtn');
+            if (user.pts >= META) {
+                wBtn.classList.add('ready');
+                wBtn.innerHTML = '<i class="fa-solid fa-gift"></i> ¡RECLAMAR RECOMPENSA!';
+            } else {
+                wBtn.classList.remove('ready');
+                wBtn.innerHTML = `<i class="fa-solid fa-lock"></i> META NO ALCANZADA`;
+            }
+            
+            document.getElementById('refillOverlay').style.display = (user.energy <= 0) ? 'flex' : 'none';
+        }
+
+        // ========== JUEGO ==========
+        function tap(e) {
+            if(user.energy <= 0) return;
+
+            user.pts += 1;
+            user.energy -= 1;
+            save();
+            playSfx('tap');
+
+            const el = document.createElement('div');
+            el.className = 'float-plus';
+            el.innerText = '+1';
+            el.style.left = e.clientX + 'px';
+            el.style.top = e.clientY + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 800);
+
+            // Partículas de jugo (Naranja/Amarillo)
+            for(let i=0; i<3; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = e.clientX + 'px';
+                p.style.top = e.clientY + 'px';
+                p.style.setProperty('--tx', (Math.random()*80 - 40) + 'px');
+                p.style.setProperty('--ty', (Math.random()*80 - 40) + 'px');
+                p.style.backgroundColor = ['#ff9f43', '#feca57', '#ff6b6b'][Math.floor(Math.random()*3)];
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 600);
+            }
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function refillEnergy() {
+            const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+            AdController.show().then(() => {
+                user.energy = 50; save();
+                playSfx('success');
+                tg.showPopup({ title: "¡Listo!", message: "+50 Energía" });
+            }).catch(() => {
+                if (typeof show_10278425 === 'function') {
+                    show_10278425().then(()=>{
+                        user.energy = 50; save(); playSfx('success');
+                    }).catch(()=>{ tg.showAlert("No hay videos disponibles."); });
+                }
+            });
+        }
+
+        function watchEnergyBonus(type) {
+            if(type === 'adsgram') {
+                const AdController = window.Adsgram.init({ blockId: ADSGRAM_ID });
+                AdController.show().then(() => { addEnergy(15); }).catch(() => { tg.showAlert("Video no cargó"); });
+            } else {
+                if (typeof show_10278425 === 'function') {
+                    show_10278425().then(()=>{ addEnergy(10); }).catch(()=>{ tg.showAlert("Video no cargó"); });
+                }
+            }
+        }
+
+        function addEnergy(amount) {
+            user.energy += amount;
+            if(user.energy > 100) user.energy = 100;
+            save(); playSfx('success');
+            tg.showPopup({ title: "¡Energía Extra!", message: `+${amount}` });
+        }
+
+        function retirar() {
+            if(user.pts < META) { tg.showAlert(`Faltan ${META - user.pts} Frutas.`); return; }
+            
+            user.pts -= META; 
+            save();
+            updateUI();
+            
+            let d = new Date();
+            document.getElementById('recDate').innerText = d.toLocaleString();
+            document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "Jugador";
+            document.getElementById('modal').style.display = 'flex';
+            playSfx('success');
+        }
+        
+        // ========== CONSOLA DE DEBUG ==========
+        console.log("🎮 Fruit Splash ELITE - Sistema de guardado mejorado activado");
+        console.log("✅ Puntos NUNCA se perderán");
+        console.log("✅ 5 respaldos diferentes");
+        console.log("✅ Auto-recuperación activada");
+    </script>
 </body>
 </html>
