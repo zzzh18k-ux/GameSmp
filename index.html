@@ -24,12 +24,15 @@
         .usd { color:#2ecc71; text-shadow:0 0 10px rgba(46,204,113,.5); }
         .coin { color:var(--gold); text-shadow:0 0 10px rgba(255,215,0,.5); }
         .pet-stage { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; width:100%; }
-        .pet-avatar { font-size:120px; filter:drop-shadow(0 0 20px rgba(255,0,122,.4)); transition:transform .2s; cursor:pointer; animation:bounce 2s infinite; }
-        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-        .pet-avatar.sleeping { filter:grayscale(1); animation:none; transform:scale(.9) rotate(5deg); }
+        
+        /* ESTILO PARA LA IMAGEN DEL GATO */
+        .pet-avatar { width: 200px; height: 200px; object-fit: contain; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5)); cursor: pointer; transition: transform 0.1s; }
+        .pet-avatar:active { transform: scale(0.95); }
+        .pet-avatar.sleeping { filter:grayscale(1); opacity: 0.5; }
+        
         .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; margin-bottom:10px; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; }
         .sleep-z { position:absolute; top:20%; right:30%; color:#aaa; font-weight:700; font-size:30px; animation:zzz 2s infinite; display:none; }
-                .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
+                           .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
         .menu-btn { background:var(--card); border:1px solid rgba(255,255,255,.1); padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; font-size:10px; font-weight:700; cursor:pointer; text-align:center; }
         
         .food-belt { width:100%; background:rgba(255,255,255,.05); border-radius:20px 20px 0 0; padding:20px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid rgba(255,255,255,.1); }
@@ -82,17 +85,26 @@
         <div class="currency"><span class="curr-label">VIP BALANCE</span><span class="curr-val usd">$<span id="usd">0.0000</span></span></div>
         <div class="currency"><span class="curr-label">PET COINS</span><span class="curr-val coin" id="coins">0</span></div>
     </div>
+    
     <div class="pet-stage">
-        <div class="pet-bubble" id="bubble">¡Hola! 😺</div><div class="sleep-z" id="sleepZ">Zzz...</div>
-        <div class="pet-avatar" id="pet" onclick="tapPet()">😺</div>
+        <div class="pet-bubble" id="bubble">¡Hola Socio! 😺</div><div class="sleep-z" id="sleepZ">Zzz...</div>
+        
+        <img src="https://i.gifer.com/ZKZg.gif" 
+             class="pet-avatar" 
+             id="pet" 
+             onclick="tapPet()" 
+             alt="Mascota">
+             
         <div style="font-size:10px; color:#aaa; margin-top:20px;">Estado: <span id="statusPet" style="color:#2ecc71">Activo</span></div>
     </div>
+    
     <div class="menu-grid">
         <div class="menu-btn" onclick="openInviteModal()"><i class="fa-solid fa-users" style="color:#0984e3"></i> INVITAR</div>
         <div class="menu-btn" onclick="exchange()"><i class="fa-solid fa-right-left" style="color:#f368e0"></i> CAMBIAR COINS</div>
         <div class="menu-btn" onclick="openChannel()"><i class="fa-brands fa-telegram" style="color:#3498db"></i> CANAL OFICIAL</div>
         <div class="menu-btn" onclick="withdraw()"><i class="fa-solid fa-gem" style="color:#2ecc71"></i> RETIRAR</div>
     </div>
+
     <div class="food-belt">
         <div class="food-item" id="item0" onclick="feed(0)">
             <div class="food-count" id="cnt0">5</div>
@@ -128,7 +140,6 @@
             <button class="btn-buy" onclick="closeModals()">ENTENDIDO</button>
         </div>
     </div>
-
     <div class="modal-overlay" id="shopModal"><div class="shop-card"><i class="fa-solid fa-basket-shopping" style="font-size:50px; color:var(--gold); margin-bottom:20px"></i><h2 style="margin:0; color:#fff">¡NEVERA VACÍA!</h2><p style="color:#aaa; font-size:13px; margin:15px 0">Tu mascota necesita comida. Ve un video para comprar más.</p><button class="btn-buy" onclick="buyFood()">VER VIDEO (+COMIDA)</button><div style="margin-top:15px; font-size:10px; color:#aaa; cursor:pointer" onclick="closeModals()">Cerrar</div></div></div>
     <div class="modal-overlay" id="sleepModal"><div class="shop-card" style="border-color:#8e44ad"><i class="fa-solid fa-bed" style="font-size:50px; color:#8e44ad; margin-bottom:20px"></i><h2 style="margin:0; color:#fff">MASCOTA DORMIDA</h2><p style="color:#aaa; font-size:13px; margin:15px 0">Tu mascota se ha cansado (Límite Diario). Déjala descansar hasta mañana.</p><button class="btn-buy" style="background:#8e44ad; color:#fff" onclick="closeModals()">ENTENDIDO</button></div></div>
     <div class="modal-overlay" id="inviteModal"><div class="invite-box"><i class="fa-solid fa-gift" style="font-size:40px; color:#00d2d3; margin-bottom:10px"></i><h3 style="color:#fff; margin:0">¡GANA DINERO REAL!</h3><p style="color:#ccc; font-size:12px; margin:10px 0">Invita amigos y gana <b>$0.10 USD</b> por cada usuario activo.</p><div class="invite-link-box" id="myLink">Cargando...</div><button class="btn-copy" onclick="copyLink()"><i class="fa-solid fa-copy"></i> COPIAR ENLACE</button><button class="btn-share" onclick="shareLink()"><i class="fa-brands fa-telegram"></i> ENVIAR A AMIGOS</button><button style="width:100%; border:none; background:none; color:#777; margin-top:15px; cursor:pointer" onclick="closeModals()">Cerrar</button></div></div>
@@ -139,7 +150,8 @@
         tg.expand();
 
         const ADS_ID = "18897";
-        const KEY = 'crypto_pet_v15_deluxe_clean'; 
+        // VERSIÓN SEGURA CON BLOQUEO MULTI
+        const KEY = 'crypto_pet_v17_security_pro'; 
         const CHANNEL_URL = "https://t.me/noticebuddy"; 
         const BOT_USERNAME = "YougamefavoriteBot"; 
         const SUPPORT_BOT = "https://t.me/AtencionYougamefavoriteBot";
@@ -151,12 +163,29 @@
         let user = { usd:0, coins:0, food:[5,3,1], adsToday:0, lastDate:"", jackpotToday: false, seenTut:false };
         
         const steps = [
+            {icon:"🔒", title:"SEGURIDAD", desc:"Dispositivo vinculado. No uses multicuentas o serás baneado."},
             {icon:"😺", title:"¡HOLA SOCIO!", desc:"Cuida a tu mascota y gana dinero. A veces doy premios sorpresa."},
             {icon:"💰", title:"MONEDAS Y USD", desc:"Gana monedas y cámbialas por Dólares. ¡1000 Coins = $0.01!"},
-            {icon:"👀", title:"OJO AL DATO", desc:"Ahora verás 4 decimales (Ej: $0.0010) para ver crecer tu dinero."},
             {icon:"📺", title:"RECARGA", desc:"Si se acaba la comida, ve un video en la tienda."}
         ];
         let stepIdx = 0;
+
+        // --- SEGURIDAD ANTIMULTI ---
+        function checkSecurity(){
+            let currentID = tg.initDataUnsafe?.user?.id;
+            if(!currentID) return; 
+
+            let owner = localStorage.getItem('device_owner_id');
+
+            if(owner){
+                if(owner != currentID){
+                    document.body.innerHTML = "<div style='background:black;color:red;height:100vh;display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;font-family:sans-serif'><h1>🚫 MULTI-CUENTA DETECTADA</h1><p>Este dispositivo ya pertenece a otro usuario.</p></div>";
+                    throw new Error("Multicuenta bloqueada"); 
+                }
+            } else {
+                localStorage.setItem('device_owner_id', currentID);
+            }
+        }
 
         function checkStatus(){
             let t = new Date().toDateString();
@@ -314,7 +343,12 @@
         function say(t){ let b = document.getElementById('bubble'); b.innerText = t; b.style.opacity = 1; setTimeout(() => { b.style.opacity = 0; }, 2000); }
         function floatTxt(t, c){ let e = document.createElement('div'); e.className = 'float-txt'; e.innerText = t; e.style.color = c; e.style.left = '50%'; e.style.top = '40%'; document.body.appendChild(e); setTimeout(() => e.remove(), 1000); }
         function tapPet(){ checkStatus(); (user.adsToday >= MAX_DAILY_ADS) ? say("Zzz... 😴") : say("¡Comida! 😺"); }
-        function load(){ tg.CloudStorage.getItem(KEY, (e, v) => { if(!e && v){ try { let c = JSON.parse(v); if(c.usd > user.usd) user = c; } catch(x) {} } checkStatus(); }); if(localStorage.getItem(KEY)){ try { let l = JSON.parse(atob(localStorage.getItem(KEY))); if(l.usd > user.usd) user = l; } catch(x) {} } checkStatus(); }
+        function load(){ 
+            checkSecurity();
+            tg.CloudStorage.getItem(KEY, (e, v) => { if(!e && v){ try { let c = JSON.parse(v); if(c.usd > user.usd) user = c; } catch(x) {} } checkStatus(); }); 
+            if(localStorage.getItem(KEY)){ try { let l = JSON.parse(atob(localStorage.getItem(KEY))); if(l.usd > user.usd) user = l; } catch(x) {} } 
+            checkStatus(); 
+        }
         function save(){ let s = JSON.stringify(user); localStorage.setItem(KEY, btoa(s)); tg.CloudStorage.setItem(KEY, s); updateVisuals(); }
 
         if(tg.platform === 'unknown' || tg.platform === 'tdesktop' || tg.platform === 'web'){ document.getElementById('banScreen').style.display = 'flex'; } else { load(); }
