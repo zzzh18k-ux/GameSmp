@@ -13,7 +13,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-                :root { --bg:#1a0b2e; --card:#2d1b4e; --gold:#ffd700; --accent:#ff007a; --text:#fff; --receipt-bg:#f5f6fa; --receipt-txt:#2f3640; }
+        :root { --bg:#1a0b2e; --card:#2d1b4e; --gold:#ffd700; --accent:#ff007a; --text:#fff; --receipt-bg:#f5f6fa; --receipt-txt:#2f3640; }
         * { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
         body { background:radial-gradient(circle at 50% 30%,#431d75 0%,#1a0b2e 80%); color:var(--text); font-family:'Montserrat',sans-serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:15px; overflow:hidden; }
         #banScreen { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9999; display:none; justify-content:center; align-items:center; color:red; font-weight:700; }
@@ -29,7 +29,7 @@
         .pet-avatar.sleeping { filter:grayscale(1); animation:none; transform:scale(.9) rotate(5deg); }
         .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; margin-bottom:10px; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; }
         .sleep-z { position:absolute; top:20%; right:30%; color:#aaa; font-weight:700; font-size:30px; animation:zzz 2s infinite; display:none; }
-        .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
+                .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
         .menu-btn { background:var(--card); border:1px solid rgba(255,255,255,.1); padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; font-size:10px; font-weight:700; cursor:pointer; text-align:center; }
         
         /* COMIDA Y COOLDOWN */
@@ -67,7 +67,7 @@
 <body>
     <div id="banScreen">SOLO MÓVIL</div>
     <div class="top-bar">
-        <div class="currency"><span class="curr-label">VIP BALANCE</span><span class="curr-val usd">$<span id="usd">0.00</span></span></div>
+        <div class="currency"><span class="curr-label">VIP BALANCE</span><span class="curr-val usd">$<span id="usd">0.0000</span></span></div>
         <div class="currency"><span class="curr-label">PET COINS</span><span class="curr-val coin" id="coins">0</span></div>
     </div>
     <div class="pet-stage">
@@ -117,24 +117,21 @@
         tg.expand();
 
         const ADS_ID = "18897";
-        const KEY = 'crypto_pet_hook_v13'; 
+        const KEY = 'crypto_pet_hook_v14'; 
         const CHANNEL_URL = "https://t.me/noticebuddy"; 
         const BOT_USERNAME = "YougamefavoriteBot"; 
         const SUPPORT_BOT = "https://t.me/AtencionYougamefavoriteBot";
         
         const MAX_DAILY_ADS = 15; 
-        
-        // TASA: 1000 MONEDAS = $0.01 (Seguridad para ti, diversión para ellos)
         const COIN_RATE = 1000; 
         const TARGET = 2.00;
         
-        // "jackpotToday" controla si ya ganó el premio gordo hoy
         let user = { usd:0, coins:0, food:[5,3,1], adsToday:0, lastDate:"", jackpotToday: false, seenTut:false };
         
         const steps = [
             {icon:"😺", title:"¡HOLA SOCIO!", desc:"Cuida a tu mascota y gana dinero. A veces doy premios sorpresa."},
             {icon:"💰", title:"MONEDAS Y USD", desc:"Gana monedas y cámbialas por Dólares. ¡1000 Coins = $0.01!"},
-            {icon:"⏳", title:"PACIENCIA", desc:"Espera 5 segundos entre comidas. No comas ansias."},
+            {icon:"👀", title:"OJO AL DATO", desc:"Ahora verás 4 decimales (Ej: $0.0010) para ver crecer tu dinero."},
             {icon:"📺", title:"RECARGA", desc:"Si se acaba la comida, ve un video en la tienda."}
         ];
         let stepIdx = 0;
@@ -142,7 +139,6 @@
         function checkStatus(){
             let t = new Date().toDateString();
             if(user.lastDate !== t){ 
-                // Nuevo día = Reiniciamos el "Gancho"
                 user.adsToday = 0; 
                 user.lastDate = t; 
                 user.jackpotToday = false; 
@@ -169,7 +165,9 @@
                 p.classList.remove('sleeping'); p.innerText = '😺'; z.style.display = 'none';
                 s.innerText = "Activo"; s.style.color = "#2ecc71";
             }
-            document.getElementById('usd').innerText = user.usd.toFixed(2);
+            
+            // 4 DECIMALES para ver el movimiento
+            document.getElementById('usd').innerText = user.usd.toFixed(4);
             document.getElementById('coins').innerText = Math.floor(user.coins);
             document.getElementById('cnt0').innerText = user.food[0];
             document.getElementById('cnt1').innerText = user.food[1];
@@ -185,32 +183,23 @@
 
             user.food[t]--;
             animatePet();
-            activateCooldown(t, 5); // 5 seg de espera
+            activateCooldown(t, 5); 
 
-            // --- LÓGICA DEL GANCHO (HOOK) ---
-            
-            // 1. ¿Ya ganó el premio gordo hoy?
+            // ESTRATEGIA GANCHO
             if(!user.jackpotToday && Math.random() < 0.3) { 
-                // 30% de probabilidad de ganar el "Gancho" si no lo ha ganado hoy
-                let jackpot = (Math.random() * (0.05 - 0.02) + 0.02); // Gana entre $0.02 y $0.05
+                let jackpot = (Math.random() * (0.05 - 0.02) + 0.02); 
                 user.usd += jackpot;
-                user.jackpotToday = true; // YA NO GANA MÁS HOY (Seguridad)
-                
-                say(`¡PREMIO GORDO! 💎 +$${jackpot.toFixed(2)}`);
-                floatTxt(`+$${jackpot.toFixed(2)} USD`, '#00d2d3');
+                user.jackpotToday = true; 
+                say(`¡PREMIO GORDO! 💎`);
+                floatTxt(`+$${jackpot.toFixed(4)}`, '#00d2d3');
                 tg.HapticFeedback.notificationOccurred('success');
-
             } else {
-                // 2. Si ya ganó el gordo, o tuvo mala suerte en el 30%...
-                // Gana MONEDAS (para retención visual) o centavos mínimos
                 let rand = Math.random();
                 if(rand < 0.2) {
-                     // 20% gana centavos seguros ($0.001)
                      user.usd += 0.001;
-                     say("¡Bien! +$0.001");
-                     floatTxt("+$0.001", '#2ecc71');
+                     say("¡Bien! +$0.0010");
+                     floatTxt("+$0.0010", '#2ecc71');
                 } else {
-                     // 80% gana Monedas (50-100 Coins)
                      let c = Math.floor(Math.random() * 50) + 50;
                      user.coins += c;
                      say("¡Coins! 💰");
@@ -252,17 +241,17 @@
 
         function withdraw(){
             if(user.usd < TARGET){
-                let f = (TARGET - user.usd).toFixed(2);
-                tg.showPopup({ title: "Falta Saldo", message: `Tienes $${user.usd.toFixed(2)}. Mínimo $${TARGET}. Te faltan $${f}.` });
+                let f = (TARGET - user.usd).toFixed(4);
+                tg.showPopup({ title: "Falta Saldo", message: `Tienes $${user.usd.toFixed(4)}. Mínimo $${TARGET}. Te faltan $${f}.` });
                 return;
             }
-            let a = user.usd.toFixed(2); user.usd = 0; save();
+            let a = user.usd.toFixed(2); // Pago real a 2 decimales
+            user.usd = 0; save();
             let n = new Date(); let u = tg.initDataUnsafe?.user?.first_name || "VIP";
             document.getElementById('recDate').innerText = n.toLocaleDateString(); document.getElementById('recTime').innerText = n.toLocaleTimeString(); document.getElementById('recUser').innerText = u.substring(0, 15); document.getElementById('recAmount').innerText = `$${a} USD`; document.getElementById('recID').innerText = "#" + Math.floor(Math.random() * 900000 + 100000);
             document.getElementById('receiptModal').style.display = 'flex';
         }
 
-        // --- FUNCIÓN DE CAMBIO (1000 = $0.01) ---
         function exchange(){
             if(user.coins < 1000){
                 tg.showPopup({ title: "Banco", message: `Necesitas 1000 Coins para cambiar.` });
@@ -270,12 +259,12 @@
             }
             tg.showConfirm(`TASA: 1000 Coins = $0.01 USD\n\n¿Cambiar todo?`, (ok) => {
                 if(ok){
-                    let v = (user.coins / COIN_RATE) * 0.01; // Matemática segura
+                    let v = (user.coins / COIN_RATE) * 0.01; 
                     let s = user.coins;
                     user.coins = 0;
                     user.usd += v;
                     save();
-                    tg.showPopup({ title: "¡Exitoso!", message: `Cambiaste ${s} Coins por $${v.toFixed(3)} USD.` });
+                    tg.showPopup({ title: "¡Exitoso!", message: `Cambiaste ${s} Coins por $${v.toFixed(4)} USD.` });
                 }
             });
         }
@@ -293,4 +282,5 @@
         if(tg.platform === 'unknown' || tg.platform === 'tdesktop' || tg.platform === 'web'){ document.getElementById('banScreen').style.display = 'flex'; } else { load(); }
     </script>
 </body>
-</html>
+</html>    
+        
