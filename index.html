@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Fruit Coin AI</title>
+    <title>Fruit Coin VIP</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
@@ -29,10 +29,8 @@
         .pet-avatar.sleeping { filter:grayscale(1); animation:none; transform:scale(.9) rotate(5deg); }
         .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; margin-bottom:10px; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; }
         .sleep-z { position:absolute; top:20%; right:30%; color:#aaa; font-weight:700; font-size:30px; animation:zzz 2s infinite; display:none; }
-                /* MENÚ CON 3 COLUMNAS PARA QUE QUEPA EL BOTÓN IA */
-        .menu-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; width:100%; padding:0 20px 20px 20px; }
-        .menu-btn { background:var(--card); border:1px solid rgba(255,255,255,.1); padding:10px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; color:#fff; font-size:9px; font-weight:700; cursor:pointer; text-align:center; height: 60px; }
-        .menu-btn i { font-size: 18px; margin-bottom: 2px; }
+                .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
+        .menu-btn { background:var(--card); border:1px solid rgba(255,255,255,.1); padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; font-size:10px; font-weight:700; cursor:pointer; text-align:center; }
         
         .food-belt { width:100%; background:rgba(255,255,255,.05); border-radius:20px 20px 0 0; padding:20px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid rgba(255,255,255,.1); }
         .food-item { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; position:relative; transition:0.3s; }
@@ -42,17 +40,22 @@
         .food-item.cooldown { pointer-events:none; opacity:0.6; filter:grayscale(0.8); }
         .food-timer { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; font-weight:900; font-size:24px; color:#fff; z-index:10; border-radius:50%; }
 
-        /* ESTILOS DE LA IA Y VENTANAS */
+        /* VENTANA UNIVERSAL (BONITA) */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.95); z-index:100; display:none; flex-direction:column; justify-content:center; align-items:center; }
-        .shop-card { background:linear-gradient(145deg,#2d1b4e,#1a0b2e); border:2px solid var(--gold); padding:20px; border-radius:20px; text-align:center; width:90%; max-width:320px; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
+        
+        .shop-card { 
+            background:linear-gradient(145deg,#2d1b4e,#1a0b2e); 
+            border:2px solid var(--gold); 
+            padding:30px; 
+            border-radius:20px; 
+            text-align:center; 
+            width:85%; 
+            max-width:320px; 
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); 
+        }
+        
         .btn-buy { background:linear-gradient(90deg,#f1c40f,#f39c12); color:#000; border:none; padding:15px; width:100%; border-radius:50px; font-weight:900; font-size:14px; margin-top:20px; cursor:pointer; animation:pulse 2s infinite; }
         
-        /* CHAT IA */
-        .ai-box { width:100%; text-align:left; }
-        .ai-input { width:100%; background:#111; border:1px solid #444; color:#fff; padding:10px; border-radius:10px; font-family:'Montserrat',sans-serif; min-height:60px; margin-bottom:10px; resize:none; }
-        .ai-output { width:100%; background:#2d1b4e; border:1px solid #00d2d3; color:#00d2d3; padding:10px; border-radius:10px; font-size:12px; min-height:60px; display:none; margin-top:10px; font-style:italic; }
-        .btn-ai { background:linear-gradient(90deg,#00d2d3,#0984e3); color:#fff; width:100%; padding:12px; border:none; border-radius:50px; font-weight:bold; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:8px; }
-
         .invite-box { background:#222; width:90%; max-width:350px; padding:25px; border-radius:15px; border:1px solid #444; text-align:center; }
         .invite-link-box { background:#111; padding:10px; border-radius:8px; border:1px solid #333; font-family:monospace; color:#00d2d3; margin:15px 0; word-break:break-all; font-size:12px; }
         .btn-copy { background:#333; color:#fff; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:700; font-size:11px; margin-bottom:10px; }
@@ -84,51 +87,39 @@
         <div class="pet-avatar" id="pet" onclick="tapPet()">😺</div>
         <div style="font-size:10px; color:#aaa; margin-top:20px;">Estado: <span id="statusPet" style="color:#2ecc71">Activo</span></div>
     </div>
-    
     <div class="menu-grid">
         <div class="menu-btn" onclick="openInviteModal()"><i class="fa-solid fa-users" style="color:#0984e3"></i> INVITAR</div>
-        <div class="menu-btn" onclick="openAI()"><i class="fa-solid fa-robot" style="color:#a55eea"></i> IA EDITOR</div>
-        <div class="menu-btn" onclick="exchange()"><i class="fa-solid fa-right-left" style="color:#f368e0"></i> CAMBIO</div>
-        <div class="menu-btn" onclick="openChannel()"><i class="fa-brands fa-telegram" style="color:#3498db"></i> CANAL</div>
+        <div class="menu-btn" onclick="exchange()"><i class="fa-solid fa-right-left" style="color:#f368e0"></i> CAMBIAR COINS</div>
+        <div class="menu-btn" onclick="openChannel()"><i class="fa-brands fa-telegram" style="color:#3498db"></i> CANAL OFICIAL</div>
         <div class="menu-btn" onclick="withdraw()"><i class="fa-solid fa-gem" style="color:#2ecc71"></i> RETIRAR</div>
     </div>
-
     <div class="food-belt">
         <div class="food-item" id="item0" onclick="feed(0)">
             <div class="food-count" id="cnt0">5</div>
-            <div class="food-icon" style="border-color:#e74c3c"><i class="fa-solid fa-apple-whole" style="color:#e74c3c"></i><div class="food-timer" id="timer0">5</div></div>
+            <div class="food-icon" style="border-color:#e74c3c">
+                <i class="fa-solid fa-apple-whole" style="color:#e74c3c"></i>
+                <div class="food-timer" id="timer0">5</div>
+            </div>
             <span style="font-size:10px">Manzana</span>
         </div>
         <div class="food-item" id="item1" onclick="feed(1)">
             <div class="food-count" id="cnt1">3</div>
-            <div class="food-icon" style="border-color:#3498db"><i class="fa-solid fa-fish" style="color:#3498db"></i><div class="food-timer" id="timer1">5</div></div>
+            <div class="food-icon" style="border-color:#3498db">
+                <i class="fa-solid fa-fish" style="color:#3498db"></i>
+                <div class="food-timer" id="timer1">5</div>
+            </div>
             <span style="font-size:10px">Salmón</span>
         </div>
         <div class="food-item" id="item2" onclick="feed(2)">
             <div class="food-count" id="cnt2">1</div>
-            <div class="food-icon" style="border-color:#f1c40f"><i class="fa-solid fa-pizza-slice" style="color:#f1c40f"></i><div class="food-timer" id="timer2">5</div></div>
+            <div class="food-icon" style="border-color:#f1c40f">
+                <i class="fa-solid fa-pizza-slice" style="color:#f1c40f"></i>
+                <div class="food-timer" id="timer2">5</div>
+            </div>
             <span style="font-size:10px">Pizza VIP</span>
         </div>
     </div>
     
-    <div class="modal-overlay" id="aiModal">
-        <div class="shop-card" style="border-color:#a55eea; background:linear-gradient(145deg,#1e1136,#0d0517);">
-            <i class="fa-solid fa-wand-magic-sparkles" style="font-size:40px; color:#a55eea; margin-bottom:15px"></i>
-            <h2 style="margin:0; color:#fff; font-size: 20px">EDITOR IA MÁGICO</h2>
-            <p style="color:#ccc; font-size:12px; margin:10px 0">Escribe tu texto y la IA lo mejorará para ti. <br><span style="color:#ffd700">Premio: ¡Mucha Energía!</span></p>
-            
-            <div class="ai-box">
-                <textarea id="aiInput" class="ai-input" placeholder="Escribe algo aquí... (Ej: Hola amigos)"></textarea>
-                <button class="btn-ai" onclick="processAI()">
-                    <i class="fa-solid fa-play"></i> MEJORAR (VER VIDEO)
-                </button>
-                <div id="aiOutput" class="ai-output"></div>
-            </div>
-            
-            <div style="margin-top:15px; font-size:12px; color:#aaa; cursor:pointer; text-decoration:underline" onclick="closeModals()">Volver al Juego</div>
-        </div>
-    </div>
-
     <div class="modal-overlay" id="universalModal">
         <div class="shop-card">
             <div id="uniIcon" style="font-size:50px; margin-bottom:15px">⚠️</div>
@@ -148,7 +139,7 @@
         tg.expand();
 
         const ADS_ID = "18897";
-        const KEY = 'crypto_pet_v16_ai_edition'; 
+        const KEY = 'crypto_pet_v15_deluxe_clean'; 
         const CHANNEL_URL = "https://t.me/noticebuddy"; 
         const BOT_USERNAME = "YougamefavoriteBot"; 
         const SUPPORT_BOT = "https://t.me/AtencionYougamefavoriteBot";
@@ -160,60 +151,28 @@
         let user = { usd:0, coins:0, food:[5,3,1], adsToday:0, lastDate:"", jackpotToday: false, seenTut:false };
         
         const steps = [
-            {icon:"🤖", title:"¡NUEVA IA!", desc:"Prueba el 'Editor IA' en el menú. Te edita textos y te da MUCHA energía."},
+            {icon:"😺", title:"¡HOLA SOCIO!", desc:"Cuida a tu mascota y gana dinero. A veces doy premios sorpresa."},
             {icon:"💰", title:"MONEDAS Y USD", desc:"Gana monedas y cámbialas por Dólares. ¡1000 Coins = $0.01!"},
-            {icon:"👀", title:"OJO AL DATO", desc:"Mira 4 decimales ($0.0010) para ver tu dinero crecer."},
+            {icon:"👀", title:"OJO AL DATO", desc:"Ahora verás 4 decimales (Ej: $0.0010) para ver crecer tu dinero."},
             {icon:"📺", title:"RECARGA", desc:"Si se acaba la comida, ve un video en la tienda."}
         ];
         let stepIdx = 0;
 
         function checkStatus(){
             let t = new Date().toDateString();
-            if(user.lastDate !== t){ user.adsToday = 0; user.lastDate = t; user.jackpotToday = false; save(); }
+            if(user.lastDate !== t){ 
+                user.adsToday = 0; user.lastDate = t; user.jackpotToday = false; save(); 
+            }
             updateVisuals();
             if(!user.seenTut){ openTutorial(); }
         }
 
+        // FUNCIÓN PARA MENSAJES BONITOS
         function msg(title, text, icon="⚠️"){
             document.getElementById('uniIcon').innerText = icon;
             document.getElementById('uniTitle').innerText = title;
             document.getElementById('uniMsg').innerText = text;
             document.getElementById('universalModal').style.display = 'flex';
-        }
-
-        // --- FUNCIONES DE LA IA ---
-        function openAI(){ document.getElementById('aiModal').style.display = 'flex'; }
-        
-        function processAI(){
-            let txt = document.getElementById('aiInput').value;
-            if(txt.length < 3){ msg("IA ERROR", "Escribe algo más largo para que la IA trabaje.", "🤖"); return; }
-            
-            checkStatus();
-            if(user.adsToday >= MAX_DAILY_ADS){ 
-                document.getElementById('aiModal').style.display = 'none';
-                document.getElementById('sleepModal').style.display = 'flex'; 
-                return; 
-            }
-
-            const a = window.Adsgram.init({ blockId: ADS_ID });
-            a.show().then(() => {
-                // EXITO: LA IA "TRABAJA"
-                let clean = txt.toUpperCase();
-                let output = `✨ TEMA: ${clean} ✨\n\n📌 Nota IA: "${txt}" ha sido optimizado con éxito.\n🚀 Estado: 100% Mejorado.\n\n(Copia este texto si te gusta)`;
-                
-                document.getElementById('aiOutput').innerText = output;
-                document.getElementById('aiOutput').style.display = 'block';
-                
-                // RECOMPENSA GIGANTE (BASTANTE ENERGÍA)
-                user.food[0] += 5; // +5 Manzanas
-                user.food[1] += 3; // +3 Salmones
-                user.food[2] += 2; // +2 Pizzas
-                user.adsToday++;
-                
-                save();
-                msg("¡IA COMPLETADA!", "Texto mejorado y energía recargada al máximo. ⚡", "🤖");
-                
-            }).catch(() => { msg("ERROR DE CONEXIÓN", "No pudimos cargar el anuncio de la IA.", "📡"); });
         }
 
         function openTutorial(){ document.getElementById('tutorialModal').style.display = 'flex'; stepIdx = 0; updateTut(); }
@@ -293,7 +252,9 @@
             a.show().then(() => {
                 user.food = [5, 3, 1]; user.adsToday++; closeModals(); say("¡Recargado! 🔋"); save();
                 if(user.adsToday >= MAX_DAILY_ADS) setTimeout(() => { updateVisuals() }, 1000);
-            }).catch(() => { msg("UPS...", "Error cargando anuncios.", "📡"); });
+            }).catch(() => { 
+                msg("UPS...", "Error cargando anuncios. Intenta luego.", "📡"); 
+            });
         }
 
         function getMyLink(){ let i = tg.initDataUnsafe?.user?.id || "0000"; return `https://t.me/${BOT_USERNAME}?start=ref_${i}`; }
@@ -340,14 +301,15 @@
 
         function contactSupport(){ tg.openTelegramLink(SUPPORT_BOT); }
         function openChannel(){ tg.openTelegramLink(CHANNEL_URL); }
+        
         function closeModals(){ 
             document.getElementById('shopModal').style.display = 'none'; 
             document.getElementById('sleepModal').style.display = 'none'; 
             document.getElementById('inviteModal').style.display = 'none'; 
             document.getElementById('tutorialModal').style.display = 'none'; 
             document.getElementById('universalModal').style.display = 'none';
-            document.getElementById('aiModal').style.display = 'none';
         }
+        
         function animatePet(){ let p = document.getElementById('pet'); p.style.transform = "scale(1.3) rotate(10deg)"; setTimeout(() => { p.style.transform = "scale(1)"; }, 200); }
         function say(t){ let b = document.getElementById('bubble'); b.innerText = t; b.style.opacity = 1; setTimeout(() => { b.style.opacity = 0; }, 2000); }
         function floatTxt(t, c){ let e = document.createElement('div'); e.className = 'float-txt'; e.innerText = t; e.style.color = c; e.style.left = '50%'; e.style.top = '40%'; document.body.appendChild(e); setTimeout(() => e.remove(), 1000); }
