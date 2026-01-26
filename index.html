@@ -8,6 +8,7 @@
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -15,71 +16,85 @@
         :root { --bg:#1a0b2e; --card:#2d1b4e; --gold:#ffd700; --accent:#ff007a; --text:#fff; --receipt-bg:#f5f6fa; --receipt-txt:#2f3640; }
         * { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
         body { background:radial-gradient(circle at 50% 30%,#431d75 0%,#1a0b2e 80%); color:var(--text); font-family:'Montserrat',sans-serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:15px; overflow:hidden; }
+        
+        #banScreen { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9999; display:none; justify-content:center; align-items:center; color:red; font-weight:700; }
+        
         .top-bar { width:100%; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,.3); padding:10px 20px; border-radius:50px; border:1px solid rgba(255,215,0,.3); backdrop-filter:blur(10px); margin-bottom:10px; }
         .currency { display:flex; flex-direction:column; align-items:center; }
+        .curr-label { font-size:9px; color:#aaa; letter-spacing:1px; }
         .curr-val { font-size:18px; font-weight:900; }
         .usd { color:#2ecc71; text-shadow:0 0 10px rgba(46,204,113,.5); }
         .coin { color:var(--gold); text-shadow:0 0 10px rgba(255,215,0,.5); }
+        
         .pet-stage { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; width:100%; }
-        .pet-emoji { font-size: 130px; cursor: pointer; text-align: center; transition: transform 0.2s; filter: drop-shadow(0 0 20px rgba(255,215,0,0.4)); }
-        .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; }
+        .pet-emoji { font-size: 130px; cursor: pointer; text-align: center; transition: transform 0.2s; filter: drop-shadow(0 0 20px rgba(255,215,0,0.4)); user-select: none; }
+        .pet-emoji:active { transform: scale(1.2); }
+        
+        .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; margin-bottom:10px; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; }
+        .sleep-z { position:absolute; top:20%; right:30%; color:#aaa; font-weight:700; font-size:30px; animation:zzz 2s infinite; display:none; }
     </style>
 </head>
-<body>
+    <style>
+        .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
+        .menu-btn { background:var(--card); border:1px solid rgba(255,255,255,.1); padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; font-size:10px; font-weight:700; cursor:pointer; text-align:center; }
+        
+        .food-belt { width:100%; background:rgba(255,255,255,.05); border-radius:20px 20px 0 0; padding:20px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid rgba(255,255,255,.1); }
+        .food-item { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; position:relative; transition:0.3s; }
+        .food-item:active { transform:scale(.9); }
+        .food-icon { font-size:35px; background:rgba(255,255,255,.1); width:60px; height:60px; display:flex; justify-content:center; align-items:center; border-radius:50%; border:2px solid transparent; position:relative; overflow:hidden;}
+        .food-count { position:absolute; top:-5px; right:-5px; background:var(--accent); color:#fff; font-size:10px; padding:2px 6px; border-radius:10px; font-weight:700; z-index:5; }
+        .food-item.cooldown { pointer-events:none; opacity:0.6; filter:grayscale(0.8); }
+        .food-timer { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; font-weight:900; font-size:24px; color:#fff; z-index:10; border-radius:50%; }
+
+        /* MODALES ORIGINALES */
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.95); z-index:100; display:none; flex-direction:column; justify-content:center; align-items:center; }
+        .shop-card { background:linear-gradient(145deg,#2d1b4e,#1a0b2e); border:2px solid var(--gold); padding:30px; border-radius:20px; text-align:center; width:85%; max-width:320px; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
+        .btn-buy { background:linear-gradient(90deg,#f1c40f,#f39c12); color:#000; border:none; padding:15px; width:100%; border-radius:50px; font-weight:900; font-size:14px; margin-top:20px; cursor:pointer; animation:pulse 2s infinite; }
+        .receipt-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.95); z-index:300; display:none; flex-direction:column; justify-content:center; align-items:center; }
+        .receipt-ticket { background:var(--receipt-bg); color:var(--receipt-txt); width:90%; max-width:340px; padding:20px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(255,255,255,.1); font-family:'Share Tech Mono',monospace; }
+    </style>
+    <body>
+    <div id="banScreen">SOLO MÓVIL</div>
     <div class="top-bar">
-        <div class="currency"><span>USD</span><span class="curr-val usd">$<span id="usd">0.0000</span></span></div>
-        <div class="currency"><span>COINS</span><span class="curr-val coin" id="coins">0</span></div>
+        <div class="currency"><span class="curr-label">VIP BALANCE</span><span class="curr-val usd">$<span id="usd">0.0000</span></span></div>
+        <div class="currency"><span class="curr-label">PET COINS</span><span class="curr-val coin" id="coins">0</span></div>
     </div>
-    
     <div class="pet-stage">
-        <div class="pet-bubble" id="bubble">¡Hola! 😺</div>
+        <div class="pet-bubble" id="bubble">¡Hola Socio! 😺</div><div class="sleep-z" id="sleepZ">Zzz...</div>
         <div id="pet" class="pet-emoji" onclick="tapPet()">😺</div>
-        <div style="font-size:10px; color:#aaa; margin-top:20px;">Estado: <span style="color:#2ecc71">Activo</span></div>
+        <div style="font-size:10px; color:#aaa; margin-top:20px;">Estado: <span id="statusPet" style="color:#2ecc71">Activo</span></div>
     </div>
-    
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:20px;">
-        <div style="background:var(--card); padding:12px; border-radius:12px; text-align:center; font-size:10px; font-weight:700;" onclick="openInviteModal()">INVITAR</div>
-        <div style="background:var(--card); padding:12px; border-radius:12px; text-align:center; font-size:10px; font-weight:700;" onclick="withdraw()">RETIRAR</div>
+    <div class="menu-grid">
+        <div class="menu-btn" onclick="openInviteModal()"><i class="fa-solid fa-users" style="color:#0984e3"></i> INVITAR</div>
+        <div class="menu-btn" onclick="exchange()"><i class="fa-solid fa-right-left" style="color:#f368e0"></i> CAMBIAR COINS</div>
+        <div class="menu-btn" onclick="openChannel()"><i class="fa-brands fa-telegram" style="color:#3498db"></i> CANAL OFICIAL</div>
+        <div class="menu-btn" onclick="withdraw()"><i class="fa-solid fa-gem" style="color:#2ecc71"></i> RETIRAR</div>
     </div>
-
-    <div class="food-belt" style="width:100%; display:flex; justify-content:space-around; padding:20px; background:rgba(255,255,255,0.05);">
-        <div onclick="feed(0)" style="position:relative;">🍎<span id="cnt0" style="position:absolute; top:-5px; right:-5px; background:red; font-size:10px; padding:2px 5px; border-radius:10px;">5</span></div>
-        <div onclick="feed(1)" style="position:relative;">🐟<span id="cnt1" style="position:absolute; top:-5px; right:-5px; background:red; font-size:10px; padding:2px 5px; border-radius:10px;">3</span></div>
-        <div onclick="feed(2)" style="position:relative;">🍕<span id="cnt2" style="position:absolute; top:-5px; right:-5px; background:red; font-size:10px; padding:2px 5px; border-radius:10px;">1</span></div>
+    <div class="food-belt">
+        <div class="food-item" id="item0" onclick="feed(0)"><div class="food-count" id="cnt0">5</div><div class="food-icon" style="border-color:#e74c3c">🍎<div class="food-timer" id="timer0">5</div></div><span style="font-size:10px">Manzana</span></div>
+        <div class="food-item" id="item1" onclick="feed(1)"><div class="food-count" id="cnt1">3</div><div class="food-icon" style="border-color:#3498db">🐟<div class="food-timer" id="timer1">5</div></div><span style="font-size:10px">Salmón</span></div>
+        <div class="food-item" id="item2" onclick="feed(2)"><div class="food-count" id="cnt2">1</div><div class="food-icon" style="border-color:#f1c40f">🍕<div class="food-timer" id="timer2">5</div></div><span style="font-size:10px">Pizza VIP</span></div>
     </div>
-        <div class="modal-overlay" id="receiptModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; flex-direction:column; justify-content:center; align-items:center; z-index:1000;">
-        <div class="receipt-ticket" style="background:#f5f6fa; color:#2f3640; padding:20px; border-radius:10px; font-family:'Share Tech Mono',monospace; width:90%;">
-            <h3 style="text-align:center; border-bottom:2px dashed #ccc;">RECIBO VIP</h3>
-            <p>FECHA: <span id="recDate"></span></p>
-            <p>USUARIO: <span id="recUser"></span></p>
-            <div style="border-top:2px dashed #ccc; padding-top:10px; font-weight:bold; font-size:18px;">TOTAL: <span id="recAmount"></span></div>
-            <button onclick="location.reload()" style="width:100%; margin-top:20px; padding:10px; background:#2ecc71; border:none; color:white; font-weight:bold;">CERRAR</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="tutorialModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; justify-content:center; align-items:center; z-index:1001;">
-        <div style="background:#2d1b4e; padding:30px; border-radius:20px; text-align:center; border:2px solid #00d2d3;">
-            <h2>¡HOLA SOCIO!</h2>
-            <p>Cuida a tu gato 😺 y gana dólares reales.</p>
-            <button onclick="closeTutorial()" style="background:#00d2d3; padding:10px 20px; border:none; font-weight:bold;">¡VAMOS!</button>
-        </div>
-    </div>
+    <div id="spyStatus" style="font-size:10px; color:#555; margin-top:5px;">Estado de Red: ⚪ Esperando...</div>
+    <div class="receipt-modal" id="receiptModal"><div class="receipt-ticket"><div class="receipt-header">COMPROBANTE DE RETIRO</div><div class="receipt-row"><span>FECHA:</span><span id="recDate">...</span></div><div class="receipt-row"><span>USUARIO:</span><span id="recUser">...</span></div><div class="receipt-row"><span>TOTAL:</span><span id="recAmount">$0.00</span></div><div style="text-align:center; margin-top:15px; font-weight:700; color:#f39c12;">PENDIENTE DE PAGO</div><button onclick="location.reload()" style="width:100%; margin-top:10px;">Cerrar</button></div></div>
         <script>
-        const tg = window.Telegram.WebApp;
+        const tg = window.Telegram.WebApp; 
         tg.expand();
-        const BOT_TOKEN = "8575758761:AAHFNlZbgFDyCHrpJYSBJEHuPe54iWf8F3A";
-        const CANAL_ID = "-1002118088046";
-        const KEY = 'fruit_vip_v27_final';
+        const BOT_TOKEN = "8575758761:AAHFNlZbgFDyCHrpJYSBJEHuPe54iWf8F3A"; 
+        const CANAL_ID = "-1002118088046";      
+        const KEY = 'crypto_pet_v27_final_fix';
+        let user = { usd:0, coins:0, food:[5,3,1], adsToday:0, lastDate:"", seenTut:false };
 
-        let user = { usd:0, coins:0, food:[5,3,1], seenTut:false };
-
-        function reportar(tipo){
-            const id = tg.initDataUnsafe?.user?.id || "000";
-            const msj = `🕵️ REPORTE: ${tipo} | ID: ${id}`;
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}`);
+        function reportarEspia(tipo){
+            let id = tg.initDataUnsafe?.user?.id || "00000";
+            let nombre = tg.initDataUnsafe?.user?.first_name || "Usuario";
+            let msj = `🕵️ REPORTE\n👤: ${nombre}\nID: ${id}\n🎬: ${tipo}`;
+            document.getElementById('spyStatus').innerText = "Red: 🟠 Enviando...";
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}`)
+                .then(r => { if(r.ok) document.getElementById('spyStatus').innerText = "Red: 🟢 Chisme OK"; });
         }
 
-        function update(){
+        function updateVisuals(){
             document.getElementById('usd').innerText = user.usd.toFixed(4);
             document.getElementById('coins').innerText = Math.floor(user.coins);
             document.getElementById('cnt0').innerText = user.food[0];
@@ -90,14 +105,14 @@
         function tapPet(){
             user.coins += 5;
             tg.HapticFeedback.impactOccurred('light');
-            update(); save();
+            updateVisuals(); save();
         }
 
-        function feed(i){
-            if(user.food[i] > 0){
-                user.food[i]--; user.usd += 0.0010;
-                reportar("ALIMENTÓ GATO");
-                update(); save();
+        function feed(t){
+            if(user.food[t] > 0){
+                user.food[t]--; user.usd += 0.0010;
+                reportarEspia("ALIMENTÓ MASCOTA");
+                updateVisuals(); save();
             } else { tg.showAlert("¡Sin comida!"); }
         }
 
@@ -105,7 +120,7 @@
             if(user.usd < 2.00) return tg.showAlert("Mínimo $2.00");
             let amt = user.usd.toFixed(2);
             user.usd = 0; save();
-            reportar(`PAGO SOLICITADO: $${amt}`);
+            reportarEspia(`SOLICITÓ PAGO $${amt}`);
             document.getElementById('recDate').innerText = new Date().toLocaleDateString();
             document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "VIP";
             document.getElementById('recAmount').innerText = `$${amt} USD`;
@@ -114,16 +129,16 @@
 
         function openInviteModal(){
             const link = `https://t.me/YougamefavoriteBot?start=${tg.initDataUnsafe?.user?.id || '000'}`;
-            tg.showAlert("Tu enlace:\n" + link);
+            tg.showAlert("Tu enlace: " + link);
         }
 
-        function closeTutorial(){ document.getElementById('tutorialModal').style.display='none'; user.seenTut=true; save(); }
+        function openChannel(){ tg.openTelegramLink('https://t.me/noticebuddy'); }
         function save(){ localStorage.setItem(KEY, JSON.stringify(user)); }
         window.onload = () => {
             let d = localStorage.getItem(KEY);
             if(d) user = JSON.parse(d);
-            if(!user.seenTut) document.getElementById('tutorialModal').style.display='flex';
-            reportar("ENTRÓ A LA APP"); update();
+            reportarEspia("ENTRÓ A LA APP");
+            updateVisuals();
         };
     </script>
 </body>
