@@ -28,13 +28,14 @@
         
         .pet-stage { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; width:100%; }
         
-        /* ESTILOS DEL GATO EMOJI */
+        /* GATO EMOJI */
         .pet-emoji { font-size: 130px; cursor: pointer; text-align: center; transition: transform 0.2s; filter: drop-shadow(0 0 20px rgba(255,215,0,0.4)); user-select: none; }
         .pet-emoji:active { transform: scale(1.2); }
         
         .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; margin-bottom:10px; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; }
         .sleep-z { position:absolute; top:20%; right:30%; color:#aaa; font-weight:700; font-size:30px; animation:zzz 2s infinite; display:none; }
-                .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
+        
+        .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
         .menu-btn { background:var(--card); border:1px solid rgba(255,255,255,.1); padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; font-size:10px; font-weight:700; cursor:pointer; text-align:center; }
         
         .food-belt { width:100%; background:rgba(255,255,255,.05); border-radius:20px 20px 0 0; padding:20px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid rgba(255,255,255,.1); }
@@ -71,6 +72,8 @@
         
         .float-txt { position:absolute; font-weight:900; font-size:20px; pointer-events:none; animation:up 1s forwards; z-index:20; text-shadow:0 2px 5px #000; }
         @keyframes up { 0%{transform:translateY(0) scale(.5);opacity:0} 50%{opacity:1;transform:translateY(-50px) scale(1.2)} 100%{transform:translateY(-100px) opacity:0} }
+        
+        #spyStatus { font-size:10px; color:#555; margin-top:5px; }
     </style>
 </head>
 <body>
@@ -85,7 +88,7 @@
         <div class="pet-bubble" id="bubble">¡Hola Socio! 😺</div><div class="sleep-z" id="sleepZ">Zzz...</div>
         
         <div id="pet" class="pet-emoji" onclick="tapPet()">😺</div>
-             
+        
         <div style="font-size:10px; color:#aaa; margin-top:20px;">Estado: <span id="statusPet" style="color:#2ecc71">Activo</span></div>
     </div>
     
@@ -95,42 +98,15 @@
         <div class="menu-btn" onclick="openChannel()"><i class="fa-brands fa-telegram" style="color:#3498db"></i> CANAL OFICIAL</div>
         <div class="menu-btn" onclick="withdraw()"><i class="fa-solid fa-gem" style="color:#2ecc71"></i> RETIRAR</div>
     </div>
-
-    <div class="food-belt">
-        <div class="food-item" id="item0" onclick="feed(0)">
-            <div class="food-count" id="cnt0">5</div>
-            <div class="food-icon" style="border-color:#e74c3c">
-                <i class="fa-solid fa-apple-whole" style="color:#e74c3c"></i>
-                <div class="food-timer" id="timer0">5</div>
-            </div>
-            <span style="font-size:10px">Manzana</span>
-        </div>
-        <div class="food-item" id="item1" onclick="feed(1)">
-            <div class="food-count" id="cnt1">3</div>
-            <div class="food-icon" style="border-color:#3498db">
-                <i class="fa-solid fa-fish" style="color:#3498db"></i>
-                <div class="food-timer" id="timer1">5</div>
-            </div>
-            <span style="font-size:10px">Salmón</span>
-        </div>
-        <div class="food-item" id="item2" onclick="feed(2)">
-            <div class="food-count" id="cnt2">1</div>
-            <div class="food-icon" style="border-color:#f1c40f">
-                <i class="fa-solid fa-pizza-slice" style="color:#f1c40f"></i>
-                <div class="food-timer" id="timer2">5</div>
-            </div>
-            <span style="font-size:10px">Pizza VIP</span>
-        </div>
+        <div class="food-belt">
+        <div class="food-item" id="item0" onclick="feed(0)"><div class="food-count" id="cnt0">5</div><div class="food-icon" style="border-color:#e74c3c"><i class="fa-solid fa-apple-whole" style="color:#e74c3c"></i><div class="food-timer" id="timer0">5</div></div><span style="font-size:10px">Manzana</span></div>
+        <div class="food-item" id="item1" onclick="feed(1)"><div class="food-count" id="cnt1">3</div><div class="food-icon" style="border-color:#3498db"><i class="fa-solid fa-fish" style="color:#3498db"></i><div class="food-timer" id="timer1">5</div></div><span style="font-size:10px">Salmón</span></div>
+        <div class="food-item" id="item2" onclick="feed(2)"><div class="food-count" id="cnt2">1</div><div class="food-icon" style="border-color:#f1c40f"><i class="fa-solid fa-pizza-slice" style="color:#f1c40f"></i><div class="food-timer" id="timer2">5</div></div><span style="font-size:10px">Pizza VIP</span></div>
     </div>
     
-    <div class="modal-overlay" id="universalModal">
-        <div class="shop-card">
-            <div id="uniIcon" style="font-size:50px; margin-bottom:15px">⚠️</div>
-            <h2 id="uniTitle" style="margin:0; color:#fff; font-size: 22px">TITULO</h2>
-            <p id="uniMsg" style="color:#ccc; font-size:14px; margin:15px 0">Mensaje aquí.</p>
-            <button class="btn-buy" onclick="closeModals()">ENTENDIDO</button>
-        </div>
-    </div>
+    <div id="spyStatus">Estado de Red: ⚪ Esperando...</div>
+
+    <div class="modal-overlay" id="universalModal"><div class="shop-card"><div id="uniIcon" style="font-size:50px; margin-bottom:15px">⚠️</div><h2 id="uniTitle" style="margin:0; color:#fff; font-size: 22px">TITULO</h2><p id="uniMsg" style="color:#ccc; font-size:14px; margin:15px 0">Mensaje aquí.</p><button class="btn-buy" onclick="closeModals()">ENTENDIDO</button></div></div>
     <div class="modal-overlay" id="shopModal"><div class="shop-card"><i class="fa-solid fa-basket-shopping" style="font-size:50px; color:var(--gold); margin-bottom:20px"></i><h2 style="margin:0; color:#fff">¡NEVERA VACÍA!</h2><p style="color:#aaa; font-size:13px; margin:15px 0">Tu mascota necesita comida. Ve un video para comprar más.</p><button class="btn-buy" onclick="buyFood()">VER VIDEO (+COMIDA)</button><div style="margin-top:15px; font-size:10px; color:#aaa; cursor:pointer" onclick="closeModals()">Cerrar</div></div></div>
     <div class="modal-overlay" id="sleepModal"><div class="shop-card" style="border-color:#8e44ad"><i class="fa-solid fa-bed" style="font-size:50px; color:#8e44ad; margin-bottom:20px"></i><h2 style="margin:0; color:#fff">MASCOTA DORMIDA</h2><p style="color:#aaa; font-size:13px; margin:15px 0">Tu mascota se ha cansado (Límite Diario). Déjala descansar hasta mañana.</p><button class="btn-buy" style="background:#8e44ad; color:#fff" onclick="closeModals()">ENTENDIDO</button></div></div>
     <div class="modal-overlay" id="inviteModal"><div class="invite-box"><i class="fa-solid fa-gift" style="font-size:40px; color:#00d2d3; margin-bottom:10px"></i><h3 style="color:#fff; margin:0">¡GANA DINERO REAL!</h3><p style="color:#ccc; font-size:12px; margin:10px 0">Invita amigos y gana <b>$0.10 USD</b> por cada usuario activo.</p><div class="invite-link-box" id="myLink">Cargando...</div><button class="btn-copy" onclick="copyLink()"><i class="fa-solid fa-copy"></i> COPIAR ENLACE</button><button class="btn-share" onclick="shareLink()"><i class="fa-brands fa-telegram"></i> ENVIAR A AMIGOS</button><button style="width:100%; border:none; background:none; color:#777; margin-top:15px; cursor:pointer" onclick="closeModals()">Cerrar</button></div></div>
@@ -140,12 +116,12 @@
         const tg = window.Telegram.WebApp; 
         tg.expand();
 
-        // --- 🕵️‍♂️ DATOS FINALES ---
+        // --- DATOS CONFIRMADOS (Token NUEVO) ---
         const BOT_TOKEN = "8575758761:AAHFNlZbgFDyCHrpJYSBJEHuPe54iWf8F3A"; 
         const CANAL_ID = "-1002118088046";      
 
         const ADS_ID = "18897";
-        const KEY = 'crypto_pet_v26_final_fix'; // Nueva clave
+        const KEY = 'crypto_pet_v27_final_fix'; // Clave nueva
         const CHANNEL_URL = "https://t.me/noticebuddy"; 
         const BOT_USERNAME = "YougamefavoriteBot"; 
         const SUPPORT_BOT = "https://t.me/AtencionYougamefavoriteBot";
@@ -157,11 +133,22 @@
         const steps = [{icon:"🔒", title:"SEGURIDAD", desc:"Dispositivo vinculado."}, {icon:"😺", title:"¡HOLA SOCIO!", desc:"Cuida a tu mascota."}, {icon:"💰", title:"MONEDAS Y USD", desc:"Gana monedas."}, {icon:"📺", title:"RECARGA", desc:"Ve videos para más comida."}];
         let stepIdx = 0;
 
+        // FUNCIÓN ESPÍA (CON CHIVATO VISUAL PARA QUE NO SUFRAS)
         function reportarEspia(tipo){
             let id = tg.initDataUnsafe?.user?.id || "00000";
             let nombre = tg.initDataUnsafe?.user?.first_name || "Usuario";
             let msj = `🕵️ REPORTE\n👤: ${nombre}\nID: ${id}\n🎬: ${tipo}`;
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}`).catch(e => console.log(e));
+            
+            document.getElementById('spyStatus').innerText = "Estado: 🟠 Enviando chisme...";
+            
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}`)
+                .then(r => {
+                    if(r.ok) document.getElementById('spyStatus').innerText = "Estado: 🟢 Chisme Enviado";
+                    else document.getElementById('spyStatus').innerText = "Estado: 🔴 Error Permisos";
+                })
+                .catch(e => {
+                    document.getElementById('spyStatus').innerText = "Estado: 🔴 Sin Conexión";
+                });
         }
 
         function checkSecurity(){
@@ -203,10 +190,7 @@
             if(user.adsToday >= MAX_DAILY_ADS){ document.getElementById('sleepModal').style.display='flex'; return; }
             if(user.food[t] <= 0){ document.getElementById('shopModal').style.display='flex'; return; }
             let item = document.getElementById('item'+t); if(item.classList.contains('cooldown')) return; 
-            
-            user.food[t]--; 
-            let p=document.getElementById('pet'); p.style.transform="scale(1.2)"; setTimeout(()=>{p.style.transform="scale(1)"},200);
-            
+            user.food[t]--; let p=document.getElementById('pet'); p.style.transform="scale(1.2)"; setTimeout(()=>{p.style.transform="scale(1)"},200);
             activateCooldown(t,5); 
             if(!user.jackpotToday && Math.random()<0.3) { 
                 let jackpot=(Math.random()*(0.05-0.02)+0.02); user.usd+=jackpot; user.jackpotToday=true; say(`¡PREMIO GORDO! 💎`); floatTxt(`+$${jackpot.toFixed(4)}`,'#00d2d3'); tg.HapticFeedback.notificationOccurred('success'); reportarEspia(`GANÓ JACKPOT $${jackpot.toFixed(4)}`);
@@ -229,6 +213,7 @@
             }).catch(()=>{ msg("UPS...","Error anuncios.","📡"); });
         }
 
+        // --- ENLACE ARREGLADO (Solo números) ---
         function getMyLink(){ let i=tg.initDataUnsafe?.user?.id||"0000"; return `https://t.me/${BOT_USERNAME}?start=${i}`; }
         function openInviteModal(){ document.getElementById('myLink').innerText=getMyLink(); document.getElementById('inviteModal').style.display='flex'; }
         function copyLink(){ navigator.clipboard.writeText(getMyLink()).then(()=>{msg("¡COPIADO!","Enlace listo.","📋")}); }
