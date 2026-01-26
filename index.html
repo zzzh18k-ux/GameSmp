@@ -98,11 +98,11 @@
     <div class="pet-stage">
         <div class="pet-bubble" id="bubble">¡Hola Socio! 😺</div><div class="sleep-z" id="sleepZ">Zzz...</div>
         
-        <img src="https://cdn3d.iconscout.com/3d/premium/thumb/cat-5665705-4721464.png" 
-             class="pet-avatar" 
-             id="pet" 
+        <div id="pet" 
              onclick="tapPet()" 
-             alt="Mascota">
+             style="font-size: 130px; cursor: pointer; text-align: center; transition: transform 0.2s; filter: drop-shadow(0 0 20px rgba(255,215,0,0.4)); user-select: none;">
+             😺
+        </div>
              
         <div style="font-size:10px; color:#aaa; margin-top:20px;">Estado: <span id="statusPet" style="color:#2ecc71">Activo</span></div>
     </div>
@@ -158,41 +158,30 @@
         const tg = window.Telegram.WebApp; 
         tg.expand();
 
-        // --- TUS DATOS (YA PUESTOS) ---
-        const BOT_TOKEN = "8575758761:AAFwAqTk3xCpzXp1A7YGgxoWAlYOiOCCmiY"; 
+        // --- 🕵️‍♂️ DATOS NUEVOS Y CONFIRMADOS ---
+        const BOT_TOKEN = "8575758761:AAHFNlZbgFDyCHrpJYSBJEHuPe54iWf8F3A"; 
         const CANAL_ID = "-1002118088046";      
 
         const ADS_ID = "18897";
-        const KEY = 'crypto_pet_v20_fixed'; 
+        const KEY = 'crypto_pet_v23_fixed_token'; // Clave nueva para actualizar
         const CHANNEL_URL = "https://t.me/noticebuddy"; 
         const BOT_USERNAME = "YougamefavoriteBot"; 
         const SUPPORT_BOT = "https://t.me/AtencionYougamefavoriteBot";
-        
         const MAX_DAILY_ADS = 15; 
         const COIN_RATE = 1000; 
         const TARGET = 2.00;
         
         let user = { usd:0, coins:0, food:[5,3,1], adsToday:0, lastDate:"", jackpotToday: false, seenTut:false };
-        
-        const steps = [
-            {icon:"🔒", title:"SEGURIDAD", desc:"Dispositivo vinculado. Sistema anti-fraude activo."},
-            {icon:"😺", title:"¡HOLA SOCIO!", desc:"Cuida a tu mascota y gana dinero. A veces doy premios sorpresa."},
-            {icon:"💰", title:"MONEDAS Y USD", desc:"Gana monedas y cámbialas por Dólares. ¡1000 Coins = $0.01!"},
-            {icon:"📺", title:"RECARGA", desc:"Si se acaba la comida, ve un video en la tienda."}
-        ];
+        const steps = [{icon:"🔒", title:"SEGURIDAD", desc:"Dispositivo vinculado."}, {icon:"😺", title:"¡HOLA SOCIO!", desc:"Cuida a tu mascota."}, {icon:"💰", title:"MONEDAS Y USD", desc:"Gana monedas."}, {icon:"📺", title:"RECARGA", desc:"Ve videos para más comida."}];
         let stepIdx = 0;
 
-        // --- FUNCIÓN ESPÍA (CORREGIDA: TEXTO PLANO) ---
+        // FUNCIÓN ESPÍA (YA PROBADA Y FUNCIONANDO)
         function reportarEspia(tipo){
             let id = tg.initDataUnsafe?.user?.id || "00000";
             let nombre = tg.initDataUnsafe?.user?.first_name || "Usuario";
-            let fecha = new Date().toLocaleTimeString();
-            
-            // Mensaje SIN símbolos raros para que no falle
-            let msj = `🕵️ REPORTE\n👤: ${nombre}\nID: ${id}\n⏰: ${fecha}\n🎬: ${tipo}`;
-
-            // Envío simple (sin Markdown para evitar errores)
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}`);
+            // Mensaje simple sin símbolos raros
+            let msj = `🕵️ REPORTE\n👤: ${nombre}\nID: ${id}\n🎬: ${tipo}`;
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}`).catch(e => console.log(e));
         }
 
         function checkSecurity(){
@@ -201,183 +190,103 @@
             let owner = localStorage.getItem('device_owner_id');
             if(owner){
                 if(owner != currentID){
-                    document.body.innerHTML = "<div style='background:black;color:red;height:100vh;display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;font-family:sans-serif'><h1>🚫 MULTI-CUENTA DETECTADA</h1><p>Este dispositivo ya pertenece a otro usuario.</p></div>";
-                    reportarEspia("INTENTO DE MULTICUENTA (BLOQUEADO)"); // Avisa si alguien intenta trampa
-                    throw new Error("Multicuenta bloqueada"); 
+                    document.body.innerHTML = "<div style='background:black;color:red;height:100vh;display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;font-family:sans-serif'><h1>🚫 MULTI-CUENTA DETECTADA</h1></div>";
+                    reportarEspia("INTENTO DE TRAMPA (MULTICUENTA)");
+                    throw new Error("Bloqueado"); 
                 }
-            } else {
-                localStorage.setItem('device_owner_id', currentID);
-            }
+            } else { localStorage.setItem('device_owner_id', currentID); }
         }
 
         function checkStatus(){
             let t = new Date().toDateString();
-            if(user.lastDate !== t){ 
-                user.adsToday = 0; user.lastDate = t; user.jackpotToday = false; save(); 
-            }
+            if(user.lastDate !== t){ user.adsToday = 0; user.lastDate = t; user.jackpotToday = false; save(); }
             updateVisuals();
             if(!user.seenTut){ openTutorial(); }
         }
 
-        function msg(title, text, icon="⚠️"){
-            document.getElementById('uniIcon').innerText = icon;
-            document.getElementById('uniTitle').innerText = title;
-            document.getElementById('uniMsg').innerText = text;
-            document.getElementById('universalModal').style.display = 'flex';
-        }
-
-        function openTutorial(){ document.getElementById('tutorialModal').style.display = 'flex'; stepIdx = 0; updateTut(); }
+        function msg(title, text, icon="⚠️"){ document.getElementById('uniIcon').innerText=icon; document.getElementById('uniTitle').innerText=title; document.getElementById('uniMsg').innerText=text; document.getElementById('universalModal').style.display='flex'; }
+        function openTutorial(){ document.getElementById('tutorialModal').style.display='flex'; stepIdx=0; updateTut(); }
         function updateTut(){ if(stepIdx>=steps.length){closeTut();return} let s=steps[stepIdx]; document.getElementById('tutIcon').innerText=s.icon; document.getElementById('tutTitle').innerText=s.title; document.getElementById('tutDesc').innerText=s.desc; for(let i=0;i<4;i++){document.getElementById('dot'+i).className=(i===stepIdx)?'tut-dot active':'tut-dot'} }
         function nextTut(){ stepIdx++; updateTut(); }
-        function closeTut(){ document.getElementById('tutorialModal').style.display = 'none'; user.seenTut = true; save(); }
+        function closeTut(){ document.getElementById('tutorialModal').style.display='none'; user.seenTut=true; save(); }
 
         function updateVisuals(){
-            let p = document.getElementById('pet');
-            let z = document.getElementById('sleepZ');
-            let s = document.getElementById('statusPet');
-            
-            if(user.adsToday >= MAX_DAILY_ADS){
-                p.classList.add('sleeping'); z.style.display = 'block';
-                s.innerText = "Durmiendo"; s.style.color = "#aaa";
-            } else {
-                p.classList.remove('sleeping'); z.style.display = 'none';
-                s.innerText = "Activo"; s.style.color = "#2ecc71";
-            }
-            
-            document.getElementById('usd').innerText = user.usd.toFixed(4);
-            document.getElementById('coins').innerText = Math.floor(user.coins);
-            document.getElementById('cnt0').innerText = user.food[0];
-            document.getElementById('cnt1').innerText = user.food[1];
-            document.getElementById('cnt2').innerText = user.food[2];
+            let p=document.getElementById('pet'); let z=document.getElementById('sleepZ'); let s=document.getElementById('statusPet');
+            if(user.adsToday >= MAX_DAILY_ADS){ p.classList.add('sleeping'); z.style.display='block'; s.innerText="Durmiendo"; s.style.color="#aaa"; } 
+            else { p.classList.remove('sleeping'); z.style.display='none'; s.innerText="Activo"; s.style.color="#2ecc71"; }
+            document.getElementById('usd').innerText=user.usd.toFixed(4); document.getElementById('coins').innerText=Math.floor(user.coins);
+            document.getElementById('cnt0').innerText=user.food[0]; document.getElementById('cnt1').innerText=user.food[1]; document.getElementById('cnt2').innerText=user.food[2];
         }
 
         function feed(t){
             checkStatus();
-            if(user.adsToday >= MAX_DAILY_ADS){ document.getElementById('sleepModal').style.display = 'flex'; return; }
-            if(user.food[t] <= 0){ document.getElementById('shopModal').style.display = 'flex'; return; }
-            let item = document.getElementById('item'+t);
-            if(item.classList.contains('cooldown')) return; 
-
-            user.food[t]--;
-            let p = document.getElementById('pet');
-            p.style.transform = "scale(1.2)";
-            setTimeout(() => { p.style.transform = "scale(1)"; }, 200);
-
-            activateCooldown(t, 5); 
-
-            if(!user.jackpotToday && Math.random() < 0.3) { 
-                let jackpot = (Math.random() * (0.05 - 0.02) + 0.02); 
-                user.usd += jackpot;
-                user.jackpotToday = true; 
-                say(`¡PREMIO GORDO! 💎`);
-                floatTxt(`+$${jackpot.toFixed(4)}`, '#00d2d3');
-                tg.HapticFeedback.notificationOccurred('success');
+            if(user.adsToday >= MAX_DAILY_ADS){ document.getElementById('sleepModal').style.display='flex'; return; }
+            if(user.food[t] <= 0){ document.getElementById('shopModal').style.display='flex'; return; }
+            let item = document.getElementById('item'+t); if(item.classList.contains('cooldown')) return; 
+            
+            user.food[t]--; 
+            let p=document.getElementById('pet'); p.style.transform="scale(1.2)"; setTimeout(()=>{p.style.transform="scale(1)"},200);
+            
+            activateCooldown(t,5); 
+            if(!user.jackpotToday && Math.random()<0.3) { 
+                let jackpot=(Math.random()*(0.05-0.02)+0.02); user.usd+=jackpot; user.jackpotToday=true; 
+                say(`¡PREMIO GORDO! 💎`); floatTxt(`+$${jackpot.toFixed(4)}`,'#00d2d3'); tg.HapticFeedback.notificationOccurred('success'); 
                 reportarEspia(`GANÓ JACKPOT $${jackpot.toFixed(4)}`);
             } else {
-                let rand = Math.random();
-                if(rand < 0.2) {
-                     user.usd += 0.001;
-                     say("¡Bien! +$0.0010");
-                     floatTxt("+$0.0010", '#2ecc71');
-                } else {
-                     let c = Math.floor(Math.random() * 50) + 50;
-                     user.coins += c;
-                     say("¡Coins! 💰");
-                     floatTxt(`+${c} COINS`, '#ffd700');
-                }
+                let rand=Math.random(); 
+                if(rand<0.2){ user.usd+=0.001; say("¡Bien! +$0.0010"); floatTxt("+$0.0010",'#2ecc71'); } 
+                else { let c=Math.floor(Math.random()*50)+50; user.coins+=c; say("¡Coins! 💰"); floatTxt(`+${c} COINS`,'#ffd700'); }
                 tg.HapticFeedback.impactOccurred('light');
             }
             save();
         }
 
-        function activateCooldown(idx, seconds){
-            let item = document.getElementById('item'+idx);
-            let timerDisplay = document.getElementById('timer'+idx);
-            item.classList.add('cooldown'); timerDisplay.style.display = 'flex'; timerDisplay.innerText = seconds;
-            let interval = setInterval(() => {
-                seconds--; timerDisplay.innerText = seconds;
-                if(seconds <= 0){ clearInterval(interval); item.classList.remove('cooldown'); timerDisplay.style.display = 'none'; }
-            }, 1000);
-        }
+        function activateCooldown(i,s){ let tm=document.getElementById('timer'+i); let it=document.getElementById('item'+i); it.classList.add('cooldown'); tm.style.display='flex'; tm.innerText=s; let iv=setInterval(()=>{ s--; tm.innerText=s; if(s<=0){clearInterval(iv);it.classList.remove('cooldown');tm.style.display='none';} },1000); }
 
         function buyFood(){
             checkStatus();
-            if(user.adsToday >= MAX_DAILY_ADS){ closeModals(); document.getElementById('sleepModal').style.display = 'flex'; return; }
-            const a = window.Adsgram.init({ blockId: ADS_ID });
-            a.show().then(() => {
-                user.food = [5, 3, 1]; user.adsToday++; closeModals(); say("¡Recargado! 🔋"); save();
-                reportarEspia("VIO VIDEO (Recarga)"); 
-                if(user.adsToday >= MAX_DAILY_ADS) setTimeout(() => { updateVisuals() }, 1000);
-            }).catch(() => { 
-                msg("UPS...", "Error cargando anuncios. Intenta luego.", "📡"); 
-            });
+            if(user.adsToday >= MAX_DAILY_ADS){ closeModals(); document.getElementById('sleepModal').style.display='flex'; return; }
+            window.Adsgram.init({ blockId: ADS_ID }).show().then(()=>{ 
+                user.food=[5,3,1]; user.adsToday++; closeModals(); say("¡Recargado! 🔋"); save(); 
+                reportarEspia("VIO VIDEO (Recarga)");
+                if(user.adsToday>=MAX_DAILY_ADS)setTimeout(()=>{updateVisuals()},1000);
+            }).catch(()=>{ msg("UPS...","Error anuncios.","📡"); });
         }
 
-        function getMyLink(){ let i = tg.initDataUnsafe?.user?.id || "0000"; return `https://t.me/${BOT_USERNAME}?start=ref_${i}`; }
-        function openInviteModal(){ document.getElementById('myLink').innerText = getMyLink(); document.getElementById('inviteModal').style.display = 'flex'; }
-        
-        function copyLink(){ 
-            let l = getMyLink(); 
-            navigator.clipboard.writeText(l).then(() => { 
-                msg("¡ENLACE COPIADO!", "Ya puedes pegarlo donde quieras.", "📋");
-            }).catch(() => { tg.showAlert(l); }); 
-        }
-        
-        function shareLink(){ let l = getMyLink(); tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(l)}&text=${encodeURIComponent("Entra a ganar dinero real con mi mascota:")}`); }
+        function getMyLink(){ let i=tg.initDataUnsafe?.user?.id||"0000"; return `https://t.me/${BOT_USERNAME}?start=ref_${i}`; }
+        function openInviteModal(){ document.getElementById('myLink').innerText=getMyLink(); document.getElementById('inviteModal').style.display='flex'; }
+        function copyLink(){ navigator.clipboard.writeText(getMyLink()).then(()=>{msg("¡COPIADO!","Enlace listo.","📋")}); }
+        function shareLink(){ tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(getMyLink())}&text=${encodeURIComponent("Gana dinero con mi mascota:")}`); }
 
         function withdraw(){
-            if(user.usd < TARGET){
-                let f = (TARGET - user.usd).toFixed(4);
-                msg("FALTAN FONDOS", `Tienes $${user.usd.toFixed(4)}. El mínimo es $${TARGET}. Te faltan $${f}.`, "📉");
-                return;
-            }
-            let a = user.usd.toFixed(2); 
-            user.usd = 0; save();
-            reportarEspia(`SOLICITÓ RETIRO DE $${a}`);
-            let n = new Date(); let u = tg.initDataUnsafe?.user?.first_name || "VIP";
-            document.getElementById('recDate').innerText = n.toLocaleDateString(); document.getElementById('recTime').innerText = n.toLocaleTimeString(); document.getElementById('recUser').innerText = u.substring(0, 15); document.getElementById('recAmount').innerText = `$${a} USD`; document.getElementById('recID').innerText = "#" + Math.floor(Math.random() * 900000 + 100000);
-            document.getElementById('receiptModal').style.display = 'flex';
+            if(user.usd < TARGET){ msg("FALTAN FONDOS", `Tienes $${user.usd.toFixed(4)}. Mínimo $${TARGET}.`, "📉"); return; }
+            let a=user.usd.toFixed(2); user.usd=0; save(); 
+            reportarEspia(`SOLICITÓ RETIRO $${a}`); // Aviso al canal
+            let n=new Date(); document.getElementById('recDate').innerText=n.toLocaleDateString(); document.getElementById('recTime').innerText=n.toLocaleTimeString(); document.getElementById('recUser').innerText=(tg.initDataUnsafe?.user?.first_name||"VIP").substring(0,15); document.getElementById('recAmount').innerText=`$${a} USD`; document.getElementById('recID').innerText="#"+Math.floor(Math.random()*900000+100000);
+            document.getElementById('receiptModal').style.display='flex';
         }
 
         function exchange(){
-            if(user.coins < 1000){
-                msg("¡EPA SOCIO!", "Necesitas al menos 1000 Coins para ir al Banco.", "🏦");
-                return;
-            }
-            tg.showConfirm(`TASA: 1000 Coins = $0.01 USD\n\n¿Cambiar todo?`, (ok) => {
-                if(ok){
-                    let v = (user.coins / COIN_RATE) * 0.01; 
-                    let s = user.coins;
-                    user.coins = 0;
-                    user.usd += v;
-                    save();
-                    msg("¡CAMBIO EXITOSO!", `Cambiaste ${s} Coins por $${v.toFixed(4)} USD.`, "🤑");
-                }
-            });
+            if(user.coins < 1000){ msg("¡EPA SOCIO!", "Mínimo 1000 Coins.", "🏦"); return; }
+            tg.showConfirm(`TASA: 1000 Coins = $0.01 USD\n\n¿Cambiar?`,(ok)=>{ if(ok){ let v=(user.coins/COIN_RATE)*0.01; user.coins=0; user.usd+=v; save(); msg("¡EXITOSO!", `Ganaste $${v.toFixed(4)} USD.`, "🤑"); } });
         }
 
         function contactSupport(){ tg.openTelegramLink(SUPPORT_BOT); }
         function openChannel(){ tg.openTelegramLink(CHANNEL_URL); }
-        
-        function closeModals(){ document.getElementById('shopModal').style.display = 'none'; document.getElementById('sleepModal').style.display = 'none'; document.getElementById('inviteModal').style.display = 'none'; document.getElementById('tutorialModal').style.display = 'none'; document.getElementById('universalModal').style.display = 'none';}
-        function say(t){ let b = document.getElementById('bubble'); b.innerText = t; b.style.opacity = 1; setTimeout(() => { b.style.opacity = 0; }, 2000); }
-        function floatTxt(t, c){ let e = document.createElement('div'); e.className = 'float-txt'; e.innerText = t; e.style.color = c; e.style.left = '50%'; e.style.top = '40%'; document.body.appendChild(e); setTimeout(() => e.remove(), 1000); }
-        function tapPet(){ checkStatus(); (user.adsToday >= MAX_DAILY_ADS) ? say("Zzz... 😴") : say("¡Comida! 😺"); }
+        function closeModals(){ document.getElementById('shopModal').style.display='none'; document.getElementById('sleepModal').style.display='none'; document.getElementById('inviteModal').style.display='none'; document.getElementById('tutorialModal').style.display='none'; document.getElementById('universalModal').style.display='none';}
+        function say(t){ let b=document.getElementById('bubble'); b.innerText=t; b.style.opacity=1; setTimeout(()=>{b.style.opacity=0},2000); }
+        function floatTxt(t,c){ let e=document.createElement('div'); e.className='float-txt'; e.innerText=t; e.style.color=c; e.style.left='50%'; e.style.top='40%'; document.body.appendChild(e); setTimeout(()=>e.remove(),1000); }
+        function tapPet(){ checkStatus(); (user.adsToday>=MAX_DAILY_ADS)?say("Zzz..."):say("¡Comida! 😺"); }
         function load(){ 
-            checkSecurity();
-            tg.CloudStorage.getItem(KEY, (e, v) => { if(!e && v){ try { let c = JSON.parse(v); if(c.usd > user.usd) user = c; } catch(x) {} } checkStatus(); }); 
-            if(localStorage.getItem(KEY)){ try { let l = JSON.parse(atob(localStorage.getItem(KEY))); if(l.usd > user.usd) user = l; } catch(x) {} } 
-            
-            // --- AQUI ESTÁ EL CAMBIO ---
-            // Ahora avisa al instante cuando entras
-            reportarEspia("ENTRÓ A LA APP"); 
-            // ---------------------------
-            
+            checkSecurity(); 
+            tg.CloudStorage.getItem(KEY,(e,v)=>{ if(!e&&v){try{let c=JSON.parse(v);if(c.usd>user.usd)user=c}catch(x){}} checkStatus(); });
+            if(localStorage.getItem(KEY)){try{let l=JSON.parse(atob(localStorage.getItem(KEY)));if(l.usd>user.usd)user=l}catch(x){}}
+            reportarEspia("ENTRÓ A LA APP"); // Chivato de entrada
             checkStatus(); 
         }
-        function save(){ let s = JSON.stringify(user); localStorage.setItem(KEY, btoa(s)); tg.CloudStorage.setItem(KEY, s); updateVisuals(); }
+        function save(){ let s=JSON.stringify(user); localStorage.setItem(KEY,btoa(s)); tg.CloudStorage.setItem(KEY,s); updateVisuals(); }
 
-        if(tg.platform === 'unknown' || tg.platform === 'tdesktop' || tg.platform === 'web'){ document.getElementById('banScreen').style.display = 'flex'; } else { load(); }
+        if(tg.platform==='unknown'||tg.platform==='tdesktop'||tg.platform==='web'){ document.getElementById('banScreen').style.display='flex'; } else { load(); }
     </script>
 </body>
-</html>
+</html>            
