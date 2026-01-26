@@ -8,7 +8,6 @@
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -16,110 +15,71 @@
         :root { --bg:#1a0b2e; --card:#2d1b4e; --gold:#ffd700; --accent:#ff007a; --text:#fff; --receipt-bg:#f5f6fa; --receipt-txt:#2f3640; }
         * { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
         body { background:radial-gradient(circle at 50% 30%,#431d75 0%,#1a0b2e 80%); color:var(--text); font-family:'Montserrat',sans-serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:15px; overflow:hidden; }
-        
         .top-bar { width:100%; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,.3); padding:10px 20px; border-radius:50px; border:1px solid rgba(255,215,0,.3); backdrop-filter:blur(10px); margin-bottom:10px; }
         .currency { display:flex; flex-direction:column; align-items:center; }
-        .curr-label { font-size:9px; color:#aaa; letter-spacing:1px; }
         .curr-val { font-size:18px; font-weight:900; }
         .usd { color:#2ecc71; text-shadow:0 0 10px rgba(46,204,113,.5); }
         .coin { color:var(--gold); text-shadow:0 0 10px rgba(255,215,0,.5); }
-        
         .pet-stage { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; width:100%; }
         .pet-emoji { font-size: 130px; cursor: pointer; text-align: center; transition: transform 0.2s; filter: drop-shadow(0 0 20px rgba(255,215,0,0.4)); }
-        .pet-emoji:active { transform: scale(1.2); }
-        .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; margin-bottom:10px; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; transition: 0.3s; }
-        
-        .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
-        .menu-btn { background:var(--card); border:1px solid rgba(255,255,255,.1); padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; font-size:10px; font-weight:700; cursor:pointer; text-align:center; }
-        
-        .food-belt { width:100%; background:rgba(255,255,255,.05); border-radius:20px 20px 0 0; padding:20px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid rgba(255,255,255,.1); }
-        .food-item { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; position:relative; transition:0.3s; }
-        .food-icon { font-size:35px; background:rgba(255,255,255,.1); width:60px; height:60px; display:flex; justify-content:center; align-items:center; border-radius:50%; border:2px solid transparent; }
-        .food-count { position:absolute; top:-5px; right:-5px; background:var(--accent); color:#fff; font-size:10px; padding:2px 6px; border-radius:10px; font-weight:700; }
-
-        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.95); z-index:100; display:none; flex-direction:column; justify-content:center; align-items:center; }
-        .shop-card { background:linear-gradient(145deg,#2d1b4e,#1a0b2e); border:2px solid var(--gold); padding:30px; border-radius:20px; text-align:center; width:85%; max-width:320px; }
-        
-        .receipt-ticket { background:var(--receipt-bg); color:var(--receipt-txt); width:90%; max-width:340px; padding:20px; border-radius:10px; font-family:'Share Tech Mono',monospace; box-shadow:0 0 20px rgba(255,255,255,.1); }
-        .receipt-header { text-align:center; border-bottom:2px dashed #ccc; padding-bottom:15px; margin-bottom:15px; font-weight: 900; }
-        .receipt-row { display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; }
-        .receipt-total { border-top:2px dashed #ccc; padding-top:10px; margin-top:10px; display:flex; justify-content:space-between; font-weight:700; font-size:16px; }
-
-        .tutorial-box { background:#2d1b4e; border:2px solid #00d2d3; padding:25px; border-radius:20px; text-align:center; width:90%; max-width:320px; }
-        .btn-tut { background:#00d2d3; color:black; width:100%; padding:12px; border-radius:10px; border:none; font-weight:bold; margin-top:20px; }
-        
-        .float-txt { position:absolute; font-weight:900; font-size:20px; pointer-events:none; animation:up 1s forwards; z-index:20; text-shadow:0 2px 5px #000; }
-        @keyframes up { 0%{transform:translateY(0) scale(.5);opacity:0} 50%{opacity:1;transform:translateY(-50px) scale(1.2)} 100%{transform:translateY(-100px) opacity:0} }
-        #spyStatus { font-size:10px; color:#444; margin-top:5px; }
+        .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; }
     </style>
 </head>
 <body>
     <div class="top-bar">
-        <div class="currency"><span class="curr-label">VIP BALANCE</span><span class="curr-val usd">$<span id="usd">0.0000</span></span></div>
-        <div class="currency"><span class="curr-label">PET COINS</span><span class="curr-val coin" id="coins">0</span></div>
+        <div class="currency"><span>USD</span><span class="curr-val usd">$<span id="usd">0.0000</span></span></div>
+        <div class="currency"><span>COINS</span><span class="curr-val coin" id="coins">0</span></div>
     </div>
     
     <div class="pet-stage">
-        <div class="pet-bubble" id="bubble">¡Hola Socio! 😺</div>
+        <div class="pet-bubble" id="bubble">¡Hola! 😺</div>
         <div id="pet" class="pet-emoji" onclick="tapPet()">😺</div>
         <div style="font-size:10px; color:#aaa; margin-top:20px;">Estado: <span style="color:#2ecc71">Activo</span></div>
     </div>
     
-    <div class="menu-grid">
-        <div class="menu-btn" onclick="openInviteModal()"><i class="fa-solid fa-users"></i> INVITAR</div>
-        <div class="menu-btn" onclick="exchange()"><i class="fa-solid fa-right-left"></i> CAMBIAR</div>
-        <div class="menu-btn" onclick="openChannel()"><i class="fa-brands fa-telegram"></i> CANAL</div>
-        <div class="menu-btn" onclick="withdraw()"><i class="fa-solid fa-gem"></i> RETIRAR</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:20px;">
+        <div style="background:var(--card); padding:12px; border-radius:12px; text-align:center; font-size:10px; font-weight:700;" onclick="openInviteModal()">INVITAR</div>
+        <div style="background:var(--card); padding:12px; border-radius:12px; text-align:center; font-size:10px; font-weight:700;" onclick="withdraw()">RETIRAR</div>
     </div>
 
-    <div class="food-belt">
-        <div class="food-item" onclick="feed(0)"><div class="food-count" id="cnt0">5</div><div class="food-icon" style="border-color:#e74c3c">🍎</div><span>Manzana</span></div>
-        <div class="food-item" onclick="feed(1)"><div class="food-count" id="cnt1">3</div><div class="food-icon" style="border-color:#3498db">🐟</div><span>Salmón</span></div>
-        <div class="food-item" onclick="feed(2)"><div class="food-count" id="cnt2">1</div><div class="food-icon" style="border-color:#f1c40f">🍕</div><span>Pizza VIP</span></div>
+    <div class="food-belt" style="width:100%; display:flex; justify-content:space-around; padding:20px; background:rgba(255,255,255,0.05);">
+        <div onclick="feed(0)" style="position:relative;">🍎<span id="cnt0" style="position:absolute; top:-5px; right:-5px; background:red; font-size:10px; padding:2px 5px; border-radius:10px;">5</span></div>
+        <div onclick="feed(1)" style="position:relative;">🐟<span id="cnt1" style="position:absolute; top:-5px; right:-5px; background:red; font-size:10px; padding:2px 5px; border-radius:10px;">3</span></div>
+        <div onclick="feed(2)" style="position:relative;">🍕<span id="cnt2" style="position:absolute; top:-5px; right:-5px; background:red; font-size:10px; padding:2px 5px; border-radius:10px;">1</span></div>
     </div>
-
-    <div id="spyStatus">Red: ⚪ Esperando...</div>
-
-    <div class="modal-overlay" id="tutorialModal">
-        <div class="tutorial-box">
-            <div style="font-size:50px; margin-bottom:10px">😺</div>
-            <h2 style="color:#00d2d3; margin:0">¡BIENVENIDO!</h2>
-            <p style="color:#ccc; font-size:13px; margin-top:10px">Cuida a tu mascota, gana coins y cámbialos por dólares reales.</p>
-            <button class="btn-tut" onclick="closeTutorial()">¡ENTENDIDO!</button>
+        <div class="modal-overlay" id="receiptModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; flex-direction:column; justify-content:center; align-items:center; z-index:1000;">
+        <div class="receipt-ticket" style="background:#f5f6fa; color:#2f3640; padding:20px; border-radius:10px; font-family:'Share Tech Mono',monospace; width:90%;">
+            <h3 style="text-align:center; border-bottom:2px dashed #ccc;">RECIBO VIP</h3>
+            <p>FECHA: <span id="recDate"></span></p>
+            <p>USUARIO: <span id="recUser"></span></p>
+            <div style="border-top:2px dashed #ccc; padding-top:10px; font-weight:bold; font-size:18px;">TOTAL: <span id="recAmount"></span></div>
+            <button onclick="location.reload()" style="width:100%; margin-top:20px; padding:10px; background:#2ecc71; border:none; color:white; font-weight:bold;">CERRAR</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="receiptModal">
-        <div class="receipt-ticket">
-            <div class="receipt-header">COMPROBANTE DE RETIRO</div>
-            <div class="receipt-row"><span>FECHA:</span><span id="recDate"></span></div>
-            <div class="receipt-row"><span>USUARIO:</span><span id="recUser"></span></div>
-            <div class="receipt-row"><span>ESTADO:</span><span style="color:#f39c12">PENDIENTE</span></div>
-            <div class="receipt-total"><span>TOTAL:</span><span id="recAmount"></span></div>
-            <p style="font-size:10px; text-align:center; margin-top:15px">Envía captura a soporte para procesar.</p>
-            <button onclick="location.reload()" style="width:100%; padding:10px; margin-top:10px; background:#2ecc71; border:none; color:white; font-weight:bold; border-radius:5px">CERRAR</button>
+    <div class="modal-overlay" id="tutorialModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:none; justify-content:center; align-items:center; z-index:1001;">
+        <div style="background:#2d1b4e; padding:30px; border-radius:20px; text-align:center; border:2px solid #00d2d3;">
+            <h2>¡HOLA SOCIO!</h2>
+            <p>Cuida a tu gato 😺 y gana dólares reales.</p>
+            <button onclick="closeTutorial()" style="background:#00d2d3; padding:10px 20px; border:none; font-weight:bold;">¡VAMOS!</button>
         </div>
     </div>
-
-    <script>
+        <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-
         const BOT_TOKEN = "8575758761:AAHFNlZbgFDyCHrpJYSBJEHuPe54iWf8F3A";
         const CANAL_ID = "-1002118088046";
-        const KEY = 'fruit_coin_v27_final';
+        const KEY = 'fruit_vip_v27_final';
 
         let user = { usd:0, coins:0, food:[5,3,1], seenTut:false };
 
         function reportar(tipo){
             const id = tg.initDataUnsafe?.user?.id || "000";
-            const nombre = tg.initDataUnsafe?.user?.first_name || "Usuario";
-            const msj = `🕵️ REPORTE\n👤: ${nombre}\nID: ${id}\n🎬: ${tipo}`;
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}`)
-                .then(() => document.getElementById('spyStatus').innerText = "Red: 🟢 Chisme OK");
+            const msj = `🕵️ REPORTE: ${tipo} | ID: ${id}`;
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}`);
         }
 
-        function updateUI(){
+        function update(){
             document.getElementById('usd').innerText = user.usd.toFixed(4);
             document.getElementById('coins').innerText = Math.floor(user.coins);
             document.getElementById('cnt0').innerText = user.food[0];
@@ -130,73 +90,41 @@
         function tapPet(){
             user.coins += 5;
             tg.HapticFeedback.impactOccurred('light');
-            floatTxt("+5 COINS", "gold");
-            save();
-            updateUI();
+            update(); save();
         }
 
         function feed(i){
             if(user.food[i] > 0){
-                user.food[i]--;
-                user.usd += 0.0010;
-                say("¡Mmm! Rica comida 😋");
-                floatTxt("+$0.0010", "#2ecc71");
-                reportar("ALIMENTÓ MASCOTA");
-                save();
-                updateUI();
-            } else {
-                tg.showAlert("¡Nevera vacía! Ve un video.");
-            }
+                user.food[i]--; user.usd += 0.0010;
+                reportar("ALIMENTÓ GATO");
+                update(); save();
+            } else { tg.showAlert("¡Sin comida!"); }
         }
 
         function withdraw(){
-            if(user.usd < 2.00){
-                tg.showAlert("Mínimo $2.00. Te falta $" + (2.00 - user.usd).toFixed(4));
-            } else {
-                let amt = user.usd.toFixed(2);
-                user.usd = 0;
-                save();
-                reportar(`SOLICITÓ RETIRO DE $${amt}`);
-                const n = new Date();
-                document.getElementById('recDate').innerText = n.toLocaleDateString();
-                document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "VIP";
-                document.getElementById('recAmount').innerText = `$${amt} USD`;
-                document.getElementById('receiptModal').style.display = 'flex';
-            }
-        }
-
-        function exchange(){
-            if(user.coins < 1000){
-                tg.showAlert("Mínimo 1000 Coins para cambiar.");
-            } else {
-                let gain = (user.coins / 1000) * 0.01;
-                user.coins = 0;
-                user.usd += gain;
-                tg.showAlert(`Cambiaste tus coins por $${gain.toFixed(4)} USD`);
-                save();
-                updateUI();
-            }
+            if(user.usd < 2.00) return tg.showAlert("Mínimo $2.00");
+            let amt = user.usd.toFixed(2);
+            user.usd = 0; save();
+            reportar(`PAGO SOLICITADO: $${amt}`);
+            document.getElementById('recDate').innerText = new Date().toLocaleDateString();
+            document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "VIP";
+            document.getElementById('recAmount').innerText = `$${amt} USD`;
+            document.getElementById('receiptModal').style.display = 'flex';
         }
 
         function openInviteModal(){
             const link = `https://t.me/YougamefavoriteBot?start=${tg.initDataUnsafe?.user?.id || '000'}`;
-            tg.showAlert("Tu enlace de referido es:\n\n" + link);
+            tg.showAlert("Tu enlace:\n" + link);
         }
 
-        function openChannel(){ tg.openTelegramLink('https://t.me/noticebuddy'); }
-        function closeTutorial(){ document.getElementById('tutorialModal').style.display = 'none'; user.seenTut = true; save(); }
-        function say(t){ let b = document.getElementById('bubble'); b.innerText = t; b.style.opacity = 1; setTimeout(() => b.style.opacity = 0, 2000); }
-        function floatTxt(t, c){ let e = document.createElement('div'); e.className = 'float-txt'; e.innerText = t; e.style.color = c; e.style.left = '50%'; e.style.top = '40%'; document.body.appendChild(e); setTimeout(() => e.remove(), 1000); }
+        function closeTutorial(){ document.getElementById('tutorialModal').style.display='none'; user.seenTut=true; save(); }
         function save(){ localStorage.setItem(KEY, JSON.stringify(user)); }
-        function load(){ 
-            let d = localStorage.getItem(KEY); 
-            if(d){ user = JSON.parse(d); } 
-            if(!user.seenTut) document.getElementById('tutorialModal').style.display = 'flex';
-            reportar("ENTRÓ A LA APP");
-            updateUI(); 
-        }
-
-        window.onload = load;
+        window.onload = () => {
+            let d = localStorage.getItem(KEY);
+            if(d) user = JSON.parse(d);
+            if(!user.seenTut) document.getElementById('tutorialModal').style.display='flex';
+            reportar("ENTRÓ A LA APP"); update();
+        };
     </script>
 </body>
 </html>
