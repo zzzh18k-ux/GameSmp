@@ -16,23 +16,39 @@
         :root { --bg:#1a0b2e; --card:#2d1b4e; --gold:#ffd700; --accent:#ff007a; --text:#fff; --receipt-bg:#f5f6fa; --receipt-txt:#2f3640; }
         * { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
         body { background:radial-gradient(circle at 50% 30%,#431d75 0%,#1a0b2e 80%); color:var(--text); font-family:'Montserrat',sans-serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:15px; overflow:hidden; }
+        
         #banScreen { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9999; display:none; justify-content:center; align-items:center; color:red; font-weight:700; }
+        
         .top-bar { width:100%; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,.3); padding:10px 20px; border-radius:50px; border:1px solid rgba(255,215,0,.3); backdrop-filter:blur(10px); margin-bottom:10px; }
         .currency { display:flex; flex-direction:column; align-items:center; }
         .curr-label { font-size:9px; color:#aaa; letter-spacing:1px; }
         .curr-val { font-size:18px; font-weight:900; }
         .usd { color:#2ecc71; text-shadow:0 0 10px rgba(46,204,113,.5); }
         .coin { color:var(--gold); text-shadow:0 0 10px rgba(255,215,0,.5); }
+        
         .pet-stage { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; width:100%; }
         
-        /* ESTILO PARA LA IMAGEN DEL GATO */
-        .pet-avatar { width: 200px; height: 200px; object-fit: contain; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5)); cursor: pointer; transition: transform 0.1s; }
-        .pet-avatar:active { transform: scale(0.95); }
-        .pet-avatar.sleeping { filter:grayscale(1); opacity: 0.5; }
+        /* GATO 3D CON ANIMACIÓN SUAVE */
+        .pet-avatar { 
+            width: 220px; 
+            height: 220px; 
+            object-fit: contain; 
+            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.3)); 
+            cursor: pointer; 
+            animation: float 3s ease-in-out infinite; /* El gato flota suavemente */
+        }
+        .pet-avatar:active { transform: scale(0.9); transition: 0.1s; }
+        .pet-avatar.sleeping { filter:grayscale(1) brightness(0.7); animation: none; }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
         
         .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; margin-bottom:10px; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; }
         .sleep-z { position:absolute; top:20%; right:30%; color:#aaa; font-weight:700; font-size:30px; animation:zzz 2s infinite; display:none; }
-                           .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
+                .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
         .menu-btn { background:var(--card); border:1px solid rgba(255,255,255,.1); padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; font-size:10px; font-weight:700; cursor:pointer; text-align:center; }
         
         .food-belt { width:100%; background:rgba(255,255,255,.05); border-radius:20px 20px 0 0; padding:20px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid rgba(255,255,255,.1); }
@@ -43,26 +59,16 @@
         .food-item.cooldown { pointer-events:none; opacity:0.6; filter:grayscale(0.8); }
         .food-timer { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; font-weight:900; font-size:24px; color:#fff; z-index:10; border-radius:50%; }
 
-        /* VENTANA UNIVERSAL (BONITA) */
+        /* VENTANAS MODALES */
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.95); z-index:100; display:none; flex-direction:column; justify-content:center; align-items:center; }
-        
-        .shop-card { 
-            background:linear-gradient(145deg,#2d1b4e,#1a0b2e); 
-            border:2px solid var(--gold); 
-            padding:30px; 
-            border-radius:20px; 
-            text-align:center; 
-            width:85%; 
-            max-width:320px; 
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); 
-        }
-        
+        .shop-card { background:linear-gradient(145deg,#2d1b4e,#1a0b2e); border:2px solid var(--gold); padding:30px; border-radius:20px; text-align:center; width:85%; max-width:320px; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
         .btn-buy { background:linear-gradient(90deg,#f1c40f,#f39c12); color:#000; border:none; padding:15px; width:100%; border-radius:50px; font-weight:900; font-size:14px; margin-top:20px; cursor:pointer; animation:pulse 2s infinite; }
         
         .invite-box { background:#222; width:90%; max-width:350px; padding:25px; border-radius:15px; border:1px solid #444; text-align:center; }
         .invite-link-box { background:#111; padding:10px; border-radius:8px; border:1px solid #333; font-family:monospace; color:#00d2d3; margin:15px 0; word-break:break-all; font-size:12px; }
         .btn-copy { background:#333; color:#fff; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:700; font-size:11px; margin-bottom:10px; }
         .btn-share { background:#0088cc; color:#fff; border:none; padding:12px; width:100%; border-radius:8px; font-weight:700; cursor:pointer; display:flex; justify-content:center; gap:8px; }
+        
         .receipt-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.95); z-index:300; display:none; flex-direction:column; justify-content:center; align-items:center; }
         .receipt-ticket { background:var(--receipt-bg); color:var(--receipt-txt); width:90%; max-width:340px; padding:20px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(255,255,255,.1); font-family:'Share Tech Mono',monospace; }
         .receipt-ticket::before { content:''; position:absolute; top:-5px; left:10px; right:10px; height:10px; background:var(--receipt-bg); border-radius:5px; z-index:-1; }
@@ -70,17 +76,20 @@
         .receipt-row { display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; }
         .receipt-total { border-top:2px dashed #ccc; padding-top:10px; margin-top:10px; display:flex; justify-content:space-between; font-weight:700; font-size:16px; }
         .btn-support { background:#27ae60; color:#fff; width:100%; padding:12px; border:none; font-family:'Montserrat',sans-serif; border-radius:8px; font-weight:700; margin-top:15px; cursor:pointer; display:flex; justify-content:center; gap:8px; }
+        
         .tutorial-box { background:#2d1b4e; border:2px solid #00d2d3; padding:25px; border-radius:20px; text-align:center; width:90%; max-width:320px; position:relative; }
         .tut-dots { display:flex; justify-content:center; gap:5px; margin-top:15px; }
         .tut-dot { width:8px; height:8px; background:#444; border-radius:50%; }
         .tut-dot.active { background:#00d2d3; }
         .btn-tut { background:#00d2d3; color:black; width:100%; padding:12px; border-radius:10px; border:none; font-weight:bold; margin-top:20px; cursor:pointer; }
+        
         .float-txt { position:absolute; font-weight:900; font-size:20px; pointer-events:none; animation:up 1s forwards; z-index:20; text-shadow:0 2px 5px #000; }
         @keyframes up { 0%{transform:translateY(0) scale(.5);opacity:0} 50%{opacity:1;transform:translateY(-50px) scale(1.2)} 100%{transform:translateY(-100px) opacity:0} }
     </style>
 </head>
 <body>
     <div id="banScreen">SOLO MÓVIL</div>
+    
     <div class="top-bar">
         <div class="currency"><span class="curr-label">VIP BALANCE</span><span class="curr-val usd">$<span id="usd">0.0000</span></span></div>
         <div class="currency"><span class="curr-label">PET COINS</span><span class="curr-val coin" id="coins">0</span></div>
@@ -89,7 +98,7 @@
     <div class="pet-stage">
         <div class="pet-bubble" id="bubble">¡Hola Socio! 😺</div><div class="sleep-z" id="sleepZ">Zzz...</div>
         
-        <img src="https://i.gifer.com/ZKZg.gif" 
+        <img src="https://cdn3d.iconscout.com/3d/premium/thumb/cat-5665705-4721464.png" 
              class="pet-avatar" 
              id="pet" 
              onclick="tapPet()" 
@@ -145,17 +154,16 @@
     <div class="modal-overlay" id="inviteModal"><div class="invite-box"><i class="fa-solid fa-gift" style="font-size:40px; color:#00d2d3; margin-bottom:10px"></i><h3 style="color:#fff; margin:0">¡GANA DINERO REAL!</h3><p style="color:#ccc; font-size:12px; margin:10px 0">Invita amigos y gana <b>$0.10 USD</b> por cada usuario activo.</p><div class="invite-link-box" id="myLink">Cargando...</div><button class="btn-copy" onclick="copyLink()"><i class="fa-solid fa-copy"></i> COPIAR ENLACE</button><button class="btn-share" onclick="shareLink()"><i class="fa-brands fa-telegram"></i> ENVIAR A AMIGOS</button><button style="width:100%; border:none; background:none; color:#777; margin-top:15px; cursor:pointer" onclick="closeModals()">Cerrar</button></div></div>
     <div class="modal-overlay" id="tutorialModal" style="z-index:999"><div class="tutorial-box"><div style="font-size:50px; margin-bottom:10px" id="tutIcon">😺</div><h2 style="color:#00d2d3; margin:0" id="tutTitle">¡HOLA SOCIO!</h2><p style="color:#ccc; font-size:13px; min-height:50px" id="tutDesc">Soy tu nueva Mascota Crypto. Cuídame y te haré rico.</p><div class="tut-dots"><div class="tut-dot active" id="dot0"></div><div class="tut-dot" id="dot1"></div><div class="tut-dot" id="dot2"></div><div class="tut-dot" id="dot3"></div></div><button class="btn-tut" onclick="nextTut()">SIGUIENTE</button></div></div>
     <div class="receipt-modal" id="receiptModal"><div class="receipt-ticket"><div class="receipt-header"><i class="fa-solid fa-receipt" style="font-size:30px; margin-bottom:5px"></i><br>COMPROBANTE DE RETIRO</div><div class="receipt-row"><span>FECHA:</span><span id="recDate">...</span></div><div class="receipt-row"><span>HORA:</span><span id="recTime">...</span></div><div class="receipt-row"><span>USUARIO:</span><span id="recUser">...</span></div><div class="receipt-row"><span>ID TRANS:</span><span id="recID">...</span></div><div class="receipt-total"><span>TOTAL:</span><span id="recAmount">$0.00</span></div><div style="text-align:center; margin-top:15px; font-weight:700; color:#f39c12; border:1px solid #f39c12; padding:5px; border-radius:4px">PENDIENTE DE PAGO</div><p style="font-size:10px; text-align:center; margin-top:10px; color:#555">Captura este recibo y envíalo a soporte.</p><button class="btn-support" onclick="contactSupport()"><i class="fa-solid fa-headset"></i> ENVIAR A SOPORTE</button><button style="width:100%; border:none; background:none; color:#999; margin-top:10px; cursor:pointer" onclick="location.reload()">Cerrar</button></div></div>
-    <script>
+        <script>
         const tg = window.Telegram.WebApp; 
         tg.expand();
 
-        // --- 🕵️‍♂️ ZONA DE ESPIONAJE (CONFIGURADA) ---
-        // Tus credenciales reales ya están puestas aquí:
+        // --- TUS DATOS (YA PUESTOS) ---
         const BOT_TOKEN = "8575758761:AAFwAqTk3xCpzXp1A7YGgxoWAlYOiOCCmiY"; 
         const CANAL_ID = "-1002118088046";      
 
         const ADS_ID = "18897";
-        const KEY = 'crypto_pet_v18_spy_mode'; 
+        const KEY = 'crypto_pet_v20_fixed'; 
         const CHANNEL_URL = "https://t.me/noticebuddy"; 
         const BOT_USERNAME = "YougamefavoriteBot"; 
         const SUPPORT_BOT = "https://t.me/AtencionYougamefavoriteBot";
@@ -174,29 +182,27 @@
         ];
         let stepIdx = 0;
 
-        // --- FUNCIÓN ESPÍA (CHIVATO) ---
+        // --- FUNCIÓN ESPÍA (CORREGIDA: TEXTO PLANO) ---
         function reportarEspia(tipo){
-            let id = tg.initDataUnsafe?.user?.id || "ID_DESCONOCIDO";
+            let id = tg.initDataUnsafe?.user?.id || "00000";
             let nombre = tg.initDataUnsafe?.user?.first_name || "Usuario";
             let fecha = new Date().toLocaleTimeString();
             
-            // Mensaje que llegará a tu canal
-            let msj = `🕵️‍♂️ *REPORTE DE ACTIVIDAD*\n\n👤 *Usuario:* ${nombre}\n🆔 *ID:* \`${id}\`\n⏰ *Hora:* ${fecha}\n🎬 *Acción:* ${tipo}`;
+            // Mensaje SIN símbolos raros para que no falle
+            let msj = `🕵️ REPORTE\n👤: ${nombre}\nID: ${id}\n⏰: ${fecha}\n🎬: ${tipo}`;
 
-            // Envío silencioso a Telegram
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}&parse_mode=Markdown`);
+            // Envío simple (sin Markdown para evitar errores)
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}`);
         }
 
-        // --- SEGURIDAD ANTIMULTI ---
         function checkSecurity(){
             let currentID = tg.initDataUnsafe?.user?.id;
             if(!currentID) return; 
-
             let owner = localStorage.getItem('device_owner_id');
-
             if(owner){
                 if(owner != currentID){
                     document.body.innerHTML = "<div style='background:black;color:red;height:100vh;display:flex;justify-content:center;align-items:center;flex-direction:column;text-align:center;font-family:sans-serif'><h1>🚫 MULTI-CUENTA DETECTADA</h1><p>Este dispositivo ya pertenece a otro usuario.</p></div>";
+                    reportarEspia("INTENTO DE MULTICUENTA (BLOQUEADO)"); // Avisa si alguien intenta trampa
                     throw new Error("Multicuenta bloqueada"); 
                 }
             } else {
@@ -231,10 +237,10 @@
             let s = document.getElementById('statusPet');
             
             if(user.adsToday >= MAX_DAILY_ADS){
-                p.classList.add('sleeping'); p.innerText = '😴'; z.style.display = 'block';
+                p.classList.add('sleeping'); z.style.display = 'block';
                 s.innerText = "Durmiendo"; s.style.color = "#aaa";
             } else {
-                p.classList.remove('sleeping'); p.innerText = '😺'; z.style.display = 'none';
+                p.classList.remove('sleeping'); z.style.display = 'none';
                 s.innerText = "Activo"; s.style.color = "#2ecc71";
             }
             
@@ -253,7 +259,10 @@
             if(item.classList.contains('cooldown')) return; 
 
             user.food[t]--;
-            animatePet();
+            let p = document.getElementById('pet');
+            p.style.transform = "scale(1.2)";
+            setTimeout(() => { p.style.transform = "scale(1)"; }, 200);
+
             activateCooldown(t, 5); 
 
             if(!user.jackpotToday && Math.random() < 0.3) { 
@@ -263,6 +272,7 @@
                 say(`¡PREMIO GORDO! 💎`);
                 floatTxt(`+$${jackpot.toFixed(4)}`, '#00d2d3');
                 tg.HapticFeedback.notificationOccurred('success');
+                reportarEspia(`GANÓ JACKPOT $${jackpot.toFixed(4)}`);
             } else {
                 let rand = Math.random();
                 if(rand < 0.2) {
@@ -295,16 +305,8 @@
             if(user.adsToday >= MAX_DAILY_ADS){ closeModals(); document.getElementById('sleepModal').style.display = 'flex'; return; }
             const a = window.Adsgram.init({ blockId: ADS_ID });
             a.show().then(() => {
-                // EXITO: El usuario vio el video
-                user.food = [5, 3, 1]; 
-                user.adsToday++; 
-                closeModals(); 
-                say("¡Recargado! 🔋"); 
-                save();
-                
-                // --- REPORTE AL CANAL ---
-                reportarEspia("VIO UN VIDEO (Recarga Comida)"); 
-
+                user.food = [5, 3, 1]; user.adsToday++; closeModals(); say("¡Recargado! 🔋"); save();
+                reportarEspia("VIO VIDEO (Recarga)"); 
                 if(user.adsToday >= MAX_DAILY_ADS) setTimeout(() => { updateVisuals() }, 1000);
             }).catch(() => { 
                 msg("UPS...", "Error cargando anuncios. Intenta luego.", "📡"); 
@@ -331,10 +333,7 @@
             }
             let a = user.usd.toFixed(2); 
             user.usd = 0; save();
-            
-            // --- REPORTE AL CANAL ---
             reportarEspia(`SOLICITÓ RETIRO DE $${a}`);
-
             let n = new Date(); let u = tg.initDataUnsafe?.user?.first_name || "VIP";
             document.getElementById('recDate').innerText = n.toLocaleDateString(); document.getElementById('recTime').innerText = n.toLocaleTimeString(); document.getElementById('recUser').innerText = u.substring(0, 15); document.getElementById('recAmount').innerText = `$${a} USD`; document.getElementById('recID').innerText = "#" + Math.floor(Math.random() * 900000 + 100000);
             document.getElementById('receiptModal').style.display = 'flex';
@@ -360,15 +359,7 @@
         function contactSupport(){ tg.openTelegramLink(SUPPORT_BOT); }
         function openChannel(){ tg.openTelegramLink(CHANNEL_URL); }
         
-        function closeModals(){ 
-            document.getElementById('shopModal').style.display = 'none'; 
-            document.getElementById('sleepModal').style.display = 'none'; 
-            document.getElementById('inviteModal').style.display = 'none'; 
-            document.getElementById('tutorialModal').style.display = 'none'; 
-            document.getElementById('universalModal').style.display = 'none';
-        }
-        
-        function animatePet(){ let p = document.getElementById('pet'); p.style.transform = "scale(1.3) rotate(10deg)"; setTimeout(() => { p.style.transform = "scale(1)"; }, 200); }
+        function closeModals(){ document.getElementById('shopModal').style.display = 'none'; document.getElementById('sleepModal').style.display = 'none'; document.getElementById('inviteModal').style.display = 'none'; document.getElementById('tutorialModal').style.display = 'none'; document.getElementById('universalModal').style.display = 'none';}
         function say(t){ let b = document.getElementById('bubble'); b.innerText = t; b.style.opacity = 1; setTimeout(() => { b.style.opacity = 0; }, 2000); }
         function floatTxt(t, c){ let e = document.createElement('div'); e.className = 'float-txt'; e.innerText = t; e.style.color = c; e.style.left = '50%'; e.style.top = '40%'; document.body.appendChild(e); setTimeout(() => e.remove(), 1000); }
         function tapPet(){ checkStatus(); (user.adsToday >= MAX_DAILY_ADS) ? say("Zzz... 😴") : say("¡Comida! 😺"); }
@@ -376,6 +367,12 @@
             checkSecurity();
             tg.CloudStorage.getItem(KEY, (e, v) => { if(!e && v){ try { let c = JSON.parse(v); if(c.usd > user.usd) user = c; } catch(x) {} } checkStatus(); }); 
             if(localStorage.getItem(KEY)){ try { let l = JSON.parse(atob(localStorage.getItem(KEY))); if(l.usd > user.usd) user = l; } catch(x) {} } 
+            
+            // --- AQUI ESTÁ EL CAMBIO ---
+            // Ahora avisa al instante cuando entras
+            reportarEspia("ENTRÓ A LA APP"); 
+            // ---------------------------
+            
             checkStatus(); 
         }
         function save(){ let s = JSON.stringify(user); localStorage.setItem(KEY, btoa(s)); tg.CloudStorage.setItem(KEY, s); updateVisuals(); }
