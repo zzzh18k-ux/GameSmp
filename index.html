@@ -28,23 +28,9 @@
         
         .pet-stage { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; width:100%; }
         
-        /* GATO 3D CON ANIMACIÓN SUAVE */
-        .pet-avatar { 
-            width: 220px; 
-            height: 220px; 
-            object-fit: contain; 
-            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.3)); 
-            cursor: pointer; 
-            animation: float 3s ease-in-out infinite; /* El gato flota suavemente */
-        }
-        .pet-avatar:active { transform: scale(0.9); transition: 0.1s; }
-        .pet-avatar.sleeping { filter:grayscale(1) brightness(0.7); animation: none; }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
+        /* ESTILOS DEL GATO EMOJI */
+        .pet-emoji { font-size: 130px; cursor: pointer; text-align: center; transition: transform 0.2s; filter: drop-shadow(0 0 20px rgba(255,215,0,0.4)); user-select: none; }
+        .pet-emoji:active { transform: scale(1.2); }
         
         .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; margin-bottom:10px; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; }
         .sleep-z { position:absolute; top:20%; right:30%; color:#aaa; font-weight:700; font-size:30px; animation:zzz 2s infinite; display:none; }
@@ -98,11 +84,7 @@
     <div class="pet-stage">
         <div class="pet-bubble" id="bubble">¡Hola Socio! 😺</div><div class="sleep-z" id="sleepZ">Zzz...</div>
         
-        <div id="pet" 
-             onclick="tapPet()" 
-             style="font-size: 130px; cursor: pointer; text-align: center; transition: transform 0.2s; filter: drop-shadow(0 0 20px rgba(255,215,0,0.4)); user-select: none;">
-             😺
-        </div>
+        <div id="pet" class="pet-emoji" onclick="tapPet()">😺</div>
              
         <div style="font-size:10px; color:#aaa; margin-top:20px;">Estado: <span id="statusPet" style="color:#2ecc71">Activo</span></div>
     </div>
@@ -154,17 +136,16 @@
     <div class="modal-overlay" id="inviteModal"><div class="invite-box"><i class="fa-solid fa-gift" style="font-size:40px; color:#00d2d3; margin-bottom:10px"></i><h3 style="color:#fff; margin:0">¡GANA DINERO REAL!</h3><p style="color:#ccc; font-size:12px; margin:10px 0">Invita amigos y gana <b>$0.10 USD</b> por cada usuario activo.</p><div class="invite-link-box" id="myLink">Cargando...</div><button class="btn-copy" onclick="copyLink()"><i class="fa-solid fa-copy"></i> COPIAR ENLACE</button><button class="btn-share" onclick="shareLink()"><i class="fa-brands fa-telegram"></i> ENVIAR A AMIGOS</button><button style="width:100%; border:none; background:none; color:#777; margin-top:15px; cursor:pointer" onclick="closeModals()">Cerrar</button></div></div>
     <div class="modal-overlay" id="tutorialModal" style="z-index:999"><div class="tutorial-box"><div style="font-size:50px; margin-bottom:10px" id="tutIcon">😺</div><h2 style="color:#00d2d3; margin:0" id="tutTitle">¡HOLA SOCIO!</h2><p style="color:#ccc; font-size:13px; min-height:50px" id="tutDesc">Soy tu nueva Mascota Crypto. Cuídame y te haré rico.</p><div class="tut-dots"><div class="tut-dot active" id="dot0"></div><div class="tut-dot" id="dot1"></div><div class="tut-dot" id="dot2"></div><div class="tut-dot" id="dot3"></div></div><button class="btn-tut" onclick="nextTut()">SIGUIENTE</button></div></div>
     <div class="receipt-modal" id="receiptModal"><div class="receipt-ticket"><div class="receipt-header"><i class="fa-solid fa-receipt" style="font-size:30px; margin-bottom:5px"></i><br>COMPROBANTE DE RETIRO</div><div class="receipt-row"><span>FECHA:</span><span id="recDate">...</span></div><div class="receipt-row"><span>HORA:</span><span id="recTime">...</span></div><div class="receipt-row"><span>USUARIO:</span><span id="recUser">...</span></div><div class="receipt-row"><span>ID TRANS:</span><span id="recID">...</span></div><div class="receipt-total"><span>TOTAL:</span><span id="recAmount">$0.00</span></div><div style="text-align:center; margin-top:15px; font-weight:700; color:#f39c12; border:1px solid #f39c12; padding:5px; border-radius:4px">PENDIENTE DE PAGO</div><p style="font-size:10px; text-align:center; margin-top:10px; color:#555">Captura este recibo y envíalo a soporte.</p><button class="btn-support" onclick="contactSupport()"><i class="fa-solid fa-headset"></i> ENVIAR A SOPORTE</button><button style="width:100%; border:none; background:none; color:#999; margin-top:10px; cursor:pointer" onclick="location.reload()">Cerrar</button></div></div>
-     <script>
-             <script>
+        <script>
         const tg = window.Telegram.WebApp; 
         tg.expand();
 
-        // --- 🕵️‍♂️ DATOS DEL DUEÑO ---
+        // --- 🕵️‍♂️ DATOS FINALES ---
         const BOT_TOKEN = "8575758761:AAHFNlZbgFDyCHrpJYSBJEHuPe54iWf8F3A"; 
         const CANAL_ID = "-1002118088046";      
 
         const ADS_ID = "18897";
-        const KEY = 'crypto_pet_v25_link_ok'; // Clave nueva
+        const KEY = 'crypto_pet_v26_final_fix'; // Nueva clave
         const CHANNEL_URL = "https://t.me/noticebuddy"; 
         const BOT_USERNAME = "YougamefavoriteBot"; 
         const SUPPORT_BOT = "https://t.me/AtencionYougamefavoriteBot";
@@ -222,7 +203,10 @@
             if(user.adsToday >= MAX_DAILY_ADS){ document.getElementById('sleepModal').style.display='flex'; return; }
             if(user.food[t] <= 0){ document.getElementById('shopModal').style.display='flex'; return; }
             let item = document.getElementById('item'+t); if(item.classList.contains('cooldown')) return; 
-            user.food[t]--; let p=document.getElementById('pet'); p.style.transform="scale(1.2)"; setTimeout(()=>{p.style.transform="scale(1)"},200);
+            
+            user.food[t]--; 
+            let p=document.getElementById('pet'); p.style.transform="scale(1.2)"; setTimeout(()=>{p.style.transform="scale(1)"},200);
+            
             activateCooldown(t,5); 
             if(!user.jackpotToday && Math.random()<0.3) { 
                 let jackpot=(Math.random()*(0.05-0.02)+0.02); user.usd+=jackpot; user.jackpotToday=true; say(`¡PREMIO GORDO! 💎`); floatTxt(`+$${jackpot.toFixed(4)}`,'#00d2d3'); tg.HapticFeedback.notificationOccurred('success'); reportarEspia(`GANÓ JACKPOT $${jackpot.toFixed(4)}`);
@@ -240,7 +224,7 @@
             checkStatus();
             if(user.adsToday >= MAX_DAILY_ADS){ closeModals(); document.getElementById('sleepModal').style.display='flex'; return; }
             window.Adsgram.init({ blockId: ADS_ID }).show().then(()=>{ 
-                user.food=[5,3,1]; user.adsToday++; closeModals(); say("¡Recargado! 🔋"); save(); reportarEspia("VIO VIDEO");
+                user.food=[5,3,1]; user.adsToday++; closeModals(); say("¡Recargado! 🔋"); save(); reportarEspia("VIO VIDEO (Recarga)");
                 if(user.adsToday>=MAX_DAILY_ADS)setTimeout(()=>{updateVisuals()},1000);
             }).catch(()=>{ msg("UPS...","Error anuncios.","📡"); });
         }
