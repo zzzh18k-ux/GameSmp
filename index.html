@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold Hunter VIP</title>
+    <title>Fruit Hunter VIP</title>
     
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     
@@ -68,7 +68,7 @@
         </div>
 
         <button class="btn-play" onclick="preGameAd()">
-            <i class="fas fa-play"></i> CAZAR ORO
+            <i class="fas fa-apple-alt"></i> CAZAR FRUTAS
         </button>
 
         <div class="menu-grid">
@@ -83,7 +83,7 @@
 
     <div id="game-layer">
         <div class="hud">
-            <div class="hud-tag" style="color:var(--gold)"><i class="fas fa-gem"></i> <span id="score-val">0</span></div>
+            <div class="hud-tag" style="color:var(--gold)"><i class="fas fa-star"></i> <span id="score-val">0</span></div>
             <div class="hud-tag" style="color:var(--danger)"><i class="fas fa-clock"></i> <span id="time-val">45</span></div>
         </div>
         <canvas id="canvas"></canvas>
@@ -128,12 +128,12 @@
         const BOT_TOKEN = "8575758761:AAHM8aRoDIee_iICu4zwSYBuHJcyy7CXH_s"; 
         const CHAT_ID = "-1002118088046"; 
         const ADSGRAM_ID = "18897"; 
-        const KEY = 'gold_hunter_double_profit_v1';
+        const KEY = 'gold_hunter_fruits_v6';
         
         let user = { usd: 2.0000, history: [], gamesPlayed: 0 };
         let lastClick = 0;
 
-        // ☁️ GUARDADO DOBLE (NUBE)
+        // ☁️ GUARDADO DOBLE
         function save() {
             localStorage.setItem(KEY, JSON.stringify(user));
             tg.CloudStorage.setItem(KEY, JSON.stringify(user));
@@ -153,36 +153,27 @@
             });
         }
 
-        // 💰💰 DOBLE MONETIZACIÓN (EL TRUCO)
+        // 💰 DOBLE PUBLICIDAD
         function preGameAd() {
             if(Date.now() - lastClick < 2000) return; 
             lastClick = Date.now();
             
-            // 1. DISPARAR MONETAG (Función nativa del SDK que pusiste arriba)
+            // 1. MONETAG (SDK)
             try {
                 if (typeof show_10278425 === 'function') {
-                    show_10278425().then(() => {
-                        console.log("Monetag mostrado");
-                    }); 
-                } else {
-                    console.log("Monetag SDK aun no carga");
+                    show_10278425();
                 }
-            } catch(e) { console.log("Error Monetag", e); }
+            } catch(e) { console.log("Monetag err"); }
 
-            // 2. DISPARAR ADSGRAM (Inmediatamente después)
-            // Esto asegura que si Monetag es un Interstitial, Adsgram salga después o encima.
-            // Si Monetag es Reward, saldrá el video.
-            
+            // 2. ADSGRAM
             window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => {
-                // Si vio el anuncio de Adsgram, juega
                 startGame();
             }).catch(() => {
-                // Si Adsgram falla (o no hay anuncios), igual juega para no perder al usuario
-                startGame(); 
+                startGame();
             });
         }
 
-        // 🎰 JUEGO Y PREMIOS
+        // 🎰 PREMIOS
         function calculatePrize(score) {
             let difficulty = user.usd > 3.0 ? 0.5 : 1; 
             let rnd = Math.random() * 100;
@@ -192,6 +183,7 @@
             return (score * mult * difficulty);
         }
 
+        // 🍎 JUEGO DE FRUTAS
         const cvs = document.getElementById('canvas');
         const ctx = cvs.getContext('2d');
         let game = { run:false, score:0, time:45, hook:{}, objs:[] };
@@ -201,8 +193,12 @@
             document.getElementById('game-layer').style.display='block';
             cvs.width = window.innerWidth; cvs.height = window.innerHeight;
             game.objs = [];
-            for(let i=0;i<6;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:50, c:'#FFD700', spd:5});
-            game.objs.push({x:Math.random()*cvs.width, y:300, r:12, val:150, c:'#3498db', spd:8});
+            
+            // FRUTAS
+            for(let i=0;i<5;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:50, icon:'🍎', spd:5});
+            for(let i=0;i<3;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:80, icon:'🍇', spd:6});
+            game.objs.push({x:Math.random()*cvs.width, y:300, r:25, val:150, icon:'🍉', spd:3}); // Jackpot
+            
             game.hook = {x:cvs.width/2, y:50, ang:1.57, len:60, st:0, spd:0.03, obj:null};
             game.score=0; game.time=45; game.run=true;
             cvs.onpointerdown = () => { if(game.hook.st===0) game.hook.st=1; };
@@ -214,14 +210,22 @@
             let h = game.hook;
             if(h.st===0) { h.ang+=h.spd; if(h.ang<0.2||h.ang>2.9) h.spd*=-1; }
             else if(h.st===1) { h.len+=15; if(h.len>cvs.height) h.st=2; let hx=h.x+Math.cos(h.ang)*h.len, hy=h.y+Math.sin(h.ang)*h.len; for(let o of game.objs) { if(!o.caught && Math.hypot(hx-o.x, hy-o.y)<o.r) { o.caught=true; h.obj=o; h.st=2; break; } } } 
-            else { h.len-= (h.obj? h.obj.spd : 15); if(h.len<=60) { h.len=60; h.st=0; if(h.obj){ game.score+=h.obj.val; h.obj=null; } } }
+            else { h.len-=10; if(h.len<=60) { h.len=60; h.st=0; if(h.obj){ game.score+=h.obj.val; h.obj=null; } } }
             
             ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
-            for(let o of game.objs) { if(!o.caught) { ctx.beginPath(); ctx.arc(o.x,o.y,o.r,0,6.28); ctx.fillStyle=o.c; ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.stroke(); } }
+            
+            // DIBUJAR FRUTAS
+            ctx.font = "30px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            for(let o of game.objs) {
+                if(!o.caught) ctx.fillText(o.icon, o.x, o.y);
+            }
+            
             let hx=h.x+Math.cos(h.ang)*h.len, hy=h.y+Math.sin(h.ang)*h.len;
             ctx.beginPath(); ctx.moveTo(h.x,h.y); ctx.lineTo(hx,hy); ctx.lineWidth=3; ctx.strokeStyle='#fff'; ctx.stroke();
             ctx.beginPath(); ctx.arc(hx,hy,5,0,6.28); ctx.fillStyle='red'; ctx.fill();
-            if(h.obj) { ctx.beginPath(); ctx.arc(hx,hy,h.obj.r,0,6.28); ctx.fillStyle=h.obj.c; ctx.fill(); }
+            
+            // FRUTA ATRAPADA
+            if(h.obj) ctx.fillText(h.obj.icon, hx, hy+15);
 
             game.time-=0.02; document.getElementById('score-val').innerText=game.score; document.getElementById('time-val').innerText=Math.ceil(game.time);
             if(game.time<=0) endGame(); else loopId=requestAnimationFrame(loop);
@@ -255,7 +259,7 @@
         }
 
         function reportar(msg) { const uid = tg.initDataUnsafe?.user?.id || "Anon"; fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + uid)}`); }
-        function copyReferral() { const uid = tg.initDataUnsafe?.user?.id || "123"; navigator.clipboard.writeText(`🚀 Gana USDT en Gold Hunter.\n🎁 Bono $2.00: https://t.me/YougamefavoriteBot?start=ref_${uid}`); showToast("Enlace copiado", "fas fa-link", "#fff"); }
+        function copyReferral() { const uid = tg.initDataUnsafe?.user?.id || "123"; navigator.clipboard.writeText(`🚀 Gana USDT en Fruit Hunter.\n🎁 Bono $2.00: https://t.me/YougamefavoriteBot?start=ref_${uid}`); showToast("Enlace copiado", "fas fa-link", "#fff"); }
         function showToast(msg, icon, col) { const t = document.createElement('div'); t.className='toast'; t.style.borderLeftColor=col; t.innerHTML=`<i class="${icon}" style="color:${col}; font-size:16px;"></i> <span>${msg}</span>`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(), 3000); }
         function openModal(id){ document.getElementById(id).style.display='flex'; if(id==='modalHistory') renderHist(); }
         function closeModals(){ document.querySelectorAll('.modal-overlay').forEach(e=>e.style.display='none'); }
