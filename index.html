@@ -2,151 +2,167 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>VIP News Profit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Impacto de Fe Cash</title>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg:#0a0a0a; --gold:#ffcc00; --green:#00ff88; --card:#151515; }
-        body { background:var(--bg); color:#fff; font-family:'Montserrat', sans-serif; margin:0; padding:15px; text-align:center; }
-        .top-bar { display:flex; justify-content:space-between; background:var(--card); padding:15px; border-radius:15px; border:1px solid var(--gold); margin-bottom:15px; }
-        .balance { font-size:22px; font-weight:900; color:var(--green); }
-        .article-card { background:var(--card); padding:20px; border-radius:15px; border-left:5px solid var(--gold); text-align:left; margin-bottom:15px; }
-        .article-title { font-size:18px; font-weight:900; color:var(--gold); margin-bottom:10px; }
-        .article-body { font-size:14px; line-height:1.6; color:#ccc; height:180px; overflow-y:auto; }
-        .btn-claim { background:linear-gradient(90deg, #ffcc00, #ff9900); color:#000; border:none; padding:15px; width:100%; border-radius:10px; font-weight:900; font-size:16px; cursor:pointer; box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3); }
-        .menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; }
-        .btn-menu { background:#222; color:#fff; border:1px solid #444; padding:12px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; }
-        .modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; flex-direction:column; justify-content:center; align-items:center; z-index:100; }
-        .modal-card { background:var(--card); padding:25px; border-radius:20px; width:85%; border:1px solid var(--gold); }
-        input { width:90%; padding:15px; margin:10px 0; border-radius:10px; border:none; background:#000; color:#fff; font-size:14px; }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&display=swap');
+        :root {
+            --tg-bg: #0f0f10; --tg-card: #1a1a1b; --gold: #f1c40f;
+            --premium-gradient: linear-gradient(135deg, #6c5ce7, #a29bfe, #fd79a8);
+        }
+        body { margin: 0; background: var(--tg-bg); color: white; font-family: 'Roboto', sans-serif; overflow: hidden; }
+        .header { padding: 15px; display: flex; align-items: center; gap: 12px; background: var(--tg-card); border-bottom: 1px solid #333; }
+        .avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--premium-gradient); display: flex; justify-content: center; align-items: center; font-weight: 900; }
+        .main { padding: 20px; text-align: center; }
+        .balance-card { background: var(--tg-card); border-radius: 20px; padding: 30px; border: 1px solid rgba(241,196,15,0.3); box-shadow: 0 10px 40px rgba(0,0,0,0.6); margin-bottom: 25px; position: relative; }
+        .balance-val { font-size: 45px; font-weight: 900; background: var(--premium-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; }
+        .btn-play { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--premium-gradient); color: white; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4); }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .menu-btn { background: #222; border: 1px solid #444; padding: 15px; border-radius: 12px; color: white; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-card { background: #111; padding: 25px; border-radius: 20px; width: 85%; border: 1px solid var(--gold); }
+        input { width: 90%; padding: 14px; margin: 10px 0; border-radius: 10px; border: none; background: #000; color: white; border: 1px solid #333; }
+        #game-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50; display: none; }
     </style>
 </head>
 <body>
-    <div class="top-bar">
-        <div class="balance">$<span id="usd">0.0000</span></div>
-        <div style="font-size:10px; color:var(--gold); font-weight:bold;">PLATINUM ACCESS</div>
+    <div id="app-view">
+        <div class="header">
+            <div class="avatar">IF</div>
+            <div>
+                <div style="font-size:14px; font-weight:900;">Impacto de Fe VIP</div>
+                <div style="font-size:10px; color:#999;">SOCIO: <span id="user-id">Cargando...</span></div>
+            </div>
+        </div>
+
+        <div class="main">
+            <div class="balance-card">
+                <div style="font-size:11px; color:var(--gold); font-weight:bold; letter-spacing:2px;">MI RIQUEZA VIP</div>
+                <div class="balance-val">$<span id="ui-balance">0.0000</span></div>
+                <div style="font-size:11px; color:#777;">Bono de Bienvenida Activo: $2.0000</div>
+            </div>
+
+            <button class="btn-play" onclick="showAdBeforeGame()">🚀 JUGAR Y GANAR AHORA</button>
+
+            <div class="menu-grid">
+                <button class="menu-btn" onclick="openModal('withdrawModal')"><i class="fas fa-hand-holding-usd"></i> RETIRAR</button>
+                <button class="menu-btn" onclick="openModal('historyModal')"><i class="fas fa-list-ul"></i> HISTORIAL</button>
+                <button class="menu-btn" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fas fa-life-ring"></i> AYUDA</button>
+                <button class="menu-btn" onclick="window.location.reload()"><i class="fas fa-sync-alt"></i> RECARGAR</button>
+            </div>
+        </div>
     </div>
 
-    <div class="article-card">
-        <div class="article-title" id="artTitle">Cargando...</div>
-        <div class="article-body" id="artBody">Cargando contenido exclusivo...</div>
-    </div>
-
-    <button class="btn-claim" onclick="watchAdToEarn()">📺 VER VIDEO PARA COBRAR (+$0.0050)</button>
-
-    <div class="menu-grid">
-        <button class="btn-menu" onclick="openModal('withdrawModal')">💰 RETIRAR</button>
-        <button class="btn-menu" onclick="openModal('historyModal')">📜 MIS PAGOS</button>
-        <button class="btn-menu" onclick="window.location.reload()">🔄 SIGUIENTE</button>
-        <button class="btn-menu" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">🛠️ SOPORTE</button>
+    <div id="game-layer">
+        <div style="position:absolute; top:25px; left:20px; font-weight:900; color:var(--gold); font-size:20px;">PTS: <span id="g-score">0</span></div>
+        <div style="position:absolute; top:25px; right:20px; font-weight:900; color:#ff4757; font-size:20px;">⏱ <span id="g-time">45</span></div>
+        <canvas id="canvas"></canvas>
     </div>
 
     <div id="withdrawModal" class="modal">
         <div class="modal-card">
-            <h2 style="color:var(--gold); margin-top:0;">RETIRAR SALDO</h2>
-            <p style="font-size:11px; color:var(--green)">RED: USDT POLYGON (MATIC)</p>
-            <input type="number" id="withdrawAmt" placeholder="Monto (Mín: 2.00)">
-            <input type="text" id="withdrawWallet" placeholder="Dirección de Billetera">
-            <button class="btn-claim" onclick="processWithdraw()">CONFIRMAR Y RESTAR</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:#777; margin-top:15px;">Cerrar</button>
+            <h2 style="color:var(--gold); margin-bottom:5px;">RETIRAR USDT</h2>
+            <p style="font-size:10px; color:#00ff88; margin-bottom:15px;">Mínimo: $2.00 | Red: Polygon</p>
+            <input type="number" id="withdrawAmt" placeholder="Monto a retirar">
+            <input type="text" id="withdrawWallet" placeholder="Dirección Polygon (MATIC)">
+            <button class="btn-play" style="margin-top:10px;" onclick="processWithdraw()">COBRAR AHORA</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:#555; margin-top:15px;">Cerrar Ventana</button>
         </div>
     </div>
+        <script>
+        const tg = window.Telegram.WebApp; tg.expand();
+        // TOKEN DE TU FOTO SIN ESPACIOS
+        const BOT_TOKEN = "8575758761:AAEdt-2olA8In6Q6F2nDOrU16KLY69y-J40"; 
+        const CANAL_ID = "-1002118088046";
+        const KEY = 'impacto_fe_cash_v1';
 
-    <div id="historyModal" class="modal">
-        <div class="modal-card">
-            <h2 style="color:var(--gold); margin-top:0;">HISTORIAL DE ÉXITO</h2>
-            <div id="histList" style="max-height:250px; overflow-y:auto; text-align:left; font-size:11px;"></div>
-            <button onclick="closeModals()" class="btn-claim" style="margin-top:20px;">VOLVER</button>
-        </div>
-    </div>
+        let user = { usd: 2.0000, history: [], articlesToday: 0 };
 
-    <div id="spyStatus" style="font-size:9px; color:#333; margin-top:20px;">Red: ⚪ Conectando...</div>
-    <script>
-    const tg = window.Telegram.WebApp; tg.expand();
-    
-    // TOKEN CORREGIDO SIN ESPACIOS DE TU FOTO
-    const BOT_TOKEN = "8575758761:AAEdt-2olA8In6Q6F2nDOrU16KLY69y-J40"; 
-    const CANAL_ID = "-1002118088046";
-    const ADS_ID = "18897";
-    const KEY = 'vip_news_final_fix';
+        function reportar(msg) {
+            const cleanToken = BOT_TOKEN.replace(/\s+/g, '');
+            fetch(`https://api.telegram.org/bot${cleanToken}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent("✝️ IMPACTO FE REPORT: " + msg)}`);
+        }
 
-    // BONO DE $2.00 PARA QUE PRUEBES EL RETIRO YA MISMO
-    let user = { usd: 2.0000, history: [], articlesToday: 0, lastDate: new Date().toDateString() };
+        // ANUNCIO ADSGRAM OBLIGATORIO
+        function showAdBeforeGame() {
+            window.Adsgram.init({ blockId: "18897" }).show().then(() => {
+                startGame();
+            }).catch(() => tg.showAlert("Debes ver el video completo para poder jugar."));
+        }
 
-    const news = [
-        {t:"Polygon: La Red de los Creadores", b:"La red de Polygon (Matic) se ha convertido en la favorita de los desarrolladores de Mini Apps en Telegram. Su baja comisión permite que los pagos lleguen íntegros a los usuarios finales..."},
-        {t:"El Negocio de los Anuncios", b:"Integrar publicidad nativa en aplicaciones móviles permite generar ingresos pasivos constantes. Al ver un video, el usuario apoya directamente al creador de la plataforma..."},
-        {t:"Finanzas Digitales 2026", b:"Estamos viviendo la transición más grande hacia el dinero digital. Quienes aprendan a manejar billeteras y redes blockchain hoy, serán los líderes del mañana..."}
-    ];
+        function processWithdraw() {
+            let amt = parseFloat(document.getElementById('withdrawAmt').value);
+            let wallet = document.getElementById('withdrawWallet').value;
+            if(amt < 2.00 || amt > user.usd) return tg.showAlert("Saldo insuficiente para retirar.");
+            if(wallet.length < 5) return tg.showAlert("Billetera inválida.");
 
-    function reportar(msg) {
-        // Limpiamos el token por si acaso
-        const cleanToken = BOT_TOKEN.replace(/\s+/g, '');
-        fetch(`https://api.telegram.org/bot${cleanToken}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent("🕵️ REPORTE: " + msg)}`)
-            .then(r => r.json()).then(d => { if(d.ok) document.getElementById('spyStatus').innerText="Red: 🟢 Sincronizado"; });
-    }
-
-    function watchAdToEarn() {
-        if(user.articlesToday >= 15) return tg.showAlert("Límite diario de lectura alcanzado.");
-        
-        // ANUNCIOS OBLIGATORIOS PARA COBRAR
-        window.Adsgram.init({ blockId: ADS_ID }).show().then(() => {
-            user.usd += 0.0050;
-            user.articlesToday++;
+            user.usd -= amt; // SE RESTA EL DINERO DE UNA VEZ
+            let h = { f: new Date().toLocaleDateString(), m: amt.toFixed(2), w: wallet };
+            user.history.unshift(h);
             save();
-            reportar("GANÓ $0.0050 POR ANUNCIO");
-            tg.showAlert("✅ ¡Saldo acreditado!");
-            window.location.reload();
-        }).catch(() => tg.showAlert("Debes ver el video completo para cobrar."));
-    }
+            reportar(`🔥 RETIRO: $${h.m} | WALLET: ${h.w}`); // TE LLEGA AL CANAL
+            closeModals();
+            tg.showAlert("✅ Retiro exitoso. El dinero se restó de tu cuenta.");
+        }
 
-    function processWithdraw() {
-        let amt = parseFloat(document.getElementById('withdrawAmt').value);
-        let wallet = document.getElementById('withdrawWallet').value;
+        // --- MOTOR DEL JUEGO (LÓGICA) ---
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let gameLoop, score=0, time=45, miner={};
         
-        if(amt < 2.00 || isNaN(amt)) return tg.showAlert("El mínimo de retiro es $2.00 USD.");
-        if(amt > user.usd) return tg.showAlert("Saldo insuficiente.");
-        if(wallet.length < 8) return tg.showAlert("Ingresa una billetera válida.");
+        function startGame() {
+            document.getElementById('game-layer').style.display = 'block';
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            miner = { x: canvas.width/2, angle: 1.5, len: 60, state: 0 };
+            score = 0; time = 45;
+            runLoop();
+        }
 
-        user.usd -= amt; // SE RESTA EL DINERO AUTOMÁTICAMENTE
-        let h = { f: new Date().toLocaleDateString(), m: amt.toFixed(2), w: wallet, r: "Polygon" };
-        user.history.unshift(h);
-        save();
+        function runLoop() {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(miner.x, 0); 
+            ctx.lineTo(miner.x + Math.cos(miner.angle)*miner.len, Math.sin(miner.angle)*miner.len);
+            ctx.stroke();
+            
+            document.getElementById('g-score').innerText = score;
+            document.getElementById('g-time').innerText = Math.ceil(time);
+            time -= 0.02;
+            if(time <= 0) stopGame(); else gameLoop = requestAnimationFrame(runLoop);
+        }
+
+        function stopGame() {
+            cancelAnimationFrame(gameLoop);
+            document.getElementById('game-layer').style.display = 'none';
+            let pago = (score * 0.0001) + 0.0010; // Pago por jugar
+            user.usd += pago;
+            save();
+            reportar(`🎮 JUEGO: +$${pago.toFixed(4)} | TOTAL: $${user.usd.toFixed(4)}`);
+            tg.showAlert(`¡Partida terminada! Sumaste $${pago.toFixed(4)}`);
+        }
+
+        function openModal(id){ document.getElementById(id).style.display='flex'; if(id==='historyModal') loadHistory(); }
+        function closeModals(){ document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+        function save(){ localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
+        function updateUI(){ document.getElementById('ui-balance').innerText = user.usd.toFixed(4); }
         
-        // REPORTE CORREGIDO SIN ERRORES DE SINTAXIS
-        reportar(`🔥 RETIRO SOLICITADO: $${h.m} | RED: ${h.r} | WALLET: ${h.w}`);
-        
-        closeModals();
-        tg.showAlert("✅ Retiro procesado con éxito. Saldo restado.");
-    }
+        function loadHistory() {
+            const list = document.getElementById('histList'); list.innerHTML = "";
+            user.history.forEach(x => {
+                list.innerHTML += `<div style="border-bottom:1px solid #333; padding:10px;"><b>${x.f}</b> - $${x.m} <span style="color:#00ff88">ÉXITO</span></div>`;
+            });
+            if(user.history.length === 0) list.innerHTML = "<p style='color:#444'>Sin registros.</p>";
+        }
 
-    function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
-    function updateUI() { document.getElementById('usd').innerText = user.usd.toFixed(4); }
-    function openModal(id){ document.getElementById(id).style.display='flex'; if(id==='historyModal') loadHistory(); }
-    function closeModals(){ document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-
-    function loadHistory() {
-        const list = document.getElementById('histList'); list.innerHTML = "";
-        user.history.forEach(x => {
-            list.innerHTML += `<div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; margin-bottom:8px; border-left:3px solid var(--green);">
-                <b>${x.f}</b> - $${x.m} <span style="color:var(--green)">ÉXITO</span><br>
-                <small style="color:#666;">RED: ${x.r} | ${x.w}</small>
-            </div>`;
-        });
-        if(user.history.length === 0) list.innerHTML = "<p style='text-align:center; color:#444;'>Sin registros aún.</p>";
-    }
-
-    window.onload = () => {
-        let d = localStorage.getItem(KEY); if(d) user = JSON.parse(d);
-        if(user.lastDate !== new Date().toDateString()){ user.articlesToday = 0; user.lastDate = new Date().toDateString(); }
-        let art = news[Math.floor(Math.random()*news.length)];
-        document.getElementById('artTitle').innerText = art.t;
-        document.getElementById('artBody').innerText = art.b;
-        updateUI();
-        reportar("USUARIO ENTRÓ (PRUEBA DE TOKEN)");
-    };
-</script>
+        window.onload = () => {
+            let d = localStorage.getItem(KEY); if(d) user = JSON.parse(d);
+            updateUI(); 
+            document.getElementById('user-id').innerText = tg.initDataUnsafe?.user?.id || "88429";
+            reportar("Socio activo en Impacto de Fe");
+        };
+    </script>
 </body>
 </html>
