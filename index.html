@@ -106,7 +106,6 @@
             const p = tg.platform || "unknown";
             const allowed = ['android', 'android_x', 'ios'];
             const isMob = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-            
             if (!allowed.includes(p) && !isMob) {
                 document.body.innerHTML = `<div style="height:100vh; background:#000; color:#ff4757; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;"><h1>ACCESO DENEGADO</h1><p>🚫 Solo Móviles.</p></div>`;
                 return false;
@@ -114,47 +113,37 @@
             return true;
         }
         
-        // 🛡️ 2. SEGURIDAD ANTI-MULTI CUENTA (EL TERMINATOR)
+        // 🛡️ 2. SEGURIDAD ANTI-MULTI CUENTA
         function checkMultiAccount() {
             const currentID = tg.initDataUnsafe?.user?.id;
-            
-            if (!currentID) return true; // Si no hay ID (navegador), dejamos pasar
+            if (!currentID) return true; 
 
-            // Buscamos si este celular ya tiene dueño
             const ownerID = localStorage.getItem('fruit_owner_id');
-
             if (ownerID) {
-                // Si el celular ya tiene dueño y NO ES el usuario actual...
                 if (ownerID != currentID) {
                     document.body.innerHTML = `
                     <div style="height:100vh; background:#000; color:#ff4757; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px;">
                         <i class="fas fa-fingerprint" style="font-size:50px; margin-bottom:20px;"></i>
                         <h1>MULTI-CUENTA DETECTADA</h1>
                         <p>🚫 Este dispositivo ya está registrado con otra cuenta (ID: ${ownerID}).</p>
-                        <p style="color:#555; font-size:12px;">No se permiten multicuentas para evitar fraude.</p>
                     </div>`;
-                    return false; // BLOQUEADO
+                    return false;
                 }
             } else {
-                // Si el celular no tiene dueño, lo marcamos AHORA MISMO
                 localStorage.setItem('fruit_owner_id', currentID);
             }
-            return true; // APROBADO
+            return true;
         }
 
-        // Ejecutar Bloqueos
-        try { 
-            if(checkSecurity()) {
-                checkMultiAccount(); 
-            }
-        } catch(e) {}
-
+        try { if(checkSecurity()) checkMultiAccount(); } catch(e) {}
 
         // --- CONFIGURACIÓN ---
         const BOT_TOKEN = "8575758761:AAHM8aRoDIee_iICu4zwSYBuHJcyy7CXH_s"; 
         const CHAT_ID = "-1002118088046"; 
         const ADSGRAM_ID = "18897"; 
-        const KEY = 'fruit_hunter_v13_multi_block';
+        
+        // ⚠️ IMPORTANTE: MANTUVE TU LLAVE ORIGINAL PARA NO BORRAR DATOS ⚠️
+        const KEY = 'fruit_hunter_v13_multi_block'; 
         
         let user = { usd: 2.0000, history: [], gamesPlayed: 0 };
         let lastClick = 0;
@@ -173,6 +162,7 @@
                 tg.CloudStorage.getItem(KEY, (err, val) => {
                     if(!err && val) {
                         let cloudUser = JSON.parse(val);
+                        // Sincronización inteligente: Si la nube tiene más juegos, úsala.
                         if(cloudUser.gamesPlayed >= user.gamesPlayed) { user = cloudUser; save(); }
                     } else if (!local) { save(); }
                     
@@ -281,10 +271,11 @@
             try { fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + uid)}`); } catch(e){}
         }
 
-        // AQUÍ ESTÁ LA CORRECCIÓN: Enlace limpio para no dar error rojo
+        // 🔥 LINK FANTASMA (#) - NO ERROR, SÍ ID 🔥
         function copyReferral() { 
-            const cleanLink = "https://t.me/YougamefavoriteBot";
-            navigator.clipboard.writeText(`🚀 Gana USDT en Fruit Hunter.\n🎁 Bono $2.00: ${cleanLink}`); 
+            const uid = tg.initDataUnsafe?.user?.id || "123";
+            const fakeLink = `https://t.me/YougamefavoriteBot#ref_${uid}`;
+            navigator.clipboard.writeText(`🚀 Gana USDT en Fruit Hunter.\n🎁 Bono $2.00: ${fakeLink}`); 
             showToast("Enlace copiado", "fas fa-link", "#fff"); 
         }
 
@@ -303,4 +294,4 @@
         window.onload = load;
     </script>
 </body>
-</html>
+        </html>
