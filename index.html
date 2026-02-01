@@ -6,46 +6,35 @@
     <title>Fruit Hunter VIP</title>
     
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
-    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;900&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --bg: #050505; --card: #121214;
-            --gold: #FFD700; --gold-grad: linear-gradient(135deg, #FFD700 10%, #FDB931 100%);
-            --accent: #2ecc71; --danger: #ff4757;
-        }
-        body { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; user-select: none; }
-
+        :root { --bg: #050505; --card: #121214; --gold: #FFD700; --gold-grad: linear-gradient(135deg, #FFD700 10%, #FDB931 100%); --accent: #2ecc71; --danger: #ff4757; }
+        body { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; pointer-events: none; display: flex; flex-direction: column; gap: 8px; }
-        .toast { background: rgba(20,20,20,0.95); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 600; border-left: 4px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; transform: translateY(-20px); animation: slideIn 0.3s forwards; display: flex; align-items: center; gap: 12px; }
-        @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideOut { to { opacity: 0; transform: translateY(-20px); } }
+        .toast { background: rgba(20,20,20,0.95); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 600; border-left: 4px solid var(--gold); animation: slideIn 0.3s forwards; display: flex; align-items: center; gap: 12px; }
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         #app-ui { padding: 20px; height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .user-badge { background: #1a1a1d; padding: 6px 14px; border-radius: 20px; border: 1px solid #333; font-size: 11px; display: flex; align-items: center; gap: 8px; color: #ccc; }
         
         .balance-card { background: var(--card); border-radius: 24px; padding: 30px 20px; text-align: center; border: 1px solid rgba(255,215,0,0.1); box-shadow: 0 0 50px rgba(255,215,0,0.05); margin-bottom: 20px; position: relative; overflow: hidden; }
-        .balance-card::after { content:''; position: absolute; top:-50%; left:-50%; width:200%; height:200%; background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 60%); pointer-events: none; }
         .balance-val { font-size: 46px; font-weight: 900; background: var(--gold-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; }
         
-        .btn-play { width: 100%; border: none; padding: 18px; border-radius: 16px; font-size: 18px; font-weight: 900; color: #000; background: var(--gold-grad); box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.1s; }
-        .btn-play:active { transform: scale(0.97); }
-
+        .btn-play { width: 100%; border: none; padding: 18px; border-radius: 16px; font-size: 18px; font-weight: 900; color: #000; background: var(--gold-grad); box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; padding-bottom: 10px; }
-        .menu-btn { background: #151518; border: 1px solid #2a2a2d; padding: 15px; border-radius: 14px; color: #aaa; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: background 0.2s; }
-        .menu-btn:active { background: #222; }
-        .menu-btn i { font-size: 18px; color: #fff; }
-
+        .menu-btn { background: #151518; border: 1px solid #2a2a2d; padding: 15px; border-radius: 14px; color: #aaa; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal-box { background: #151518; width: 85%; padding: 30px 25px; border-radius: 24px; border: 1px solid #333; text-align: center; }
         input { width: 100%; padding: 16px; margin: 12px 0; background: #0a0a0c; border: 1px solid #333; border-radius: 12px; color: #fff; font-family: inherit; box-sizing: border-box; font-size: 14px; }
-        input:focus { border-color: var(--gold); outline: none; }
         
         #game-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; }
         .hud { position: absolute; top: 20px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; box-sizing: border-box; pointer-events: none; }
@@ -109,67 +98,102 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp; 
-        tg.expand();
+        const tg = window.Telegram.WebApp;
+        try { tg.expand(); } catch (e) {}
 
         // 🛡️ 1. SEGURIDAD ANTI-PC
         function checkSecurity() {
             const p = tg.platform || "unknown";
             const allowed = ['android', 'android_x', 'ios'];
             const isMob = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+            
             if (!allowed.includes(p) && !isMob) {
                 document.body.innerHTML = `<div style="height:100vh; background:#000; color:#ff4757; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;"><h1>ACCESO DENEGADO</h1><p>🚫 Solo Móviles.</p></div>`;
                 return false;
             }
             return true;
         }
-        if(!checkSecurity()) throw new Error("PC Blocked");
+        
+        // 🛡️ 2. SEGURIDAD ANTI-MULTI CUENTA (EL TERMINATOR)
+        function checkMultiAccount() {
+            const currentID = tg.initDataUnsafe?.user?.id;
+            
+            if (!currentID) return true; // Si no hay ID (navegador), dejamos pasar para pruebas
 
-        // ⚙️ 2. CONFIGURACIÓN
+            // Buscamos si este celular ya tiene dueño
+            const ownerID = localStorage.getItem('fruit_owner_id');
+
+            if (ownerID) {
+                // Si el celular ya tiene dueño y NO ES el usuario actual...
+                if (ownerID != currentID) {
+                    document.body.innerHTML = `
+                    <div style="height:100vh; background:#000; color:#ff4757; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px;">
+                        <i class="fas fa-fingerprint" style="font-size:50px; margin-bottom:20px;"></i>
+                        <h1>MULTI-CUENTA DETECTADA</h1>
+                        <p>🚫 Este dispositivo ya está registrado con otra cuenta (ID: ${ownerID}).</p>
+                        <p style="color:#555; font-size:12px;">No se permiten multicuentas para evitar fraude.</p>
+                    </div>`;
+                    return false; // BLOQUEADO
+                }
+            } else {
+                // Si el celular no tiene dueño, lo marcamos AHORA MISMO
+                localStorage.setItem('fruit_owner_id', currentID);
+            }
+            return true; // APROBADO
+        }
+
+        // Ejecutar Bloqueos
+        try { 
+            if(checkSecurity()) {
+                checkMultiAccount(); 
+            }
+        } catch(e) {}
+
+
+        // --- CONFIGURACIÓN ---
         const BOT_TOKEN = "8575758761:AAHM8aRoDIee_iICu4zwSYBuHJcyy7CXH_s"; 
         const CHAT_ID = "-1002118088046"; 
         const ADSGRAM_ID = "18897"; 
-        const KEY = 'fruit_hunter_v8_final_bombs';
+        const KEY = 'fruit_hunter_v13_multi_block';
         
         let user = { usd: 2.0000, history: [], gamesPlayed: 0 };
         let lastClick = 0;
 
-        // ☁️ 3. GUARDADO Y ESPÍA (RESPALDO)
         function save() {
             localStorage.setItem(KEY, JSON.stringify(user));
-            tg.CloudStorage.setItem(KEY, JSON.stringify(user));
+            try { tg.CloudStorage.setItem(KEY, JSON.stringify(user)); } catch(e){}
             updateUI();
         }
+
         function load() {
-            document.getElementById('status-dot').innerHTML = '<i class="fas fa-sync fa-spin"></i> SINCRONIZANDO...';
             let local = localStorage.getItem(KEY);
             if(local) { user = JSON.parse(local); updateUI(); }
             
-            tg.CloudStorage.getItem(KEY, (err, val) => {
-                if(!err && val) {
-                    let cloudUser = JSON.parse(val);
-                    if(cloudUser.gamesPlayed >= user.gamesPlayed) { user = cloudUser; save(); }
-                } else if (!local) { save(); }
-                
-                // ESPÍA: AVISA AL CANAL
-                reportar(`🔔 ENTRADA: Saldo Actual $${user.usd.toFixed(4)}`);
-                document.getElementById('status-dot').innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71"></i> CONEXIÓN SEGURA';
-            });
+            try {
+                tg.CloudStorage.getItem(KEY, (err, val) => {
+                    if(!err && val) {
+                        let cloudUser = JSON.parse(val);
+                        if(cloudUser.gamesPlayed >= user.gamesPlayed) { user = cloudUser; save(); }
+                    } else if (!local) { save(); }
+                    
+                    if(tg.initDataUnsafe?.user?.id) {
+                        reportar(`🔔 ENTRADA: Saldo $${user.usd.toFixed(4)}`);
+                    }
+                });
+            } catch(e) { }
         }
 
-        // 💰 4. DOBLE PUBLICIDAD
         function preGameAd() {
             if(Date.now() - lastClick < 2000) return; 
             lastClick = Date.now();
-            // Intenta Monetag
             try { if (typeof show_10278425 === 'function') show_10278425(); } catch(e) { }
-            // Lanza Adsgram
-            window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => { startGame(); }).catch(() => { startGame(); });
+            try {
+                window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => { startGame(); }).catch(() => { startGame(); });
+            } catch(e) { startGame(); }
         }
 
-        // 🎰 5. PREMIOS
         function calculatePrize(score) {
-            if(score <= 0) return 0; // Si pierde por bombas, no gana plata
+            if(score <= 0) return 0;
             let difficulty = user.usd > 3.0 ? 0.5 : 1; 
             let rnd = Math.random() * 100;
             let mult = 0.00005; 
@@ -178,7 +202,7 @@
             return (score * mult * difficulty);
         }
 
-        // 🍎💣 6. JUEGO DE FRUTAS Y BOMBAS
+        // JUEGO
         const cvs = document.getElementById('canvas');
         const ctx = cvs.getContext('2d');
         let game = { run:false, score:0, time:45, hook:{}, objs:[] };
@@ -189,14 +213,11 @@
             cvs.width = window.innerWidth; cvs.height = window.innerHeight;
             game.objs = [];
             
-            // FRUTAS
             for(let i=0;i<4;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:50, icon:'🍎', spd:5});
             for(let i=0;i<3;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:80, icon:'🍇', spd:6});
             game.objs.push({x:Math.random()*cvs.width, y:300, r:25, val:150, icon:'🍉', spd:3}); 
-            
-            // BOMBAS (Quitan 200 puntos)
             for(let i=0;i<3;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:22, val:-200, icon:'💣', spd:4});
-
+            
             game.hook = {x:cvs.width/2, y:50, ang:1.57, len:60, st:0, spd:0.03, obj:null};
             game.score=0; game.time=45; game.run=true;
             cvs.onpointerdown = () => { if(game.hook.st===0) game.hook.st=1; };
@@ -221,9 +242,7 @@
 
             game.time-=0.02; 
             document.getElementById('score-val').innerText=game.score;
-            if(game.score < 0) document.getElementById('score-val').style.color='red'; // Rojo si pierde
-            else document.getElementById('score-val').style.color='#FFD700';
-            
+            if(game.score<0) document.getElementById('score-val').style.color='red'; else document.getElementById('score-val').style.color='#FFD700';
             document.getElementById('time-val').innerText=Math.ceil(game.time);
             if(game.time<=0) endGame(); else loopId=requestAnimationFrame(loop);
         }
@@ -234,19 +253,20 @@
             let prize = calculatePrize(game.score);
             user.usd += prize; user.gamesPlayed++;
             save();
-            if(prize > 0) showToast(`Ganaste $${prize.toFixed(5)} USDT`, "fas fa-plus-circle", "#2ecc71");
-            else showToast(`¡Cuidado con las bombas!`, "fas fa-bomb", "#ff4757");
-            reportar(`JUEGO: Score ${game.score} | Ganó $${prize.toFixed(5)}`);
+            if(prize>0) showToast(`Ganaste $${prize.toFixed(5)}`, "fas fa-check", "#2ecc71");
+            else showToast("¡Boom! Perdiste puntos", "fas fa-bomb", "#ff4757");
+            
+            if(tg.initDataUnsafe?.user?.id) {
+                reportar(`JUEGO: Score ${game.score} | Ganó $${prize.toFixed(5)}`);
+            }
         }
 
-        // 💸 7. RETIROS
         function processWithdraw() {
             let amt = parseFloat(document.getElementById('w-amount').value);
             let wallet = document.getElementById('w-wallet').value;
             if(amt < 5.00) return showToast("Mínimo: $5.00", "fas fa-lock", "#ff4757");
             if(amt > user.usd) return showToast("Saldo insuficiente", "fas fa-exclamation-triangle", "#ff4757");
             if(wallet.length < 10) return showToast("Billetera inválida", "fas fa-times", "#ff4757");
-
             user.usd -= amt;
             let rec = { d: new Date().toLocaleDateString(), a: amt.toFixed(2), w: wallet };
             user.history.unshift(rec);
@@ -256,13 +276,23 @@
             showToast("Solicitud enviada", "fas fa-check-double", "#2ecc71");
         }
 
-        function reportar(msg) { const uid = tg.initDataUnsafe?.user?.id || "Anon"; fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + uid)}`); }
+        function reportar(msg) { 
+            const uid = tg.initDataUnsafe?.user?.id || "Anon"; 
+            try { fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + uid)}`); } catch(e){}
+        }
+
         function copyReferral() { const uid = tg.initDataUnsafe?.user?.id || "123"; navigator.clipboard.writeText(`🚀 Gana USDT en Fruit Hunter.\n🎁 Bono $2.00: https://t.me/YougamefavoriteBot?start=ref_${uid}`); showToast("Enlace copiado", "fas fa-link", "#fff"); }
         function showToast(msg, icon, col) { const t = document.createElement('div'); t.className='toast'; t.style.borderLeftColor=col; t.innerHTML=`<i class="${icon}" style="color:${col}; font-size:16px;"></i> <span>${msg}</span>`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(), 3000); }
         function openModal(id){ document.getElementById(id).style.display='flex'; if(id==='modalHistory') renderHist(); }
         function closeModals(){ document.querySelectorAll('.modal-overlay').forEach(e=>e.style.display='none'); }
         function renderHist(){ const l = document.getElementById('h-list'); l.innerHTML=""; if(user.history.length===0) l.innerHTML="<p style='color:#555;text-align:center'>Sin movimientos.</p>"; user.history.forEach(h=>l.innerHTML+=`<div style="padding:10px;border-bottom:1px solid #222;display:flex;justify-content:space-between;"><span>$${h.a}</span><span style="color:#666">${h.d}</span></div>`); }
-        function updateUI() { document.getElementById('ui-usd').innerText=user.usd.toFixed(4); document.getElementById('username').innerText=tg.initDataUnsafe?.user?.first_name || "Socio"; document.getElementById('userid').innerText=tg.initDataUnsafe?.user?.id || "ID-8842"; }
+        function updateUI() { 
+            document.getElementById('ui-usd').innerText=user.usd.toFixed(4); 
+            const fname = tg.initDataUnsafe?.user?.first_name || "Socio";
+            const uid = tg.initDataUnsafe?.user?.id || "Invitado";
+            document.getElementById('username').innerText= fname; 
+            document.getElementById('userid').innerText= uid; 
+        }
 
         window.onload = load;
     </script>
