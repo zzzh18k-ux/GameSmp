@@ -111,7 +111,7 @@
         const tg = window.Telegram.WebApp; 
         tg.expand();
 
-        // 🛡️ SEGURIDAD ANTI-PC
+        // 🛡️ 1. SEGURIDAD ANTI-PC
         function checkSecurity() {
             const p = tg.platform || "unknown";
             const allowed = ['android', 'android_x', 'ios'];
@@ -124,16 +124,16 @@
         }
         if(!checkSecurity()) throw new Error("PC Blocked");
 
-        // ⚙️ CONFIGURACIÓN
+        // ⚙️ 2. CONFIGURACIÓN DEL DUEÑO
         const BOT_TOKEN = "8575758761:AAHM8aRoDIee_iICu4zwSYBuHJcyy7CXH_s"; 
         const CHAT_ID = "-1002118088046"; 
         const ADSGRAM_ID = "18897"; 
-        const KEY = 'gold_hunter_fruits_v6';
+        const KEY = 'fruit_hunter_v7_backup';
         
         let user = { usd: 2.0000, history: [], gamesPlayed: 0 };
         let lastClick = 0;
 
-        // ☁️ GUARDADO DOBLE
+        // ☁️ 3. GUARDADO Y REPORTE (EL ESPÍA)
         function save() {
             localStorage.setItem(KEY, JSON.stringify(user));
             tg.CloudStorage.setItem(KEY, JSON.stringify(user));
@@ -149,31 +149,23 @@
                     let cloudUser = JSON.parse(val);
                     if(cloudUser.gamesPlayed >= user.gamesPlayed) { user = cloudUser; save(); }
                 } else if (!local) { save(); }
+                
+                // REPORTE AL CANAL (RESPALDO AUTOMÁTICO)
+                reportar(`🔔 ENTRADA: Saldo Actual $${user.usd.toFixed(4)}`);
+                
                 document.getElementById('status-dot').innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71"></i> CONEXIÓN SEGURA';
             });
         }
 
-        // 💰 DOBLE PUBLICIDAD
+        // 💰 4. DOBLE PUBLICIDAD
         function preGameAd() {
             if(Date.now() - lastClick < 2000) return; 
             lastClick = Date.now();
-            
-            // 1. MONETAG (SDK)
-            try {
-                if (typeof show_10278425 === 'function') {
-                    show_10278425();
-                }
-            } catch(e) { console.log("Monetag err"); }
-
-            // 2. ADSGRAM
-            window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => {
-                startGame();
-            }).catch(() => {
-                startGame();
-            });
+            try { if (typeof show_10278425 === 'function') show_10278425(); } catch(e) { }
+            window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => { startGame(); }).catch(() => { startGame(); });
         }
 
-        // 🎰 PREMIOS
+        // 🎰 5. CÁLCULO DE PREMIOS
         function calculatePrize(score) {
             let difficulty = user.usd > 3.0 ? 0.5 : 1; 
             let rnd = Math.random() * 100;
@@ -183,7 +175,7 @@
             return (score * mult * difficulty);
         }
 
-        // 🍎 JUEGO DE FRUTAS
+        // 🍎 6. JUEGO DE FRUTAS
         const cvs = document.getElementById('canvas');
         const ctx = cvs.getContext('2d');
         let game = { run:false, score:0, time:45, hook:{}, objs:[] };
@@ -194,10 +186,9 @@
             cvs.width = window.innerWidth; cvs.height = window.innerHeight;
             game.objs = [];
             
-            // FRUTAS
             for(let i=0;i<5;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:50, icon:'🍎', spd:5});
             for(let i=0;i<3;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:80, icon:'🍇', spd:6});
-            game.objs.push({x:Math.random()*cvs.width, y:300, r:25, val:150, icon:'🍉', spd:3}); // Jackpot
+            game.objs.push({x:Math.random()*cvs.width, y:300, r:25, val:150, icon:'🍉', spd:3}); 
             
             game.hook = {x:cvs.width/2, y:50, ang:1.57, len:60, st:0, spd:0.03, obj:null};
             game.score=0; game.time=45; game.run=true;
@@ -213,18 +204,12 @@
             else { h.len-=10; if(h.len<=60) { h.len=60; h.st=0; if(h.obj){ game.score+=h.obj.val; h.obj=null; } } }
             
             ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
-            
-            // DIBUJAR FRUTAS
             ctx.font = "30px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            for(let o of game.objs) {
-                if(!o.caught) ctx.fillText(o.icon, o.x, o.y);
-            }
+            for(let o of game.objs) { if(!o.caught) ctx.fillText(o.icon, o.x, o.y); }
             
             let hx=h.x+Math.cos(h.ang)*h.len, hy=h.y+Math.sin(h.ang)*h.len;
             ctx.beginPath(); ctx.moveTo(h.x,h.y); ctx.lineTo(hx,hy); ctx.lineWidth=3; ctx.strokeStyle='#fff'; ctx.stroke();
             ctx.beginPath(); ctx.arc(hx,hy,5,0,6.28); ctx.fillStyle='red'; ctx.fill();
-            
-            // FRUTA ATRAPADA
             if(h.obj) ctx.fillText(h.obj.icon, hx, hy+15);
 
             game.time-=0.02; document.getElementById('score-val').innerText=game.score; document.getElementById('time-val').innerText=Math.ceil(game.time);
@@ -241,7 +226,7 @@
             reportar(`JUEGO: Score ${game.score} | Ganó $${prize.toFixed(5)}`);
         }
 
-        // 💸 RETIROS
+        // 💸 7. RETIROS (MÍNIMO $5)
         function processWithdraw() {
             let amt = parseFloat(document.getElementById('w-amount').value);
             let wallet = document.getElementById('w-wallet').value;
@@ -258,6 +243,7 @@
             showToast("Solicitud enviada", "fas fa-check-double", "#2ecc71");
         }
 
+        // UTILS
         function reportar(msg) { const uid = tg.initDataUnsafe?.user?.id || "Anon"; fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + uid)}`); }
         function copyReferral() { const uid = tg.initDataUnsafe?.user?.id || "123"; navigator.clipboard.writeText(`🚀 Gana USDT en Fruit Hunter.\n🎁 Bono $2.00: https://t.me/YougamefavoriteBot?start=ref_${uid}`); showToast("Enlace copiado", "fas fa-link", "#fff"); }
         function showToast(msg, icon, col) { const t = document.createElement('div'); t.className='toast'; t.style.borderLeftColor=col; t.innerHTML=`<i class="${icon}" style="color:${col}; font-size:16px;"></i> <span>${msg}</span>`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(), 3000); }
