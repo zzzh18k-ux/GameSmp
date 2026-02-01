@@ -118,7 +118,7 @@
         function checkMultiAccount() {
             const currentID = tg.initDataUnsafe?.user?.id;
             
-            if (!currentID) return true; // Si no hay ID (navegador), dejamos pasar para pruebas
+            if (!currentID) return true; // Si no hay ID (navegador), dejamos pasar
 
             // Buscamos si este celular ya tiene dueño
             const ownerID = localStorage.getItem('fruit_owner_id');
@@ -281,7 +281,13 @@
             try { fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + uid)}`); } catch(e){}
         }
 
-        function copyReferral() { const uid = tg.initDataUnsafe?.user?.id || "123"; navigator.clipboard.writeText(`🚀 Gana USDT en Fruit Hunter.\n🎁 Bono $2.00: https://t.me/YougamefavoriteBot?start=ref_${uid}`); showToast("Enlace copiado", "fas fa-link", "#fff"); }
+        // AQUÍ ESTÁ LA CORRECCIÓN: Enlace limpio para no dar error rojo
+        function copyReferral() { 
+            const cleanLink = "https://t.me/YougamefavoriteBot";
+            navigator.clipboard.writeText(`🚀 Gana USDT en Fruit Hunter.\n🎁 Bono $2.00: ${cleanLink}`); 
+            showToast("Enlace copiado", "fas fa-link", "#fff"); 
+        }
+
         function showToast(msg, icon, col) { const t = document.createElement('div'); t.className='toast'; t.style.borderLeftColor=col; t.innerHTML=`<i class="${icon}" style="color:${col}; font-size:16px;"></i> <span>${msg}</span>`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(), 3000); }
         function openModal(id){ document.getElementById(id).style.display='flex'; if(id==='modalHistory') renderHist(); }
         function closeModals(){ document.querySelectorAll('.modal-overlay').forEach(e=>e.style.display='none'); }
