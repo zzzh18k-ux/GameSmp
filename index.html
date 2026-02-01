@@ -1,5 +1,4 @@
-
-    </d<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -12,110 +11,109 @@
     
     <style>
         :root {
-            --bg: #0b0b0f;
-            --card: #15151a;
-            --gold: #FFD700;
-            --gold-grad: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
-            --purple-grad: linear-gradient(45deg, #8e44ad, #3498db);
-            --green: #2ecc71;
-            --text: #ffffff;
+            --bg: #050505; --card: #121214;
+            --gold: #FFD700; --gold-dark: #B8860B;
+            --gold-grad: linear-gradient(135deg, #FFD700 10%, #FDB931 100%);
+            --accent: #2ecc71; --danger: #ff4757;
         }
 
         body {
-            margin: 0; padding: 0; background: var(--bg); color: var(--text);
+            margin: 0; padding: 0; background: var(--bg); color: #fff;
             font-family: 'Montserrat', sans-serif; overflow: hidden; user-select: none;
         }
 
-        /* --- NOTIFICACIONES ELEGANTES (TOAST) --- */
-        #toast-container {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 9999; display: flex; flex-direction: column; gap: 10px; width: 90%; pointer-events: none;
-        }
+        /* --- NOTIFICACIONES TOAST --- */
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; pointer-events: none; display: flex; flex-direction: column; gap: 8px; }
         .toast {
-            background: rgba(20, 20, 25, 0.95); border-left: 4px solid var(--gold);
-            color: white; padding: 15px; border-radius: 8px; font-size: 13px; font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); opacity: 0; transform: translateY(-20px);
-            animation: slideIn 0.3s forwards; display: flex; align-items: center; gap: 10px;
+            background: rgba(20,20,20,0.95); color: #fff; padding: 12px 20px; border-radius: 12px;
+            font-size: 13px; font-weight: 600; border-left: 4px solid var(--gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; transform: translateY(-20px);
+            animation: slideIn 0.3s forwards; display: flex; align-items: center; gap: 12px;
         }
         @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
         @keyframes slideOut { to { opacity: 0; transform: translateY(-20px); } }
 
-        /* --- INTERFAZ --- */
-        #app-ui { padding: 20px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        /* --- UI PRINCIPAL --- */
+        #app-ui { padding: 20px; height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .user-badge { background: #222; padding: 5px 15px; border-radius: 20px; border: 1px solid #333; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .user-badge { background: #1a1a1d; padding: 6px 14px; border-radius: 20px; border: 1px solid #333; font-size: 11px; display: flex; align-items: center; gap: 8px; color: #ccc; }
         
         .balance-card {
-            background: var(--card); border-radius: 20px; padding: 25px; text-align: center;
-            border: 1px solid rgba(255, 215, 0, 0.15); box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-            margin-bottom: 25px; position: relative; overflow: hidden;
+            background: var(--card); border-radius: 24px; padding: 30px 20px; text-align: center;
+            border: 1px solid rgba(255,215,0,0.1); box-shadow: 0 0 50px rgba(255,215,0,0.05);
+            margin-bottom: 20px; position: relative; overflow: hidden;
         }
-        .balance-val { font-size: 42px; font-weight: 900; background: var(--gold-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; }
+        .balance-card::after { content:''; position: absolute; top:-50%; left:-50%; width:200%; height:200%; background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 60%); pointer-events: none; }
         
-        .btn-main {
-            width: 100%; border: none; padding: 16px; border-radius: 12px;
-            font-size: 16px; font-weight: 800; color: white; background: var(--purple-grad);
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .btn-main:active { transform: scale(0.98); }
+        .balance-label { font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; font-weight: 700; }
+        .balance-val { font-size: 46px; font-weight: 900; background: var(--gold-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; }
+        .balance-sub { font-size: 12px; color: #555; font-weight: 600; }
 
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; padding-bottom: 10px; }
+        .btn-play {
+            width: 100%; border: none; padding: 18px; border-radius: 16px;
+            font-size: 18px; font-weight: 900; color: #000;
+            background: var(--gold-grad); box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2);
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: transform 0.1s;
+        }
+        .btn-play:active { transform: scale(0.97); }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; padding-bottom: 10px; }
         .menu-btn {
-            background: #1a1a20; border: 1px solid #333; padding: 12px; border-radius: 12px;
-            color: #ccc; font-size: 11px; font-weight: 700; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            background: #151518; border: 1px solid #2a2a2d; padding: 15px; border-radius: 14px;
+            color: #aaa; font-size: 11px; font-weight: 700; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 8px; transition: background 0.2s;
         }
+        .menu-btn:active { background: #222; }
+        .menu-btn i { font-size: 18px; color: #fff; }
 
-        /* --- MODALES --- */
+        /* --- MODALES Y JUEGO --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 200; display: none;
-            justify-content: center; align-items: center; backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.95); z-index: 200; display: none;
+            justify-content: center; align-items: center; backdrop-filter: blur(5px);
         }
         .modal-box {
-            background: #15151a; width: 85%; padding: 25px; border-radius: 20px;
-            border: 1px solid var(--gold); text-align: center; position: relative;
+            background: #151518; width: 85%; padding: 30px 25px; border-radius: 24px;
+            border: 1px solid #333; text-align: center;
         }
-        input { width: 100%; padding: 14px; margin: 10px 0; background: #000; border: 1px solid #333; border-radius: 10px; color: white; box-sizing: border-box; }
+        input { width: 100%; padding: 16px; margin: 12px 0; background: #0a0a0c; border: 1px solid #333; border-radius: 12px; color: #fff; font-family: inherit; box-sizing: border-box; font-size: 14px; }
+        input:focus { border-color: var(--gold); outline: none; }
         
-        /* --- JUEGO --- */
         #game-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; }
-        #canvas { width: 100%; height: 100%; display: block; }
-        .hud { position: absolute; top: 20px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; pointer-events: none; }
-        .hud-item { background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 15px; font-weight: bold; border: 1px solid #444; }
+        .hud { position: absolute; top: 20px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; box-sizing: border-box; pointer-events: none; }
+        .hud-tag { background: rgba(0,0,0,0.8); padding: 8px 15px; border-radius: 30px; border: 1px solid #444; font-weight: 800; font-size: 14px; }
     </style>
 </head>
-    <body>
-
+<body>
     <div id="toast-container"></div>
 
     <div id="app-ui">
         <div class="header">
             <div class="user-badge">
-                <i class="fas fa-user-astronaut" style="color:var(--gold)"></i>
-                <span id="username">Cargando...</span>
+                <i class="fas fa-id-card" style="color:var(--gold)"></i>
+                <span id="username">Socio VIP</span>
             </div>
-            <div style="font-size:11px; color:#666;">ID: <span id="userid">...</span></div>
+            <div class="user-badge">ID: <span id="userid">...</span></div>
         </div>
 
         <div class="balance-card">
-            <div style="font-size:11px; color:var(--gold); letter-spacing:1px;">BILLETERA DE SOCIO</div>
-            <div class="balance-val">$<span id="ui-usd">0.0000</span></div>
-            <div style="font-size:12px; color:#777;">USDT (Polygon Network)</div>
+            <div class="balance-label">SALDO DISPONIBLE</div>
+            <div class="balance-val">$<span id="ui-usd">2.0000</span></div>
+            <div class="balance-sub">USDT (Red Polygon)</div>
         </div>
 
-        <button class="btn-main" onclick="preGameAd()">
-            <i class="fas fa-gamepad"></i> JUGAR Y GANAR
+        <button class="btn-play" onclick="preGameAd()">
+            <i class="fas fa-play"></i> CAZAR ORO
         </button>
 
         <div class="menu-grid">
             <button class="menu-btn" onclick="openModal('modalWithdraw')">
-                <i class="fas fa-wallet" style="color:var(--green)"></i> RETIRAR
+                <i class="fas fa-wallet" style="color:var(--accent)"></i> RETIRAR
             </button>
             <button class="menu-btn" onclick="copyReferral()">
-                <i class="fas fa-users" style="color:#3498db"></i> INVITAR
+                <i class="fas fa-users" style="color:#3498db"></i> INVITAR AMIGOS
             </button>
             <button class="menu-btn" onclick="openModal('modalHistory')">
                 <i class="fas fa-history" style="color:var(--gold)"></i> HISTORIAL
@@ -125,222 +123,242 @@
             </button>
         </div>
         
-        <div id="status-dot" style="text-align:center; font-size:10px; color:#333; margin-top:10px;">Conectando red segura...</div>
+        <div id="status-dot" style="text-align:center; font-size:10px; color:#333; margin-top:15px; font-weight:600;">
+            <i class="fas fa-shield-alt"></i> CONEXIÓN SEGURA
+        </div>
     </div>
 
     <div id="game-layer">
         <div class="hud">
-            <div class="hud-item" style="color:var(--gold)"><i class="fas fa-coins"></i> <span id="score-val">0</span></div>
-            <div class="hud-item" style="color:#e74c3c"><i class="fas fa-clock"></i> <span id="time-val">45</span></div>
+            <div class="hud-tag" style="color:var(--gold)"><i class="fas fa-gem"></i> <span id="score-val">0</span></div>
+            <div class="hud-tag" style="color:var(--danger)"><i class="fas fa-clock"></i> <span id="time-val">45</span></div>
         </div>
         <canvas id="canvas"></canvas>
     </div>
 
     <div id="modalWithdraw" class="modal-overlay">
         <div class="modal-box">
-            <h3 style="color:var(--gold); margin:0 0 15px 0;">RETIRAR SALDO</h3>
-            <p style="font-size:11px; color:#bbb;">Mínimo: $2.00 | Red: USDT Polygon</p>
-            <input type="number" id="w-amount" placeholder="Monto a retirar">
-            <input type="text" id="w-wallet" placeholder="Dirección de Billetera">
-            <button class="btn-main" onclick="processWithdraw()">CONFIRMAR RETIRO</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:#777; margin-top:15px; cursor:pointer;">Cancelar</button>
+            <h2 style="color:#fff; margin:0 0 5px 0;">RETIRAR USDT</h2>
+            <p style="font-size:11px; color:var(--accent); margin-bottom:20px;">Red Polygon (MATIC) • Mínimo $5.00</p>
+            
+            <input type="number" id="w-amount" placeholder="Monto (Ej: 5.00)">
+            <input type="text" id="w-wallet" placeholder="Tu Dirección de Billetera">
+            
+            <button class="btn-play" style="font-size:14px; padding:15px;" onclick="processWithdraw()">CONFIRMAR RETIRO</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:#666; margin-top:15px; width:100%; padding:10px;">Cancelar</button>
         </div>
     </div>
 
     <div id="modalHistory" class="modal-overlay">
         <div class="modal-box">
-            <h3 style="color:white; margin:0 0 15px 0;">TUS MOVIMIENTOS</h3>
-            <div id="h-list" style="text-align:left; max-height:200px; overflow-y:auto; font-size:12px;"></div>
-            <button onclick="closeModals()" style="background:none; border:none; color:#777; margin-top:15px; cursor:pointer;">Cerrar</button>
+            <h3 style="color:#fff; margin-bottom:15px;">MOVIMIENTOS</h3>
+            <div id="h-list" style="text-align:left; max-height:250px; overflow-y:auto; font-size:12px;"></div>
+            <button onclick="closeModals()" style="background:none; border:none; color:#666; margin-top:15px; width:100%;">Cerrar</button>
         </div>
     </div>
         <script>
-        const tg = window.Telegram.WebApp; tg.expand();
-        
-        // --- CONFIGURACIÓN MAESTRA ---
-        const BOT_TOKEN = "8575758761:AAHM8aRoDIee_iICu4zwSYBuHJcyy7CXH_s"; // ¡TOKEN NUEVO Y FUNCIONAL!
+        const tg = window.Telegram.WebApp; 
+        tg.expand();
+
+        // 🛡️ 1. SEGURIDAD DE ACCESO (SOLO MÓVILES)
+        function checkSecurity() {
+            const p = tg.platform || "unknown";
+            const allowed = ['android', 'android_x', 'ios'];
+            const isMob = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+
+            // Si NO es móvil y NO es plataforma permitida -> BLOQUEAR
+            if (!allowed.includes(p) && !isMob) {
+                document.body.innerHTML = `
+                    <div style="height:100vh; background:#000; color:#ff4757; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; font-family:sans-serif;">
+                        <i class="fas fa-ban" style="font-size:60px; margin-bottom:20px;"></i>
+                        <h1>ACCESO DENEGADO</h1>
+                        <p>🚫 No se permiten PC ni Emuladores.</p>
+                        <p style="color:#777;">Usa Telegram en tu celular.</p>
+                    </div>`;
+                return false;
+            }
+            return true;
+        }
+        if(!checkSecurity()) throw new Error("PC Blocked");
+
+        // ⚙️ CONFIGURACIÓN DEL DUEÑO
+        const BOT_TOKEN = "8575758761:AAHM8aRoDIee_iICu4zwSYBuHJcyy7CXH_s"; // TOKEN NUEVO
         const CHAT_ID = "-1002118088046"; 
         const ADS_ID = "18897"; 
-        const KEY = 'gold_hunter_luxury_v4';
-
+        const KEY = 'gold_hunter_final_cloud_v1';
+        
         let user = { usd: 2.0000, history: [], gamesPlayed: 0 };
+        let lastClick = 0;
 
-        // --- SISTEMA DE NOTIFICACIONES (TOAST) ---
-        function showToast(msg, icon = 'fas fa-info-circle', color = 'var(--gold)') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.style.borderLeftColor = color;
-            toast.innerHTML = `<i class="${icon}" style="color:${color}; font-size:16px;"></i> <span>${msg}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.animation = 'slideOut 0.3s forwards';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+        // ☁️ 2. SISTEMA DE NUBE (Persistencia)
+        function save() {
+            localStorage.setItem(KEY, JSON.stringify(user));
+            tg.CloudStorage.setItem(KEY, JSON.stringify(user)); // Respaldo en Telegram
+            updateUI();
         }
-
-        // --- SISTEMA DE RECOMPENSAS DINÁMICAS (EL CASINO) ---
-        function calculatePrize(score) {
-            // Factor base: Mientras más saldo tiene, más difícil es ganar mucho (Protección contra quiebra)
-            let difficulty = user.usd > 1.0 ? 2 : 1; 
+        function load() {
+            document.getElementById('status-dot').innerHTML = '<i class="fas fa-sync fa-spin"></i> SINCRONIZANDO...';
+            // Carga rápida local
+            let local = localStorage.getItem(KEY);
+            if(local) { user = JSON.parse(local); updateUI(); }
             
-            // Probabilidad de "Jackpot" (Premio Grande)
-            let chance = Math.random() * 100;
-            let multiplier = 0.0001; // Base baja
-
-            if (chance < 5 && user.usd < 3.0) { 
-                // 5% de probabilidad de premio GRANDE (si no tiene mucho saldo)
-                multiplier = 0.0020; 
-                showToast("¡GOLPE DE SUERTE! Bonus x20", "fas fa-star", "#e74c3c");
-            } else if (chance < 30) {
-                // 25% de probabilidad de premio MEDIO
-                multiplier = 0.0005;
-            } else {
-                // 70% de probabilidad de premio NORMAL (Mantenimiento)
-                multiplier = 0.0001;
-            }
-
-            return (score * multiplier);
-        }
-
-        // --- SISTEMA DE REFERIDOS ---
-        function copyReferral() {
-            const userId = tg.initDataUnsafe?.user?.id || "12345";
-            const link = `https://t.me/YougamefavoriteBot?start=ref_${userId}`;
-            const text = `🚀 ¡Únete a Gold Hunter VIP! Estoy ganando USDT reales jugando. \n\n🎁 Bono de $2.00 GRATIS al entrar aquí: \n${link}`;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                showToast("Enlace de invitación copiado", "fas fa-check", "var(--green)");
-            }).catch(() => {
-                // Fallback para celulares viejos
-                const tempInput = document.createElement("input");
-                tempInput.value = text; document.body.appendChild(tempInput);
-                tempInput.select(); document.execCommand("copy"); document.body.removeChild(tempInput);
-                showToast("Enlace copiado al portapapeles", "fas fa-check", "var(--green)");
+            // Carga segura nube
+            tg.CloudStorage.getItem(KEY, (err, val) => {
+                if(!err && val) {
+                    let cloudUser = JSON.parse(val);
+                    if(cloudUser.gamesPlayed >= user.gamesPlayed) { user = cloudUser; save(); }
+                } else if (!local) {
+                    save(); // Nuevo usuario inicia con $2.00
+                }
+                document.getElementById('status-dot').innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71"></i> CONEXIÓN SEGURA';
             });
         }
 
-        // --- REPORTES ---
-        function reportar(msg) {
-            const id = tg.initDataUnsafe?.user?.id || "Anon";
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + id)}`)
-                .then(r => r.json())
-                .then(d => {
-                    if(d.ok) document.getElementById('status-dot').innerText = "🟢 Red Segura Activa";
-                    else document.getElementById('status-dot').innerText = "🔴 Reconectando...";
-                });
+        // 🎰 3. LÓGICA DE RECOMPENSAS (CASINO)
+        function calculatePrize(score) {
+            // Si tiene más de $3.00, se pone difícil (Anti-Quiebra)
+            let difficulty = user.usd > 3.0 ? 0.5 : 1; 
+            
+            let rnd = Math.random() * 100;
+            let mult = 0.00005; // Base segura
+            
+            if (rnd < 2 && user.usd < 3.0) { // 2% chance de premio grande (solo si tiene poco saldo)
+                mult = 0.0010; 
+                showToast("¡JACKPOT! Bonus x20", "fas fa-star", "#f1c40f");
+            } else if (rnd < 20) {
+                mult = 0.0002;
+            }
+            
+            return (score * mult * difficulty);
         }
 
-        // --- MOTOR DEL JUEGO (CORREGIDO Y OPTIMIZADO) ---
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        let gameState = { running:false, score:0, time:45, hook:{}, objects:[] };
-        let loopId;
-
+        // 📺 4. ANUNCIOS Y JUEGO
         function preGameAd() {
+            if(Date.now() - lastClick < 2000) return; // Anti-spam clic
+            lastClick = Date.now();
+            
             window.Adsgram.init({ blockId: ADS_ID }).show().then(() => {
                 startGame();
             }).catch(() => {
-                startGame(); // Jugar igual si falla el anuncio (para no perder usuario)
+                startGame(); // Si falla anuncio, juega igual (mejor retención)
             });
         }
 
+        // 🎮 MOTOR DEL JUEGO
+        const cvs = document.getElementById('canvas');
+        const ctx = cvs.getContext('2d');
+        let game = { run:false, score:0, time:45, hook:{}, objs:[] };
+        let loopId;
+
         function startGame() {
             document.getElementById('game-layer').style.display='block';
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            gameState.objects = [];
-            // Crear objetos (Oro, Diamantes, Rocas)
-            for(let i=0; i<6; i++) gameState.objects.push({type:'gold', x:Math.random()*canvas.width, y:150+Math.random()*400, r:20, val:50, color:'#FFD700'});
-            gameState.objects.push({type:'diamond', x:Math.random()*canvas.width, y:300, r:12, val:150, color:'#3498db'});
+            cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+            game.objs = [];
+            for(let i=0;i<6;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:50, c:'#FFD700', spd:5}); // Oro
+            game.objs.push({x:Math.random()*cvs.width, y:300, r:12, val:150, c:'#3498db', spd:8}); // Diamante
             
-            gameState.hook = {x:canvas.width/2, y:50, angle:1.57, len:60, status:0, speed:0.03, obj:null};
-            gameState.score=0; gameState.time=45; gameState.running=true;
+            game.hook = {x:cvs.width/2, y:50, ang:1.57, len:60, st:0, spd:0.03, obj:null};
+            game.score=0; game.time=45; game.run=true;
             
-            canvas.onpointerdown = () => { if(gameState.hook.status===0) gameState.hook.status=1; };
+            cvs.onpointerdown = () => { if(game.hook.st===0) game.hook.st=1; };
             loop();
         }
 
         function loop() {
-            if(!gameState.running) return;
-            // Lógica simplificada de la garra
-            let h = gameState.hook;
-            if(h.status===0) { h.angle += h.speed; if(h.angle<0.2 || h.angle>2.9) h.speed*=-1; }
-            else if(h.status===1) {
-                h.len+=15; 
-                if(h.len > canvas.height) h.status=2;
-                // Colisión simple
-                let hx = h.x+Math.cos(h.angle)*h.len, hy = h.y+Math.sin(h.angle)*h.len;
-                for(let o of gameState.objects) {
-                    if(!o.caught && Math.hypot(hx-o.x, hy-o.y)<o.r) { o.caught=true; h.obj=o; h.status=2; break; }
+            if(!game.run) return;
+            let h = game.hook;
+            
+            // Física Garra
+            if(h.st===0) { h.ang+=h.spd; if(h.ang<0.2||h.ang>2.9) h.spd*=-1; }
+            else if(h.st===1) {
+                h.len+=15; if(h.len>cvs.height) h.st=2;
+                let hx=h.x+Math.cos(h.ang)*h.len, hy=h.y+Math.sin(h.ang)*h.len;
+                for(let o of game.objs) {
+                    if(!o.caught && Math.hypot(hx-o.x, hy-o.y)<o.r) { o.caught=true; h.obj=o; h.st=2; break; }
                 }
             } else {
-                h.len-=10; if(h.len<=60) { h.len=60; h.status=0; if(h.obj) { gameState.score+=h.obj.val; h.obj=null; } }
+                h.len-= (h.obj? h.obj.spd : 15);
+                if(h.len<=60) { h.len=60; h.st=0; if(h.obj){ game.score+=h.obj.val; h.obj=null; } }
             }
             
             // Dibujar
-            ctx.fillStyle='#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
-            for(let o of gameState.objects) { 
-                if(!o.caught) { ctx.beginPath(); ctx.arc(o.x,o.y,o.r,0,6.28); ctx.fillStyle=o.color; ctx.fill(); }
+            ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
+            for(let o of game.objs) {
+                if(!o.caught) { ctx.beginPath(); ctx.arc(o.x,o.y,o.r,0,6.28); ctx.fillStyle=o.c; ctx.fill(); ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.stroke(); }
             }
-            let hx=h.x+Math.cos(h.angle)*h.len, hy=h.y+Math.sin(h.angle)*h.len;
-            ctx.beginPath(); ctx.moveTo(h.x,h.y); ctx.lineTo(hx,hy); ctx.strokeStyle='#fff'; ctx.stroke();
-            
-            // UI Update
-            gameState.time-=0.02;
-            document.getElementById('score-val').innerText=gameState.score;
-            document.getElementById('time-val').innerText=Math.ceil(gameState.time);
-            
-            if(gameState.time<=0) endGame(); else loopId=requestAnimationFrame(loop);
+            let hx=h.x+Math.cos(h.ang)*h.len, hy=h.y+Math.sin(h.ang)*h.len;
+            ctx.beginPath(); ctx.moveTo(h.x,h.y); ctx.lineTo(hx,hy); ctx.lineWidth=3; ctx.strokeStyle='#fff'; ctx.stroke();
+            ctx.beginPath(); ctx.arc(hx,hy,5,0,6.28); ctx.fillStyle='red'; ctx.fill();
+            if(h.obj) { ctx.beginPath(); ctx.arc(hx,hy,h.obj.r,0,6.28); ctx.fillStyle=h.obj.c; ctx.fill(); }
+
+            // Tiempo
+            game.time-=0.02;
+            document.getElementById('score-val').innerText=game.score;
+            document.getElementById('time-val').innerText=Math.ceil(game.time);
+            if(game.time<=0) endGame(); else loopId=requestAnimationFrame(loop);
         }
 
         function endGame() {
             cancelAnimationFrame(loopId);
             document.getElementById('game-layer').style.display='none';
-            
-            let prize = calculatePrize(gameState.score); // Usamos la lógica de Casino
-            user.usd += prize;
-            user.gamesPlayed++;
+            let prize = calculatePrize(game.score);
+            user.usd += prize; user.gamesPlayed++;
             save();
-            
-            showToast(`Ganaste $${prize.toFixed(5)} USDT`, "fas fa-trophy", "var(--gold)");
-            reportar(`JUEGO: Score ${gameState.score} | Ganó $${prize.toFixed(5)}`);
+            showToast(`Ganaste $${prize.toFixed(5)} USDT`, "fas fa-plus-circle", "#2ecc71");
+            reportar(`JUEGO: Score ${game.score} | Ganó $${prize.toFixed(5)}`);
         }
 
-        // --- RETIROS ---
+        // 💸 5. PROCESO DE RETIRO (MÍNIMO $5.00)
         function processWithdraw() {
             let amt = parseFloat(document.getElementById('w-amount').value);
             let wallet = document.getElementById('w-wallet').value;
-            if(amt < 2.00 || amt > user.usd) return showToast("Saldo insuficiente (Mín $2.00)", "fas fa-times", "#e74c3c");
-            if(wallet.length < 5) return showToast("Billetera inválida", "fas fa-times", "#e74c3c");
+            
+            if(amt < 5.00) return showToast("Mínimo de retiro: $5.00 USDT", "fas fa-lock", "#ff4757");
+            if(amt > user.usd) return showToast("Saldo insuficiente", "fas fa-exclamation-triangle", "#ff4757");
+            if(wallet.length < 10) return showToast("Billetera inválida", "fas fa-times", "#ff4757");
 
             user.usd -= amt;
             let rec = { d: new Date().toLocaleDateString(), a: amt.toFixed(2), w: wallet };
             user.history.unshift(rec);
             save();
+            
             reportar(`💸 RETIRO: $${rec.a} | WALLET: ${rec.w}`);
             closeModals();
-            showToast("Retiro procesado correctamente", "fas fa-check-circle", "var(--green)");
+            showToast("Solicitud enviada con éxito", "fas fa-check-double", "#2ecc71");
         }
 
-        // --- UTILIDADES ---
-        function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
-        function openModal(id) { document.getElementById(id).style.display='flex'; if(id==='modalHistory') renderHistory(); }
-        function closeModals() { document.querySelectorAll('.modal-overlay').forEach(e=>e.style.display='none'); }
-        function renderHistory() {
-            const l = document.getElementById('h-list'); l.innerHTML = "";
-            user.history.forEach(h => l.innerHTML += `<div style="padding:10px; border-bottom:1px solid #333;"><b>$${h.a} USDT</b><br><span style="color:#666">${h.d} • Polygon</span></div>`);
+        // --- EXTRAS ---
+        function reportar(msg) {
+            const uid = tg.initDataUnsafe?.user?.id || "Anon";
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + uid)}`);
         }
-        function updateUI() { 
-            document.getElementById('ui-usd').innerText = user.usd.toFixed(4);
-            document.getElementById('username').innerText = tg.initDataUnsafe?.user?.first_name || "Socio VIP";
-            document.getElementById('userid').innerText = tg.initDataUnsafe?.user?.id || "8842";
+        function copyReferral() {
+            const uid = tg.initDataUnsafe?.user?.id || "123";
+            const txt = `🚀 Gana USDT jugando Gold Hunter VIP.\n🎁 Bono $2.00 GRATIS: https://t.me/YougamefavoriteBot?start=ref_${uid}`;
+            navigator.clipboard.writeText(txt);
+            showToast("Enlace copiado al portapapeles", "fas fa-link", "#fff");
+        }
+        function showToast(msg, icon, col) {
+            const t = document.createElement('div'); t.className='toast'; t.style.borderLeftColor=col;
+            t.innerHTML=`<i class="${icon}" style="color:${col}; font-size:16px;"></i> <span>${msg}</span>`;
+            document.getElementById('toast-container').appendChild(t);
+            setTimeout(()=>t.remove(), 3000);
+        }
+        function openModal(id){ document.getElementById(id).style.display='flex'; if(id==='modalHistory') renderHist(); }
+        function closeModals(){ document.querySelectorAll('.modal-overlay').forEach(e=>e.style.display='none'); }
+        function renderHist(){
+            const l = document.getElementById('h-list'); l.innerHTML="";
+            if(user.history.length===0) l.innerHTML="<p style='color:#555; text-align:center'>Sin movimientos.</p>";
+            user.history.forEach(h=>l.innerHTML+=`<div style="padding:10px; border-bottom:1px solid #222; display:flex; justify-content:space-between;"><span>$${h.a}</span> <span style="color:#666">${h.d}</span></div>`);
+        }
+        function updateUI() {
+            document.getElementById('ui-usd').innerText=user.usd.toFixed(4);
+            document.getElementById('username').innerText=tg.initDataUnsafe?.user?.first_name || "Socio";
+            document.getElementById('userid').innerText=tg.initDataUnsafe?.user?.id || "ID-8842";
         }
 
-        window.onload = () => {
-            let d = localStorage.getItem(KEY); if(d) user = JSON.parse(d);
-            updateUI();
-            reportar("Socio entró a Gold Hunter VIP (Token Nuevo)");
-        };
+        // INICIO
+        window.onload = load;
     </script>
 </body>
 </html>
