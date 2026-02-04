@@ -132,59 +132,55 @@
         const REF_PAY = 0.05; 
         const OLD_KEY = 'fruit_hunter_v13_multi_block';
 
-        // 🧠 LÓGICA DE IDENTIFICACIÓN INTELIGENTE
-        // Si no hay Telegram, busca si ya teníamos un ID de prueba guardado para no bloquearnos al refrescar.
+        // DETECCIÓN DE USUARIO
+        // Si estamos en web (pruebas), generamos un ID aleatorio.
         let telegramID = tg.initDataUnsafe?.user?.id;
-        let testID = localStorage.getItem('fh_test_id');
-        if (!telegramID && !testID) {
-            testID = "TEST_" + Math.floor(Math.random()*100000);
-            localStorage.setItem('fh_test_id', testID);
-        }
-        let uid = telegramID || testID || "UNKNOWN";
+        let isTesting = !telegramID; // Si no hay ID de Telegram, estamos probando
+        let uid = telegramID || "TEST_" + Math.floor(Math.random()*100000);
         
         let user = { usd:0, dailyGames:10, totalGames:0, lastLogin:"", lastReward:"" };
 
         // 🛡️ SISTEMA DE SEGURIDAD
         function checkSecurity() {
-            // 1. BLOQUEO DE PC (Agresivo)
-            const platform = tg.platform || "unknown";
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            // Detectar móviles de forma estricta
-            const isMobile = /android|avantgo|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od|ad)|iris|kindle|lge |maemo|midp|mmp|mobile|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|smartphone|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(userAgent);
+            // 1. BLOQUEO DE PC 💻
+            // Detectamos si es un navegador de escritorio
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            // Si NO es móvil y NO estamos dentro de la App de Telegram Android/iOS -> FUERA
-            // NOTA: Si quieres probar en PC, comenta estas líneas temporalmente.
-            if (!isMobile && platform !== 'android' && platform !== 'ios') {
+            // Si NO es móvil y NO estamos en la App de Telegram Android/iOS -> BLOQUEAR
+            // (Si estás probando en PC, usa el modo desarrollador F12 -> Móvil)
+            if (!isMobile && tg.platform !== 'android' && tg.platform !== 'ios') {
                 document.body.innerHTML = `
                     <div style="background:#000; color:#fff; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px; font-family:sans-serif;">
                         <i class="fas fa-mobile-alt" style="font-size:60px; color:#FF3D00; margin-bottom:20px;"></i>
-                        <h2 style="text-transform:uppercase;">Solo en Celular</h2>
-                        <p>Fruit Hunter PRO fue diseñado exclusivamente para teléfonos móviles.</p>
-                        <p style="color:#666; font-size:12px; margin-top:10px;">Acceso desde PC bloqueado.</p>
+                        <h2 style="text-transform:uppercase;">Solo Celulares</h2>
+                        <p>Esta App solo funciona en dispositivos móviles.</p>
                     </div>`;
                 return false; 
             }
 
-            // 2. BLOQUEO MULTI-CUENTA (En el mismo dispositivo)
+            // 2. BLOQUEO MULTI-CUENTA 🚫
+            // Si soy "TEST_", me salto esta seguridad para poder trabajar tranquilo.
+            if (isTesting || uid.toString().startsWith("TEST_")) {
+                console.log("Modo Pruebas: Seguridad Multi-cuenta desactivada para ti.");
+                return true; 
+            }
+
             let deviceLock = localStorage.getItem('fh_device_lock');
             
-            // Si el dispositivo ya tiene dueño y NO SOY YO -> BLOQUEO
+            // Si el celular ya tiene dueño y NO SOY YO -> BLOQUEO ROJO
             if (deviceLock && deviceLock !== String(uid)) {
                  document.body.innerHTML = `
                     <div style="background:#B71C1C; color:#fff; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px; font-family:sans-serif;">
-                        <i class="fas fa-user-shield" style="font-size:60px; color:#fff; margin-bottom:20px;"></i>
+                        <i class="fas fa-ban" style="font-size:60px; color:#fff; margin-bottom:20px;"></i>
                         <h2>ACCESO DENEGADO</h2>
-                        <p>Este dispositivo ya está vinculado a otra cuenta.</p>
-                        <div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; margin-top:20px; font-size:11px;">
-                            ID Dispositivo: ${deviceLock}<br>
-                            Tu ID Actual: ${uid}
-                        </div>
+                        <p>Multi-cuenta detectada.</p>
+                        <div style="font-size:11px; margin-top:15px; opacity:0.7;">Dueño: ${deviceLock} <br> Tú: ${uid}</div>
                     </div>`;
-                reportar(`🚨 SEGURIDAD: Multi-cuenta detectada. Intruso: ${uid} (Dueño: ${deviceLock})`);
+                reportar(`🚨 SEGURIDAD: Intento de Multi-cuenta. Intruso: ${uid}`);
                 return false; 
             }
             
-            // Si pasamos, firmamos el dispositivo como nuestro
+            // Si es un usuario real, marcamos el territorio
             localStorage.setItem('fh_device_lock', uid);
             return true;
         }
