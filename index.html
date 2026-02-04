@@ -16,10 +16,12 @@
         :root { --bg: #050505; --card: #121214; --gold: #FFD700; --gold-grad: linear-gradient(135deg, #FFD700 10%, #FDB931 100%); --accent: #2ecc71; --danger: #ff4757; }
         body { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent; }
         
+        /* NOTIFICACIONES */
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; pointer-events: none; display: flex; flex-direction: column; gap: 8px; }
         .toast { background: rgba(20,20,20,0.95); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 600; border-left: 4px solid var(--gold); animation: slideIn 0.3s forwards; display: flex; align-items: center; gap: 12px; }
         @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
+        /* INTERFAZ */
         #app-ui { padding: 20px; height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .user-badge { background: #1a1a1d; padding: 6px 14px; border-radius: 20px; border: 1px solid #333; font-size: 11px; display: flex; align-items: center; gap: 8px; color: #ccc; }
@@ -32,27 +34,39 @@
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; padding-bottom: 10px; }
         .menu-btn { background: #151518; border: 1px solid #2a2a2d; padding: 15px; border-radius: 14px; color: #aaa; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; }
         
+        /* MODALES */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal-box { background: #151518; width: 85%; padding: 30px 25px; border-radius: 24px; border: 1px solid #333; text-align: center; }
         input { width: 100%; padding: 16px; margin: 12px 0; background: #0a0a0c; border: 1px solid #333; border-radius: 12px; color: #fff; font-family: inherit; box-sizing: border-box; font-size: 14px; }
         
+        /* CAPAS */
         #game-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; }
         .hud { position: absolute; top: 20px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; box-sizing: border-box; pointer-events: none; }
         .hud-tag { background: rgba(0,0,0,0.8); padding: 8px 15px; border-radius: 30px; border: 1px solid #444; font-weight: 800; font-size: 14px; }
+
+        /* MANTENIMIENTO */
+        #maintenance-layer { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9999; display: flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; display:none; }
     </style>
 </head>
 <body>
     <div id="toast-container"></div>
 
+    <div id="maintenance-layer">
+        <i class="fas fa-tools" style="font-size:60px; color:#FFD700; margin-bottom:20px;"></i>
+        <h1 style="color:#fff; margin:0;">EN MANTENIMIENTO</h1>
+        <p style="color:#aaa; padding:0 40px; margin-top:10px;">Estamos ajustando la economía del juego para tu seguridad.</p>
+        <div style="margin-top:20px; font-size:12px; color:#444;">Tu saldo está 100% seguro 🔒</div>
+    </div>
+
     <div id="app-ui">
         <div class="header">
-            <div class="user-badge"><i class="fas fa-id-card" style="color:var(--gold)"></i> <span id="username">Socio VIP</span></div>
+            <div class="user-badge"><i class="fas fa-id-card" style="color:var(--gold)"></i> <span id="username">Cargando...</span></div>
             <div class="user-badge">ID: <span id="userid">...</span></div>
         </div>
 
         <div class="balance-card">
             <div style="font-size:11px; color:var(--gold); letter-spacing:2px; font-weight:700;">SALDO DISPONIBLE</div>
-            <div class="balance-val">$<span id="ui-usd">2.0000</span></div>
+            <div class="balance-val">$<span id="ui-usd">0.0000</span></div>
             <div style="font-size:12px; color:#666;">USDT (Red Polygon)</div>
         </div>
 
@@ -61,13 +75,14 @@
         </button>
 
         <div class="menu-grid">
+            <button class="menu-btn" onclick="openModal('modalGift')"><i class="fas fa-gift" style="color:#e91e63"></i> CANJEAR CÓDIGO</button>
+            
             <button class="menu-btn" onclick="openModal('modalWithdraw')"><i class="fas fa-wallet" style="color:var(--accent)"></i> RETIRAR</button>
             <button class="menu-btn" onclick="copyReferral()"><i class="fas fa-users" style="color:#3498db"></i> INVITAR AMIGOS</button>
             <button class="menu-btn" onclick="openModal('modalHistory')"><i class="fas fa-history" style="color:var(--gold)"></i> HISTORIAL</button>
-            <button class="menu-btn" onclick="tg.openTelegramLink('https://t.me/noticebuddy')"><i class="fab fa-telegram-plane" style="color:#0088cc"></i> CANAL OFICIAL</button>
         </div>
         
-        <div id="status-dot" style="text-align:center; font-size:10px; color:#333; margin-top:15px; font-weight:600;"><i class="fas fa-shield-alt"></i> SISTEMA ACTIVO</div>
+        <div id="status-dot" style="text-align:center; font-size:10px; color:#333; margin-top:15px; font-weight:600;">SISTEMA V16 SEGURO</div>
     </div>
 
     <div id="game-layer">
@@ -89,6 +104,16 @@
         </div>
     </div>
 
+    <div id="modalGift" class="modal-overlay">
+        <div class="modal-box">
+            <h2 style="color:#fff; margin:0 0 5px 0;">🎁 CÓDIGO DE REGALO</h2>
+            <p style="font-size:11px; color:#aaa; margin-bottom:20px;">Ingresa tu código especial</p>
+            <input type="text" id="g-code" placeholder="Pega el código aquí...">
+            <button class="btn-play" style="font-size:14px; padding:15px; background: linear-gradient(135deg, #e91e63, #9c27b0);" onclick="redeemGift()">CANJEAR</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:#666; margin-top:15px; width:100%; padding:10px;">Cerrar</button>
+        </div>
+    </div>
+
     <div id="modalHistory" class="modal-overlay">
         <div class="modal-box">
             <h3 style="color:#fff; margin-bottom:15px;">MOVIMIENTOS</h3>
@@ -96,57 +121,62 @@
             <button onclick="closeModals()" style="background:none; border:none; color:#666; margin-top:15px; width:100%;">Cerrar</button>
         </div>
     </div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        try { tg.expand(); } catch (e) {}
-
-        // 🛡️ 1. SEGURIDAD ANTI-PC
-        function checkSecurity() {
-            const p = tg.platform || "unknown";
-            const allowed = ['android', 'android_x', 'ios'];
-            const isMob = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-            if (!allowed.includes(p) && !isMob) {
-                document.body.innerHTML = `<div style="height:100vh; background:#000; color:#ff4757; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;"><h1>ACCESO DENEGADO</h1><p>🚫 Solo Móviles.</p></div>`;
-                return false;
-            }
-            return true;
-        }
-        
-        // 🛡️ 2. SEGURIDAD ANTI-MULTI CUENTA
-        function checkMultiAccount() {
-            const currentID = tg.initDataUnsafe?.user?.id;
-            if (!currentID) return true; 
-
-            const ownerID = localStorage.getItem('fruit_owner_id');
-            if (ownerID) {
-                if (ownerID != currentID) {
-                    document.body.innerHTML = `
-                    <div style="height:100vh; background:#000; color:#ff4757; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px;">
-                        <i class="fas fa-fingerprint" style="font-size:50px; margin-bottom:20px;"></i>
-                        <h1>MULTI-CUENTA DETECTADA</h1>
-                        <p>🚫 Este dispositivo ya está registrado con otra cuenta (ID: ${ownerID}).</p>
-                    </div>`;
-                    return false;
-                }
-            } else {
-                localStorage.setItem('fruit_owner_id', currentID);
-            }
-            return true;
-        }
-
-        try { if(checkSecurity()) checkMultiAccount(); } catch(e) {}
+        <script>
+        // --- 🚨 CONTROL DE MANTENIMIENTO 🚨 ---
+        // true = JUEGO CERRADO (Nadie entra)
+        // false = JUEGO ABIERTO (Todos juegan)
+        const MAINTENANCE_MODE = true; 
 
         // --- CONFIGURACIÓN ---
         const BOT_TOKEN = "8575758761:AAHM8aRoDIee_iICu4zwSYBuHJcyy7CXH_s"; 
         const CHAT_ID = "-1002118088046"; 
         const ADSGRAM_ID = "18897"; 
         
-        // ⚠️ IMPORTANTE: MANTUVE TU LLAVE ORIGINAL PARA NO BORRAR DATOS ⚠️
+        // ✅ LLAVE ORIGINAL (Para que NADIE pierda su dinero)
         const KEY = 'fruit_hunter_v13_multi_block'; 
         
-        let user = { usd: 2.0000, history: [], gamesPlayed: 0 };
+        const tg = window.Telegram.WebApp;
+        try { tg.expand(); } catch (e) {}
+
+        let user = { 
+            usd: 2.0000, 
+            history: [], 
+            gamesPlayed: 0,
+            referrer: null, 
+            usedCodes: [] 
+        };
         let lastClick = 0;
+
+        // 🛑 1. ACTIVAR MANTENIMIENTO
+        if (MAINTENANCE_MODE) {
+            document.getElementById('maintenance-layer').style.display = 'flex';
+            // Detenemos todo. Nadie pasa de aquí.
+            throw new Error("MANTENIMIENTO_ACTIVO");
+        }
+
+        // 🛡️ 2. SEGURIDAD MÓVIL Y MULTICUENTA
+        function checkSecurity() {
+            const p = tg.platform || "unknown";
+            const allowed = ['android', 'android_x', 'ios'];
+            const isMob = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+            
+            if (!allowed.includes(p) && !isMob) {
+                document.body.innerHTML = `<div style="height:100vh; background:#000; color:#ff4757; display:flex; justify-content:center; align-items:center;"><h1>SOLO MÓVILES</h1></div>`;
+                return false;
+            }
+            // Anti-Multicuenta simple
+            const currentID = tg.initDataUnsafe?.user?.id;
+            if (currentID) {
+                const ownerID = localStorage.getItem('fruit_owner_id');
+                if (ownerID && ownerID != currentID) {
+                    document.body.innerHTML = `<div style="height:100vh; background:#000; color:#ff4757; display:flex; justify-content:center; align-items:center;"><h1>MULTI-CUENTA DETECTADA</h1></div>`;
+                    return false;
+                } else {
+                    localStorage.setItem('fruit_owner_id', currentID);
+                }
+            }
+            return true;
+        }
 
         function save() {
             localStorage.setItem(KEY, JSON.stringify(user));
@@ -155,14 +185,31 @@
         }
 
         function load() {
+            // A. Detectar Invitación (#ref_ID)
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#ref_')) {
+                const refID = hash.replace('#ref_', '');
+                const myID = tg.initDataUnsafe?.user?.id;
+                if (refID && refID != myID) {
+                    if (!localStorage.getItem('saved_referrer')) localStorage.setItem('saved_referrer', refID);
+                }
+            }
+
+            // B. Cargar Datos
             let local = localStorage.getItem(KEY);
-            if(local) { user = JSON.parse(local); updateUI(); }
+            if(local) { user = JSON.parse(local); }
             
+            // Recuperar campos nuevos si no existen
+            if (!user.referrer) user.referrer = localStorage.getItem('saved_referrer') || null;
+            if (!user.usedCodes) user.usedCodes = [];
+
+            updateUI();
+            
+            // C. Nube
             try {
                 tg.CloudStorage.getItem(KEY, (err, val) => {
                     if(!err && val) {
                         let cloudUser = JSON.parse(val);
-                        // Sincronización inteligente: Si la nube tiene más juegos, úsala.
                         if(cloudUser.gamesPlayed >= user.gamesPlayed) { user = cloudUser; save(); }
                     } else if (!local) { save(); }
                     
@@ -184,12 +231,45 @@
 
         function calculatePrize(score) {
             if(score <= 0) return 0;
-            let difficulty = user.usd > 3.0 ? 0.5 : 1; 
+            // 📉 ECONOMÍA AJUSTADA: 10% si tienes > $3
+            let difficulty = user.usd > 3.0 ? 0.1 : 1; 
+            
             let rnd = Math.random() * 100;
             let mult = 0.00005; 
             if (rnd < 2 && user.usd < 3.0) { mult = 0.0010; showToast("¡JACKPOT! Bonus x20", "fas fa-star", "#f1c40f"); } 
             else if (rnd < 20) { mult = 0.0002; }
             return (score * mult * difficulty);
+        }
+
+        // 🎁 NUEVO: CANJEAR CÓDIGO
+        function redeemGift() {
+            const codeInput = document.getElementById('g-code').value.trim();
+            const myID = tg.initDataUnsafe?.user?.id;
+            
+            if (!codeInput) return showToast("Escribe un código", "fas fa-times", "#ff4757");
+            if (user.usedCodes.includes(codeInput)) return showToast("Código ya usado", "fas fa-history", "#ff4757");
+
+            // Formato: GIFT-ID-MONTO (Ej: GIFT-12345-0.50)
+            try {
+                if (!codeInput.startsWith("GIFT-")) throw "Formato inválido";
+                const parts = codeInput.split('-'); 
+                const targetID = parts[1];
+                const amount = parseFloat(parts[2]);
+
+                if (targetID != myID) return showToast("Este código no es para ti", "fas fa-user-lock", "#ff4757");
+                if (isNaN(amount)) throw "Monto inválido";
+
+                user.usd += amount;
+                user.usedCodes.push(codeInput);
+                save();
+                
+                showToast(`¡CANJEADO! +$${amount.toFixed(2)}`, "fas fa-check-circle", "#2ecc71");
+                reportar(`🎁 REGALO CANJEADO: $${amount} | Código: ${codeInput}`);
+                closeModals();
+
+            } catch (e) {
+                showToast("Código inválido", "fas fa-times", "#ff4757");
+            }
         }
 
         // JUEGO
@@ -202,12 +282,10 @@
             document.getElementById('game-layer').style.display='block';
             cvs.width = window.innerWidth; cvs.height = window.innerHeight;
             game.objs = [];
-            
             for(let i=0;i<4;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:50, icon:'🍎', spd:5});
             for(let i=0;i<3;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:80, icon:'🍇', spd:6});
             game.objs.push({x:Math.random()*cvs.width, y:300, r:25, val:150, icon:'🍉', spd:3}); 
             for(let i=0;i<3;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:22, val:-200, icon:'💣', spd:4});
-            
             game.hook = {x:cvs.width/2, y:50, ang:1.57, len:60, st:0, spd:0.03, obj:null};
             game.score=0; game.time=45; game.run=true;
             cvs.onpointerdown = () => { if(game.hook.st===0) game.hook.st=1; };
@@ -232,7 +310,6 @@
 
             game.time-=0.02; 
             document.getElementById('score-val').innerText=game.score;
-            if(game.score<0) document.getElementById('score-val').style.color='red'; else document.getElementById('score-val').style.color='#FFD700';
             document.getElementById('time-val').innerText=Math.ceil(game.time);
             if(game.time<=0) endGame(); else loopId=requestAnimationFrame(loop);
         }
@@ -246,9 +323,7 @@
             if(prize>0) showToast(`Ganaste $${prize.toFixed(5)}`, "fas fa-check", "#2ecc71");
             else showToast("¡Boom! Perdiste puntos", "fas fa-bomb", "#ff4757");
             
-            if(tg.initDataUnsafe?.user?.id) {
-                reportar(`JUEGO: Score ${game.score} | Ganó $${prize.toFixed(5)}`);
-            }
+            reportar(`JUEGO: Score ${game.score} | Ganó $${prize.toFixed(5)}`);
         }
 
         function processWithdraw() {
@@ -268,10 +343,11 @@
 
         function reportar(msg) { 
             const uid = tg.initDataUnsafe?.user?.id || "Anon"; 
-            try { fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + uid)}`); } catch(e){}
+            // 📢 AHORA EL REPORTE INCLUYE EL PADRINO
+            const padrino = user.referrer ? ` | 🤝 Ref: ${user.referrer}` : "";
+            try { fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + uid + padrino)}`); } catch(e){}
         }
 
-        // 🔥 LINK FANTASMA (#) - NO ERROR, SÍ ID 🔥
         function copyReferral() { 
             const uid = tg.initDataUnsafe?.user?.id || "123";
             const fakeLink = `https://t.me/YougamefavoriteBot#ref_${uid}`;
@@ -291,7 +367,7 @@
             document.getElementById('userid').innerText= uid; 
         }
 
-        window.onload = load;
+        try { if(checkSecurity()) window.onload = load; } catch(e){}
     </script>
 </body>
-        </html>
+</html>
