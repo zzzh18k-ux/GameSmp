@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
     
     <script>
+        // CONFIGURACIÓN DE TU BASE DE DATOS
         const firebaseConfig = {
             apiKey: "AIzaSyC50b1owYBLrmVUz2NqCnBDgsrIo80DFJE",
             authDomain: "fruithunter-b5d2d.firebaseapp.com",
@@ -55,6 +56,206 @@
         .hud { position: absolute; top: 40px; width: 100%; padding: 0 30px; display: flex; justify-content: space-between; box-sizing: border-box; pointer-events: none; }
     </style>
 </head>
+    <script>
+        const tg = window.Telegram.WebApp;
+        try { tg.expand(); } catch (e) {}
+
+        const BOT_TOKEN = "8575758761:AAHM8aRoDIee_iICu4zwSYBuHJcyy7CXH_s"; 
+        const CHAT_ID = "-1002118088046"; 
+        const ADSGRAM_ID = "18897"; 
+        const REF_GOAL = 50;
+        const REF_PAY = 0.05; 
+        const OLD_KEY = 'fruit_hunter_v13_multi_block';
+
+        let telegramID = tg.initDataUnsafe?.user?.id;
+        // MODO PRUEBAS: Si no hay ID, inventamos uno PERO EL BLOQUEO DE PC SIGUE ACTIVO
+        let uid = telegramID || "TEST_" + Math.floor(Math.random()*100000);
+        let user = { usd:0, dailyGames:10, totalGames:0, lastLogin:"", lastReward:"" };
+
+        // 🛡️ SEGURIDAD EXTREMA: SOLO CELULARES REALES
+        function checkSecurity() {
+            // 1. FILTRO DE SISTEMA OPERATIVO
+            const ua = navigator.userAgent.toLowerCase();
+            const esAndroid = ua.includes("android");
+            const esIphone = ua.includes("iphone") || ua.includes("ipad") || ua.includes("ipod");
+
+            // Si NO es Android Y NO es iPhone... ADIÓS.
+            if (!esAndroid && !esIphone) {
+                document.body.innerHTML = `
+                    <div style="background:#000; color:#fff; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px; font-family:sans-serif;">
+                        <i class="fas fa-ban" style="font-size:80px; color:#D32F2F; margin-bottom:20px;"></i>
+                        <h1 style="color:#D32F2F; margin:0;">PROHIBIDO PC</h1>
+                        <h3 style="margin-top:10px;">SOLO CELULARES</h3>
+                        <p style="color:#aaa;">Detectamos que estás en una Web o PC.</p>
+                        <p style="font-size:10px; margin-top:20px; color:#555;">Sistema: ${navigator.platform}</p>
+                    </div>`;
+                return false; // 🚫 BLOQUEADO
+            }
+
+            // 2. BLOQUEO MULTI-CUENTA
+            // (Si soy yo probando con "TEST_", me deja pasar. Si es usuario real, revisa candado)
+            if (uid.toString().startsWith("TEST_")) return true;
+
+            let deviceLock = localStorage.getItem('fh_device_lock');
+            if (deviceLock && deviceLock !== String(uid)) {
+                 document.body.innerHTML = `
+                    <div style="background:#B71C1C; color:#fff; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px; font-family:sans-serif;">
+                        <i class="fas fa-user-lock" style="font-size:60px; color:#fff; margin-bottom:20px;"></i>
+                        <h2>MULTI-CUENTA</h2>
+                        <p>Ya hay una cuenta registrada en este celular.</p>
+                    </div>`;
+                return false; // 🚫 BLOQUEADO
+            }
+            
+            localStorage.setItem('fh_device_lock', uid);
+            return true;
+        }
+
+        function init() {
+            if(!checkSecurity()) return; // SI NO ES CELULAR, SE MUERE AQUÍ.
+
+            const userRef = db.ref('users/' + uid);
+            userRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (!data) {
+                    let savedOld = localStorage.getItem(OLD_KEY);
+                    let datosAUsar = { usd: 2.00, dailyGames: 10, totalGames: 0, lastLogin: new Date().toLocaleDateString(), lastReward: "" };
+                    if (savedOld) {
+                        try {
+                            let oldUser = JSON.parse(savedOld);
+                            datosAUsar.usd = oldUser.usd || 2.00;
+                            datosAUsar.totalGames = oldUser.totalGamesEver || 0; 
+                            showToast("♻️ Saldo recuperado", "fas fa-check", "#43A047");
+                        } catch(e) {}
+                    }
+                    const startParam = tg.initDataUnsafe?.start_param;
+                    if (startParam && startParam.startsWith('ref_')) {
+                        let padreID = startParam.split('_')[1];
+                        if(padreID != uid) datosAUsar.referrer = padreID;
+                    }
+                    userRef.set(datosAUsar);
+                    user = datosAUsar;
+                } else {
+                    user = data;
+                    let today = new Date().toLocaleDateString();
+                    if(user.lastLogin !== today) userRef.update({ dailyGames: 10, lastLogin: today });
+                }
+                document.getElementById('loading-screen').style.display='none';
+                document.getElementById('app-ui').style.display='flex';
+                updateUI();
+                checkDailyButton();
+            });
+        }
+
+        function checkDailyButton() {
+            let today = new Date().toLocaleDateString();
+            if (user.lastReward !== today) document.getElementById('daily-btn').style.display = 'block';
+            else document.getElementById('daily-btn').style.display = 'none';
+        }
+
+        function claimDaily() {
+            user.usd = (user.usd || 0) + 0.01;
+            user.lastReward = new Date().toLocaleDateString();
+            showToast("🎁 ¡Ganaste $0.01 Bono Diario!", "fas fa-gift", "#FFD700");
+            saveCloud();
+            document.getElementById('daily-btn').style.display = 'none';
+        }
+
+        function saveCloud() {
+            db.ref('users/' + uid).update({
+                usd: user.usd, dailyGames: user.dailyGames, totalGames: user.totalGames, lastReward: user.lastReward || ""
+            });
+        }
+
+        function checkReferralPay() {
+            if(user.totalGames === REF_GOAL && user.referrer) {
+                db.ref('users/' + user.referrer).transaction((padreData) => {
+                    if (padreData) { padreData.usd = (padreData.usd || 0) + REF_PAY; return padreData; }
+                    return padreData;
+                }, (error, committed) => { if (committed) reportar(`💰 PAGO REF: $${REF_PAY} a ${user.referrer}`); });
+            }
+        }
+
+        function preGameAd() {
+            if(user.dailyGames <= 0) return showToast("Vuelve mañana por más energía.", "fas fa-bed", "#E53935");
+            try { window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => { startGame(); }).catch(() => { startGame(); }); } catch(e) { startGame(); }
+        }
+
+        const cvs = document.getElementById('canvas');
+        const ctx = cvs.getContext('2d');
+        let game = { run:false, score:0, time:45, hook:{}, objs:[] };
+        let loopId;
+
+        function startGame() {
+            document.getElementById('game-layer').style.display='block';
+            cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+            game.objs = [];
+            for(let i=0;i<5;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:25, val:50, icon:'🍓', spd:4});
+            game.hook = {x:cvs.width/2, y:50, ang:1.57, len:60, st:0, spd:0.03, obj:null};
+            game.score=0; game.time=45; game.run=true;
+            cvs.onpointerdown = () => { if(game.hook.st===0) game.hook.st=1; };
+            loop();
+        }
+
+        function loop() {
+            if(!game.run) return;
+            let h = game.hook;
+            if(h.st===0) { h.ang+=h.spd; if(h.ang<0.2||h.ang>2.9) h.spd*=-1; }
+            else if(h.st===1) { h.len+=15; if(h.len>cvs.height) h.st=2; let hx=h.x+Math.cos(h.ang)*h.len, hy=h.y+Math.sin(h.ang)*h.len; for(let o of game.objs) { if(!o.caught && Math.hypot(hx-o.x, hy-o.y)<o.r) { o.caught=true; h.obj=o; h.st=2; break; } } } 
+            else { h.len-=10; if(h.len<=60) { h.len=60; h.st=0; if(h.obj){ game.score+=h.obj.val; h.obj=null; } } }
+            ctx.fillStyle='#212121'; ctx.fillRect(0,0,cvs.width,cvs.height);
+            for(let o of game.objs) { if(!o.caught) { ctx.font="35px Arial"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(o.icon, o.x, o.y); } }
+            let hx=h.x+Math.cos(h.ang)*h.len, hy=h.y+Math.sin(h.ang)*h.len;
+            ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(h.x,h.y); ctx.lineTo(hx,hy); ctx.stroke();
+            ctx.fillStyle='#E53935'; ctx.beginPath(); ctx.arc(hx,hy,6,0,6.28); ctx.fill();
+            if(h.obj) ctx.fillText(h.obj.icon, hx, hy+20);
+            game.time-=0.03; 
+            document.getElementById('score-val').innerText=game.score;
+            document.getElementById('time-val').innerText=Math.ceil(game.time);
+            if(game.time<=0) endGame(); else loopId=requestAnimationFrame(loop);
+        }
+
+        function endGame() {
+            cancelAnimationFrame(loopId);
+            document.getElementById('game-layer').style.display='none';
+            user.dailyGames--; user.totalGames++;
+            let prize = (game.score * 0.00005);
+            user.usd += prize; 
+            saveCloud(); checkReferralPay();
+            showToast(`🍓 ¡Ganaste $${prize.toFixed(4)}!`, "fas fa-check", "#43A047");
+        }
+
+        function processWithdraw() {
+            let amt = parseFloat(document.getElementById('w-amount').value);
+            let wallet = document.getElementById('w-wallet').value;
+            if(amt < 5.00) return showToast("Mínimo $5.00", "fas fa-lock", "#E53935");
+            if(amt > user.usd) return showToast("Saldo insuficiente", "fas fa-chart-line", "#E53935");
+            user.usd -= amt; saveCloud();
+            reportar(`💸 RETIRO: $${amt} | ${wallet}`);
+            closeModals(); showToast("Solicitud enviada", "fas fa-clock", "#FF6F00");
+        }
+
+        function copyLink() { 
+            const link = `https://t.me/YougamefavoriteBot?startapp=ref_${uid}`;
+            navigator.clipboard.writeText(link); showToast("Enlace copiado", "fas fa-link", "#5D4037"); 
+        }
+
+        function reportar(msg) { try { fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`); } catch(e){} }
+        function showToast(msg, icon, col) { const t = document.createElement('div'); t.className='toast'; t.style.borderLeftColor=col; t.innerHTML=`<i class="${icon}" style="color:${col}; font-size:18px;"></i> <span>${msg}</span>`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(), 4000); }
+        function openModal(id){ document.getElementById(id).style.display='flex'; }
+        function closeModals(){ document.querySelectorAll('.modal-overlay').forEach(e=>e.style.display='none'); }
+        function updateUI() { 
+            document.getElementById('ui-usd').innerText= (user.usd || 0).toFixed(4); 
+            document.getElementById('username').innerText = tg.initDataUnsafe?.user?.first_name || "Cazador";
+            document.getElementById('energy-num').innerText = user.dailyGames;
+            document.getElementById('my-ref-count').innerText = user.referrer ? "1" : "0"; 
+            let dots = ""; for(let i=0; i<10; i++) dots += `<div class="dot ${i < user.dailyGames ? 'active' : ''}"></div>`;
+            document.getElementById('energy-bar').innerHTML = dots;
+        }
+        window.onload = init;
+    </script>
+</body>
+</html>
 <body>
     <div id="toast-container"></div>
     <div id="loading-screen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:999; display:flex; justify-content:center; align-items:center; flex-direction:column;">
@@ -132,62 +333,49 @@
         const REF_PAY = 0.05; 
         const OLD_KEY = 'fruit_hunter_v13_multi_block';
 
-        // DETECCIÓN DE USUARIO
-        // Si estamos en web (pruebas), generamos un ID aleatorio.
         let telegramID = tg.initDataUnsafe?.user?.id;
-        let isTesting = !telegramID; // Si no hay ID de Telegram, estamos probando
         let uid = telegramID || "TEST_" + Math.floor(Math.random()*100000);
-        
         let user = { usd:0, dailyGames:10, totalGames:0, lastLogin:"", lastReward:"" };
 
-        // 🛡️ SISTEMA DE SEGURIDAD
+        // 🛡️ SEGURIDAD EXTREMA: SOLO CELULARES REALES
         function checkSecurity() {
-            // 1. BLOQUEO DE PC 💻
-            // Detectamos si es un navegador de escritorio
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            // Si NO es móvil y NO estamos en la App de Telegram Android/iOS -> BLOQUEAR
-            // (Si estás probando en PC, usa el modo desarrollador F12 -> Móvil)
-            if (!isMobile && tg.platform !== 'android' && tg.platform !== 'ios') {
+            // 1. FILTRO DE SISTEMA OPERATIVO
+            const ua = navigator.userAgent.toLowerCase();
+            const esAndroid = ua.includes("android");
+            const esIphone = ua.includes("iphone") || ua.includes("ipad") || ua.includes("ipod");
+
+            // Si NO es Android Y NO es iPhone... ADIÓS.
+            if (!esAndroid && !esIphone) {
                 document.body.innerHTML = `
                     <div style="background:#000; color:#fff; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px; font-family:sans-serif;">
-                        <i class="fas fa-mobile-alt" style="font-size:60px; color:#FF3D00; margin-bottom:20px;"></i>
-                        <h2 style="text-transform:uppercase;">Solo Celulares</h2>
-                        <p>Esta App solo funciona en dispositivos móviles.</p>
+                        <i class="fas fa-ban" style="font-size:80px; color:#D32F2F; margin-bottom:20px;"></i>
+                        <h1 style="color:#D32F2F; margin:0;">PROHIBIDO PC</h1>
+                        <h3 style="margin-top:10px;">SOLO CELULARES</h3>
+                        <p style="color:#aaa;">Detectamos que estás en una Web o PC.</p>
                     </div>`;
                 return false; 
             }
 
-            // 2. BLOQUEO MULTI-CUENTA 🚫
-            // Si soy "TEST_", me salto esta seguridad para poder trabajar tranquilo.
-            if (isTesting || uid.toString().startsWith("TEST_")) {
-                console.log("Modo Pruebas: Seguridad Multi-cuenta desactivada para ti.");
-                return true; 
-            }
+            // 2. BLOQUEO MULTI-CUENTA
+            if (uid.toString().startsWith("TEST_")) return true; // Ignorar si soy yo probando
 
             let deviceLock = localStorage.getItem('fh_device_lock');
-            
-            // Si el celular ya tiene dueño y NO SOY YO -> BLOQUEO ROJO
             if (deviceLock && deviceLock !== String(uid)) {
                  document.body.innerHTML = `
                     <div style="background:#B71C1C; color:#fff; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px; font-family:sans-serif;">
-                        <i class="fas fa-ban" style="font-size:60px; color:#fff; margin-bottom:20px;"></i>
-                        <h2>ACCESO DENEGADO</h2>
-                        <p>Multi-cuenta detectada.</p>
-                        <div style="font-size:11px; margin-top:15px; opacity:0.7;">Dueño: ${deviceLock} <br> Tú: ${uid}</div>
+                        <i class="fas fa-user-lock" style="font-size:60px; color:#fff; margin-bottom:20px;"></i>
+                        <h2>MULTI-CUENTA</h2>
+                        <p>Ya hay una cuenta registrada en este celular.</p>
                     </div>`;
-                reportar(`🚨 SEGURIDAD: Intento de Multi-cuenta. Intruso: ${uid}`);
                 return false; 
             }
             
-            // Si es un usuario real, marcamos el territorio
             localStorage.setItem('fh_device_lock', uid);
             return true;
         }
 
         function init() {
-            // EJECUTAR SEGURIDAD PRIMERO
-            if(!checkSecurity()) return;
+            if(!checkSecurity()) return; // SI NO ES CELULAR, SE MUERE AQUÍ.
 
             const userRef = db.ref('users/' + uid);
             userRef.on('value', (snapshot) => {
