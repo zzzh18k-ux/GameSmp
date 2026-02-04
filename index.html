@@ -3,179 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fruit Hunter VIP</title>
+    <title>Fruit Hunter PRO 🍓</title>
     
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root { --bg: #050505; --card: #121214; --gold: #FFD700; --gold-grad: linear-gradient(135deg, #FFD700 10%, #FDB931 100%); --accent: #2ecc71; --danger: #ff4757; }
-        body { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Montserrat', sans-serif; overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent; }
+        /* ESTILO CREMOSO FRUTAL */
+        :root { --bg: #FFF3E0; --text-main: #5D4037; --accent: #FF6F00; --green: #43A047; --btn-grad: linear-gradient(135deg, #FF9800 0%, #F57C00 100%); }
+        body { margin: 0; padding: 0; background: var(--bg); color: var(--text-main); font-family: 'Fredoka', sans-serif; overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent; }
         
-        /* NOTIFICACIONES */
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; pointer-events: none; display: flex; flex-direction: column; gap: 8px; }
-        .toast { background: rgba(20,20,20,0.95); color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 600; border-left: 4px solid var(--gold); animation: slideIn 0.3s forwards; display: flex; align-items: center; gap: 12px; }
-        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .toast { background: #fff; padding: 12px 20px; border-radius: 15px; font-size: 13px; font-weight: 600; border-left: 5px solid var(--accent); box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; }
 
-        /* INTERFAZ */
         #app-ui { padding: 20px; height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .user-badge { background: #1a1a1d; padding: 6px 14px; border-radius: 20px; border: 1px solid #333; font-size: 11px; display: flex; align-items: center; gap: 8px; color: #ccc; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .user-badge { background: #fff; padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-size: 12px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
         
-        .balance-card { background: var(--card); border-radius: 24px; padding: 30px 20px; text-align: center; border: 1px solid rgba(255,215,0,0.1); box-shadow: 0 0 50px rgba(255,215,0,0.05); margin-bottom: 20px; position: relative; overflow: hidden; }
-        .balance-val { font-size: 46px; font-weight: 900; background: var(--gold-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; }
-        
-        .btn-play { width: 100%; border: none; padding: 18px; border-radius: 16px; font-size: 18px; font-weight: 900; color: #000; background: var(--gold-grad); box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; padding-bottom: 10px; }
-        .menu-btn { background: #151518; border: 1px solid #2a2a2d; padding: 15px; border-radius: 14px; color: #aaa; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        
-        /* MODALES */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #151518; width: 85%; padding: 30px 25px; border-radius: 24px; border: 1px solid #333; text-align: center; }
-        input { width: 100%; padding: 16px; margin: 12px 0; background: #0a0a0c; border: 1px solid #333; border-radius: 12px; color: #fff; font-family: inherit; box-sizing: border-box; font-size: 14px; }
-        
-        /* CAPAS */
-        #game-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; display: none; }
-        .hud { position: absolute; top: 20px; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; box-sizing: border-box; pointer-events: none; }
-        .hud-tag { background: rgba(0,0,0,0.8); padding: 8px 15px; border-radius: 30px; border: 1px solid #444; font-weight: 800; font-size: 14px; }
+        .daily-row { display: flex; justify-content: space-between; margin-bottom: 20px; gap: 5px; background: #fff; padding: 10px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .day-box { background: #FFF3E0; border-radius: 8px; flex: 1; text-align: center; padding: 5px 0; font-size: 10px; color: #8D6E63; font-weight: bold; transition:0.3s; }
+        .day-box.claimed { background: var(--green); color: #fff; transform: scale(1.1); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-        /* MANTENIMIENTO */
-        #maintenance-layer { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9999; display: flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; display:none; }
+        .balance-card { background: #fff; border-radius: 25px; padding: 25px; text-align: center; margin-bottom: 15px; box-shadow: 0 10px 25px rgba(255, 111, 0, 0.15); border: 1px solid #FFE0B2; }
+        .balance-val { font-size: 48px; font-weight: 700; color: var(--accent); margin: 5px 0; }
+        
+        .energy-box { background: #fff; padding: 12px 20px; border-radius: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .energy-dots { display: flex; gap: 4px; }
+        .dot { width: 8px; height: 12px; background: #FFE0B2; border-radius: 4px; }
+        .dot.active { background: var(--accent); height: 16px; }
+
+        .btn-play { width: 100%; border: none; padding: 20px; border-radius: 20px; font-size: 18px; font-weight: 700; color: #fff; background: var(--btn-grad); box-shadow: 0 10px 20px rgba(255, 152, 0, 0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .btn-disabled { background: #CFD8DC; box-shadow: none; cursor: not-allowed; }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; }
+        .menu-btn { background: #fff; border: none; padding: 15px; border-radius: 18px; color: #8D6E63; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 5px 10px rgba(0,0,0,0.05); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(93, 64, 55, 0.6); z-index: 200; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #fff; width: 85%; padding: 30px 25px; border-radius: 30px; text-align: center; }
+        input { width: 100%; padding: 15px; margin: 15px 0; background: #FFF3E0; border: 2px solid #FFE0B2; border-radius: 15px; font-size: 16px; box-sizing: border-box; outline: none; }
+
+        #game-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #212121; z-index: 100; display: none; }
+        .hud { position: absolute; top: 40px; width: 100%; padding: 0 30px; display: flex; justify-content: space-between; box-sizing: border-box; pointer-events: none; }
     </style>
 </head>
 <body>
     <div id="toast-container"></div>
 
-    <div id="maintenance-layer">
-        <i class="fas fa-tools" style="font-size:60px; color:#FFD700; margin-bottom:20px;"></i>
-        <h1 style="color:#fff; margin:0;">EN MANTENIMIENTO</h1>
-        <p style="color:#aaa; padding:0 40px; margin-top:10px;">Estamos ajustando la economía del juego para tu seguridad.</p>
-        <div style="margin-top:20px; font-size:12px; color:#444;">Tu saldo está 100% seguro 🔒</div>
-    </div>
-
     <div id="app-ui">
         <div class="header">
-            <div class="user-badge"><i class="fas fa-id-card" style="color:var(--gold)"></i> <span id="username">Cargando...</span></div>
-            <div class="user-badge">ID: <span id="userid">...</span></div>
+            <div class="user-badge"><i class="fas fa-user-circle" style="color:var(--accent)"></i> <span id="username">Cargando...</span></div>
+            <div class="user-badge">🆔 <span id="userid">...</span></div>
         </div>
+
+        <div class="daily-row" id="daily-calendar"></div>
 
         <div class="balance-card">
-            <div style="font-size:11px; color:var(--gold); letter-spacing:2px; font-weight:700;">SALDO DISPONIBLE</div>
+            <div style="font-size:11px; font-weight:bold; color:#8D6E63;">TU SALDO DISPONIBLE</div>
             <div class="balance-val">$<span id="ui-usd">0.0000</span></div>
-            <div style="font-size:12px; color:#666;">USDT (Red Polygon)</div>
+            <div style="font-size:12px; background:#F5F5F5; display:inline-block; padding:4px 10px; border-radius:10px; color:#aaa;">USDT (Polygon)</div>
         </div>
 
-        <button class="btn-play" onclick="preGameAd()">
-            <i class="fas fa-bomb" style="color:#000;"></i> CAZAR (Cuidado 💣)
+        <div class="energy-box">
+            <div style="font-size:12px; font-weight:bold; color:var(--text-main);">⚡ ENERGÍA</div>
+            <div class="energy-dots" id="energy-bar"></div>
+            <div style="font-size:12px; font-weight:bold; color:#8D6E63;"><span id="energy-num">10</span>/10</div>
+        </div>
+
+        <button id="btn-play" class="btn-play" onclick="preGameAd()">
+            <i class="fas fa-play-circle"></i> ¡JUGAR! (-1 Energía)
         </button>
+        
+        <div style="background:#fff; padding:12px; border-radius:15px; box-shadow:0 5px 15px rgba(0,0,0,0.05); margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:bold; margin-bottom:5px;">
+                <span style="color:var(--text-main);">🎫 META PARA CÓDIGO DE ORO</span>
+                <span style="color:var(--accent);" id="ref-prog-text">0/50</span>
+            </div>
+            <div style="background:#FFF3E0; height:8px; border-radius:4px; overflow:hidden;">
+                <div id="ref-prog-bar" style="width:0%; height:100%; background:var(--accent);"></div>
+            </div>
+            <p style="font-size:9px; color:#aaa; margin-top:5px; text-align:center;">Al llegar a 50, se enviará la solicitud al Admin.</p>
+        </div>
 
         <div class="menu-grid">
-            <button class="menu-btn" onclick="openModal('modalGift')"><i class="fas fa-gift" style="color:#e91e63"></i> CANJEAR CÓDIGO</button>
-            
-            <button class="menu-btn" onclick="openModal('modalWithdraw')"><i class="fas fa-wallet" style="color:var(--accent)"></i> RETIRAR</button>
-            <button class="menu-btn" onclick="copyReferral()"><i class="fas fa-users" style="color:#3498db"></i> INVITAR AMIGOS</button>
-            <button class="menu-btn" onclick="openModal('modalHistory')"><i class="fas fa-history" style="color:var(--gold)"></i> HISTORIAL</button>
+            <button class="menu-btn" onclick="openModal('modalWithdraw')"><i class="fas fa-wallet" style="color:#43A047"></i> RETIRAR</button>
+            <button class="menu-btn" onclick="openModal('modalGift')"><i class="fas fa-gift" style="color:#E53935"></i> CANJEAR</button>
+            <button class="menu-btn" onclick="copyLink()"><i class="fas fa-share-alt" style="color:#1E88E5"></i> INVITAR</button>
+            <button class="menu-btn" onclick="tg.openTelegramLink('https://t.me/YougamefavoriteBot')"><i class="fab fa-telegram" style="color:#039BE5"></i> CANAL</button>
         </div>
-        
-        <div id="status-dot" style="text-align:center; font-size:10px; color:#333; margin-top:15px; font-weight:600;">SISTEMA V16 SEGURO</div>
     </div>
-
-    <div id="game-layer">
+        <div id="game-layer">
         <div class="hud">
-            <div class="hud-tag" style="color:var(--gold)"><i class="fas fa-star"></i> <span id="score-val">0</span></div>
-            <div class="hud-tag" style="color:var(--danger)"><i class="fas fa-clock"></i> <span id="time-val">45</span></div>
+            <div style="color:#FFD700; font-weight:900; font-size:24px;"><i class="fas fa-star"></i> <span id="score-val">0</span></div>
+            <div style="color:#fff; font-weight:900; font-size:24px;"><i class="fas fa-clock"></i> <span id="time-val">45</span></div>
         </div>
         <canvas id="canvas"></canvas>
     </div>
 
     <div id="modalWithdraw" class="modal-overlay">
         <div class="modal-box">
-            <h2 style="color:#fff; margin:0 0 5px 0;">RETIRAR USDT</h2>
-            <p style="font-size:11px; color:var(--accent); margin-bottom:20px;">Red Polygon (MATIC) • Mínimo $5.00</p>
-            <input type="number" id="w-amount" placeholder="Monto (Ej: 5.00)">
-            <input type="text" id="w-wallet" placeholder="Tu Dirección de Billetera">
-            <button class="btn-play" style="font-size:14px; padding:15px;" onclick="processWithdraw()">CONFIRMAR RETIRO</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:#666; margin-top:15px; width:100%; padding:10px;">Cancelar</button>
+            <h3 style="margin:0; color:var(--text-main);">RETIRAR DINERO</h3>
+            <p style="font-size:12px; color:#8D6E63;">Mínimo $5.00 USDT</p>
+            <input type="number" id="w-amount" placeholder="Monto">
+            <input type="text" id="w-wallet" placeholder="Billetera (Polygon)">
+            <button class="btn-play" style="font-size:14px; padding:15px; margin-top:10px;" onclick="processWithdraw()">ENVIAR SOLICITUD</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:#aaa; margin-top:10px; width:100%; font-weight:bold;">Cancelar</button>
         </div>
     </div>
 
     <div id="modalGift" class="modal-overlay">
         <div class="modal-box">
-            <h2 style="color:#fff; margin:0 0 5px 0;">🎁 CÓDIGO DE REGALO</h2>
-            <p style="font-size:11px; color:#aaa; margin-bottom:20px;">Ingresa tu código especial</p>
+            <h3 style="margin:0; color:var(--text-main);">CANJEAR PREMIO</h3>
+            <p style="font-size:12px; color:#8D6E63;">Pega aquí el código que te envíe el Admin</p>
             <input type="text" id="g-code" placeholder="Pega el código aquí...">
-            <button class="btn-play" style="font-size:14px; padding:15px; background: linear-gradient(135deg, #e91e63, #9c27b0);" onclick="redeemGift()">CANJEAR</button>
-            <button onclick="closeModals()" style="background:none; border:none; color:#666; margin-top:15px; width:100%; padding:10px;">Cerrar</button>
+            <button class="btn-play" style="font-size:14px; padding:15px; margin-top:10px; background:var(--green);" onclick="redeemGift()">VALIDAR</button>
+            <button onclick="closeModals()" style="background:none; border:none; color:#aaa; margin-top:10px; width:100%; font-weight:bold;">Cerrar</button>
         </div>
     </div>
 
-    <div id="modalHistory" class="modal-overlay">
-        <div class="modal-box">
-            <h3 style="color:#fff; margin-bottom:15px;">MOVIMIENTOS</h3>
-            <div id="h-list" style="text-align:left; max-height:250px; overflow-y:auto; font-size:12px;"></div>
-            <button onclick="closeModals()" style="background:none; border:none; color:#666; margin-top:15px; width:100%;">Cerrar</button>
-        </div>
-    </div>
-        <script>
-        // --- 🚨 CONTROL DE MANTENIMIENTO 🚨 ---
-        // true = JUEGO CERRADO (Nadie entra)
-        // false = JUEGO ABIERTO (Todos juegan)
-        const MAINTENANCE_MODE = true; 
-
-        // --- CONFIGURACIÓN ---
-        const BOT_TOKEN = "8575758761:AAHM8aRoDIee_iICu4zwSYBuHJcyy7CXH_s"; 
-        const CHAT_ID = "-1002118088046"; 
-        const ADSGRAM_ID = "18897"; 
-        
-        // ✅ LLAVE ORIGINAL (Para que NADIE pierda su dinero)
-        const KEY = 'fruit_hunter_v13_multi_block'; 
-        
+    <script>
         const tg = window.Telegram.WebApp;
         try { tg.expand(); } catch (e) {}
 
-        let user = { 
-            usd: 2.0000, 
-            history: [], 
-            gamesPlayed: 0,
-            referrer: null, 
-            usedCodes: [] 
-        };
-        let lastClick = 0;
-
-        // 🛑 1. ACTIVAR MANTENIMIENTO
-        if (MAINTENANCE_MODE) {
-            document.getElementById('maintenance-layer').style.display = 'flex';
-            // Detenemos todo. Nadie pasa de aquí.
-            throw new Error("MANTENIMIENTO_ACTIVO");
-        }
-
-        // 🛡️ 2. SEGURIDAD MÓVIL Y MULTICUENTA
+        // 🛡️ BLOQUEO DE SEGURIDAD (ANTI-PC y MULTI-CUENTA)
         function checkSecurity() {
             const p = tg.platform || "unknown";
             const allowed = ['android', 'android_x', 'ios'];
             const isMob = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-            
             if (!allowed.includes(p) && !isMob) {
-                document.body.innerHTML = `<div style="height:100vh; background:#000; color:#ff4757; display:flex; justify-content:center; align-items:center;"><h1>SOLO MÓVILES</h1></div>`;
+                document.body.innerHTML = `<div style="height:100vh; background:#000; color:#ff4757; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;"><h1>ACCESO DENEGADO</h1><p>🚫 Solo Móviles.</p></div>`;
                 return false;
             }
-            // Anti-Multicuenta simple
+            return true;
+        }
+        
+        function checkMultiAccount() {
             const currentID = tg.initDataUnsafe?.user?.id;
-            if (currentID) {
-                const ownerID = localStorage.getItem('fruit_owner_id');
-                if (ownerID && ownerID != currentID) {
-                    document.body.innerHTML = `<div style="height:100vh; background:#000; color:#ff4757; display:flex; justify-content:center; align-items:center;"><h1>MULTI-CUENTA DETECTADA</h1></div>`;
+            if (!currentID) return true; 
+
+            const ownerID = localStorage.getItem('fruit_owner_id');
+            if (ownerID) {
+                if (ownerID != currentID) {
+                    document.body.innerHTML = `
+                    <div style="height:100vh; background:#000; color:#ff4757; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px;">
+                        <i class="fas fa-fingerprint" style="font-size:50px; margin-bottom:20px;"></i>
+                        <h1>MULTI-CUENTA DETECTADA</h1>
+                        <p>🚫 ID: ${ownerID}</p>
+                    </div>`;
                     return false;
-                } else {
-                    localStorage.setItem('fruit_owner_id', currentID);
                 }
+            } else {
+                localStorage.setItem('fruit_owner_id', currentID);
             }
             return true;
+        }
+                // --- CONFIGURACIÓN ---
+        const BOT_TOKEN = "8575758761:AAHM8aRoDIee_iICu4zwSYBuHJcyy7CXH_s"; 
+        const CHAT_ID = "-1002118088046"; 
+        const ADSGRAM_ID = "18897"; 
+        const KEY = 'fruit_hunter_v13_multi_block'; 
+        
+        // 🔐 TU LLAVE SECRETA (X99)
+        const ADMIN_KEY = "X99"; 
+        
+        const MAX_DAILY = 10;
+        const REF_GOAL = 50;
+        const REF_REWARD = 0.25; 
+
+        let user = { 
+            usd: 2.0000, 
+            history: [], 
+            gamesPlayed: 0, 
+            dailyGames: 10, 
+            lastLogin: "",
+            dailyStreak: 0,
+            usedCodes: [],
+            totalGamesEver: 0,
+            referrer: null,
+            codeReported: false 
+        };
+
+        function init() {
+            let saved = localStorage.getItem(KEY);
+            if(saved) user = JSON.parse(saved);
+
+            const startParam = tg.initDataUnsafe?.start_param;
+            if (startParam && startParam.startsWith('ref_') && !user.referrer) {
+                const refID = startParam.split('_')[1]; 
+                const myID = tg.initDataUnsafe?.user?.id || "Nuevo";
+                if (refID != myID) {
+                    user.referrer = refID; 
+                    reportar(`🤝 NUEVO INGRESO: ID ${myID} invitado por ID ${refID}`);
+                    showToast("¡Invitación detectada!", "fas fa-user-plus", "#43A047");
+                }
+            }
+
+            let today = new Date().toLocaleDateString();
+            if(user.lastLogin !== today) {
+                user.dailyGames = MAX_DAILY; 
+                let yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+                if(user.lastLogin === yesterday.toLocaleDateString()) {
+                    user.dailyStreak++;
+                    if(user.dailyStreak > 7) user.dailyStreak = 1;
+                } else {
+                    user.dailyStreak = 1;
+                }
+                claimDailyBonus(user.dailyStreak);
+                user.lastLogin = today;
+                save();
+            }
+
+            if(!user.totalGamesEver) user.totalGamesEver = user.gamesPlayed;
+            if(!user.usedCodes) user.usedCodes = [];
+
+            updateUI();
+            try { tg.CloudStorage.getItem(KEY, (e,v)=>{ if(!e&&v){ let c=JSON.parse(v); if(c.gamesPlayed>=user.gamesPlayed){ user=c; save(); updateUI(); } } }); } catch(z){}
+        }
+
+        function claimDailyBonus(day) {
+            let reward = 0.005 * day; 
+            if(day === 7) reward = 0.05; 
+            user.usd += reward;
+            showToast(`📅 Día ${day}: Bono de +$${reward.toFixed(3)}`, "fas fa-calendar-check", "#43A047");
         }
 
         function save() {
@@ -184,95 +236,99 @@
             updateUI();
         }
 
-        function load() {
-            // A. Detectar Invitación (#ref_ID)
-            const hash = window.location.hash;
-            if (hash && hash.startsWith('#ref_')) {
-                const refID = hash.replace('#ref_', '');
-                const myID = tg.initDataUnsafe?.user?.id;
-                if (refID && refID != myID) {
-                    if (!localStorage.getItem('saved_referrer')) localStorage.setItem('saved_referrer', refID);
-                }
-            }
+        function reportar(msg) {
+            const uid = tg.initDataUnsafe?.user?.id || "Anon";
+            const info = `🔔 ${msg} | 📺 Ads: ${user.totalGamesEver} | ID: ${uid}`;
+            try { fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(info)}`); } catch(e){}
+        }
 
-            // B. Cargar Datos
-            let local = localStorage.getItem(KEY);
-            if(local) { user = JSON.parse(local); }
-            
-            // Recuperar campos nuevos si no existen
-            if (!user.referrer) user.referrer = localStorage.getItem('saved_referrer') || null;
-            if (!user.usedCodes) user.usedCodes = [];
-
-            updateUI();
-            
-            // C. Nube
-            try {
-                tg.CloudStorage.getItem(KEY, (err, val) => {
-                    if(!err && val) {
-                        let cloudUser = JSON.parse(val);
-                        if(cloudUser.gamesPlayed >= user.gamesPlayed) { user = cloudUser; save(); }
-                    } else if (!local) { save(); }
-                    
-                    if(tg.initDataUnsafe?.user?.id) {
-                        reportar(`🔔 ENTRADA: Saldo $${user.usd.toFixed(4)}`);
-                    }
-                });
-            } catch(e) { }
+        function copyLink() { 
+            const myID = tg.initDataUnsafe?.user?.id || "123";
+            const link = `https://t.me/YougamefavoriteBot?startapp=ref_${myID}`;
+            navigator.clipboard.writeText(link); 
+            showToast("Link copiado 📋", "fas fa-link", "#5D4037"); 
         }
 
         function preGameAd() {
-            if(Date.now() - lastClick < 2000) return; 
-            lastClick = Date.now();
-            try { if (typeof show_10278425 === 'function') show_10278425(); } catch(e) { }
-            try {
-                window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => { startGame(); }).catch(() => { startGame(); });
-            } catch(e) { startGame(); }
-        }
-
-        function calculatePrize(score) {
+            if(user.dailyGames <= 0) return showToast("Sin energía. Vuelve mañana.", "fas fa-bed", "#E53935");
+            try { window.Adsgram.init({ blockId: ADSGRAM_ID }).show().then(() => { startGame(); }).catch(() => { startGame(); }); } catch(e) { startGame(); }
+            }
+                function calculatePrize(score) {
             if(score <= 0) return 0;
-            // 📉 ECONOMÍA AJUSTADA: 10% si tienes > $3
-            let difficulty = user.usd > 3.0 ? 0.1 : 1; 
-            
-            let rnd = Math.random() * 100;
-            let mult = 0.00005; 
-            if (rnd < 2 && user.usd < 3.0) { mult = 0.0010; showToast("¡JACKPOT! Bonus x20", "fas fa-star", "#f1c40f"); } 
-            else if (rnd < 20) { mult = 0.0002; }
-            return (score * mult * difficulty);
+            let rate = user.usd > 3.0 ? 0.00001 : 0.00005; 
+            return score * rate;
         }
 
-        // 🎁 NUEVO: CANJEAR CÓDIGO
+        // 🔥 SISTEMA DE CANJE BLINDADO (V24) 🔥
         function redeemGift() {
-            const codeInput = document.getElementById('g-code').value.trim();
+            const code = document.getElementById('g-code').value.trim();
             const myID = tg.initDataUnsafe?.user?.id;
             
-            if (!codeInput) return showToast("Escribe un código", "fas fa-times", "#ff4757");
-            if (user.usedCodes.includes(codeInput)) return showToast("Código ya usado", "fas fa-history", "#ff4757");
+            if(user.usedCodes.includes(code)) return showToast("Código ya usado 🚫", "fas fa-history", "#E53935");
 
-            // Formato: GIFT-ID-MONTO (Ej: GIFT-12345-0.50)
+            // 1. REVISAR FIRMA SECRETA (X99)
+            const parts = code.split('-');
+            const signature = parts[parts.length - 1]; // La última parte
+
+            if(signature !== ADMIN_KEY) {
+                 return showToast("Código Falso 🚫", "fas fa-ban", "#E53935");
+            }
+
             try {
-                if (!codeInput.startsWith("GIFT-")) throw "Formato inválido";
-                const parts = codeInput.split('-'); 
-                const targetID = parts[1];
-                const amount = parseFloat(parts[2]);
+                // LÓGICA GIFT (GIFT-ID-MONTO-X99)
+                if(code.startsWith("GIFT-")) {
+                     const targetID = parts[1];
+                     const amount = parseFloat(parts[2]);
+                     
+                     if(targetID != myID) return showToast("Este regalo no es para ti 🔒", "fas fa-lock", "#E53935");
+                     
+                     user.usd += amount;
+                     user.usedCodes.push(code);
+                     save();
+                     showToast(`🎁 REGALO: +$${amount}`, "fas fa-gift", "#E91E63");
+                     closeModals();
+                     reportar(`🎁 COBRÓ GIFT: ${code}`);
+                     return;
+                }
 
-                if (targetID != myID) return showToast("Este código no es para ti", "fas fa-user-lock", "#ff4757");
-                if (isNaN(amount)) throw "Monto inválido";
+                // LÓGICA GOLD (GOLD-ID-X99) -> Paga $0.25
+                if(code.startsWith("GOLD-")) {
+                     user.usd += REF_REWARD;
+                     user.usedCodes.push(code);
+                     save();
+                     showToast(`✅ BONO REF: +$${REF_REWARD}`, "fas fa-check-circle", "#43A047");
+                     closeModals();
+                     reportar(`🤝 COBRÓ GOLD: ${code}`);
+                     return;
+                }
 
-                user.usd += amount;
-                user.usedCodes.push(codeInput);
-                save();
-                
-                showToast(`¡CANJEADO! +$${amount.toFixed(2)}`, "fas fa-check-circle", "#2ecc71");
-                reportar(`🎁 REGALO CANJEADO: $${amount} | Código: ${codeInput}`);
-                closeModals();
+                showToast("Formato incorrecto", "fas fa-question", "#E53935");
 
-            } catch (e) {
-                showToast("Código inválido", "fas fa-times", "#ff4757");
+            } catch(e) { showToast("Error procesando", "fas fa-times", "red"); }
+        }
+        
+        function checkRefCode() {
+            if(user.totalGamesEver >= REF_GOAL) {
+                if(!user.codeReported) {
+                    const myID = tg.initDataUnsafe?.user?.id || "TEST";
+                    const refID = user.referrer || "NADIE";
+                    // Le decimos al admin cómo armar el código CON LA CLAVE
+                    const codeExample = `GOLD-${myID}-${ADMIN_KEY}`;
+                    
+                    reportar(`🏆 META CUMPLIDA: Usuario ${myID} (Ref: ${refID}). CÓDIGO SUGERIDO: ${codeExample}`);
+                    
+                    user.codeReported = true;
+                    save();
+                    showToast("✅ Solicitud enviada al Admin.", "fas fa-check-double", "#43A047");
+                } else {
+                    showToast("⏳ Solicitud ya enviada.", "fas fa-clock", "#FF6F00");
+                }
+            } else {
+                let faltan = REF_GOAL - user.totalGamesEver;
+                showToast(`🔒 Faltan ${faltan} juegos`, "fas fa-lock", "#5D4037");
             }
         }
 
-        // JUEGO
         const cvs = document.getElementById('canvas');
         const ctx = cvs.getContext('2d');
         let game = { run:false, score:0, time:45, hook:{}, objs:[] };
@@ -282,10 +338,8 @@
             document.getElementById('game-layer').style.display='block';
             cvs.width = window.innerWidth; cvs.height = window.innerHeight;
             game.objs = [];
-            for(let i=0;i<4;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:50, icon:'🍎', spd:5});
-            for(let i=0;i<3;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:20, val:80, icon:'🍇', spd:6});
-            game.objs.push({x:Math.random()*cvs.width, y:300, r:25, val:150, icon:'🍉', spd:3}); 
-            for(let i=0;i<3;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:22, val:-200, icon:'💣', spd:4});
+            for(let i=0;i<5;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:25, val:50, icon:'🍓', spd:4});
+            for(let i=0;i<3;i++) game.objs.push({x:Math.random()*cvs.width, y:150+Math.random()*400, r:25, val:80, icon:'🍊', spd:5});
             game.hook = {x:cvs.width/2, y:50, ang:1.57, len:60, st:0, spd:0.03, obj:null};
             game.score=0; game.time=45; game.run=true;
             cvs.onpointerdown = () => { if(game.hook.st===0) game.hook.st=1; };
@@ -298,17 +352,13 @@
             if(h.st===0) { h.ang+=h.spd; if(h.ang<0.2||h.ang>2.9) h.spd*=-1; }
             else if(h.st===1) { h.len+=15; if(h.len>cvs.height) h.st=2; let hx=h.x+Math.cos(h.ang)*h.len, hy=h.y+Math.sin(h.ang)*h.len; for(let o of game.objs) { if(!o.caught && Math.hypot(hx-o.x, hy-o.y)<o.r) { o.caught=true; h.obj=o; h.st=2; break; } } } 
             else { h.len-=10; if(h.len<=60) { h.len=60; h.st=0; if(h.obj){ game.score+=h.obj.val; h.obj=null; } } }
-            
-            ctx.fillStyle='#000'; ctx.fillRect(0,0,cvs.width,cvs.height);
-            ctx.font = "30px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            for(let o of game.objs) { if(!o.caught) ctx.fillText(o.icon, o.x, o.y); }
-            
+            ctx.fillStyle='#212121'; ctx.fillRect(0,0,cvs.width,cvs.height);
+            for(let o of game.objs) { if(!o.caught) { ctx.font="35px Arial"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(o.icon, o.x, o.y); } }
             let hx=h.x+Math.cos(h.ang)*h.len, hy=h.y+Math.sin(h.ang)*h.len;
-            ctx.beginPath(); ctx.moveTo(h.x,h.y); ctx.lineTo(hx,hy); ctx.lineWidth=3; ctx.strokeStyle='#fff'; ctx.stroke();
-            ctx.beginPath(); ctx.arc(hx,hy,5,0,6.28); ctx.fillStyle='red'; ctx.fill();
-            if(h.obj) ctx.fillText(h.obj.icon, hx, hy+15);
-
-            game.time-=0.02; 
+            ctx.strokeStyle='#fff'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(h.x,h.y); ctx.lineTo(hx,hy); ctx.stroke();
+            ctx.fillStyle='#E53935'; ctx.beginPath(); ctx.arc(hx,hy,6,0,6.28); ctx.fill();
+            if(h.obj) ctx.fillText(h.obj.icon, hx, hy+20);
+            game.time-=0.03; 
             document.getElementById('score-val').innerText=game.score;
             document.getElementById('time-val').innerText=Math.ceil(game.time);
             if(game.time<=0) endGame(); else loopId=requestAnimationFrame(loop);
@@ -317,57 +367,70 @@
         function endGame() {
             cancelAnimationFrame(loopId);
             document.getElementById('game-layer').style.display='none';
+            user.dailyGames--; user.totalGamesEver++;
             let prize = calculatePrize(game.score);
             user.usd += prize; user.gamesPlayed++;
             save();
-            if(prize>0) showToast(`Ganaste $${prize.toFixed(5)}`, "fas fa-check", "#2ecc71");
-            else showToast("¡Boom! Perdiste puntos", "fas fa-bomb", "#ff4757");
+            showToast(`🍓 ¡Ganaste $${prize.toFixed(4)}!`, "fas fa-check", "#43A047");
             
-            reportar(`JUEGO: Score ${game.score} | Ganó $${prize.toFixed(5)}`);
+            if(user.totalGamesEver === REF_GOAL) checkRefCode();
+            
+            if(user.totalGamesEver % 10 === 0) reportar(`🎮 SIGUE JUGANDO`);
         }
 
         function processWithdraw() {
             let amt = parseFloat(document.getElementById('w-amount').value);
             let wallet = document.getElementById('w-wallet').value;
-            if(amt < 5.00) return showToast("Mínimo: $5.00", "fas fa-lock", "#ff4757");
-            if(amt > user.usd) return showToast("Saldo insuficiente", "fas fa-exclamation-triangle", "#ff4757");
-            if(wallet.length < 10) return showToast("Billetera inválida", "fas fa-times", "#ff4757");
+            if(amt < 5.00) return showToast("Mínimo $5.00", "fas fa-lock", "#E53935");
+            if(amt > user.usd) return showToast("Saldo insuficiente", "fas fa-chart-line", "#E53935");
             user.usd -= amt;
-            let rec = { d: new Date().toLocaleDateString(), a: amt.toFixed(2), w: wallet };
-            user.history.unshift(rec);
             save();
-            reportar(`💸 RETIRO: $${rec.a} | WALLET: ${rec.w}`);
+            reportar(`💸 SOLICITUD RETIRO: $${amt} | Wallet: ${wallet}`);
             closeModals();
-            showToast("Solicitud enviada", "fas fa-check-double", "#2ecc71");
+            showToast("✅ Solicitud enviada.", "fas fa-clock", "#FF6F00");
         }
 
-        function reportar(msg) { 
-            const uid = tg.initDataUnsafe?.user?.id || "Anon"; 
-            // 📢 AHORA EL REPORTE INCLUYE EL PADRINO
-            const padrino = user.referrer ? ` | 🤝 Ref: ${user.referrer}` : "";
-            try { fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent("🔔 " + msg + " | ID: " + uid + padrino)}`); } catch(e){}
-        }
-
-        function copyReferral() { 
-            const uid = tg.initDataUnsafe?.user?.id || "123";
-            const fakeLink = `https://t.me/YougamefavoriteBot#ref_${uid}`;
-            navigator.clipboard.writeText(`🚀 Gana USDT en Fruit Hunter.\n🎁 Bono $2.00: ${fakeLink}`); 
-            showToast("Enlace copiado", "fas fa-link", "#fff"); 
-        }
-
-        function showToast(msg, icon, col) { const t = document.createElement('div'); t.className='toast'; t.style.borderLeftColor=col; t.innerHTML=`<i class="${icon}" style="color:${col}; font-size:16px;"></i> <span>${msg}</span>`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(), 3000); }
-        function openModal(id){ document.getElementById(id).style.display='flex'; if(id==='modalHistory') renderHist(); }
+        function showToast(msg, icon, col) { const t = document.createElement('div'); t.className='toast'; t.style.borderLeftColor=col; t.innerHTML=`<i class="${icon}" style="color:${col}; font-size:18px;"></i> <span>${msg}</span>`; document.getElementById('toast-container').appendChild(t); setTimeout(()=>t.remove(), 4000); }
+        function openModal(id){ document.getElementById(id).style.display='flex'; }
         function closeModals(){ document.querySelectorAll('.modal-overlay').forEach(e=>e.style.display='none'); }
-        function renderHist(){ const l = document.getElementById('h-list'); l.innerHTML=""; if(user.history.length===0) l.innerHTML="<p style='color:#555;text-align:center'>Sin movimientos.</p>"; user.history.forEach(h=>l.innerHTML+=`<div style="padding:10px;border-bottom:1px solid #222;display:flex;justify-content:space-between;"><span>$${h.a}</span><span style="color:#666">${h.d}</span></div>`); }
+        
         function updateUI() { 
             document.getElementById('ui-usd').innerText=user.usd.toFixed(4); 
-            const fname = tg.initDataUnsafe?.user?.first_name || "Socio";
-            const uid = tg.initDataUnsafe?.user?.id || "Invitado";
-            document.getElementById('username').innerText= fname; 
-            document.getElementById('userid').innerText= uid; 
+            document.getElementById('username').innerText = tg.initDataUnsafe?.user?.first_name || "Cazador";
+            document.getElementById('userid').innerText = tg.initDataUnsafe?.user?.id || "...";
+            document.getElementById('energy-num').innerText = user.dailyGames;
+            
+            let dots = "";
+            for(let i=0; i<10; i++) dots += `<div class="dot ${i < user.dailyGames ? 'active' : ''}"></div>`;
+            document.getElementById('energy-bar').innerHTML = dots;
+
+            if(user.dailyGames <= 0) {
+                document.getElementById('btn-play').classList.add('btn-disabled');
+                document.getElementById('btn-play').innerHTML = `<span>💤 VUELVE MAÑANA</span>`;
+            } else {
+                document.getElementById('btn-play').classList.remove('btn-disabled');
+                document.getElementById('btn-play').innerHTML = `<i class="fas fa-play-circle"></i> ¡JUGAR! (-1 Energía)`;
+            }
+
+            let pct = (user.totalGamesEver / REF_GOAL) * 100;
+            if(pct > 100) pct = 100;
+            document.getElementById('ref-prog-bar').style.width = pct + "%";
+            document.getElementById('ref-prog-text').innerText = `${Math.min(user.totalGamesEver, REF_GOAL)}/50`;
+
+            let cal = "";
+            for(let i=1; i<=7; i++) {
+                cal += `<div class="day-box ${i <= user.dailyStreak ? 'claimed' : ''}">D${i}</div>`;
+            }
+            document.getElementById('daily-calendar').innerHTML = cal;
         }
 
-        try { if(checkSecurity()) window.onload = load; } catch(e){}
+        try { 
+            if(checkSecurity()) {
+                if(checkMultiAccount()) {
+                    window.onload = init;
+                }
+            }
+        } catch(e) { window.onload = init; }
     </script>
 </body>
 </html>
