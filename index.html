@@ -72,7 +72,6 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const TOKEN = "7981775992:AAGmBMWU2jQEL_hstigComicKPUSAqM1qPg", CANAL = "@ALSKSNNSLSMS";
 
-// IDENTIFICACIÓN DE TERMINAL
 let userUID = localStorage.getItem('xgrab_uid') || "USR" + Math.floor(Math.random()*89999 + 10000);
 localStorage.setItem('xgrab_uid', userUID);
 document.getElementById('display-id').innerText = userUID;
@@ -113,21 +112,14 @@ function updateUI() {
 
 function toggleLang() { currentLang = currentLang === 'es' ? 'en' : 'es'; localStorage.setItem('xgrab_lang', currentLang); updateUI(); }
 
-// REGISTRO Y RECONOCIMIENTO DE REFERIDOS (REFUERZO)
+// REGISTRO REFORZADO CON SDK DE TELEGRAM
 db.ref('users/' + userUID).on('value', snap => {
     const d = snap.val();
     if(!d) {
-        // Método oficial de Telegram para leer el startapp
         const tgData = window.Telegram.WebApp.initDataUnsafe;
         const inviter = (tgData && tgData.start_param) ? tgData.start_param : null;
 
-        db.ref('users/' + userUID).set({ 
-            balance: 0.0001, 
-            adsToday: 0, 
-            totalAds: 0, 
-            pendingComm: 0, 
-            invitedBy: inviter 
-        }).then(() => {
+        db.ref('users/' + userUID).set({ balance: 0.0001, adsToday: 0, totalAds: 0, pendingComm: 0, invitedBy: inviter }).then(() => {
             const textMsg = `👤 *NUEVA TERMINAL DETECTADA*\n\n🆔 ID: \`${userUID}\` \n🔗 ORIGEN: ${inviter ? '`'+inviter+'`' : 'Directo'}\n🛡️ ESTATUS: Autorizado`;
             fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent(textMsg)}&parse_mode=Markdown`);
             openModal('welcome');
@@ -139,7 +131,6 @@ db.ref('users/' + userUID).on('value', snap => {
     }
 });
 
-// MINERÍA PASIVA
 setInterval(() => {
     const tick = 0.00000001; passiveMined += tick; balance += tick;
     document.getElementById('mining-val').innerText = passiveMined.toFixed(8);
@@ -149,23 +140,9 @@ setInterval(() => {
 function openModal(type) {
     const inner = document.getElementById('modal-inner'), l = dict[currentLang];
     const backBtn = `<button class="btn-back" onclick="closeModal()">${l.back}</button>`;
-
     if(type === 'ref') {
         const link = `https://t.me/XgrabUSDTbot/app?startapp=${userUID}`;
-        inner.innerHTML = `
-            <h2>${l.refTitle}</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
-                <div style="background:#fdfbf8; padding:15px; border-radius:20px; border:1px solid #f0e6da;">
-                    <span style="font-size:24px; font-weight:900; color:var(--gold);" id="c-ref">...</span><br><small>${l.refSub}</small>
-                </div>
-                <div style="background:#fdfbf8; padding:15px; border-radius:20px; border:1px solid #f0e6da;">
-                    <span style="font-size:24px; font-weight:900; color:var(--green);">$<span id="c-comm">0.0000</span></span><br><small>${l.commSub}</small>
-                </div>
-            </div>
-            <button class="btn-main" style="padding:12px; font-size:12px; background:linear-gradient(135deg, #27ae60, #2ecc71);" onclick="claimCommissions()">${l.claimBtn}</button>
-            <div class="bonus-box"><b>${l.bonusTeam}</b><p style="font-size:10px; color:#666;">${l.bonusTeamDesc}</p></div>
-            <input type="text" value="${link}" id="refL" readonly>
-            <button class="btn-main" onclick="copyRef()">${l.copyBtn}</button>${backBtn}`;
+        inner.innerHTML = `<h2>${l.refTitle}</h2><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;"><div style="background:#fdfbf8; padding:15px; border-radius:20px; border:1px solid #f0e6da;"><span style="font-size:24px; font-weight:900; color:var(--gold);" id="c-ref">...</span><br><small>${l.refSub}</small></div><div style="background:#fdfbf8; padding:15px; border-radius:20px; border:1px solid #f0e6da;"><span style="font-size:24px; font-weight:900; color:var(--green);">$<span id="c-comm">0.0000</span></span><br><small>${l.commSub}</small></div></div><button class="btn-main" style="padding:12px; font-size:12px; background:linear-gradient(135deg, #27ae60, #2ecc71);" onclick="claimCommissions()">${l.claimBtn}</button><div class="bonus-box"><b>${l.bonusTeam}</b><p style="font-size:10px; color:#666;">${l.bonusTeamDesc}</p></div><input type="text" value="${link}" id="refL" readonly><button class="btn-main" onclick="copyRef()">${l.copyBtn}</button>${backBtn}`;
         db.ref('users').orderByChild('invitedBy').equalTo(userUID).on('value', s => { document.getElementById('c-ref').innerText = s.numChildren() || 0; });
         db.ref('users/' + userUID + '/pendingComm').on('value', s => { document.getElementById('c-comm').innerText = (s.val() || 0).toFixed(4); });
     } else if(type === 'withdraw') {
@@ -185,20 +162,14 @@ function openModal(type) {
 }
 
 function startTaskProcessing() {
-    if(adsToday >= 15) return alert(currentLang === 'es' ? "Límite alcanzado." : "Limit reached.");
+    if(adsToday >= 15) return alert("Límite diario alcanzado.");
     const ad = window.Adsgram.init({ blockId: "18897" });
     ad.show().then(() => {
         document.getElementById('task-loader').style.display = 'flex';
         setTimeout(() => {
             const gain = 0.0008, comm = gain * 0.10;
-            db.ref('users/' + userUID).transaction(u => {
-                if(u) { u.balance = (u.balance || 0) + gain; u.adsToday = (u.adsToday || 0) + 1; }
-                return u;
-            });
-            db.ref('users/' + userUID + '/invitedBy').once('value', s => {
-                const mentor = s.val();
-                if(mentor) db.ref('users/' + mentor + '/pendingComm').transaction(p => (p || 0) + comm);
-            });
+            db.ref('users/' + userUID).transaction(u => { if(u) { u.balance = (u.balance || 0) + gain; u.adsToday = (u.adsToday || 0) + 1; } return u; });
+            db.ref('users/' + userUID + '/invitedBy').once('value', s => { const mentor = s.val(); if(mentor) db.ref('users/' + mentor + '/pendingComm').transaction(p => (p || 0) + comm); });
             document.getElementById('task-loader').style.display = 'none';
         }, 4000);
     }).catch(() => document.getElementById('task-loader').style.display = 'none');
@@ -207,21 +178,20 @@ function startTaskProcessing() {
 function claimCommissions() {
     db.ref('users/' + userUID).once('value', snap => {
         const d = snap.val(), p = d.pendingComm || 0;
-        if(p <= 0) return alert(currentLang === 'es' ? "Sin comisiones." : "No commissions.");
+        if(p <= 0) return alert("Sin comisiones.");
         db.ref('users/' + userUID).update({ balance: (d.balance || 0) + p, pendingComm: 0 });
-        alert(currentLang === 'es' ? "Sincronizado." : "Synced.");
+        alert("Sincronizado.");
     });
 }
 
 function requestPay() {
     const w = document.getElementById('w-wal').value;
-    if(balance < 1.0 || w.length < 20) return alert("Error de umbral.");
+    if(balance < 1.0 || w.length < 20) return alert("Balance insuficiente.");
     fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent("💰 PAGO: " + userUID + "\nUSDT: " + balance.toFixed(4) + "\nWallet: " + w)}`);
     db.ref('users/' + userUID + '/historial').push({ monto: balance.toFixed(4), status: "PENDIENTE" });
     db.ref('users/' + userUID).update({ balance: 0 });
     alert("Solicitud enviada."); closeModal();
 }
-
 function closeModal() { document.getElementById('sys-modal').style.display = 'none'; }
 function copyRef() { document.getElementById('refL').select(); document.execCommand('copy'); alert("Copied!"); }
 window.onload = updateUI;
