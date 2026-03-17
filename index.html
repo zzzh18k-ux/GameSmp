@@ -3,118 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xchange Elite Market</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Gold Miner USDT Pro</title>
     <style>
-        :root { --bg: #000; --card: #111; --accent: #24a1de; --text: #fff; --sec: #8e8e93; --brd: rgba(255,255,255,0.08); }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); padding: 15px; padding-bottom: 90px; }
-        .radar { background: var(--card); border: 1px solid var(--brd); border-radius: 12px; padding: 10px; display: flex; justify-content: space-around; margin-bottom: 15px; }
-        .stat { text-align: center; }
-        .stat-n { display: block; font-weight: 800; color: var(--accent); font-size: 14px; }
-        .stat-t { font-size: 8px; text-transform: uppercase; color: var(--sec); }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .box { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid var(--brd); margin-bottom: 20px; }
-        .lbl { font-size: 10px; font-weight: 700; color: var(--sec); text-transform: uppercase; margin-bottom: 8px; display: block; }
-        .s-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 15px; }
-        .s-btn { aspect-ratio: 1/1; background: #1c1c1e; border: 1px solid var(--brd); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .s-btn.active { border-color: var(--accent); background: rgba(36,161,222,0.15); }
-        .s-btn svg { width: 20px; fill: var(--sec); }
-        .s-btn.active svg { fill: var(--accent); }
-        input, textarea { width: 100%; background: #1c1c1e; border: 1px solid var(--brd); border-radius: 12px; padding: 12px; color: #fff; margin-bottom: 12px; outline: none; }
-        .btn-p { background: var(--accent); color: #fff; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer; width: 100%; }
-        .card { background: var(--card); border-radius: 15px; padding: 15px; border: 1px solid var(--brd); margin-bottom: 10px; }
-        .u-tag { color: var(--accent); font-weight: 700; font-size: 13px; margin-bottom: 5px; display: block; }
-        .nav { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: rgba(17,17,17,0.95); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--brd); }
-        .nav-a { text-align: center; color: var(--sec); text-decoration: none; font-size: 10px; }
-        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 10px 20px; border-radius: 20px; font-weight: 700; transition: 0.4s; z-index: 9999; }
-        #toast.v { transform: translateX(-50%) translateY(0); }
+        :root { --binance-yellow: #F0B90B; --bg-white: #FFFFFF; --text-gray: #5E6673; }
+        body { background-color: var(--bg-white); margin: 0; font-family: 'Arial', sans-serif; overflow: hidden; color: #1E2329; }
+        .header { background-color: var(--binance-yellow); padding: 15px; text-align: center; font-weight: bold; font-size: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .stats-bar { display: flex; justify-content: space-around; background: #fafafa; padding: 10px; border-bottom: 1px solid #eaeaea; font-weight: bold; }
+        .timer-low { color: #ea3943; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        canvas { display: block; background: #ffffff; touch-action: none; }
+        .controls { position: fixed; bottom: 0; width: 100%; height: 80px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: center; }
+        .btn-launch { background: var(--binance-yellow); border: none; width: 90%; height: 60px; border-radius: 12px; font-size: 20px; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+        .btn-launch:active { transform: scale(0.95); }
+        /* Pantalla de Fin */
+        #gameOver { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     </style>
 </head>
 <body>
 
-<div id="toast">OFERTA ENVIADA</div>
-
-<div class="radar">
-    <div class="stat"><span class="stat-n">1,452</span><span class="stat-t">Usuarios</span></div>
-    <div class="stat"><span class="stat-n" id="count-t">0</span><span class="stat-t">Tratos</span></div>
-    <div class="stat"><span class="stat-n" style="color:#4cd964">ON</span><span class="stat-t">Server</span></div>
+<div class="header">🟡 GOLD EXTRACTOR PRO</div>
+<div class="stats-bar">
+    <div>⏳ TIEMPO: <span id="time">45</span>s</div>
+    <div>💰 <span id="balance">0.0000</span> USDT</div>
 </div>
 
-<div class="box">
-    <span class="lbl">Plataforma</span>
-    <div class="s-grid">
-        <div class="s-btn active" onclick="setPlat('tg', this)"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.13 7.19c-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-3.53 2.39-5.35 3.6-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.89.03-.25.38-.51 1.05-.78 1.37-.58 4.12-1.76 8.24-3.55 3.92-1.66 4.73-1.95 5.27-1.96.12 0 .38.03.55.17.14.12.18.28.19.39 0 .14 0 .28-.01.41z"/></svg></div>
-    </div>
-    <span class="lbl">ID Contacto</span>
-    <input type="text" id="u-id" placeholder="@usuario">
-    <span class="lbl">Propuesta</span>
-    <textarea id="u-ms" rows="2" placeholder="Tu oferta..."></textarea>
-    <button class="btn-p" onclick="publishTrade()">PUBLICAR</button>
+<canvas id="gameCanvas"></canvas>
+
+<div id="gameOver">
+    <h1 style="color: #F0B90B;">¡TIEMPO AGOTADO!</h1>
+    <p id="finalResult" style="font-size: 18px; padding: 20px;"></p>
+    <button class="btn-launch" onclick="location.reload()">🔄 USAR ENERGÍA (-1)</button>
+    <p style="font-size: 12px; margin-top: 15px; color: #777;">¿Sin energía? Invita a un amigo y obtén +2 ⚡️</p>
 </div>
 
-<div id="feed"></div>
-
-<nav class="nav">
-    <div class="nav-a">INICIO</div>
-    <a href="https://t.me/XchangeEliteOficial" class="nav-a">CANAL</a>
-</nav>
+<div class="controls">
+    <button class="btn-launch" onclick="launchHook()">⚡️ LANZAR GANCHO</button>
+</div>
 
 <script>
-    // URL DIRECTA A LA API (Sustituye por la tuya si no es esta)
-    const DB_URL = "https://fruithunter-b5d2d-default-rtdb.firebaseio.com/elite_trades_v2.json";
-    let plat = 'tg';
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight - 180;
 
-    function setPlat(p, el) {
-        document.querySelectorAll('.s-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active'); plat = p;
+    // --- CONFIGURACIÓN DE BALANCE ACORDADA ---
+    let timeLeft = 45;
+    let currentBalance = 0;
+    let gameState = "PLAYING"; // PLAYING, GAMEOVER
+    
+    // Física del Gancho
+    let hook = {
+        x: canvas.width / 2,
+        y: 50,
+        angle: 0,
+        dir: 1,
+        speed: 0.04,
+        len: 40,
+        state: "IDLE", // IDLE, EXTENDING, RETRACTING
+        targetX: 0,
+        targetY: 0,
+        grabbedItem: null
+    };
+
+    // Objetos (Monedas con peso y Rocas castigo)
+    let items = [];
+    function initItems() {
+        // Monedas Pequeñas (Poco valor, suben rápido)
+        for(let i=0; i<6; i++) items.push({x: Math.random()*(canvas.width-40)+20, y: Math.random()*300+150, type:'coin', val:0.0005, r:8, w:1, color:'#F0B90B'});
+        // Monedas Grandes (MUCHO VALOR, SUBEN LENTO - ESTRATEGIA ANTI-QUIEBRA)
+        items.push({x: Math.random()*(canvas.width-40)+20, y: 400, type:'coin', val:0.10, r:15, w:4, color:'#F0B90B'}); // Peso 4 = 4 veces más lento
+        // Rocas (CASTIGO DE TIEMPO Y PESO)
+        for(let i=0; i<4; i++) items.push({x: Math.random()*(canvas.width-40)+20, y: Math.random()*300+200, type:'rock', val:0, r:25, w:8, color:'#888'});
     }
 
-    async function publishTrade() {
-        const u = document.getElementById('u-id').value;
-        const m = document.getElementById('u-ms').value;
-        if(!u || !m) return alert("Faltan datos");
+    function draw() {
+        if (gameState !== "PLAYING") return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const data = { u, m, p: plat, t: Date.now(), v: Math.floor(Math.random()*200) };
+        // 1. Mover Gancho
+        if (hook.state === "IDLE") {
+            hook.angle += hook.speed * hook.dir;
+            if (Math.abs(hook.angle) > 1.2) hook.dir *= -1;
+        } else if (hook.state === "EXTENDING") {
+            hook.len += 8;
+            if (hook.len > 600 || checkCollision()) hook.state = "RETRACTING";
+        } else if (hook.state === "RETRACTING") {
+            // VELOCIDAD SEGÚN PESO (weight)
+            let retractSpeed = hook.grabbedItem ? (12 / hook.grabbedItem.w) : 12;
+            hook.len -= retractSpeed;
+            if (hook.len <= 40) {
+                if (hook.grabbedItem) {
+                    currentBalance += hook.grabbedItem.val;
+                    document.getElementById('balance').innerText = currentBalance.toFixed(4);
+                }
+                hook.state = "IDLE";
+                hook.grabbedItem = null;
+            }
+        }
 
-        try {
-            await fetch(DB_URL, { method: 'POST', body: JSON.stringify(data) });
-            document.getElementById('u-ms').value = "";
-            showToast();
-            loadFeed();
-        } catch (e) { alert("Error de conexión"); }
+        // 2. Dibujar Cuerda
+        let endX = hook.x + Math.sin(hook.angle) * hook.len;
+        let endY = hook.y + Math.cos(hook.angle) * hook.len;
+        ctx.beginPath();
+        ctx.moveTo(hook.x, hook.y);
+        ctx.lineTo(endX, endY);
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // 3. Dibujar Gancho (Anzuelo)
+        ctx.beginPath();
+        ctx.arc(endX, endY, 5, 0, Math.PI*2);
+        ctx.fillStyle = "#000";
+        ctx.fill();
+
+        // 4. Dibujar Objetos
+        items.forEach(item => {
+            if (item === hook.grabbedItem) {
+                item.x = endX;
+                item.y = endY;
+            }
+            ctx.beginPath();
+            ctx.arc(item.x, item.y, item.r, 0, Math.PI*2);
+            ctx.fillStyle = item.color;
+            ctx.fill();
+            if(item.type === 'coin') {
+                ctx.fillStyle = "white";
+                ctx.fillText("$", item.x-3, item.y+4);
+            }
+        });
+
+        requestAnimationFrame(draw);
     }
 
-    async function loadFeed() {
-        try {
-            const res = await fetch(DB_URL);
-            const json = await res.json();
-            const f = document.getElementById('feed');
-            f.innerHTML = "";
-            if(!json) return;
-            
-            const posts = Object.values(json).reverse();
-            document.getElementById('count-t').innerText = posts.length;
-
-            posts.forEach(i => {
-                f.innerHTML += `
-                <div class="card">
-                    <span class="u-tag">${i.u}</span>
-                    <div style="font-size:14px; margin-bottom:10px">${i.m}</div>
-                    <div style="font-size:10px; color:var(--sec)">👁️ ${i.v} • ${i.p.toUpperCase()}</div>
-                </div>`;
-            });
-        } catch (e) {}
+    function checkCollision() {
+        let endX = hook.x + Math.sin(hook.angle) * hook.len;
+        let endY = hook.y + Math.cos(hook.angle) * hook.len;
+        
+        for (let item of items) {
+            let d = Math.hypot(endX - item.x, endY - item.y);
+            if (d < item.r + 5) {
+                hook.grabbedItem = item;
+                // CASTIGO DE ROCA: Quita 5 segundos extra
+                if (item.type === 'rock') {
+                    timeLeft = Math.max(0, timeLeft - 5);
+                }
+                items = items.filter(i => i !== item);
+                return true;
+            }
+        }
+        return false;
     }
 
-    function showToast() {
-        const t = document.getElementById('toast');
-        t.classList.add('v');
-        setTimeout(() => t.classList.remove('v'), 2000);
+    function launchHook() {
+        if (hook.state === "IDLE") hook.state = "EXTENDING";
     }
 
-    loadFeed();
-    setInterval(loadFeed, 5000); // Actualiza cada 5 seg
+    // Cronómetro
+    let timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+            timeLeft--;
+            document.getElementById('time').innerText = timeLeft;
+            if (timeLeft <= 10) document.getElementById('time').parentElement.classList.add('timer-low');
+        } else {
+            endGame();
+        }
+    }, 1000);
+
+    function endGame() {
+        gameState = "GAMEOVER";
+        clearInterval(timerInterval);
+        document.getElementById('gameOver').style.display = 'flex';
+        document.getElementById('finalResult').innerHTML = `Lograste recolectar:<br><b style="font-size:24px; color:#F0B90B;">$${currentBalance.toFixed(4)} USDT</b><br><br>¡Cuidado con las rocas, te quitan 5s de vida!`;
+    }
+
+    initItems();
+    draw();
 </script>
 </body>
 </html>
