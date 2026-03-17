@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xgrab USDT - Protocolo de Autoridad</title>
+    <title>Xgrab USDT - Global Authority Protocol</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
@@ -17,22 +17,31 @@
         :root { --bg: #f8f5f0; --panel: #ffffff; --accent: #c99b67; --text: #3d3d3d; --gold: #b0895d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; height: 100vh; overflow: hidden; }
+        
         #main-ui { padding: 20px; height: 100%; display: flex; flex-direction: column; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .lang-btn { background: var(--panel); border: 1px solid #eee; padding: 6px 12px; border-radius: 12px; font-size: 10px; font-weight: 800; color: var(--accent); }
+        .lang-btn { background: var(--panel); border: 1px solid #eee; padding: 6px 12px; border-radius: 12px; font-size: 10px; font-weight: 800; color: var(--accent); cursor: pointer; }
+        
         .vault-card { background: var(--panel); border-radius: 30px; padding: 30px 15px; text-align: center; box-shadow: 0 15px 35px rgba(201, 155, 103, 0.15); border: 1px solid rgba(201, 155, 103, 0.1); margin-bottom: 20px; }
         .vault-amount { font-family: 'Playfair Display', serif; font-size: 45px; color: var(--gold); font-weight: 900; }
+        
         .mining-section { background: rgba(201, 155, 103, 0.05); border: 1px dashed var(--accent); border-radius: 20px; padding: 15px; margin-bottom: 20px; text-align: center; }
-        .mining-power { font-size: 9px; font-weight: 800; color: var(--accent); letter-spacing: 1px; }
+        .mining-power { font-size: 9px; font-weight: 800; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; }
         .mining-live { font-family: monospace; font-size: 14px; color: #888; margin-top: 5px; }
-        .btn-main { background: linear-gradient(135deg, var(--accent), var(--gold)); color: #fff; width: 100%; padding: 20px; border-radius: 20px; border: none; font-weight: 800; font-size: 16px; box-shadow: 0 10px 25px rgba(176, 137, 93, 0.4); margin-bottom: 20px; }
+
+        .btn-main { background: linear-gradient(135deg, var(--accent), var(--gold)); color: #fff; width: 100%; padding: 20px; border-radius: 20px; border: none; font-weight: 800; font-size: 16px; box-shadow: 0 10px 25px rgba(176, 137, 93, 0.4); margin-bottom: 20px; cursor: pointer; }
+        .btn-back { background: #eee; color: #666; width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; font-size: 14px; margin-top: 15px; cursor: pointer; text-transform: uppercase; }
+
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; }
-        .menu-item { background: var(--panel); border-radius: 20px; padding: 18px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .menu-item { background: var(--panel); border-radius: 20px; padding: 18px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.03); cursor: pointer; }
         .menu-item i { color: var(--accent); font-size: 20px; margin-bottom: 8px; display: block; }
         .menu-item span { font-size: 11px; font-weight: 800; text-transform: uppercase; }
+
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(248, 245, 240, 0.98); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: var(--panel); border-radius: 35px; padding: 35px 25px; width: 100%; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.12); max-height: 85vh; overflow-y: auto; }
-        input { width: 100%; padding: 18px; margin: 15px 0; background: #f8f8f8; border: 1px solid #eee; border-radius: 15px; text-align: center; font-weight: 600; }
+        .bonus-box { background: #fffcf5; border: 1px solid #f0e6da; padding: 15px; border-radius: 15px; margin: 10px 0; text-align: left; }
+        input { width: 100%; padding: 18px; margin: 15px 0; background: #f8f8f8; border: 1px solid #eee; border-radius: 15px; text-align: center; font-family: 'Montserrat'; font-weight: 600; }
+        
         #task-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 3000; display: none; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { width: 40px; height: 40px; border: 4px solid #eee; border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -43,27 +52,27 @@
 <div id="main-ui">
     <div class="header">
         <button class="lang-btn" onclick="toggleLang()"><i class="fas fa-globe"></i> <span id="lang-label">EN</span></button>
-        <div style="font-size:10px; font-weight:700;">ID: <span id="display-id">---</span></div>
+        <div style="font-size:10px; font-weight:700;">NODE_ID: <span id="display-id">---</span></div>
     </div>
 
     <div class="vault-card">
-        <div id="txt-bal-label" style="font-size:11px; color:#a0a0a0; font-weight:700;">BÓVEDA PRINCIPAL (USDT)</div>
+        <div id="txt-bal-label" style="font-size:11px; color:#a0a0a0; font-weight:700;">BÓVEDA CENTRAL (USDT)</div>
         <div class="vault-amount">$<span id="ui-balance">0.000000</span></div>
-        <div style="font-size:10px; color:#c0c0c0; font-weight:700; margin-top:5px;"><span id="txt-prog">TAREAS</span>: <span id="ads-count">0</span> / 15</div>
+        <div style="font-size:10px; color:#c0c0c0; font-weight:700; margin-top:5px;"><span id="txt-prog">REGISTROS</span>: <span id="ads-count">0</span> / 15</div>
     </div>
 
     <div class="mining-section">
-        <div class="mining-power"><i class="fas fa-microchip"></i> <span id="txt-mine-status">MINADO PASIVO ACTIVO</span></div>
-        <div class="mining-live">+$<span id="mining-val">0.000000</span></div>
+        <div class="mining-power"><i class="fas fa-microchip"></i> <span id="txt-mine">ALGORITMO PASIVO ACTIVO</span></div>
+        <div class="mining-live">+$<span id="mining-val">0.00000000</span></div>
     </div>
 
-    <button class="btn-main" onclick="startTaskProcessing()" id="txt-btn-task">EJECUTAR PROTOCOLO</button>
+    <button class="btn-main" onclick="startTaskProcessing()" id="txt-btn">EJECUTAR PROTOCOLO</button>
 
     <div class="menu-grid">
         <div class="menu-item" onclick="openModal('withdraw')"><i class="fas fa-wallet"></i><span id="txt-m1">Liquidación</span></div>
-        <div class="menu-item" onclick="openModal('ref')"><i class="fas fa-users-viewfinder"></i><span id="txt-m2">Mi Red</span></div>
-        <div class="menu-item" onclick="openModal('hist')"><i class="fas fa-clock-rotate-left"></i><span id="txt-m3">Historial</span></div>
-        <div class="menu-item" onclick="openModal('guide')"><i class="fas fa-scroll"></i><span id="txt-m4">Guía</span></div>
+        <div class="menu-item" onclick="openModal('ref')"><i class="fas fa-users-between-lines"></i><span id="txt-m2">Mi Red</span></div>
+        <div class="menu-item" onclick="openModal('hist')"><i class="fas fa-file-invoice-dollar"></i><span id="txt-m3">Historial</span></div>
+        <div class="menu-item" onclick="openModal('guide')"><i class="fas fa-shield-halved"></i><span id="txt-m4">Guía</span></div>
     </div>
 </div>
 
@@ -71,6 +80,7 @@
 <div id="sys-modal" class="modal"><div class="modal-content" id="modal-inner"></div></div>
 
 <script>
+// CONFIGURACIÓN DE NÚCLEO
 const firebaseConfig = { apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", authDomain: "fruithunter-b5d2d.firebaseapp.com", databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com", projectId: "fruithunter-b5d2d", storageBucket: "fruithunter-b5d2d.appspot.com", messagingSenderId: "910354867578", appId: "1:910354867578:web:30c5a30058c621116622c3" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -84,39 +94,45 @@ let currentLang = localStorage.getItem('xgrab_lang') || 'es';
 let balance = 0, adsToday = 0, totalAds = 0, passiveMined = 0;
 
 const langData = {
-    es: { bal: "BÓVEDA PRINCIPAL", prog: "TAREAS", btn: "EJECUTAR PROTOCOLO", m1: "Liquidación", m2: "Mi Red", m3: "Historial", m4: "Guía", mine: "MINADO PASIVO ACTIVO", load: "Validando Nodo..." },
-    en: { bal: "MAIN VAULT", prog: "TASKS", btn: "EXECUTE PROTOCOL", m1: "Settlement", m2: "My Network", m3: "History", m4: "Guide", mine: "PASSIVE MINING ACTIVE", load: "Validating Node..." }
+    es: { 
+        bal: "BÓVEDA CENTRAL", prog: "REGISTROS", btn: "EJECUTAR PROTOCOLO", m1: "Liquidación", m2: "Mi Red", m3: "Historial", m4: "Guía", mine: "ALGORITMO PASIVO ACTIVO", load: "SINCRONIZANDO NODO...", back: "RETROCEDER AL PANEL",
+        copyMsg: "ENLACE DE RED ENCRIPTADO Y COPIADO.", authMsg: "PROTOCOLO ACTIVADO. Acceso autorizado al nodo central.", payMsg: "SOLICITUD ENVIADA AL LIBRO CONTABLE.", limitMsg: "CAPACIDAD AGOTADA. Espere nueva ventana de sincronización."
+    },
+    en: { 
+        bal: "CENTRAL VAULT", prog: "RECORDS", btn: "EXECUTE PROTOCOL", m1: "Settlement", m2: "My Network", m3: "History", m4: "Guide", mine: "PASSIVE ALGORITHM ACTIVE", load: "SYNCING NODE...", back: "RETURN TO PANEL",
+        copyMsg: "NETWORK LINK ENCRYPTED AND COPIED.", authMsg: "PROTOCOL ACTIVATED. Authorized access to central node.", payMsg: "REQUEST SENT TO LEDGER.", limitMsg: "CAPACITY REACHED. Wait for new sync window."
+    }
 };
 
 function updateUI() {
     const l = langData[currentLang];
-    document.querySelectorAll('[id^="txt-"]').forEach(el => {
-        const key = el.id.replace('txt-', '');
-        if(l[key]) el.innerText = l[key];
-    });
+    document.getElementById('txt-bal-label').innerText = l.bal;
+    document.getElementById('txt-prog').innerText = l.prog;
+    document.getElementById('txt-btn').innerText = l.btn;
+    document.getElementById('txt-m1').innerText = l.m1;
+    document.getElementById('txt-m2').innerText = l.m2;
+    document.getElementById('txt-m3').innerText = l.m3;
+    document.getElementById('txt-m4').innerText = l.m4;
+    document.getElementById('txt-mine').innerText = l.mine;
+    document.getElementById('txt-load').innerText = l.load;
     document.getElementById('lang-label').innerText = currentLang === 'es' ? 'EN' : 'ES';
 }
 
 function toggleLang() { currentLang = currentLang === 'es' ? 'en' : 'es'; localStorage.setItem('xgrab_lang', currentLang); updateUI(); }
 
+// MINERÍA PASIVA (Suma constante)
 setInterval(() => {
-    const tick = 0.00000001;
-    passiveMined += tick; balance += tick;
+    const tick = 0.00000001; passiveMined += tick; balance += tick;
     document.getElementById('mining-val').innerText = passiveMined.toFixed(8);
     document.getElementById('ui-balance').innerText = balance.toFixed(6);
-    if(Math.random() > 0.98) db.ref('users/' + userUID).update({ balance: balance });
 }, 1000);
 
 db.ref('users/' + userUID).on('value', snap => {
     const d = snap.val();
     if(!d) {
         const inviter = new URLSearchParams(window.location.search).get('start');
-        db.ref('users/' + userUID).set({ balance: 0.00001, adsToday: 0, totalAds: 0, invitedBy: inviter || null });
-        
-        // AVISO DE NUEVO USUARIO AL CANAL
-        const joinMsg = `👤 *NUEVO MIEMBRO*\n\nID: \`${userUID}\`\nInvitado por: \`${inviter || 'Directo'}\`\nEstatus: Autorizado ✅`;
-        fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent(joinMsg)}&parse_mode=Markdown`);
-        
+        db.ref('users/' + userUID).set({ balance: 0.00005, adsToday: 0, totalAds: 0, invitedBy: inviter || null });
+        fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent("👤 *NUEVA TERMINAL DETECTADA*\nID: " + userUID + "\nOrigen: " + (inviter || 'Directo'))}&parse_mode=Markdown`);
         openModal('welcome');
     } else {
         balance = d.balance || 0; adsToday = d.adsToday || 0; totalAds = d.totalAds || 0;
@@ -126,7 +142,9 @@ db.ref('users/' + userUID).on('value', snap => {
 });
 
 function startTaskProcessing() {
-    if(adsToday >= 15) return alert("Límite diario alcanzado.");
+    const l = langData[currentLang];
+    if(adsToday >= 15) return alert(l.limitMsg);
+    
     const ad = window.Adsgram.init({ blockId: "18897" });
     ad.show().then(() => {
         document.getElementById('task-loader').style.display = 'flex';
@@ -136,70 +154,72 @@ function startTaskProcessing() {
                 if(u) { u.balance = (u.balance || 0) + gain; u.adsToday = (u.adsToday || 0) + 1; u.totalAds = (u.totalAds || 0) + 1; }
                 return u;
             });
-            if(totalAds + 1 >= 100) checkBonus100();
-            checkBonus30Ref();
+            // COMISIÓN AL MENTOR (10%)
+            db.ref('users/' + userUID + '/invitedBy').once('value', s => {
+                if(s.val()) db.ref('users/' + s.val() + '/balance').transaction(b => (b || 0) + (gain * 0.10));
+            });
             document.getElementById('task-loader').style.display = 'none';
         }, 4000);
-    });
-}
-
-function checkBonus100() {
-    db.ref('users/' + userUID + '/bonos/b100').once('value', s => {
-        if(!s.exists()) {
-            db.ref('users/' + userUID).update({ balance: balance + 0.01, "bonos/b100": true });
-            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent("🔥 META 100 TAREAS: " + userUID)}`);
-        }
-    });
-}
-
-function checkBonus30Ref() {
-    db.ref('users').orderByChild('invitedBy').equalTo(userUID).once('value', s => {
-        let active = 0; s.forEach(c => { if((c.val().totalAds || 0) >= 15) active++; });
-        if(active >= 30) {
-            db.ref('users/' + userUID + '/bonos/b30').once('value', b => {
-                if(!b.exists()) {
-                    db.ref('users/' + userUID).update({ balance: balance + 0.05, "bonos/b30": true });
-                    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent("🏆 30 SOCIOS ACTIVOS: " + userUID)}`);
-                }
-            });
-        }
+    }).catch(() => {
+        document.getElementById('task-loader').style.display = 'none';
+        alert("ERROR DE SINCRONIZACIÓN CON EL NODO PUBLICITARIO.");
     });
 }
 
 function openModal(type) {
-    const inner = document.getElementById('modal-inner');
-    if(type === 'welcome') {
-        inner.innerHTML = `<h2>Bienvenido</h2><p style="font-size:13px; margin:15px 0;">Acceso autorizado. Su terminal comenzará a minar pasivamente ahora.</p><button class="btn-main" onclick="closeModal()">INICIAR</button>`;
-    } else if(type === 'ref') {
+    const inner = document.getElementById('modal-inner'), l = langData[currentLang];
+    const backBtn = `<button class="btn-back" onclick="closeModal()">${l.back}</button>`;
+
+    if(type === 'ref') {
         const link = `https://t.me/XgrabUSDTbot?start=${userUID}`;
-        inner.innerHTML = `<h2>Mi Red</h2><div style="background:#fdfbf8; padding:20px; border-radius:20px; margin:15px 0;"><span style="font-size:35px; font-weight:900; color:var(--gold);" id="c-ref">...</span><br><small>SOCIOS TOTALES</small></div><input type="text" value="${link}" id="refL" readonly><button class="btn-main" onclick="copyRef()">COPIAR LINK</button>`;
+        inner.innerHTML = `
+            <h2 style="font-family:'Playfair Display';">INFRAESTRUCTURA DE RED</h2>
+            <div style="background:#fdfbf8; padding:20px; border-radius:20px; margin:15px 0;">
+                <span style="font-size:35px; font-weight:900; color:var(--gold);" id="c-ref">...</span><br>
+                <small>SOCIOS EN RED</small>
+            </div>
+            <div class="bonus-box">
+                <p style="font-size:11px; font-weight:800; color:var(--gold);">💰 BONO DE EQUIPO ACTIVO (10%)</p>
+                <p style="font-size:10px; color:#666; margin-top:5px;">Usted recibe una comisión del 10% sobre cada validación exitosa de sus socios reclutados.</p>
+            </div>
+            <div class="bonus-box">
+                <p style="font-size:11px; font-weight:800; color:var(--accent);">🏆 HITOS DE RECOMPENSA</p>
+                <p style="font-size:10px; color:#666;">• 30 socios activos: <b>$0.05 USDT</b><br>• 100 tareas completadas: <b>$0.01 USDT</b></p>
+            </div>
+            <input type="text" value="${link}" id="refL" readonly>
+            <button class="btn-main" onclick="copyRef()">COPIAR ENLACE DE RED</button>
+            ${backBtn}`;
         db.ref('users').orderByChild('invitedBy').equalTo(userUID).on('value', s => { document.getElementById('c-ref').innerText = s.numChildren() || 0; });
     } else if(type === 'withdraw') {
-        inner.innerHTML = `<h2>Liquidación</h2><p style="font-size:11px;">Mínimo $1.00 USDT - Red Polygon</p><input type="text" id="w-wal" placeholder="Dirección MATIC/USDT"><button class="btn-main" onclick="requestPay()">SOLICITAR PAGO</button>`;
+        inner.innerHTML = `<h2 style="font-family:'Playfair Display';">LIQUIDACIÓN</h2><p style="font-size:11px; color:#999; margin-bottom:15px;">UMBRAL MÍNIMO: 1.00 USDT (POLYGON)</p><input type="text" id="w-wal" placeholder="Dirección MATIC 0x..."><button class="btn-main" onclick="requestPay()">SOLICITAR LIQUIDACIÓN</button>${backBtn}`;
     } else if(type === 'hist') {
-        inner.innerHTML = `<h2>Historial</h2><div id="h-l" style="font-size:12px; max-height:200px; overflow-y:auto; margin:15px 0;">Cargando...</div><button class="btn-main" onclick="closeModal()">CERRAR</button>`;
+        inner.innerHTML = `<h2 style="font-family:'Playfair Display';">REGISTROS</h2><div id="h-l" style="font-size:12px; max-height:200px; overflow-y:auto; margin:15px 0;">Sincronizando registros...</div>${backBtn}`;
         db.ref('users/' + userUID + '/historial').once('value', s => {
-            let h = ""; s.forEach(c => { h += `<div style="padding:8px; border-bottom:1px solid #eee;">$${c.val().monto} - ${c.val().status}</div>`; });
-            document.getElementById('h-l').innerHTML = h || "Sin registros.";
+            let h = ""; s.forEach(c => { h += `<div style="padding:12px; border-bottom:1px solid #eee; text-align:left;"><b>$${c.val().monto} USDT</b><br><small style="color:#999;">${c.val().fecha} | ${c.val().status}</small></div>`; });
+            document.getElementById('h-l').innerHTML = h || "Sin registros de liquidación.";
         });
     } else if(type === 'guide') {
-        inner.innerHTML = `<h2>Guía</h2><p style="font-size:12px; text-align:left; line-height:1.6;">• Minado: Gana solo por estar aquí.<br>• Tareas: Valida 15 nodos para sumar.<br>• Red: Gana 10% por cada socio.<br>• Retiros: Mínimo $1 en USDT Polygon.</p><button class="btn-main" onclick="closeModal()">ENTENDIDO</button>`;
+        inner.innerHTML = `<h2 style="font-family:'Playfair Display';">MANUAL OPERATIVO</h2><div style="text-align:left; font-size:12px; color:#666; line-height:1.8; margin-top:15px;"><p>1. <b>ALGORITMO PASIVO:</b> Genera fracciones de USDT por tiempo de permanencia.</p><p>2. <b>VALIDACIÓN:</b> Ejecute 15 protocolos diarios para inyectar liquidez.</p><p>3. <b>RED:</b> El 10% de la producción de su equipo se acredita a su bóveda.</p><p>4. <b>UMBRAL:</b> Liquidaciones disponibles vía Red Polygon a partir de $1.00.</p></div>${backBtn}`;
+    } else if(type === 'welcome') {
+        inner.innerHTML = `<h2>PROTOCOLO ACTIVADO</h2><p style="font-size:13px; margin:20px 0;">Terminal sincronizada. Acceso autorizado al nodo central de Xgrab.</p><button class="btn-main" onclick="closeModal()">INICIAR SISTEMA</button>`;
     }
     document.getElementById('sys-modal').style.display = 'flex';
 }
 
 function requestPay() {
-    const w = document.getElementById('w-wal').value;
-    if(balance < 1.0 || w.length < 20) return alert("Error en balance o wallet.");
-    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent("💰 RETIRO SOLICITADO\nID: " + userUID + "\nAmt: " + balance.toFixed(4) + "\nWallet: " + w)}`);
-    db.ref('users/' + userUID + '/historial').push({ monto: balance.toFixed(4), fecha: new Date().toLocaleString(), status: "PROCESANDO" });
+    const l = langData[currentLang], w = document.getElementById('w-wal').value;
+    if(balance < 1.0 || w.length < 20) return alert(l.en === langData.en ? "Protocol Error: Insufficient funds or invalid node." : "Error de Protocolo: Fondos insuficientes o dirección inválida.");
+    
+    alert(l.payMsg);
+    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent("💰 *SOLICITUD DE PAGO*\nID: " + userUID + "\nMonto: " + balance.toFixed(4) + " USDT\nWallet: " + w)}&parse_mode=Markdown`);
+    db.ref('users/' + userUID + '/historial').push({ monto: balance.toFixed(4), fecha: new Date().toLocaleString(), status: "EN LIBRO CONTABLE" });
     db.ref('users/' + userUID).update({ balance: 0 });
     closeModal();
 }
 
 function closeModal() { document.getElementById('sys-modal').style.display = 'none'; }
-function copyRef() { document.getElementById('refL').select(); document.execCommand('copy'); alert("Copiado"); }
+function copyRef() { document.getElementById('refL').select(); document.execCommand('copy'); alert(langData[currentLang].copyMsg); }
 window.onload = updateUI;
 </script>
 </body>
-    </html>
+</html>
