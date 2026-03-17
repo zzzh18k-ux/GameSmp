@@ -6,8 +6,6 @@
     <title>Xchange Elite | Global Market</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
-
     <style>
         :root {
             --bg: #000000;
@@ -32,7 +30,7 @@
         .brand { display: flex; align-items: center; gap: 12px; }
         .logo-sq { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), #007aff); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px var(--accent-glow); }
         .brand-name { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; }
-        .lang-selector { background: var(--card-bg); border: 1px solid var(--border); color: #fff; padding: 5px; border-radius: 8px; font-size: 12px; outline: none; }
+        .lang-selector { background: var(--card-bg); border: 1px solid var(--border); color: #fff; padding: 8px; border-radius: 8px; font-size: 12px; outline: none; }
 
         .form-section { background: var(--card-bg); border-radius: 24px; padding: 24px; border: 1px solid var(--border); margin-bottom: 24px; }
         .section-label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block; }
@@ -44,15 +42,16 @@
         .social-btn.active svg { fill: var(--accent); }
 
         input, textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 16px; color: #fff; font-size: 15px; outline: none; margin-bottom: 15px; }
-        .btn-main { background: var(--accent); color: #fff; border: none; width: 100%; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer; }
+        .btn-main { background: var(--accent); color: #fff; border: none; width: 100%; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .btn-main:active { transform: scale(0.98); opacity: 0.8; }
 
-        .post-card { background: var(--card-bg); border-radius: 20px; padding: 18px; border: 1px solid var(--border); margin-bottom: 12px; animation: slide 0.3s ease; }
+        .post-card { background: var(--card-bg); border-radius: 20px; padding: 18px; border: 1px solid var(--border); margin-bottom: 12px; }
         .user-tag { color: var(--accent); font-weight: 700; font-size: 14px; }
         .activity-pill { background: rgba(255, 255, 255, 0.05); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: var(--text-secondary); }
         .post-content { font-size: 15px; color: #efeff4; line-height: 1.5; margin: 12px 0; }
         .btn-contact { background: #fff; color: #000; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 700; text-decoration: none; display: inline-block; }
 
-        .view-pill { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-secondary); font-weight: 600; }
+        .view-pill { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-secondary); font-weight: 600; margin-top: 4px; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: rgba(17,17,17,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border); z-index: 2000; }
         .nav-item { text-align: center; color: var(--text-secondary); text-decoration: none; font-size: 10px; font-weight: 700; }
@@ -69,9 +68,9 @@
     <div id="toast">OFERTA ENVIADA</div>
 
     <div class="radar-top">
-        <div class="stat-box"><span class="stat-num" id="user-count">...</span><span class="stat-txt">Usuarios</span></div>
-        <div class="stat-box"><span class="stat-num" id="trade-count">...</span><span class="stat-txt">Tratos Hoy</span></div>
-        <div class="stat-box"><span class="stat-num" style="color: #4cd964;">ON</span><span class="stat-txt">Servidor</span></div>
+        <div class="stat-box"><span class="stat-num" id="user-count">1,420</span><span class="stat-txt" id="stat-u">Usuarios</span></div>
+        <div class="stat-box"><span class="stat-num" id="trade-count">12</span><span class="stat-txt" id="stat-t">Tratos Hoy</span></div>
+        <div class="stat-box"><span class="stat-num" style="color: #4cd964;">ON</span><span class="stat-txt" id="stat-s">Servidor</span></div>
     </div>
 
     <header class="header">
@@ -79,7 +78,7 @@
             <div class="logo-sq"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg></div>
             <span class="brand-name">Xchange Elite</span>
         </div>
-        <select class="lang-selector" id="lang-select" onchange="window.changeLang(this.value)">
+        <select class="lang-selector" id="lang-select">
             <option value="es">🇪🇸 ES</option>
             <option value="en">🇺🇸 EN</option>
             <option value="pt">🇧🇷 PT</option>
@@ -110,17 +109,6 @@
 
     <div id="muro-elite"></div>
 
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            INICIO
-        </a>
-        <a href="https://t.me/XchangeEliteOficial" target="_blank" class="nav-item">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.13 7.19c-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-3.53 2.39-5.35 3.6-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.89.03-.25.38-.51 1.05-.78 1.37-.58 4.12-1.76 8.24-3.55 3.92-1.66 4.73-1.95 5.27-1.96.12 0 .38.03.55.17.14.12.18.28.19.39 0 .14 0 .28-.01.41z"/></svg>
-            CANAL
-        </a>
-    </nav>
-
     <script src="https://adsgram.ai/sdk.js"></script>
 
     <script type="module">
@@ -138,35 +126,33 @@
         const db = getDatabase(app);
         let selectedPlat = 'tg';
 
-        const AdController = window.Adsgram.init({ blockId: "18897" });
-        window.showAd = () => { AdController.show().catch(() => {}); };
+        // ADSGRAM CONFIG
+        const AdController = window.Adsgram ? window.Adsgram.init({ blockId: "18897" }) : null;
 
         const i18n = {
-            es: { channel: "Canal de Enlace", contact: "ID de Contacto", activity: "Actividad", msg: "Propuesta", btn: "PUBLICAR EN MERCADO", toast: "OFERTA ENVIADA", contactBtn: "CONTACTAR" },
-            en: { channel: "Link Channel", contact: "Contact ID", activity: "Activity Type", msg: "Proposal", btn: "PUBLISH ON MARKET", toast: "OFFER TRANSMITTED", contactBtn: "CONTACT" },
-            pt: { channel: "Canal de Link", contact: "ID de Contato", activity: "Atividade", msg: "Proposta", btn: "PUBLICAR NO MERCADO", toast: "OFERTA ENVIADA", contactBtn: "CONTATO" }
+            es: { statU: "Usuarios", statT: "Tratos Hoy", statS: "Servidor", channel: "Canal de Enlace", contact: "ID de Contacto", activity: "Actividad", msg: "Propuesta", btn: "PUBLICAR EN MERCADO", toast: "OFERTA ENVIADA", contactBtn: "CONTACTAR", placeholderUser: "@usuario", placeholderAct: "Ej: Registro, Follow", placeholderMsg: "Detalles de tu oferta..." },
+            en: { statU: "Users", statT: "Today's Deals", statS: "Server", channel: "Link Channel", contact: "Contact ID", activity: "Activity", msg: "Proposal", btn: "PUBLISH ON MARKET", toast: "OFFER SENT", contactBtn: "CONTACT", placeholderUser: "@username", placeholderAct: "Ex: Registration, Follow", placeholderMsg: "Offer details..." },
+            pt: { statU: "Usuários", statT: "Acordos Hoje", statS: "Servidor", channel: "Canal de Link", contact: "ID de Contato", activity: "Atividade", msg: "Proposta", btn: "PUBLICAR NO MERCADO", toast: "OFERTA ENVIADA", contactBtn: "CONTATO", placeholderUser: "@usuario", placeholderAct: "Ex: Registro, Follow", placeholderMsg: "Detalhes da oferta..." }
         };
 
-        const cleanOldPosts = () => {
-            const cutoff = Date.now() - (24 * 60 * 60 * 1000);
-            get(ref(db, 'elite_trades_v2')).then((snap) => {
-                if (snap.exists()) {
-                    snap.forEach((child) => {
-                        if (child.val().t < cutoff) remove(ref(db, `elite_trades_v2/${child.key}`));
-                    });
-                }
-            });
-        };
-
-        window.changeLang = (lang) => {
-            document.getElementById('txt-channel').innerText = i18n[lang].channel;
-            document.getElementById('txt-contact').innerText = i18n[lang].contact;
-            document.getElementById('txt-activity').innerText = i18n[lang].activity;
-            document.getElementById('txt-msg').innerText = i18n[lang].msg;
-            document.getElementById('txt-btn').innerText = i18n[lang].btn;
-            document.getElementById('toast').innerText = i18n[lang].toast;
+        const updateLanguage = (lang) => {
+            const t = i18n[lang];
+            document.getElementById('stat-u').innerText = t.statU;
+            document.getElementById('stat-t').innerText = t.statT;
+            document.getElementById('stat-s').innerText = t.statS;
+            document.getElementById('txt-channel').innerText = t.channel;
+            document.getElementById('txt-contact').innerText = t.contact;
+            document.getElementById('txt-activity').innerText = t.activity;
+            document.getElementById('txt-msg').innerText = t.msg;
+            document.getElementById('txt-btn').innerText = t.btn;
+            document.getElementById('user-id').placeholder = t.placeholderUser;
+            document.getElementById('activity-tag').placeholder = t.placeholderAct;
+            document.getElementById('trade-msg').placeholder = t.placeholderMsg;
+            document.getElementById('toast').innerText = t.toast;
             renderFeed();
         };
+
+        document.getElementById('lang-select').addEventListener('change', (e) => updateLanguage(e.target.value));
 
         window.setPlat = (p, el) => {
             document.querySelectorAll('.social-btn').forEach(b => b.classList.remove('active'));
@@ -178,10 +164,15 @@
             const userId = document.getElementById('user-id').value.trim();
             const tag = document.getElementById('activity-tag').value.trim();
             const msg = document.getElementById('trade-msg').value.trim();
-            if(!userId || !tag || !msg) return;
+            
+            if(!userId || !tag || !msg) return alert("Completa todos los campos");
 
-            // Generamos las vistas falsas permanentes para este post (entre 85 y 490)
-            const fakeViews = Math.floor(Math.random() * (490 - 85 + 1)) + 85;
+            // Intento mostrar anuncio antes de publicar
+            if(AdController) {
+                AdController.show().catch(e => console.log("Ad skip"));
+            }
+
+            const fakeViews = Math.floor(Math.random() * (500 - 80 + 1)) + 80;
 
             push(ref(db, 'elite_trades_v2'), {
                 u: userId, tag: tag, msg: msg, plat: selectedPlat, t: Date.now(), views: fakeViews
@@ -190,8 +181,6 @@
                 const toast = document.getElementById('toast');
                 toast.classList.add('visible');
                 setTimeout(() => toast.classList.remove('visible'), 2500);
-                cleanOldPosts();
-                window.showAd(); 
             });
         };
 
@@ -206,7 +195,7 @@
                                  v.plat === 'ig' ? `https://instagram.com/${v.u.replace('@','')}` : 
                                  v.plat === 'tk' ? `https://tiktok.com/@${v.u.replace('@','')}` : v.u;
                 
-                const viewsCount = v.views || Math.floor(Math.random() * 200) + 50;
+                const viewsCount = v.views || Math.floor(Math.random() * 150) + 40;
 
                 feed.innerHTML += `
                     <div class="post-card">
@@ -216,7 +205,7 @@
                         </div>
                         <div class="post-content">${v.msg}</div>
                         <div style="display:flex; justify-content:space-between; align-items:center">
-                            <div style="display:flex; flex-direction:column; gap:2px">
+                            <div>
                                 <span style="font-size:9px; font-weight:700; color:var(--text-secondary)">${v.plat.toUpperCase()}</span>
                                 <div class="view-pill">
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -232,15 +221,10 @@
         onValue(query(ref(db, 'elite_trades_v2'), orderByChild('t')), (snap) => {
             currentData = [];
             snap.forEach(c => currentData.push(c.val()));
-            document.getElementById('user-count').innerText = (currentData.length * 9 + 1420).toLocaleString();
+            document.getElementById('user-count').innerText = (currentData.length * 5 + 1420).toLocaleString();
             document.getElementById('trade-count').innerText = currentData.length;
             renderFeed();
         });
-
-        window.addEventListener('load', () => {
-            cleanOldPosts();
-            setTimeout(window.showAd, 2500);
-        });
     </script>
 </body>
-</html>
+    </html>
