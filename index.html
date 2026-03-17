@@ -3,182 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gold Miner USDT Pro</title>
+    <title>USDT Rebirth - Corporate Edition</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        :root { --binance-yellow: #F0B90B; --bg-white: #FFFFFF; --text-gray: #5E6673; }
-        body { background-color: var(--bg-white); margin: 0; font-family: 'Arial', sans-serif; overflow: hidden; color: #1E2329; }
-        .header { background-color: var(--binance-yellow); padding: 15px; text-align: center; font-weight: bold; font-size: 22px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .stats-bar { display: flex; justify-content: space-around; background: #fafafa; padding: 10px; border-bottom: 1px solid #eaeaea; font-weight: bold; }
-        .timer-low { color: #ea3943; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
-        canvas { display: block; background: #ffffff; touch-action: none; }
-        .controls { position: fixed; bottom: 0; width: 100%; height: 80px; background: white; border-top: 1px solid #eee; display: flex; align-items: center; justify-content: center; }
-        .btn-launch { background: var(--binance-yellow); border: none; width: 90%; height: 60px; border-radius: 12px; font-size: 20px; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
-        .btn-launch:active { transform: scale(0.95); }
-        /* Pantalla de Fin */
-        #gameOver { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        :root { --neon: #00d4ff; --dark: #080a0c; --panel: #12161b; --gold: #ffd700; }
+        body { margin: 0; padding: 0; background: var(--dark); color: #fff; font-family: 'Rajdhani', sans-serif; overflow: hidden; }
+
+        /* --- UI PRINCIPAL --- */
+        #main-ui { padding: 25px; height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; }
+        
+        .vault-card { 
+            background: linear-gradient(145deg, #12161b, #0a0c10);
+            border-radius: 30px; padding: 45px 20px; text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            margin-bottom: 25px;
+        }
+        .vault-title { color: var(--neon); font-family: 'Orbitron'; font-size: 10px; letter-spacing: 3px; margin-bottom: 10px; }
+        .vault-amount { font-size: 45px; font-family: 'Orbitron'; font-weight: 900; text-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+
+        .btn-hunt {
+            background: var(--neon); color: #000; width: 100%; padding: 22px;
+            border-radius: 20px; border: none; font-family: 'Orbitron'; font-weight: 900;
+            font-size: 16px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.2);
+        }
+
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: auto; }
+        .menu-item {
+            background: var(--panel); border: 1px solid #1e252e; border-radius: 20px;
+            padding: 18px; text-align: center; cursor: pointer;
+        }
+        .menu-item i { color: var(--neon); font-size: 20px; margin-bottom: 8px; display: block; }
+        .menu-item span { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6e7681; }
+
+        /* --- MODALES TÁCTICOS --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 500; display: none;
+            justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;
+        }
+        .modal-content {
+            background: var(--panel); border: 1px solid var(--neon);
+            border-radius: 25px; padding: 30px; width: 100%; text-align: center;
+        }
+        .modal-h { font-family: 'Orbitron'; color: var(--neon); margin-bottom: 15px; }
+        .modal-p { color: #8b949e; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+
+        /* --- MINERÍA --- */
+        #game-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: none; }
+        .hud { position: absolute; top: 30px; width: 100%; padding: 0 25px; display: flex; justify-content: space-between; box-sizing: border-box; }
+        .hud-item { background: rgba(18, 22, 27, 0.9); padding: 12px 18px; border-radius: 15px; border: 1px solid var(--neon); font-family: 'Orbitron'; color: var(--neon); font-size: 12px; }
     </style>
 </head>
 <body>
 
-<div class="header">🟡 GOLD EXTRACTOR PRO</div>
-<div class="stats-bar">
-    <div>⏳ TIEMPO: <span id="time">45</span>s</div>
-    <div>💰 <span id="balance">0.0000</span> USDT</div>
-</div>
+    <div id="main-ui">
+        <div style="display:flex; justify-content:space-between; color:#444; font-size:10px; font-weight:700; margin-bottom:15px;">
+            <span>REBIRTH PROTOCOL V2</span>
+            <span>POWER: 100%</span>
+        </div>
 
-<canvas id="gameCanvas"></canvas>
+        <div class="vault-card">
+            <div class="vault-title">NET ASSETS AVAILABLE</div>
+            <div class="vault-amount">$<span id="bal-display">0.0000</span></div>
+            <div style="font-size:11px; color:#444; margin-top:10px;">Network: Polygon Mainnet</div>
+        </div>
 
-<div id="gameOver">
-    <h1 style="color: #F0B90B;">¡TIEMPO AGOTADO!</h1>
-    <p id="finalResult" style="font-size: 18px; padding: 20px;"></p>
-    <button class="btn-launch" onclick="location.reload()">🔄 USAR ENERGÍA (-1)</button>
-    <p style="font-size: 12px; margin-top: 15px; color: #777;">¿Sin energía? Invita a un amigo y obtén +2 ⚡️</p>
-</div>
+        <button class="btn-hunt" onclick="checkAdsBeforePlay()">
+            <i class="fas fa-bolt"></i> ENGAGE EXTRACTION
+        </button>
 
-<div class="controls">
-    <button class="btn-launch" onclick="launchHook()">⚡️ LANZAR GANCHO</button>
-</div>
+        <div class="menu-grid">
+            <div class="menu-item" onclick="openWithdraw()">
+                <i class="fas fa-wallet"></i><span>Withdraw</span>
+            </div>
+            <div class="menu-item" onclick="openReferral()">
+                <i class="fas fa-link"></i><span>Network</span>
+            </div>
+            <div class="menu-item" onclick="showLogs()">
+                <i class="fas fa-database"></i><span>History</span>
+            </div>
+            <div class="menu-item" onclick="window.open('https://t.me/TuCanal')">
+                <i class="fab fa-telegram-plane"></i><span>Support</span>
+            </div>
+        </div>
+    </div>
 
-<script>
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight - 180;
+    <div id="sys-modal" class="modal">
+        <div class="modal-content" id="modal-body">
+            </div>
+    </div>
 
-    // --- CONFIGURACIÓN DE BALANCE ACORDADA ---
-    let timeLeft = 45;
-    let currentBalance = 0;
-    let gameState = "PLAYING"; // PLAYING, GAMEOVER
-    
-    // Física del Gancho
-    let hook = {
-        x: canvas.width / 2,
-        y: 50,
-        angle: 0,
-        dir: 1,
-        speed: 0.04,
-        len: 40,
-        state: "IDLE", // IDLE, EXTENDING, RETRACTING
-        targetX: 0,
-        targetY: 0,
-        grabbedItem: null
-    };
+    <div id="game-layer">
+        <div class="hud">
+            <div class="hud-item"><i class="fas fa-cube"></i> <span id="game-usd">0.0000</span></div>
+            <div class="hud-item" style="border-color:#ff4b2b; color:#ff4b2b;"><i class="fas fa-clock"></i> <span id="game-time">40</span></div>
+        </div>
+        <canvas id="miner-canvas"></canvas>
+    </div>
 
-    // Objetos (Monedas con peso y Rocas castigo)
-    let items = [];
-    function initItems() {
-        // Monedas Pequeñas (Poco valor, suben rápido)
-        for(let i=0; i<6; i++) items.push({x: Math.random()*(canvas.width-40)+20, y: Math.random()*300+150, type:'coin', val:0.0005, r:8, w:1, color:'#F0B90B'});
-        // Monedas Grandes (MUCHO VALOR, SUBEN LENTO - ESTRATEGIA ANTI-QUIEBRA)
-        items.push({x: Math.random()*(canvas.width-40)+20, y: 400, type:'coin', val:0.10, r:15, w:4, color:'#F0B90B'}); // Peso 4 = 4 veces más lento
-        // Rocas (CASTIGO DE TIEMPO Y PESO)
-        for(let i=0; i<4; i++) items.push({x: Math.random()*(canvas.width-40)+20, y: Math.random()*300+200, type:'rock', val:0, r:25, w:8, color:'#888'});
-    }
+    <script>
+        // --- VARIABLES DE NEGOCIO (CONFIGURACIÓN RENTABLE) ---
+        let USER_BALANCE = 0.0000;
+        let REF_COMMISSION = 0.10; // 10%
+        let MIN_WITHDRAW = 5.00; // Mínimo para que veas ganancias reales
+        let COIN_VALUE = 0.0005; // Valor por moneda (Ajustable)
+        let REF_CODE = "USER-" + Math.floor(Math.random()*9999);
 
-    function draw() {
-        if (gameState !== "PLAYING") return;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // --- LÓGICA DE INTERFAZ ---
+        function showModal(title, text, btnAction) {
+            const body = document.getElementById('modal-body');
+            body.innerHTML = `
+                <h2 class="modal-h">${title}</h2>
+                <p class="modal-p">${text}</p>
+                <button class="btn-hunt" onclick="${btnAction}">ENTENDIDO</button>
+            `;
+            document.getElementById('sys-modal').style.display = 'flex';
+        }
 
-        // 1. Mover Gancho
-        if (hook.state === "IDLE") {
-            hook.angle += hook.speed * hook.dir;
-            if (Math.abs(hook.angle) > 1.2) hook.dir *= -1;
-        } else if (hook.state === "EXTENDING") {
-            hook.len += 8;
-            if (hook.len > 600 || checkCollision()) hook.state = "RETRACTING";
-        } else if (hook.state === "RETRACTING") {
-            // VELOCIDAD SEGÚN PESO (weight)
-            let retractSpeed = hook.grabbedItem ? (12 / hook.grabbedItem.w) : 12;
-            hook.len -= retractSpeed;
-            if (hook.len <= 40) {
-                if (hook.grabbedItem) {
-                    currentBalance += hook.grabbedItem.val;
-                    document.getElementById('balance').innerText = currentBalance.toFixed(4);
+        function closeModal() { document.getElementById('sys-modal').style.display = 'none'; }
+
+        function openWithdraw() {
+            if(USER_BALANCE < MIN_WITHDRAW) {
+                showModal("FONDOS INSUFICIENTES", 
+                `Para procesar un retiro en la red Polygon, necesitas un mínimo de **$${MIN_WITHDRAW.toFixed(2)}**. <br><br> Actualmente posees **$${USER_BALANCE.toFixed(4)}**. Sigue minando para alcanzar la cuota de transferencia.`, 
+                "closeModal()");
+            } else {
+                showModal("SOLICITUD DISPONIBLE", "Tu saldo es apto. Introduce tu wallet de Polygon.", "closeModal()");
+            }
+        }
+
+        function openReferral() {
+            showModal("RED DE AFILIADOS", 
+            `Obtén un **10% de comisión de por vida** por cada extracción de tus referidos.<br><br> Tu enlace de reclutamiento:<br><b style="color:#00d4ff">t.me/TuBot?start=${REF_CODE}</b>`, 
+            "closeModal()");
+        }
+
+        function showLogs() {
+            showModal("HISTORIAL DE BLOQUES", "No se detectan retiros previos. Todas las transacciones de minado están sincronizadas localmente.", "closeModal()");
+        }
+
+        // --- LÓGICA DEL JUEGO (RENTABILIDAD CONTROLADA) ---
+        const cvs = document.getElementById('miner-canvas');
+        const ctx = cvs.getContext('2d');
+        let game = { active: false, score: 0, time: 40, hook: {}, objs: [] };
+
+        function checkAdsBeforePlay() {
+            // Aquí iría tu código de AdsGram o Monetag
+            // console.log("Llamando anuncio...");
+            startMining();
+        }
+
+        function startMining() {
+            document.getElementById('game-layer').style.display = 'block';
+            cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+            game.objs = [];
+            // Monedas de valor bajo pero constantes
+            for(let i=0; i<8; i++) game.objs.push({x: Math.random()*cvs.width, y: 300+Math.random()*(cvs.height-450), r:16, val: COIN_VALUE, type:'gold', mass:2});
+            // Obstáculos pesados (Para ralentizar y forzar más juegos/anuncios)
+            for(let i=0; i<4; i++) game.objs.push({x: Math.random()*cvs.width, y: 300+Math.random()*(cvs.height-450), r:35, val:0, type:'rock', mass:18});
+            
+            game.hook = { x: cvs.width/2, y: 90, ang: Math.PI/2, len: 90, state: 0, spd: 0.045, catch: null };
+            game.score = 0; game.time = 40; game.active = true;
+            loop();
+        }
+
+        cvs.addEventListener('touchstart', (e) => { e.preventDefault(); if(game.hook.state===0) game.hook.state=1; });
+
+        function loop() {
+            if(!game.active) return;
+            ctx.fillStyle = '#080a0c'; ctx.fillRect(0,0,cvs.width, cvs.height);
+            let h = game.hook;
+
+            if(h.state === 0) {
+                h.ang += h.spd; if(h.ang < 0.4 || h.ang > Math.PI - 0.4) h.spd *= -1;
+            } else if(h.state === 1) {
+                h.len += 15; if(h.len > cvs.height - 60) h.state = 2;
+                let hx = h.x + Math.cos(h.ang)*h.len, hy = h.y + Math.sin(h.ang)*h.len;
+                game.objs.forEach(o => {
+                    if(!o.caught && Math.hypot(hx-o.x, hy-o.y) < o.r + 15) { o.caught=true; h.catch=o; h.state=2; }
+                });
+            } else {
+                let v = h.catch ? (25 / h.catch.mass) : 15;
+                h.len -= v;
+                if(h.len <= 90) {
+                    h.len = 90; h.state = 0;
+                    if(h.catch) { game.score += h.catch.val; h.catch=null; }
                 }
-                hook.state = "IDLE";
-                hook.grabbedItem = null;
             }
-        }
 
-        // 2. Dibujar Cuerda
-        let endX = hook.x + Math.sin(hook.angle) * hook.len;
-        let endY = hook.y + Math.cos(hook.angle) * hook.len;
-        ctx.beginPath();
-        ctx.moveTo(hook.x, hook.y);
-        ctx.lineTo(endX, endY);
-        ctx.strokeStyle = "#333";
-        ctx.lineWidth = 3;
-        ctx.stroke();
+            // Dibujar Gancho Neón
+            let hx = h.x + Math.cos(h.ang)*h.len, hy = h.y + Math.sin(h.ang)*h.len;
+            ctx.strokeStyle = '#00d4ff'; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(h.x, h.y); ctx.lineTo(hx, hy); ctx.stroke();
+            ctx.fillStyle = '#00d4ff'; ctx.beginPath(); ctx.arc(hx, hy, 8, 0, 7); ctx.fill();
 
-        // 3. Dibujar Gancho (Anzuelo)
-        ctx.beginPath();
-        ctx.arc(endX, endY, 5, 0, Math.PI*2);
-        ctx.fillStyle = "#000";
-        ctx.fill();
-
-        // 4. Dibujar Objetos
-        items.forEach(item => {
-            if (item === hook.grabbedItem) {
-                item.x = endX;
-                item.y = endY;
-            }
-            ctx.beginPath();
-            ctx.arc(item.x, item.y, item.r, 0, Math.PI*2);
-            ctx.fillStyle = item.color;
-            ctx.fill();
-            if(item.type === 'coin') {
-                ctx.fillStyle = "white";
-                ctx.fillText("$", item.x-3, item.y+4);
-            }
-        });
-
-        requestAnimationFrame(draw);
-    }
-
-    function checkCollision() {
-        let endX = hook.x + Math.sin(hook.angle) * hook.len;
-        let endY = hook.y + Math.cos(hook.angle) * hook.len;
-        
-        for (let item of items) {
-            let d = Math.hypot(endX - item.x, endY - item.y);
-            if (d < item.r + 5) {
-                hook.grabbedItem = item;
-                // CASTIGO DE ROCA: Quita 5 segundos extra
-                if (item.type === 'rock') {
-                    timeLeft = Math.max(0, timeLeft - 5);
+            // Dibujar Objetos
+            game.objs.forEach(o => {
+                if(!o.caught) {
+                    ctx.beginPath(); ctx.arc(o.x, o.y, o.r, 0, 7);
+                    if(o.type==='gold') {
+                        ctx.fillStyle='#00d4ff'; ctx.fill();
+                        ctx.fillStyle='#000'; ctx.font='900 14px Orbitron'; ctx.textAlign='center'; ctx.fillText('$', o.x, o.y+5);
+                    } else {
+                        ctx.fillStyle='#1c2128'; ctx.strokeStyle='#30363d'; ctx.lineWidth=2; ctx.fill(); ctx.stroke();
+                    }
                 }
-                items = items.filter(i => i !== item);
-                return true;
-            }
+            });
+
+            game.time -= 0.016;
+            document.getElementById('game-usd').innerText = game.score.toFixed(4);
+            document.getElementById('game-time').innerText = Math.ceil(game.time);
+
+            if(game.time <= 0) {
+                game.active = false;
+                USER_BALANCE += game.score;
+                document.getElementById('bal-display').innerText = USER_BALANCE.toFixed(4);
+                document.getElementById('game-layer').style.display='none';
+                showModal("EXTRACCIÓN FINALIZADA", `Has recuperado **$${game.score.toFixed(4)}** en fragmentos de USDT. Tu saldo ha sido actualizado en la bóveda.`, "closeModal()");
+            } else { requestAnimationFrame(loop); }
         }
-        return false;
-    }
-
-    function launchHook() {
-        if (hook.state === "IDLE") hook.state = "EXTENDING";
-    }
-
-    // Cronómetro
-    let timerInterval = setInterval(() => {
-        if (timeLeft > 0) {
-            timeLeft--;
-            document.getElementById('time').innerText = timeLeft;
-            if (timeLeft <= 10) document.getElementById('time').parentElement.classList.add('timer-low');
-        } else {
-            endGame();
-        }
-    }, 1000);
-
-    function endGame() {
-        gameState = "GAMEOVER";
-        clearInterval(timerInterval);
-        document.getElementById('gameOver').style.display = 'flex';
-        document.getElementById('finalResult').innerHTML = `Lograste recolectar:<br><b style="font-size:24px; color:#F0B90B;">$${currentBalance.toFixed(4)} USDT</b><br><br>¡Cuidado con las rocas, te quitan 5s de vida!`;
-    }
-
-    initItems();
-    draw();
-</script>
+    </script>
 </body>
 </html>
