@@ -1,33 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intercambio FruitHunter</title>
+    <title>FruitHunter Premium</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { font-family: sans-serif; background: #e5ddd5; padding: 10px; }
-        .caja { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); margin-bottom: 20px; }
-        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        button { background: #075e54; color: white; border: none; padding: 10px; width: 100%; border-radius: 5px; font-weight: bold; }
-        .post { background: #fff; padding: 10px; border-radius: 10px; margin-bottom: 10px; border-bottom: 2px solid #ddd; }
-        .user { color: #075e54; font-weight: bold; }
+        :root { --p: #0088cc; --s: #f0f2f5; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--s); margin: 0; padding: 15px; color: #333; }
+        .header { background: #fff; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; border-bottom: 4px solid var(--p); }
+        .card { background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #eee; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--p); }
+        button { background: var(--p); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,136,204,0.2); }
+        .post { background: #fff; padding: 15px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); animation: slide 0.4s ease; }
+        @keyframes slide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .user { color: var(--p); font-weight: 700; font-size: 14px; margin-bottom: 5px; display: block; }
+        .text { font-size: 15px; line-height: 1.5; word-wrap: break-word; }
+        .text a { color: #0088cc; text-decoration: underline; font-weight: bold; }
+        .btn-contact { background: #25D366; margin-top: 10px; font-size: 13px; padding: 8px; width: auto; display: inline-block; text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <div class="caja">
-        <h3>🍎 Publicar Intercambio</h3>
-        <input type="text" id="user" placeholder="Tu @Usuario de Telegram">
-        <textarea id="msg" placeholder="¿Qué quieres cambiar?"></textarea>
-        <button onclick="enviar()">Publicar en el Muro</button>
+    <div class="header">
+        <h2 style="margin:0;">🔄 Muro de Intercambios</h2>
+        <small>Publica enlaces y encuentra ofertas</small>
     </div>
 
-    <div id="muro">Cargando...</div>
+    <div class="card">
+        <input type="text" id="user" placeholder="👤 Tu @Usuario de Telegram">
+        <textarea id="msg" rows="3" placeholder="📝 ¿Qué ofreces? (Pega tus enlaces aquí)"></textarea>
+        <button onclick="enviar()">🚀 Publicar Anuncio</button>
+    </div>
+
+    <div id="muro"></div>
 
 <script>
-    // Configuración con tus datos de FruitHunter
     const firebaseConfig = {
         databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com",
         projectId: "fruithunter-b5d2d",
@@ -37,24 +47,33 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // Función para convertir texto en enlaces clickeables
+    function linkify(text) {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        return text.replace(urlRegex, (url) => `<a href="${url}" target="_blank">${url}</a>`);
+    }
+
     function enviar() {
         const u = document.getElementById('user').value;
         const m = document.getElementById('msg').value;
         if(u && m) {
-            db.ref('chats').push({ usuario: u, mensaje: m });
+            db.ref('chats').push({ usuario: u, mensaje: m, t: Date.now() });
             document.getElementById('msg').value = "";
         }
     }
 
-    db.ref('chats').on('value', (snap) => {
+    db.ref('chats').orderByChild('t').on('value', (snap) => {
         const div = document.getElementById('muro');
         div.innerHTML = "";
         snap.forEach((child) => {
-            const val = child.val();
-            div.innerHTML = `<div class="post">
-                <span class="user">${val.usuario}</span><br>
-                ${val.mensaje}
-            </div>` + div.innerHTML;
+            const v = child.val();
+            const msgConLinks = linkify(v.mensaje);
+            div.innerHTML = `
+                <div class="post">
+                    <span class="user">Enviado por: ${v.usuario}</span>
+                    <div class="text">${msgConLinks}</div>
+                    <a href="https://t.me/${v.usuario.replace('@','')}" class="button btn-contact" target="_blank">💬 Contactar</a>
+                </div>` + div.innerHTML;
         });
     });
 </script>
