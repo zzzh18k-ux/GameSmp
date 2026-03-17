@@ -8,6 +8,10 @@
     
     <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://adsgram.ai/sdk.js"></script>
+
     <style>
         :root {
             --bg: #000000;
@@ -51,12 +55,6 @@
         .activity-pill { background: rgba(255, 255, 255, 0.05); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: var(--text-secondary); }
         .post-content { font-size: 15px; color: #efeff4; line-height: 1.5; margin: 12px 0; }
         .btn-contact { background: #fff; color: #000; padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 700; text-decoration: none; display: inline-block; }
-
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: rgba(17,17,17,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--border); z-index: 2000; }
-        .nav-item { text-align: center; color: var(--text-secondary); text-decoration: none; font-size: 10px; font-weight: 700; }
-        .nav-item svg { width: 24px; height: 24px; fill: var(--text-secondary); display: block; margin: 0 auto 4px; }
-        .nav-item.active { color: var(--accent); }
-        .nav-item.active svg { fill: var(--accent); }
 
         #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #fff; color: #000; padding: 12px 24px; border-radius: 50px; font-weight: 700; z-index: 3000; transition: 0.5s; }
         #toast.visible { transform: translateX(-50%) translateY(0); }
@@ -106,25 +104,10 @@
         <button class="btn-main" onclick="publishTrade()" id="txt-btn">PUBLICAR EN MERCADO</button>
     </main>
 
-    <div id="muro-elite" class="feed-container"></div>
+    <div id="muro-elite"></div>
 
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            INICIO
-        </a>
-        <a href="https://t.me/XchangeEliteOficial" target="_blank" class="nav-item">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.13 7.19c-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-3.53 2.39-5.35 3.6-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.89.03-.25.38-.51 1.05-.78 1.37-.58 4.12-1.76 8.24-3.55 3.92-1.66 4.73-1.95 5.27-1.96.12 0 .38.03.55.17.14.12.18.28.19.39 0 .14 0 .28-.01.41z"/></svg>
-            CANAL
-        </a>
-    </nav>
-
-    <script src="https://adsgram.ai/sdk.js"></script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, query, orderByChild } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-
+    <script>
+        // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAs-7N0P0E1_zR8XqW2M6V5Y4T3L1_v0U9", 
             databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com",
@@ -132,25 +115,9 @@
             appId: "1:910354867578:web:30c5a30058c621116622c3"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
         let selectedPlat = 'tg';
-
-        // LÓGICA DE ADSGRAM (Block 18897)
-        const AdController = window.Adsgram.init({ blockId: "18897" });
-
-        const showAd = () => {
-            AdController.show().then((result) => {
-                console.log("Ad show success", result);
-            }).catch((result) => {
-                console.log("Ad show error", result);
-            });
-        };
-
-        // Mostrar anuncio al entrar (una sola vez)
-        window.addEventListener('load', () => {
-            setTimeout(showAd, 3000); // Espera 3 segundos al entrar para no asustar
-        });
 
         const i18n = {
             es: { channel: "Canal de Enlace", contact: "ID de Contacto", activity: "Actividad", msg: "Propuesta", btn: "PUBLICAR EN MERCADO", toast: "OFERTA ENVIADA", contactBtn: "CONTACTAR" },
@@ -158,64 +125,71 @@
             pt: { channel: "Canal de Link", contact: "ID de Contato", activity: "Atividade", msg: "Proposta", btn: "PUBLICAR NO MERCADO", toast: "OFERTA ENVIADA", contactBtn: "CONTATO" }
         };
 
-        window.changeLang = (lang) => {
+        function changeLang(lang) {
             document.getElementById('txt-channel').innerText = i18n[lang].channel;
             document.getElementById('txt-contact').innerText = i18n[lang].contact;
             document.getElementById('txt-activity').innerText = i18n[lang].activity;
             document.getElementById('txt-msg').innerText = i18n[lang].msg;
             document.getElementById('txt-btn').innerText = i18n[lang].btn;
             document.getElementById('toast').innerText = i18n[lang].toast;
-        };
+            refreshFeed();
+        }
 
-        window.setPlat = (p, el) => {
-            document.querySelectorAll('.social-btn').forEach(b => b.classList.remove('active'));
+        function setPlat(p, el) {
+            var btns = document.getElementsByClassName('social-btn');
+            for(var i=0; i<btns.length; i++) btns[i].classList.remove('active');
             el.classList.add('active');
             selectedPlat = p;
-        };
+        }
 
-        window.publishTrade = () => {
-            const userId = document.getElementById('user-id').value.trim();
-            const tag = document.getElementById('activity-tag').value.trim();
-            const msg = document.getElementById('trade-msg').value.trim();
-            if(!userId || !tag || !msg) return;
+        function publishTrade() {
+            var userId = document.getElementById('user-id').value.trim();
+            var tag = document.getElementById('activity-tag').value.trim();
+            var msg = document.getElementById('trade-msg').value.trim();
+            
+            if(!userId || !tag || !msg) { alert("Rellena todo"); return; }
 
-            push(ref(db, 'elite_trades_v2'), {
+            db.ref('elite_trades_v2').push({
                 u: userId, tag: tag, msg: msg, plat: selectedPlat, t: Date.now()
-            }).then(() => {
+            }).then(function() {
                 document.getElementById('trade-msg').value = "";
-                const toast = document.getElementById('toast');
+                var toast = document.getElementById('toast');
                 toast.classList.add('visible');
-                setTimeout(() => toast.classList.remove('visible'), 2500);
-                
-                // Mostrar anuncio después de publicar (opcional, ayuda a monetizar más)
-                if(Math.random() > 0.5) showAd(); 
+                setTimeout(function(){ toast.classList.remove('visible'); }, 2500);
+                if(window.Adsgram) {
+                    window.Adsgram.init({ blockId: "18897" }).show().catch(function(e){});
+                }
             });
-        };
+        }
 
-        onValue(query(ref(db, 'elite_trades_v2'), orderByChild('t')), (snap) => {
-            const feed = document.getElementById('muro-elite');
+        var globalList = [];
+        function refreshFeed() {
+            var feed = document.getElementById('muro-elite');
+            var lang = document.getElementById('lang-select').value;
             feed.innerHTML = "";
-            let list = [];
-            snap.forEach(c => list.push(c.val()));
-            list.reverse().forEach(v => {
-                const lang = document.querySelector('.lang-selector').value;
-                const contactUrl = v.plat === 'tg' ? `https://t.me/${v.u.replace('@','')}` : 
-                                 v.plat === 'ig' ? `https://instagram.com/${v.u.replace('@','')}` : 
-                                 v.plat === 'tk' ? `https://tiktok.com/@${v.u.replace('@','')}` : v.u;
+            globalList.slice().reverse().forEach(function(v) {
+                var contactUrl = v.plat === 'tg' ? "https://t.me/" + v.u.replace('@','') : 
+                                 v.plat === 'ig' ? "https://instagram.com/" + v.u.replace('@','') : 
+                                 v.plat === 'tk' ? "https://tiktok.com/@" + v.u.replace('@','') : v.u;
 
-                feed.innerHTML += `
-                    <div class="post-card">
-                        <div style="display:flex; justify-content:space-between">
-                            <span class="user-tag">${v.u}</span>
-                            <span class="activity-pill">${v.tag}</span>
-                        </div>
-                        <div class="post-content">${v.msg}</div>
-                        <div style="display:flex; justify-content:space-between; align-items:center">
-                            <span style="font-size:10px; color:#444">${v.plat.toUpperCase()}</span>
-                            <a href="${contactUrl}" class="btn-contact" target="_blank">${i18n[lang].contactBtn}</a>
-                        </div>
-                    </div>`;
+                feed.innerHTML += '<div class="post-card">' +
+                    '<div style="display:flex; justify-content:space-between">' +
+                        '<span class="user-tag">' + v.u + '</span>' +
+                        '<span class="activity-pill">' + v.tag + '</span>' +
+                    '</div>' +
+                    '<div class="post-content">' + v.msg + '</div>' +
+                    '<div style="display:flex; justify-content:space-between; align-items:center">' +
+                        '<span style="font-size:10px; color:#444">' + v.plat.toUpperCase() + '</span>' +
+                        '<a href="' + contactUrl + '" class="btn-contact" target="_blank">' + i18n[lang].contactBtn + '</a>' +
+                    '</div>' +
+                '</div>';
             });
+        }
+
+        db.ref('elite_trades_v2').orderByChild('t').on('value', function(snap) {
+            globalList = [];
+            snap.forEach(function(child) { globalList.push(child.val()); });
+            refreshFeed();
         });
     </script>
 </body>
