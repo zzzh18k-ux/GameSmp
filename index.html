@@ -13,9 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --fb-blue: #1877F2; /* Azul Facebook */
-            --tg-blue: #24A1DE; /* Azul Telegram */
-            --bg-soft: #F0F2F5; /* Gris cremoso de fondo */
+            --fb-blue: #1877F2; 
+            --tg-blue: #24A1DE; 
+            --bg-soft: #F0F2F5; 
             --card-bg: #FFFFFF; 
             --text-main: #1C1E21;
             --text-sub: #65676B;
@@ -23,89 +23,37 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         
-        body { 
-            background: var(--bg-soft); 
-            color: var(--text-main); 
-            height: 100vh; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-        }
+        body { background: var(--bg-soft); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* Selector de Idioma más elegante */
         #lang-overlay { position: fixed; inset: 0; background: rgba(240, 242, 245, 0.9); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); }
         .lang-card { background: #fff; border: none; padding: 30px; border-radius: 25px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .lang-option { background: var(--bg-soft); color: var(--text-main); border: 1px solid #ddd; padding: 15px; border-radius: 15px; margin: 10px 0; cursor: pointer; font-weight: bold; transition: 0.3s; }
         .lang-option:hover { background: var(--fb-blue); color: #fff; }
 
-        .header { 
-            padding: 15px 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: var(--card-bg);
-            border-bottom: 1px solid #ddd;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+        .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 18px; letter-spacing: 1px; }
         .live-stat { color: #31a24c; font-size: 11px; font-weight: 800; background: #e7f3ff; padding: 4px 10px; border-radius: 20px; }
 
-        .categories { 
-            display: flex; gap: 10px; overflow-x: auto; padding: 15px; 
-            background: var(--card-bg); scrollbar-width: none; 
-        }
-        .cat-btn { 
-            background: #e4e6eb; border: none; color: var(--text-sub); 
-            padding: 10px 18px; border-radius: 20px; font-size: 12px; 
-            white-space: nowrap; font-weight: 600; transition: 0.3s;
-        }
-        .cat-btn.active { 
-            background: var(--fb-blue); color: #fff; 
-            box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3); 
-        }
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px; background: var(--card-bg); scrollbar-width: none; }
+        .cat-btn { background: #e4e6eb; border: none; color: var(--text-sub); padding: 10px 18px; border-radius: 20px; font-size: 12px; white-space: nowrap; font-weight: 600; transition: 0.3s; }
+        .cat-btn.active { background: var(--fb-blue); color: #fff; box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3); }
 
         .feed { flex: 1; overflow-y: scroll; padding: 15px; padding-bottom: 100px; }
         
-        /* Tarjetas estilo Facebook/Telegram */
-        .card { 
-            background: var(--card-bg); 
-            border-radius: 15px; 
-            padding: 18px; 
-            margin-bottom: 15px; 
-            border: 1px solid #ddd;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            animation: fadeIn 0.4s ease; 
-        }
+        .card { background: var(--card-bg); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid #ddd; box-shadow: 0 1px 2px rgba(0,0,0,0.1); animation: fadeIn 0.4s ease; }
         .card-title { font-weight: 600; font-size: 14px; color: var(--text-main); line-height: 1.5; margin-bottom: 12px; }
         
         .card-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-sub); margin-top: 12px; border-top: 1px solid #f0f2f5; padding-top: 10px; }
         
-        .btn-main { 
-            background: var(--tg-blue); color: #fff; border: none; 
-            padding: 12px; width: 100%; border-radius: 10px; 
-            font-weight: 700; font-size: 13px; cursor: pointer; 
-            transition: 0.2s; text-transform: uppercase;
-        }
+        .btn-main { background: var(--tg-blue); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
         .btn-main:active { transform: scale(0.98); }
 
-        /* Botón Flotante Plus */
-        .btn-plus { 
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); 
-            background: var(--fb-blue); color: #fff; width: 60px; height: 60px; 
-            border-radius: 50%; font-size: 24px; display: flex; 
-            align-items: center; justify-content: center; 
-            box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4); z-index: 1000; 
-        }
+        .btn-plus { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--fb-blue); color: #fff; width: 60px; height: 60px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4); z-index: 1000; }
 
-        /* Modal con fondo claro */
         .modal { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 5000; display: none; flex-direction: column; padding: 30px; justify-content: center; backdrop-filter: blur(5px); }
         .modal-box { background: #fff; border: 1px solid #ddd; padding: 25px; border-radius: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
         
-        input, textarea { 
-            background: #f0f2f5; border: 1px solid #ddd; color: #1c1e21; 
-            padding: 15px; border-radius: 12px; margin-bottom: 15px; 
-            width: 100%; font-size: 14px; outline: none; 
-        }
+        input, textarea { background: #f0f2f5; border: 1px solid #ddd; color: #1c1e21; padding: 15px; border-radius: 12px; margin-bottom: 15px; width: 100%; font-size: 14px; outline: none; }
         textarea { height: 100px; resize: none; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -148,7 +96,6 @@
     </div>
 
 <script>
-// CONFIGURACIÓN FIREBASE
 const firebaseConfig = { apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", authDomain: "fruithunter-b5d2d.firebaseapp.com", databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com", projectId: "fruithunter-b5d2d", storageBucket: "fruithunter-b5d2d.appspot.com", messagingSenderId: "910354867578", appId: "1:910354867578:web:30c5a30058c621116622c3" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
@@ -228,37 +175,43 @@ function procesarPublicacion() {
     });
 }
 
+// CARGA DE DATOS SIN DUPLICADOS (BUFFER ESTRATEGIA)
 function loadData(category = 'INTERCAMBIO') {
     activeCat = category;
     db.ref('posts').on('value', snap => {
         const feed = document.getElementById('main-feed');
-        feed.innerHTML = '';
         const now = new Date().getTime();
+        let htmlBuffer = ""; // La "bolsa" de contenido
         
         snap.forEach(child => {
             const p = child.val();
             const timeLeft = 86400000 - (now - p.time);
-            if (timeLeft <= 0) { db.ref('posts/' + child.key).remove(); return; }
+            
+            if (timeLeft <= 0) { 
+                db.ref('posts/' + child.key).remove(); 
+                return; 
+            }
 
             if(p.category === category) {
-                const newViews = (p.views || 0) + Math.floor(Math.random() * 2);
-                db.ref('posts/' + child.key).update({ views: newViews });
-
                 const isEx = p.category === 'INTERCAMBIO';
                 const hours = Math.floor(timeLeft / 3600000);
-                feed.innerHTML += `
+                
+                htmlBuffer += `
                 <div class="card">
                     <div class="card-title">${isEx ? p.desc : p.title}</div>
                     <button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
                         ${isEx ? langData[currentLang].viewEx : langData[currentLang].view}
                     </button>
                     <div class="card-meta">
-                        <span><i class="fas fa-eye"></i> ${newViews} vistas</span>
+                        <span><i class="fas fa-eye"></i> ${p.views || 0} vistas</span>
                         <span style="color:#d93025; font-weight:700;"><i class="fas fa-clock"></i> ${hours}h</span>
                     </div>
                 </div>`;
             }
         });
+        
+        // Se limpia y se pega todo de un solo golpe al final
+        feed.innerHTML = htmlBuffer;
     });
 }
 
@@ -266,7 +219,6 @@ function accion(isEx, link, desc, user) {
     const chance = Math.floor(Math.random() * 10) + 1;
     if (chance <= 3 && typeof show_10747271 === 'function') {
         show_10747271().finally(() => { ejecutarSalida(isEx, link, desc, user); });
-        setTimeout(() => ejecutarSalida(isEx, link, desc, user), 2500);
     } else {
         ejecutarSalida(isEx, link, desc, user);
     }
