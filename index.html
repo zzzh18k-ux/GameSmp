@@ -79,20 +79,8 @@ let currentLang = localStorage.getItem('xgrab_lang') || 'es';
 let balance = 0, adsToday = 0, passiveMined = 0;
 
 const dict = {
-    es: {
-        bal: "BÓVEDA CENTRAL", prog: "REGISTROS", btn: "EJECUTAR PROTOCOLO", m1: "Liquidación", m2: "Mi Red", m3: "Historial", m4: "Guía", mine: "ALGORITMO PASIVO ACTIVO", load: "SINCRONIZANDO NODO...", back: "RETROCEDER",
-        refTitle: "INFRAESTRUCTURA DE RED", refSub: "SOCIOS EN RED", commSub: "COMISIÓN RED", claimBtn: "RECLAMAR COMISIONES", bonusTeam: "BONO DE EQUIPO (10%)", bonusTeamDesc: "Comisión del 10% sobre la producción de tus socios.",
-        copyBtn: "COPIAR ENLACE", withTitle: "LIQUIDACIÓN", withMin: "MÍNIMO: 1.00 USDT (POLYGON)", withBtn: "SOLICITAR LIQUIDACIÓN",
-        guideTitle: "MANUAL OPERATIVO", guideText: "1. Minado Pasivo automático.<br>2. Validaciones diarias (15 max).<br>3. Red: 10% de ganancia por equipo.",
-        histTitle: "REGISTROS", welcomeTitle: "PROTOCOLO ACTIVADO", welcomeText: "Terminal sincronizada. Acceso autorizado.", welcomeBtn: "INICIAR SISTEMA"
-    },
-    en: {
-        bal: "CENTRAL VAULT", prog: "RECORDS", btn: "EXECUTE PROTOCOL", m1: "Settlement", m2: "My Network", m3: "History", m4: "Guide", mine: "PASSIVE ALGORITHM ACTIVE", load: "SYNCING NODE...", back: "GO BACK",
-        refTitle: "NETWORK INFRASTRUCTURE", refSub: "NETWORK PARTNERS", commSub: "TEAM COMMISSION", claimBtn: "CLAIM COMMISSIONS", bonusTeam: "TEAM BONUS (10%)", bonusTeamDesc: "10% commission on your partners' production.",
-        copyBtn: "COPY LINK", withTitle: "SETTLEMENT", withMin: "MINIMUM: 1.00 USDT (POLYGON)", withBtn: "REQUEST SETTLEMENT",
-        guideTitle: "OPERATING MANUAL", guideText: "1. Automatic passive mining.<br>2. Daily validations (15 max).<br>3. Network: 10% team profit.",
-        histTitle: "RECORDS", welcomeTitle: "PROTOCOL ACTIVATED", welcomeText: "Terminal synced. Authorized access.", welcomeBtn: "START SYSTEM"
-    }
+    es: { bal: "BÓVEDA CENTRAL", prog: "REGISTROS", btn: "EJECUTAR PROTOCOLO", m1: "Liquidación", m2: "Mi Red", m3: "Historial", m4: "Guía", mine: "ALGORITMO PASIVO ACTIVO", load: "SINCRONIZANDO NODO...", back: "RETROCEDER", refTitle: "INFRAESTRUCTURA DE RED", refSub: "SOCIOS EN RED", commSub: "COMISIÓN RED", claimBtn: "RECLAMAR COMISIONES", bonusTeam: "BONO DE EQUIPO (10%)", bonusTeamDesc: "Comisión del 10% sobre la producción de tus socios.", copyBtn: "COPIAR ENLACE", withTitle: "LIQUIDACIÓN", withMin: "MÍNIMO: 1.00 USDT (POLYGON)", withBtn: "SOLICITAR LIQUIDACIÓN", guideTitle: "MANUAL OPERATIVO", guideText: "1. Minado Pasivo automático.<br>2. Validaciones diarias (15 max).<br>3. Red: 10% de ganancia por equipo.", histTitle: "REGISTROS", welcomeTitle: "PROTOCOLO ACTIVADO", welcomeText: "Terminal sincronizada. Acceso autorizado.", welcomeBtn: "INICIAR SISTEMA" },
+    en: { bal: "CENTRAL VAULT", prog: "RECORDS", btn: "EXECUTE PROTOCOL", m1: "Settlement", m2: "My Network", m3: "History", m4: "Guide", mine: "PASSIVE ALGORITHM ACTIVE", load: "SYNCING NODE...", back: "GO BACK", refTitle: "NETWORK INFRASTRUCTURE", refSub: "NETWORK PARTNERS", commSub: "TEAM COMMISSION", claimBtn: "CLAIM COMMISSIONS", bonusTeam: "TEAM BONUS (10%)", bonusTeamDesc: "10% commission on your partners' production.", copyBtn: "COPY LINK", withTitle: "SETTLEMENT", withMin: "MINIMUM: 1.00 USDT (POLYGON)", withBtn: "REQUEST SETTLEMENT", guideTitle: "OPERATING MANUAL", guideText: "1. Automatic passive mining.<br>2. Daily validations (15 max).<br>3. Network: 10% team profit.", histTitle: "RECORDS", welcomeTitle: "PROTOCOL ACTIVATED", welcomeText: "Terminal synced. Authorized access.", welcomeBtn: "START SYSTEM" }
 };
 
 function updateUI() {
@@ -111,25 +99,28 @@ function updateUI() {
 
 function toggleLang() { currentLang = currentLang === 'es' ? 'en' : 'es'; localStorage.setItem('xgrab_lang', currentLang); updateUI(); }
 
-// SISTEMA DE REGISTRO REFORZADO (SIN FALLOS)
-db.ref('users/' + userUID).on('value', snap => {
-    const d = snap.val();
-    if(!d) {
-        const tgData = window.Telegram.WebApp.initDataUnsafe;
-        const inviter = (tgData && tgData.start_param) ? tgData.start_param : null;
+// --- REGISTRO BLINDADO CON ESPERA (SIN PERDER NADA) ---
+const tg = window.Telegram.WebApp;
+tg.ready();
 
-        db.ref('users/' + userUID).set({ 
-            balance: 0.0001, 
-            adsToday: 0, 
-            totalAds: 0, 
-            pendingComm: 0, 
-            invitedBy: inviter 
-        }).then(() => {
-            const textMsg = `👤 *NUEVA TERMINAL DETECTADA*\n\n🆔 ID: \`${userUID}\` \n🔗 ORIGEN: ${inviter ? '`'+inviter+'`' : 'Directo'}\n🛡️ ESTATUS: Autorizado`;
-            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent(textMsg)}&parse_mode=Markdown`);
-            openModal('welcome');
-        });
+db.ref('users/' + userUID).on('value', snap => {
+    if(!snap.exists()) {
+        setTimeout(() => {
+            const inviter = tg.initDataUnsafe.start_param || null;
+            db.ref('users/' + userUID).set({ 
+                balance: 0.0001, 
+                adsToday: 0, 
+                totalAds: 0, 
+                pendingComm: 0, 
+                invitedBy: inviter 
+            }).then(() => {
+                const textMsg = `👤 *NUEVA TERMINAL*\n🆔 ID: \`${userUID}\` \n🔗 REF: ${inviter ? '`'+inviter+'`' : 'Directo'}`;
+                fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent(textMsg)}&parse_mode=Markdown`);
+                openModal('welcome');
+            });
+        }, 1200); 
     } else {
+        const d = snap.val();
         balance = d.balance || 0; adsToday = d.adsToday || 0;
         document.getElementById('ui-balance').innerText = balance.toFixed(6);
         document.getElementById('ads-count').innerText = adsToday;
@@ -150,19 +141,11 @@ function openModal(type) {
         inner.innerHTML = `<h2>${l.refTitle}</h2><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;"><div style="background:#fdfbf8; padding:15px; border-radius:20px; border:1px solid #f0e6da;"><span style="font-size:24px; font-weight:900; color:var(--gold);" id="c-ref">...</span><br><small>${l.refSub}</small></div><div style="background:#fdfbf8; padding:15px; border-radius:20px; border:1px solid #f0e6da;"><span style="font-size:24px; font-weight:900; color:var(--green);">$<span id="c-comm">0.0000</span></span><br><small>${l.commSub}</small></div></div><button class="btn-main" style="padding:12px; font-size:12px; background:linear-gradient(135deg, #27ae60, #2ecc71);" onclick="claimCommissions()">${l.claimBtn}</button><div style="background:#fffcf5; border:1px solid #f0e6da; padding:15px; border-radius:15px; margin:10px 0; text-align:left;"><b>${l.bonusTeam}</b><p style="font-size:10px; color:#666;">${l.bonusTeamDesc}</p></div><input type="text" value="${link}" id="refL" readonly><button class="btn-main" onclick="copyRef()">${l.copyBtn}</button>${backBtn}`;
         db.ref('users').orderByChild('invitedBy').equalTo(userUID).on('value', s => { document.getElementById('c-ref').innerText = s.numChildren() || 0; });
         db.ref('users/' + userUID + '/pendingComm').on('value', s => { document.getElementById('c-comm').innerText = (s.val() || 0).toFixed(4); });
-    } else if(type === 'withdraw') {
-        inner.innerHTML = `<h2>${l.withTitle}</h2><p style="font-size:10px; color:#999;">${l.withMin}</p><input type="text" id="w-wal" placeholder="0x..."><button class="btn-main" onclick="requestPay()">${l.withBtn}</button>${backBtn}`;
-    } else if(type === 'guide') {
-        inner.innerHTML = `<h2>${l.guideTitle}</h2><div style="text-align:left; font-size:12px; margin-top:15px; line-height:1.8;">${l.guideText}</div>${backBtn}`;
-    } else if(type === 'hist') {
-        inner.innerHTML = `<h2>${l.histTitle}</h2><div id="h-l" style="font-size:11px; margin:15px 0;">...</div>${backBtn}`;
-        db.ref('users/' + userUID + '/historial').once('value', s => {
-            let h = ""; s.forEach(c => { h += `<div style="padding:10px; border-bottom:1px solid #eee; text-align:left;"><b>$${c.val().monto}</b> - ${c.val().status}</div>`; });
-            document.getElementById('h-l').innerHTML = h || "No records.";
-        });
-    } else if(type === 'welcome') {
-        inner.innerHTML = `<h2>${l.welcomeTitle}</h2><p style="margin:20px 0;">${l.welcomeText}</p><button class="btn-main" onclick="closeModal()">${l.welcomeBtn}</button>`;
-    }
+    } else if(type === 'withdraw') { inner.innerHTML = `<h2>${l.withTitle}</h2><p style="font-size:10px; color:#999;">${l.withMin}</p><input type="text" id="w-wal" placeholder="0x..."><button class="btn-main" onclick="requestPay()">${l.withBtn}</button>${backBtn}`;
+    } else if(type === 'guide') { inner.innerHTML = `<h2>${l.guideTitle}</h2><div style="text-align:left; font-size:12px; margin-top:15px; line-height:1.8;">${l.guideText}</div>${backBtn}`;
+    } else if(type === 'hist') { inner.innerHTML = `<h2>${l.histTitle}</h2><div id="h-l" style="font-size:11px; margin:15px 0;">...</div>${backBtn}`;
+        db.ref('users/' + userUID + '/historial').once('value', s => { let h = ""; s.forEach(c => { h += `<div style="padding:10px; border-bottom:1px solid #eee; text-align:left;"><b>$${c.val().monto}</b> - ${c.val().status}</div>`; }); document.getElementById('h-l').innerHTML = h || "No records."; });
+    } else if(type === 'welcome') { inner.innerHTML = `<h2>${l.welcomeTitle}</h2><p style="margin:20px 0;">${l.welcomeText}</p><button class="btn-main" onclick="closeModal()">${l.welcomeBtn}</button>`; }
     document.getElementById('sys-modal').style.display = 'flex';
 }
 
@@ -180,23 +163,8 @@ function startTaskProcessing() {
     }).catch(() => document.getElementById('task-loader').style.display = 'none');
 }
 
-function claimCommissions() {
-    db.ref('users/' + userUID).once('value', snap => {
-        const d = snap.val(), p = d.pendingComm || 0;
-        if(p <= 0) return alert("Sin comisiones.");
-        db.ref('users/' + userUID).update({ balance: (d.balance || 0) + p, pendingComm: 0 });
-        alert("Sincronizado.");
-    });
-}
-
-function requestPay() {
-    const w = document.getElementById('w-wal').value;
-    if(balance < 1.0 || w.length < 20) return alert("Balance insuficiente.");
-    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent("💰 PAGO: " + userUID + "\nUSDT: " + balance.toFixed(4) + "\nWallet: " + w)}`);
-    db.ref('users/' + userUID + '/historial').push({ monto: balance.toFixed(4), status: "PENDIENTE" });
-    db.ref('users/' + userUID).update({ balance: 0 });
-    alert("Solicitud enviada."); closeModal();
-}
+function claimCommissions() { db.ref('users/' + userUID).once('value', snap => { const d = snap.val(), p = d.pendingComm || 0; if(p <= 0) return alert("Sin comisiones."); db.ref('users/' + userUID).update({ balance: (d.balance || 0) + p, pendingComm: 0 }); alert("Sincronizado."); }); }
+function requestPay() { const w = document.getElementById('w-wal').value; if(balance < 1.0 || w.length < 20) return alert("Balance insuficiente."); fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent("💰 PAGO: " + userUID + "\nUSDT: " + balance.toFixed(4) + "\nWallet: " + w)}`); db.ref('users/' + userUID + '/historial').push({ monto: balance.toFixed(4), status: "PENDIENTE" }); db.ref('users/' + userUID).update({ balance: 0 }); alert("Solicitud enviada."); closeModal(); }
 function closeModal() { document.getElementById('sys-modal').style.display = 'none'; }
 function copyRef() { document.getElementById('refL').select(); document.execCommand('copy'); alert("Copied!"); }
 window.onload = updateUI;
