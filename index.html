@@ -66,13 +66,11 @@
 <div id="sys-modal" class="modal"><div class="modal-content" id="modal-inner"></div></div>
 
 <script>
-// CONFIGURACIÓN FIREBASE
 const firebaseConfig = { apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", authDomain: "fruithunter-b5d2d.firebaseapp.com", databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com", projectId: "fruithunter-b5d2d", storageBucket: "fruithunter-b5d2d.appspot.com", messagingSenderId: "910354867578", appId: "1:910354867578:web:30c5a30058c621116622c3" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const TOKEN = "7981775992:AAGmBMWU2jQEL_hstigComicKPUSAqM1qPg", CANAL = "@ALSKSNNSLSMS";
 
-// IDENTIFICACIÓN DE USUARIO
 let userUID = localStorage.getItem('xgrab_uid') || "USR" + Math.floor(Math.random()*89999 + 10000);
 localStorage.setItem('xgrab_uid', userUID);
 document.getElementById('display-id').innerText = userUID;
@@ -80,7 +78,6 @@ document.getElementById('display-id').innerText = userUID;
 let currentLang = localStorage.getItem('xgrab_lang') || 'es';
 let balance = 0, adsToday = 0, passiveMined = 0;
 
-// DICCIONARIO MULTI-IDIOMA
 const dict = {
     es: { bal: "BÓVEDA CENTRAL", prog: "REGISTROS", btn: "EJECUTAR PROTOCOLO", m1: "Liquidación", m2: "Mi Red", m3: "Historial", m4: "Guía", mine: "ALGORITMO PASIVO ACTIVO", load: "SINCRONIZANDO NODO...", back: "RETROCEDER", refTitle: "INFRAESTRUCTURA DE RED", refSub: "SOCIOS EN RED", commSub: "COMISIÓN RED", claimBtn: "RECLAMAR COMISIONES", bonusTeam: "BONO DE EQUIPO (10%)", bonusTeamDesc: "Comisión del 10% sobre la producción de tus socios.", copyBtn: "COPIAR ENLACE", withTitle: "LIQUIDACIÓN", withMin: "MÍNIMO: 1.00 USDT (POLYGON)", withBtn: "SOLICITAR LIQUIDACIÓN", guideTitle: "MANUAL OPERATIVO", guideText: "1. Minado Pasivo automático.<br>2. Validaciones diarias (15 max).<br>3. Red: 10% de ganancia por equipo.", histTitle: "REGISTROS", welcomeTitle: "PROTOCOLO ACTIVADO", welcomeText: "Terminal sincronizada. Acceso autorizado.", welcomeBtn: "INICIAR SISTEMA" },
     en: { bal: "CENTRAL VAULT", prog: "RECORDS", btn: "EXECUTE PROTOCOL", m1: "Settlement", m2: "My Network", m3: "History", m4: "Guide", mine: "PASSIVE ALGORITHM ACTIVE", load: "SYNCING NODE...", back: "GO BACK", refTitle: "NETWORK INFRASTRUCTURE", refSub: "NETWORK PARTNERS", commSub: "TEAM COMMISSION", claimBtn: "CLAIM COMMISSIONS", bonusTeam: "TEAM BONUS (10%)", bonusTeamDesc: "10% commission on your partners' production.", copyBtn: "COPY LINK", withTitle: "SETTLEMENT", withMin: "MINIMUM: 1.00 USDT (POLYGON)", withBtn: "REQUEST SETTLEMENT", guideTitle: "OPERATING MANUAL", guideText: "1. Automatic passive mining.<br>2. Daily validations (15 max).<br>3. Network: 10% team profit.", histTitle: "RECORDS", welcomeTitle: "PROTOCOL ACTIVATED", welcomeText: "Terminal synced. Authorized access.", welcomeBtn: "START SYSTEM" }
@@ -102,13 +99,13 @@ function updateUI() {
 
 function toggleLang() { currentLang = currentLang === 'es' ? 'en' : 'es'; localStorage.setItem('xgrab_lang', currentLang); updateUI(); }
 
-// --- LÓGICA DE REGISTRO CON PAUSA DE SEGURIDAD PARA REFERIDOS ---
+// --- LÓGICA DE REGISTRO CON ESPERA DE SEGURIDAD (IMPORTANTE) ---
 const tg = window.Telegram.WebApp;
 tg.ready();
 
 db.ref('users/' + userUID).on('value', snap => {
     if(!snap.exists()) {
-        // Pausa de 1.2 segundos para asegurar que Telegram envíe el start_param
+        // Pausa necesaria para capturar el referido de Telegram
         setTimeout(() => {
             const inviter = tg.initDataUnsafe.start_param || null;
             db.ref('users/' + userUID).set({ 
@@ -131,14 +128,12 @@ db.ref('users/' + userUID).on('value', snap => {
     }
 });
 
-// MINADO PASIVO VISUAL
 setInterval(() => {
     const tick = 0.00000001; passiveMined += tick; balance += tick;
     document.getElementById('mining-val').innerText = passiveMined.toFixed(8);
     document.getElementById('ui-balance').innerText = balance.toFixed(6);
 }, 1000);
 
-// GESTIÓN DE MODALES
 function openModal(type) {
     const inner = document.getElementById('modal-inner'), l = dict[currentLang];
     const backBtn = `<button class="btn-back" onclick="closeModal()">${l.back}</button>`;
@@ -155,7 +150,6 @@ function openModal(type) {
     document.getElementById('sys-modal').style.display = 'flex';
 }
 
-// PROCESAMIENTO DE ADS
 function startTaskProcessing() {
     if(adsToday >= 15) return alert("Límite diario alcanzado.");
     const ad = window.Adsgram.init({ blockId: "18897" });
