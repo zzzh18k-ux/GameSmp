@@ -3,296 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xgrab Exchange - Maqueta Visual</title>
-    
+    <title>Xgrab PRO - Hub de Tráfico</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg: #0a0a0c; /* Fondo casi negro */
-            --card-bg: #141417; /* Tarjetas gris muy oscuro */
-            --text: #e0e0e0;
-            --accent: #0088cc; /* Azul Telegram para enlaces */
-            --gold: #d4af37; /* Dorado premium para acentos */
-            --time: #ff4d4d; /* Rojo para urgencia de tiempo */
+            --bg: #050505;
+            --card: #121214;
+            --accent: #0088cc;
+            --gold: #ffcc00;
+            --fire: #ff4500;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            height: 100vh;
-            overflow: hidden; /* Evita scroll doble */
-            display: flex;
-            flex-direction: column;
-        }
+        /* --- HEADER ADRENALINA --- */
+        .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
+        .logo { font-weight: 900; font-size: 20px; color: var(--gold); text-shadow: 0 0 10px rgba(255, 204, 0, 0.3); }
+        .live-counter { background: rgba(255, 69, 0, 0.1); border: 1px solid var(--fire); padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; color: var(--fire); display: flex; align-items: center; gap: 5px; animation: glow 2s infinite; }
 
-        /* --- ENCABEZADO (Simulación de Ojos y Usuarios) --- */
-        .header {
-            padding: 15px 20px;
-            background-color: var(--card-bg);
-            border-bottom: 1px solid #222;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* --- CATEGORÍAS (TABS) --- */
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px; scrollbar-width: none; border-bottom: 1px solid #1a1a1a; }
+        .categories::-webkit-scrollbar { display: none; }
+        .cat-btn { background: var(--glass); border: 1px solid #333; color: #888; padding: 8px 16px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; cursor: pointer; }
+        .cat-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 136, 204, 0.4); }
 
-        .logo {
-            font-weight: 800;
-            font-size: 18px;
-            color: var(--gold);
-            letter-spacing: -1px;
-        }
+        /* --- FEED --- */
+        .feed { flex: 1; overflow-y: scroll; padding: 15px; padding-bottom: 100px; }
 
-        .live-status {
-            font-size: 11px;
-            font-weight: 600;
-            color: #888;
-            background: rgba(255,255,255,0.03);
-            padding: 5px 10px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        /* --- TARJETA "EN FUEGO" --- */
+        .card { background: var(--card); border-radius: 20px; padding: 16px; margin-bottom: 15px; border: 1px solid #222; position: relative; overflow: hidden; }
+        .card.hot { border: 1px solid var(--fire); box-shadow: 0 0 15px rgba(255, 69, 0, 0.1); }
+        .card.hot::before { content: "🔥 TRENDING"; position: absolute; top: 0; right: 0; background: var(--fire); color: white; font-size: 8px; font-weight: 900; padding: 3px 8px; border-radius: 0 0 0 10px; }
 
-        .live-dot {
-            height: 8px;
-            width: 8px;
-            background-color: #27ae60; /* Punto verde de online */
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
+        .card-top { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .cat-tag { font-size: 9px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .timer { font-size: 11px; color: #ff4d4d; font-weight: 800; display: flex; align-items: center; gap: 4px; }
 
-        /* --- FEED DE PUBLICACIONES (Scrollable) --- */
-        .feed {
-            flex: 1;
-            padding: 15px;
-            overflow-y: scroll;
-            -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
-            padding-bottom: 80px; /* Espacio para el botón flotante */
-        }
+        .card-title { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
+        .card-meta { font-size: 11px; color: #666; margin-bottom: 15px; display: flex; gap: 10px; }
 
-        /* --- ESTILO DE CADA TARJETA (El Intercambio) --- */
-        .exchange-card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid #1a1a1e;
-            position: relative;
-            transition: transform 0.2s;
-        }
+        .card-actions { display: flex; gap: 10px; }
+        .btn-join { flex: 1; background: #fff; color: #000; border: none; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; }
+        .btn-stats { background: var(--glass); border: none; color: #fff; width: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
 
-        .exchange-card:active {
-            transform: scale(0.98); /* Efecto de toque */
-        }
+        /* --- MENÚ INFERIOR --- */
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #0a0a0a; border-top: 1px solid #222; display: flex; justify-content: space-around; padding: 12px 0; padding-bottom: 25px; }
+        .nav-item { color: #555; font-size: 20px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item span { font-size: 9px; font-weight: 700; }
+        .nav-plus { background: var(--accent); color: white; width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin-top: -30px; border: 4px solid var(--bg); box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4); }
 
-        /* Cabecera de la tarjeta: Usuario y Tiempo */
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            font-size: 12px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .user-avatar {
-            width: 24px;
-            height: 24px;
-            background: #2a2a30;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 10px;
-            color: #666;
-        }
-
-        .time-left {
-            color: var(--time);
-            font-weight: 700;
-            background: rgba(255, 77, 77, 0.1);
-            padding: 3px 8px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* Cuerpo de la tarjeta: Lo que se intercambia */
-        .card-body {
-            margin-bottom: 12px;
-        }
-
-        .exchange-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: white;
-        }
-
-        .exchange-link {
-            font-size: 11px;
-            color: #888;
-            word-break: break-all; /* Rompe links largos */
-            text-decoration: none;
-            display: block;
-        }
-
-        /* Pie de la tarjeta: Botón de Acción y Vistas Fantasmas */
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #1a1a1e;
-        }
-
-        .ghost-views {
-            font-size: 10px;
-            color: #555;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .btn-action {
-            background-color: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        /* --- BOTÓN FLOTANTE (+) --- */
-        .fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--accent), #00aaff);
-            border-radius: 50%;
-            color: white;
-            font-size: 24px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 8px 20px rgba(0, 136, 204, 0.4);
-            border: none;
-            cursor: pointer;
-            z-index: 100;
-        }
-
-        /* --- ANIMACIONES --- */
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(39, 174, 96, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
-        }
-
+        @keyframes glow { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        @keyframes pulse-fire { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div class="logo">XGRAB <span style="font-weight:400;color:#666;">HUB</span></div>
-        <div class="live-status">
-            <span class="live-dot"></span>
-            <span id="simulated-users">1,432 Ojos Mirando</span>
+        <div class="logo">XGRAB <span style="color:#fff;">HUB</span></div>
+        <div class="live-counter">
+            <i class="fas fa-eye"></i> <span id="online-count">1,842</span> MIRANDO
         </div>
     </div>
 
-    <div class="feed" id="main-feed">
-
-        <div class="exchange-card">
-            <div class="card-header">
-                <div class="user-info">
-                    <div class="user-avatar">US</div>
-                    @UserInvicto77
-                </div>
-                <div class="time-left">
-                    <i class="fas fa-history"></i> 14h 22m
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="exchange-title">🎁 Miembro Premium de Hamster Kombat</div>
-                <div class="exchange-link">https://t.me/hamster_kombat_bot?start=kentId123456</div>
-            </div>
-            <div class="card-footer">
-                <div class="ghost-views"><i class="fas fa-eye"></i> 112 vistas</div>
-                <button class="btn-action" onclick="alert('Simulación: Abriendo chat con @UserInvicto77')">CONTACTAR</button>
-            </div>
-        </div>
-
-        <div class="exchange-card">
-            <div class="card-header">
-                <div class="user-info">
-                    <div class="user-avatar">PM</div>
-                    @PedroMaster
-                </div>
-                <div class="time-left">
-                    <i class="fas fa-history"></i> 02h 05m
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="exchange-title">🎮 Vendo cuenta de Steam con 5 juegos</div>
-                <div class="exchange-link">Cambio por USDT o cuenta de Epic Games</div>
-            </div>
-            <div class="card-footer">
-                <div class="ghost-views"><i class="fas fa-eye"></i> 89 vistas</div>
-                <button class="btn-main" style="background-color: var(--accent); border:none; color:white; padding:6px 14px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer;" onclick="alert('Simulación: Abriendo chat con @PedroMaster')">VER OFERTA</button>
-            </div>
-        </div>
-        
-        <div class="exchange-card" style="border-color: rgba(255, 77, 77, 0.3);">
-            <div class="card-header">
-                <div class="user-info">
-                    <div class="user-avatar">L9</div>
-                    @Luis99
-                </div>
-                <div class="time-left" style="color: #ffaa00; background: rgba(255, 170, 0, 0.1);">
-                    <i class="fas fa-history"></i> 00h 15m
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="exchange-title">💎 Link de Gema para TapSwap</div>
-                <div class="exchange-link">https://t.me/tapswap_bot?start=r_987654</div>
-            </div>
-            <div class="card-footer">
-                <div class="ghost-views"><i class="fas fa-eye"></i> 241 vistas</div>
-                <button class="btn-action" style="border-color:#ffaa00; color:#ffaa00;" onclick="alert('Simulación: Abriendo chat con @Luis99')">ÚLTIMO CHANCE</button>
-            </div>
-        </div>
-
+    <div class="categories">
+        <button class="cat-btn active">TODOS</button>
+        <button class="cat-btn">🤖 BOTS</button>
+        <button class="cat-btn">📣 CANALES</button>
+        <button class="cat-btn">👥 GRUPOS</button>
+        <button class="cat-btn">🔥 VISTAS</button>
+        <button class="cat-btn">👤 SEGUIDORES</button>
     </div>
 
-    <button class="fab" onclick="alert('Simulación: Aquí se abriría el formulario para publicar.')">
-        <i class="fas fa-plus"></i>
-    </button>
+    <div class="feed">
+        <div class="card hot">
+            <div class="card-top">
+                <span class="cat-tag">Canales / Miembros</span>
+                <span class="timer"><i class="fas fa-bolt"></i> 02:45:10</span>
+            </div>
+            <div class="card-title">🚀 Canal Cripto Señales VIP</div>
+            <div class="card-meta">
+                <span><i class="fas fa-user-plus"></i> +1.2k Miembros</span>
+                <span><i class="fas fa-fire"></i> 942 Vistas</span>
+            </div>
+            <div class="card-actions">
+                <button class="btn-join" onclick="alert('Abriendo Canal...')">UNIRSE AHORA</button>
+                <button class="btn-stats"><i class="far fa-heart"></i></button>
+            </div>
+        </div>
 
+        <div class="card">
+            <div class="card-top">
+                <span class="cat-tag">Bots / Referidos</span>
+                <span class="timer" style="color:#888;"><i class="fas fa-clock"></i> 22:10:05</span>
+            </div>
+            <div class="card-title">💎 Hamster Kombat - Gold Ref</div>
+            <div class="card-meta">
+                <span><i class="fas fa-robot"></i> Bot</span>
+                <span><i class="fas fa-eye"></i> 145 Vistas</span>
+            </div>
+            <div class="card-actions">
+                <button class="btn-join" style="background:var(--accent); color:white;">PROBAR BOT</button>
+                <button class="btn-stats"><i class="far fa-heart"></i></button>
+            </div>
+        </div>
+
+        <div class="card" style="border-left: 4px solid var(--gold);">
+            <div class="card-top">
+                <span class="cat-tag" style="color:var(--gold);">Vistas / Intercambio</span>
+                <span class="timer"><i class="fas fa-clock"></i> 18:30:45</span>
+            </div>
+            <div class="card-title">👀 Necesito 500 vistas en mi último post</div>
+            <div class="card-meta">
+                <span><i class="fas fa-eye"></i> Pago con Miembros</span>
+            </div>
+            <div class="card-actions">
+                <button class="btn-join">INTERCAMBIAR</button>
+                <button class="btn-stats"><i class="far fa-heart"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <a href="#" class="nav-item active"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-fire"></i><span>Top</span></a>
+        <div class="nav-plus" onclick="alert('Formulario de publicación por Categoría')"><i class="fas fa-plus"></i></div>
+        <a href="#" class="nav-item"><i class="fas fa-bolt"></i><span>Flash</span></a>
+        <a href="#" class="nav-item"><i class="fas fa-user"></i><span>Mi Perfil</span></a>
+    </div>
+
+    <script>
+        // Simulación de adrenalina: Los usuarios online suben y bajan
+        setInterval(() => {
+            const count = document.getElementById('online-count');
+            let current = parseInt(count.innerText.replace(',',''));
+            current += Math.floor(Math.random() * 20) - 10;
+            count.innerText = current.toLocaleString();
+        }, 3000);
+    </script>
 </body>
 </html>
