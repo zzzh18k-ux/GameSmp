@@ -14,51 +14,44 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* HEADER */
         .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
         .logo { font-family: 'Orbitron'; color: var(--accent); font-size: 18px; text-shadow: 0 0 10px var(--accent); }
         .lang-btn { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 5px 8px; border-radius: 8px; font-size: 10px; cursor: pointer; margin-left: 5px; font-weight: 800; }
         .lang-btn.active { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 5px var(--accent); }
 
-        /* CATEGORIAS */
         .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px; background: rgba(255,255,255,0.02); scrollbar-width: none; }
         .cat-btn { background: var(--card); border: 1px solid #222; color: #888; padding: 10px 15px; border-radius: 12px; font-size: 11px; white-space: nowrap; font-weight: bold; }
         .cat-btn.active { background: var(--accent); color: #000; border: none; }
 
-        /* FEED */
         .feed { flex: 1; overflow-y: scroll; padding: 15px; padding-bottom: 100px; }
         .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
         .card-tag { color: var(--accent); font-size: 9px; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; display: block; }
         .card-title { font-size: 16px; font-weight: 800; margin-bottom: 15px; }
         
-        /* BOTONES PREMIUM */
         .btn-main { background: #fff; color: #000; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: 900; font-size: 12px; text-transform: uppercase; cursor: pointer; }
-        .btn-plus { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; width: 60px; height: 60px; border-radius: 20px; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(0,242,255,0.5); border: none; z-index: 1000; animation: pulse 2s infinite; }
+        .btn-plus { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; width: 60px; height: 60px; border-radius: 20px; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(0,242,255,0.5); border: none; z-index: 1000; }
 
-        /* MODALES */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; display: none; flex-direction: column; padding: 30px; justify-content: center; }
         .modal-box { background: #0a0a0a; border: 1px solid var(--accent); padding: 25px; border-radius: 25px; text-align: center; }
         input, select { background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 15px; margin-bottom: 15px; width: 100%; outline: none; }
-
-        @keyframes pulse { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.1); } 100% { transform: translateX(-50%) scale(1); } }
     </style>
 </head>
 <body>
 
     <div id="welcome-modal" class="modal" style="display: flex;">
         <div class="modal-box">
-            <h2 id="tr-welcome-h" style="font-family:'Orbitron'; color:var(--accent); margin-bottom:15px;">X EXCHANGE</h2>
-            <p id="tr-welcome-p" style="font-size:13px; color:#bbb; margin-bottom:20px;">Intercambia referidos y canales. Los interesados te escribirán a Telegram con nuestra marca de agua.</p>
-            <button class="btn-main" id="tr-welcome-btn" onclick="document.getElementById('welcome-modal').style.display='none'">ENTRAR</button>
+            <h2 id="tr-welcome-h">X EXCHANGE</h2>
+            <p id="tr-welcome-p" style="font-size:13px; color:#bbb; margin-bottom:20px; margin-top:10px;"></p>
+            <button class="btn-main" id="tr-welcome-btn" onclick="document.getElementById('welcome-modal').style.display='none'"></button>
         </div>
     </div>
 
     <div class="header">
         <div class="logo">X EXCHANGE</div>
         <div>
-            <button class="lang-btn active" onclick="setLang('es', this)">ES</button>
-            <button class="lang-btn" onclick="setLang('en', this)">EN</button>
-            <button class="lang-btn" onclick="setLang('ru', this)">RU</button>
+            <button class="lang-btn active" id="btn-es" onclick="setLang('es', this)">ES</button>
+            <button class="lang-btn" id="btn-en" onclick="setLang('en', this)">EN</button>
+            <button class="lang-btn" id="btn-ru" onclick="setLang('ru', this)">RU</button>
         </div>
     </div>
 
@@ -75,31 +68,29 @@
 
     <div id="modal-pub" class="modal">
         <div class="modal-box">
-            <h2 id="tr-pub-h" style="font-family:'Orbitron'; color:var(--accent); margin-bottom:20px;">PUBLICAR</h2>
+            <h2 id="tr-pub-h" style="font-family:'Orbitron'; color:var(--accent); margin-bottom:20px;"></h2>
             <select id="p-cat">
                 <option value="BOTS">BOT DE TELEGRAM</option>
                 <option value="CANALES">CANAL / COMUNIDAD</option>
                 <option value="GRUPOS">GRUPO DE CHAT</option>
             </select>
-            <input type="text" id="p-title" placeholder="Título">
+            <input type="text" id="p-title" placeholder="...">
             <input type="text" id="p-link" placeholder="https://t.me/...">
-            <input type="text" id="p-user" placeholder="@TuUsuario">
-            <button class="btn-main" id="tr-pub-btn" onclick="publicar()" style="background:var(--accent);">SUBIR</button>
-            <button onclick="document.getElementById('modal-pub').style.display='none'" id="tr-pub-close" style="margin-top:15px; background:none; border:none; color:#666;">CERRAR</button>
+            <input type="text" id="p-user" placeholder="@Usuario">
+            <button class="btn-main" id="tr-pub-btn" onclick="publicar()" style="background:var(--accent);"></button>
+            <button onclick="document.getElementById('modal-pub').style.display='none'" id="tr-pub-close" style="margin-top:15px; background:none; border:none; color:#666; font-weight:bold;"></button>
         </div>
     </div>
 
 <script>
-// CONFIG FIREBASE (TUS DATOS REPLICADOS)
 const firebaseConfig = { apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", authDomain: "fruithunter-b5d2d.firebaseapp.com", databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com", projectId: "fruithunter-b5d2d", storageBucket: "fruithunter-b5d2d.appspot.com", messagingSenderId: "910354867578", appId: "1:910354867578:web:30c5a30058c621116622c3" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// TRADUCCIONES TOTALES
 const langData = {
-    es: { welcomeH: "X EXCHANGE", welcomeP: "Intercambia referidos y canales. Los interesados te escribirán a Telegram con nuestra marca de agua.", welcomeB: "ENTRAR", all: "TODO", bots: "🤖 BOTS", ch: "📣 CANALES", gr: "👥 GRUPOS", pubH: "PUBLICAR", pubB: "SUBIR", close: "CERRAR", view: "VER INTERCAMBIO", msg: "¡Hola! Vi tu oferta en X Exchange (@ReferralsXchangeBot). Me interesa:" },
-    en: { welcomeH: "X EXCHANGE", welcomeP: "Exchange referrals and channels. People will message you on Telegram with our watermark.", welcomeB: "ENTER", all: "ALL", bots: "🤖 BOTS", ch: "📣 CHANNELS", gr: "👥 GROUPS", pubH: "PUBLISH", pubB: "UPLOAD", close: "CLOSE", view: "VIEW EXCHANGE", msg: "Hello! I saw your offer on X Exchange (@ReferralsXchangeBot). I'm interested in:" },
-    ru: { welcomeH: "X EXCHANGE", welcomeP: "Обмен рефералами и каналами. Люди будут писать вам в Telegram с нашей пометкой.", welcomeB: "ВХОД", all: "ВСЕ", bots: "🤖 БОТЫ", ch: "📣 КАНАЛЫ", gr: "👥 ГРУППЫ", pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", close: "ЗАКРЫТЬ", view: "ПОСМОТРЕТЬ", msg: "Привет! Я видел ваше предложение на X Exchange (@ReferralsXchangeBot). Меня интересует:" }
+    es: { welcomeH: "X EXCHANGE", welcomeP: "Intercambia referidos y canales. Los interesados te escribirán a Telegram con nuestra marca de agua.", welcomeB: "ENTRAR", all: "TODO", bots: "🤖 BOTS", ch: "📣 CANALES", gr: "👥 GRUPOS", pubH: "PUBLICAR", pubB: "SUBIR", close: "CERRAR", view: "VER INTERCAMBIO", msg: "¡Hola! Vi tu oferta en X Exchange (@ReferralsXchangeBot). Me interesa:", phTitle: "Título de oferta", phLink: "Enlace (https://...)", phUser: "Tu @Usuario de Telegram", success: "¡Publicado!" },
+    en: { welcomeH: "X EXCHANGE", welcomeP: "Exchange referrals and channels. People will message you on Telegram with our watermark.", welcomeB: "ENTER", all: "ALL", bots: "🤖 BOTS", ch: "📣 CHANNELS", gr: "👥 GROUPS", pubH: "PUBLISH", pubB: "UPLOAD", close: "CLOSE", view: "VIEW EXCHANGE", msg: "Hello! I saw your offer on X Exchange (@ReferralsXchangeBot). I'm interested in:", phTitle: "Offer title", phLink: "Link (https://...)", phUser: "Your @Username", success: "Published!" },
+    ru: { welcomeH: "X EXCHANGE", welcomeP: "Обмен рефералами и каналами. Люди будут писать вам в Telegram с нашей пометкой.", welcomeB: "ВХОД", all: "ВСЕ", bots: "🤖 БОТЫ", ch: "📣 КАНАЛЫ", gr: "👥 ГРУППЫ", pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", close: "ЗАКРЫТЬ", view: "ПОСМОТРЕТЬ", msg: "Привет! Я видел ваше предложение на X Exchange (@ReferralsXchangeBot). Меня интересует:", phTitle: "Заголовок", phLink: "Ссылка (https://...)", phUser: "Ваш @Username", success: "Опубликовано!" }
 };
 
 let currentLang = 'es';
@@ -107,6 +98,8 @@ let currentLang = 'es';
 function setLang(lang, btn) {
     currentLang = lang;
     const t = langData[lang];
+    
+    // TRADUCIR TODO EL CONTENIDO
     document.getElementById('tr-welcome-h').innerText = t.welcomeH;
     document.getElementById('tr-welcome-p').innerText = t.welcomeP;
     document.getElementById('tr-welcome-btn').innerText = t.welcomeB;
@@ -118,8 +111,13 @@ function setLang(lang, btn) {
     document.getElementById('tr-pub-btn').innerText = t.pubB;
     document.getElementById('tr-pub-close').innerText = t.close;
     
+    // TRADUCIR PLACEHOLDERS
+    document.getElementById('p-title').placeholder = t.phTitle;
+    document.getElementById('p-link').placeholder = t.phLink;
+    document.getElementById('p-user').placeholder = t.phUser;
+    
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if(btn) btn.classList.add('active');
     loadData();
 }
 
@@ -141,16 +139,11 @@ function loadData(category = 'TODOS') {
     });
 }
 
-// FUNCIÓN CON MARCA DE AGUA
 function irAIntercambio(link, titulo, usuario) {
-    const watermarkMsg = encodeURIComponent(`${langData[currentLang].msg} ${titulo}`);
-    
-    // Si el usuario puso su @User, intentamos mandarle mensaje directo con texto
+    const msg = encodeURIComponent(`${langData[currentLang].msg} ${titulo}`);
     if(usuario.includes('@')) {
-        const cleanUser = usuario.replace('@', '');
-        window.open(`https://t.me/${cleanUser}?text=${watermarkMsg}`);
+        window.open(`https://t.me/${usuario.replace('@','') }?text=${msg}`);
     } else {
-        // Si es un link directo de canal/bot, lo abrimos normal
         window.open(link);
     }
 }
@@ -163,10 +156,10 @@ function publicar() {
         user: document.getElementById('p-user').value,
         time: new Date().getTime()
     };
-    if(!data.title || !data.link) return alert("Fill all fields");
+    if(!data.title || !data.link) return;
     db.ref('posts').push(data).then(() => {
         document.getElementById('modal-pub').style.display = 'none';
-        alert("Success!");
+        alert(langData[currentLang].success);
     });
 }
 
@@ -176,7 +169,8 @@ function filterCat(cat, btn) {
     loadData(cat);
 }
 
-loadData();
+// INICIO AUTOMÁTICO EN ESPAÑOL
+setLang('es', document.getElementById('btn-es'));
 </script>
 </body>
 </html>
