@@ -3,147 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xgrab PRO - Hub de Tráfico</title>
+    <title>Xgrab HUB - Intercambio Real</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --bg: #050505;
-            --card: #121214;
-            --accent: #0088cc;
-            --gold: #ffcc00;
-            --fire: #ff4500;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-
-        /* --- HEADER ADRENALINA --- */
+        :root { --bg: #050505; --card: #121214; --accent: #0088cc; --gold: #ffcc00; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: var(--bg); color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
         .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
-        .logo { font-weight: 900; font-size: 20px; color: var(--gold); text-shadow: 0 0 10px rgba(255, 204, 0, 0.3); }
-        .live-counter { background: rgba(255, 69, 0, 0.1); border: 1px solid var(--fire); padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; color: var(--fire); display: flex; align-items: center; gap: 5px; animation: glow 2s infinite; }
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px; border-bottom: 1px solid #1a1a1a; }
+        .cat-btn { background: #222; border: 1px solid #444; color: #888; padding: 8px 15px; border-radius: 10px; font-size: 11px; white-space: nowrap; cursor: pointer; }
+        .cat-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        /* --- CATEGORÍAS (TABS) --- */
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px; scrollbar-width: none; border-bottom: 1px solid #1a1a1a; }
-        .categories::-webkit-scrollbar { display: none; }
-        .cat-btn { background: var(--glass); border: 1px solid #333; color: #888; padding: 8px 16px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; cursor: pointer; }
-        .cat-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 136, 204, 0.4); }
+        .feed { flex: 1; overflow-y: scroll; padding: 15px; padding-bottom: 80px; }
+        .card { background: var(--card); border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #222; }
+        .card-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; color: var(--gold); }
+        .card-link { font-size: 12px; color: #888; margin-bottom: 10px; word-break: break-all; }
+        .btn-go { background: var(--accent); color: white; border: none; padding: 8px; width: 100%; border-radius: 8px; font-weight: bold; text-decoration: none; display: block; text-align: center; }
 
-        /* --- FEED --- */
-        .feed { flex: 1; overflow-y: scroll; padding: 15px; padding-bottom: 100px; }
-
-        /* --- TARJETA "EN FUEGO" --- */
-        .card { background: var(--card); border-radius: 20px; padding: 16px; margin-bottom: 15px; border: 1px solid #222; position: relative; overflow: hidden; }
-        .card.hot { border: 1px solid var(--fire); box-shadow: 0 0 15px rgba(255, 69, 0, 0.1); }
-        .card.hot::before { content: "🔥 TRENDING"; position: absolute; top: 0; right: 0; background: var(--fire); color: white; font-size: 8px; font-weight: 900; padding: 3px 8px; border-radius: 0 0 0 10px; }
-
-        .card-top { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .cat-tag { font-size: 9px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        .timer { font-size: 11px; color: #ff4d4d; font-weight: 800; display: flex; align-items: center; gap: 4px; }
-
-        .card-title { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
-        .card-meta { font-size: 11px; color: #666; margin-bottom: 15px; display: flex; gap: 10px; }
-
-        .card-actions { display: flex; gap: 10px; }
-        .btn-join { flex: 1; background: #fff; color: #000; border: none; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 800; cursor: pointer; }
-        .btn-stats { background: var(--glass); border: none; color: #fff; width: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-
-        /* --- MENÚ INFERIOR --- */
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #0a0a0a; border-top: 1px solid #222; display: flex; justify-content: space-around; padding: 12px 0; padding-bottom: 25px; }
-        .nav-item { color: #555; font-size: 20px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; }
-        .nav-item.active { color: var(--accent); }
-        .nav-item span { font-size: 9px; font-weight: 700; }
-        .nav-plus { background: var(--accent); color: white; width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin-top: -30px; border: 4px solid var(--bg); box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4); }
-
-        @keyframes glow { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
-        @keyframes pulse-fire { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        /* FORMULARIO (MODAL) */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: none; flex-direction: column; padding: 20px; }
+        input, select { background: #1a1a1a; border: 1px solid #333; color: white; padding: 12px; border-radius: 10px; margin-bottom: 15px; width: 100%; }
+        
+        .fab { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; background: var(--accent); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; box-shadow: 0 5px 15px rgba(0,136,204,0.4); border: none; color: white; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="logo">XGRAB <span style="color:#fff;">HUB</span></div>
-        <div class="live-counter">
-            <i class="fas fa-eye"></i> <span id="online-count">1,842</span> MIRANDO
-        </div>
+<div class="header">
+    <div style="font-weight:900; color:var(--gold);">XGRAB HUB</div>
+    <div style="font-size:10px; color:#27ae60;">● <span id="online">1,240</span> ONLINE</div>
+</div>
+
+<div class="categories" id="cat-bar">
+    <button class="cat-btn active" onclick="filterCat('TODOS', this)">TODOS</button>
+    <button class="cat-btn" onclick="filterCat('BOTS', this)">🤖 BOTS</button>
+    <button class="cat-btn" onclick="filterCat('CANALES', this)">📣 CANALES</button>
+    <button class="cat-btn" onclick="filterCat('GRUPOS', this)">👥 GRUPOS</button>
+</div>
+
+<div class="feed" id="main-feed">
     </div>
 
-    <div class="categories">
-        <button class="cat-btn active">TODOS</button>
-        <button class="cat-btn">🤖 BOTS</button>
-        <button class="cat-btn">📣 CANALES</button>
-        <button class="cat-btn">👥 GRUPOS</button>
-        <button class="cat-btn">🔥 VISTAS</button>
-        <button class="cat-btn">👤 SEGUIDORES</button>
-    </div>
+<button class="fab" onclick="document.getElementById('modal').style.display='flex'"><i class="fas fa-plus"></i></button>
 
-    <div class="feed">
-        <div class="card hot">
-            <div class="card-top">
-                <span class="cat-tag">Canales / Miembros</span>
-                <span class="timer"><i class="fas fa-bolt"></i> 02:45:10</span>
-            </div>
-            <div class="card-title">🚀 Canal Cripto Señales VIP</div>
-            <div class="card-meta">
-                <span><i class="fas fa-user-plus"></i> +1.2k Miembros</span>
-                <span><i class="fas fa-fire"></i> 942 Vistas</span>
-            </div>
-            <div class="card-actions">
-                <button class="btn-join" onclick="alert('Abriendo Canal...')">UNIRSE AHORA</button>
-                <button class="btn-stats"><i class="far fa-heart"></i></button>
-            </div>
-        </div>
+<div class="modal" id="modal">
+    <h2 style="margin-bottom:20px;">Publicar Intercambio</h2>
+    <select id="p-cat">
+        <option value="BOTS">🤖 BOT DE TELEGRAM</option>
+        <option value="CANALES">📣 CANAL</option>
+        <option value="GRUPOS">👥 GRUPO</option>
+    </select>
+    <input type="text" id="p-title" placeholder="Título (Ej: Mi Canal Cripto)">
+    <input type="text" id="p-link" placeholder="Link (https://t.me/...)">
+    <input type="text" id="p-user" placeholder="Tu @Usuario de Telegram">
+    <button class="btn-go" onclick="publicar()">SUBIR AHORA</button>
+    <button onclick="document.getElementById('modal').style.display='none'" style="background:none; border:none; color:#666; margin-top:15px;">CANCELAR</button>
+</div>
 
-        <div class="card">
-            <div class="card-top">
-                <span class="cat-tag">Bots / Referidos</span>
-                <span class="timer" style="color:#888;"><i class="fas fa-clock"></i> 22:10:05</span>
-            </div>
-            <div class="card-title">💎 Hamster Kombat - Gold Ref</div>
-            <div class="card-meta">
-                <span><i class="fas fa-robot"></i> Bot</span>
-                <span><i class="fas fa-eye"></i> 145 Vistas</span>
-            </div>
-            <div class="card-actions">
-                <button class="btn-join" style="background:var(--accent); color:white;">PROBAR BOT</button>
-                <button class="btn-stats"><i class="far fa-heart"></i></button>
-            </div>
-        </div>
+<script>
+// CONFIGURACIÓN USANDO TUS DATOS DE LA FOTO
+const firebaseConfig = {
+    apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE",
+    authDomain: "fruithunter-b5d2d.firebaseapp.com",
+    databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com",
+    projectId: "fruithunter-b5d2d",
+    storageBucket: "fruithunter-b5d2d.appspot.com",
+    messagingSenderId: "910354867578",
+    appId: "1:910354867578:web:30c5a30058c621116622c3"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const tg = window.Telegram.WebApp;
 
-        <div class="card" style="border-left: 4px solid var(--gold);">
-            <div class="card-top">
-                <span class="cat-tag" style="color:var(--gold);">Vistas / Intercambio</span>
-                <span class="timer"><i class="fas fa-clock"></i> 18:30:45</span>
-            </div>
-            <div class="card-title">👀 Necesito 500 vistas en mi último post</div>
-            <div class="card-meta">
-                <span><i class="fas fa-eye"></i> Pago con Miembros</span>
-            </div>
-            <div class="card-actions">
-                <button class="btn-join">INTERCAMBIAR</button>
-                <button class="btn-stats"><i class="far fa-heart"></i></button>
-            </div>
-        </div>
-    </div>
+// CARGAR DATOS
+function loadData(category = 'TODOS') {
+    db.ref('posts').on('value', snap => {
+        const feed = document.getElementById('main-feed');
+        feed.innerHTML = '';
+        snap.forEach(child => {
+            const p = child.val();
+            if(category === 'TODOS' || p.category === category) {
+                feed.innerHTML += `
+                <div class="card">
+                    <div style="font-size:9px; color:var(--accent); font-weight:bold;">${p.category}</div>
+                    <div class="card-title">${p.title}</div>
+                    <div class="card-link">${p.link}</div>
+                    <a href="${p.link}" class="btn-go" onclick="window.open('${p.link}')">VISITAR</a>
+                </div>`;
+            }
+        });
+    });
+}
 
-    <div class="nav-bar">
-        <a href="#" class="nav-item active"><i class="fas fa-home"></i><span>Inicio</span></a>
-        <a href="#" class="nav-item"><i class="fas fa-fire"></i><span>Top</span></a>
-        <div class="nav-plus" onclick="alert('Formulario de publicación por Categoría')"><i class="fas fa-plus"></i></div>
-        <a href="#" class="nav-item"><i class="fas fa-bolt"></i><span>Flash</span></a>
-        <a href="#" class="nav-item"><i class="fas fa-user"></i><span>Mi Perfil</span></a>
-    </div>
+// PUBLICAR
+function publicar() {
+    const cat = document.getElementById('p-cat').value;
+    const title = document.getElementById('p-title').value;
+    const link = document.getElementById('p-link').value;
+    const user = document.getElementById('p-user').value;
 
-    <script>
-        // Simulación de adrenalina: Los usuarios online suben y bajan
-        setInterval(() => {
-            const count = document.getElementById('online-count');
-            let current = parseInt(count.innerText.replace(',',''));
-            current += Math.floor(Math.random() * 20) - 10;
-            count.innerText = current.toLocaleString();
-        }, 3000);
-    </script>
+    if(!title || !link) return alert("Llena los campos");
+
+    db.ref('posts').push({
+        category: cat,
+        title: title,
+        link: link,
+        user: user,
+        time: new Date().getTime()
+    }).then(() => {
+        document.getElementById('modal').style.display = 'none';
+        alert("¡Publicado con éxito!");
+    });
+}
+
+function filterCat(cat, btn) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadData(cat);
+}
+
+// SIMULACIÓN DE OJOS
+setInterval(() => {
+    document.getElementById('online').innerText = (1200 + Math.floor(Math.random()*400)).toLocaleString();
+}, 3000);
+
+loadData();
+</script>
 </body>
 </html>
