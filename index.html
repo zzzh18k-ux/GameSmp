@@ -88,7 +88,7 @@ const db = firebase.database();
 const langData = {
     es: { exchange: "INTERCAMBIA COSAS", bots: "🤖 BOTS", ch: "📣 CANALES", gr: "👥 GRUPOS", pubH: "PUBLICAR", pubB: "SUBIR AHORA", close: "CERRAR", view: "VER", viewEx: "CAMBIAR", phManual: "Escribe qué ofreces y buscas...", phUser: "@TuUsuario de Telegram", phTitle: "Nombre", phLink: "t.me/enlace", msgEx: "Vengo de @ReferralsXchangeBot por el intercambio de:", exp: "Expira en: ", ok: "¡Publicado!", spam: "¡Ya publicaste este contenido!" },
     en: { exchange: "EXCHANGE STUFF", bots: "🤖 BOTS", ch: "📣 CHANNELS", gr: "👥 GROUPS", pubH: "PUBLISH", pubB: "UPLOAD NOW", close: "CLOSE", view: "VIEW", viewEx: "EXCHANGE", phManual: "Write what you offer/want...", phUser: "Your Telegram @User", phTitle: "Name", phLink: "t.me/link", msgEx: "I'm coming from @ReferralsXchangeBot for:", exp: "Expires in: ", ok: "Published!", spam: "Content already posted!" },
-    ru: { exchange: "ОБМЕН ВЕЩАМИ", bots: "🤖 БОТЫ", ch: "📣 КАНАЛЫ", gr: "👥 ГРУППЫ", pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", close: "ЗАКРЫТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕНЯТЬ", phManual: "Напишите, что вы предлагаете...", phUser: "Ваш @Username", phTitle: "Название", phLink: "Ссылка", msgEx: "Я из @ReferralsXchangeBot для обмена:", exp: "Истекает через: ", ok: "Опубликовано!", spam: "Уже опубликовано!" }
+    ru: { exchange: "ОБМЕН ВЕЩАМИ", bots: "🤖 БОТЫ", ch: "КАHАЛЫ", gr: "ГРУППЫ", pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", close: "ЗАКРЫТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕНЯТЬ", phManual: "Напишите, что вы предлагаете...", phUser: "Ваш @Username", phTitle: "Название", phLink: "Ссылка", msgEx: "Я из @ReferralsXchangeBot для обмена:", exp: "Истекает через: ", ok: "Опубликовано!", spam: "Уже опубликовано!" }
 };
 
 let currentLang = 'es';
@@ -117,7 +117,18 @@ function openPublish() {
     document.getElementById('modal-pub').style.display = 'flex';
 }
 
+// 1. PUBLICAR CON ANUNCIO OBLIGATORIO (PAGO POR PUESTO)
 function publicar() {
+    if (typeof show_10747271 === 'function') {
+        show_10747271().finally(() => {
+            procesarPublicacion();
+        });
+    } else {
+        procesarPublicacion();
+    }
+}
+
+function procesarPublicacion() {
     const now = new Date().getTime();
     let contentCheck = "";
     const data = { category: activeCat, time: now, views: Math.floor(Math.random()*5)+1 };
@@ -190,16 +201,15 @@ function loadData(category = 'INTERCAMBIO') {
     });
 }
 
-// FUNCIÓN MONETIZADA
+// 2. ACCIÓN CON ANUNCIO ALEATORIO (30% DE PROBABILIDAD)
 function accion(isEx, link, desc, user) {
-    // DISPARA EL ANUNCIO DE MONETAG ANTES DE SALIR
-    if (typeof show_10747271 === 'function') {
-        show_10747271().then(() => {
-            ejecutarSalida(isEx, link, desc, user);
-        }).catch(() => {
-            // Si el anuncio falla o lo bloquean, igual dejamos que el usuario siga
+    const chance = Math.floor(Math.random() * 10) + 1;
+    
+    if (chance <= 3 && typeof show_10747271 === 'function') {
+        show_10747271().finally(() => {
             ejecutarSalida(isEx, link, desc, user);
         });
+        setTimeout(() => ejecutarSalida(isEx, link, desc, user), 2500);
     } else {
         ejecutarSalida(isEx, link, desc, user);
     }
