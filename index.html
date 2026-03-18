@@ -3,198 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Xgrab USDT - Protocolo de Autoridad</title>
+    <title>Xgrab USDT - Sistema Blindado</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
-    <script src='//libtl.com/sdk.js' data-zone='10278425' data-sdk='show_10278425'></script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --bg: #f8f5f0; --panel: #ffffff; --accent: #c99b67; --text: #3d3d3d; --gold: #b0895d; --green: #27ae60; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; height: 100vh; overflow: hidden; }
-        #main-ui { padding: 20px; height: 100%; display: flex; flex-direction: column; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .lang-btn { background: var(--panel); border: 1px solid #eee; padding: 6px 12px; border-radius: 12px; font-size: 10px; font-weight: 800; color: var(--accent); cursor: pointer; }
-        .vault-card { background: var(--panel); border-radius: 30px; padding: 30px 15px; text-align: center; box-shadow: 0 15px 35px rgba(201, 155, 103, 0.15); border: 1px solid rgba(201, 155, 103, 0.1); margin-bottom: 20px; }
-        .vault-amount { font-family: 'Playfair Display', serif; font-size: 45px; color: var(--gold); font-weight: 900; }
-        .mining-section { background: rgba(201, 155, 103, 0.05); border: 1px dashed var(--accent); border-radius: 20px; padding: 15px; margin-bottom: 20px; text-align: center; }
-        .btn-main { background: linear-gradient(135deg, var(--accent), var(--gold)); color: #fff; width: 100%; padding: 20px; border-radius: 20px; border: none; font-weight: 800; font-size: 16px; box-shadow: 0 10px 25px rgba(176, 137, 93, 0.4); margin-bottom: 20px; cursor: pointer; }
-        .btn-back { background: #eee; color: #666; width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 700; font-size: 14px; margin-top: 15px; cursor: pointer; }
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; }
-        .menu-item { background: var(--panel); border-radius: 20px; padding: 18px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.03); cursor: pointer; }
-        .menu-item i { color: var(--accent); font-size: 20px; margin-bottom: 8px; display: block; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(248, 245, 240, 0.98); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: var(--panel); border-radius: 35px; padding: 35px 25px; width: 100%; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.12); max-height: 85vh; overflow-y: auto; }
-        input { width: 100%; padding: 18px; margin: 15px 0; background: #f8f8f8; border: 1px solid #eee; border-radius: 15px; text-align: center; font-family: 'Montserrat'; font-weight: 600; }
-        #task-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 3000; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #eee; border-top: 4px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        :root { --bg: #f8f5f0; --panel: #ffffff; --accent: #c99b67; --gold: #b0895d; }
+        body { background: var(--bg); font-family: 'Montserrat', sans-serif; margin: 0; padding: 20px; text-align: center; }
+        .vault { background: var(--panel); border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .amount { font-size: 40px; font-weight: 700; color: var(--gold); }
+        .btn { background: linear-gradient(135deg, var(--accent), var(--gold)); color: white; border: none; padding: 15px; width: 100%; border-radius: 15px; font-weight: 700; cursor: pointer; }
+        .menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .item { background: white; padding: 15px; border-radius: 15px; font-size: 12px; }
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); display:none; flex-direction:column; justify-content:center; align-items:center; z-index:1000; }
     </style>
 </head>
 <body>
 
-<div id="main-ui">
-    <div class="header">
-        <button class="lang-btn" onclick="toggleLang()"><i class="fas fa-globe"></i> <span id="lang-label">EN</span></button>
-        <div style="font-size:10px; font-weight:700;">NODE_ID: <span id="display-id">---</span></div>
-    </div>
-    <div class="vault-card">
-        <div id="txt-bal-label" style="font-size:11px; color:#a0a0a0; font-weight:700;">BÓVEDA CENTRAL</div>
-        <div class="vault-amount">$<span id="ui-balance">0.000000</span></div>
-        <div style="font-size:10px; color:#c0c0c0; font-weight:700; margin-top:5px;"><span id="txt-prog">REGISTROS</span>: <span id="ads-count">0</span> / 15</div>
-    </div>
-    <div class="mining-section">
-        <div style="font-size:9px; font-weight:800; color:var(--accent); letter-spacing:1px;"><i class="fas fa-microchip"></i> <span id="txt-mine">ALGORITMO PASIVO ACTIVO</span></div>
-        <div style="font-family: monospace; font-size:14px; color: #888; margin-top: 5px;">+$<span id="mining-val">0.00000000</span></div>
-    </div>
-    <button class="btn-main" onclick="startTaskProcessing()" id="txt-btn">EJECUTAR PROTOCOLO</button>
-    <div class="menu-grid">
-        <div class="menu-item" onclick="openModal('withdraw')"><i class="fas fa-wallet"></i><span id="txt-m1">Liquidación</span></div>
-        <div class="menu-item" onclick="openModal('ref')"><i class="fas fa-users-between-lines"></i><span id="txt-m2">Mi Red</span></div>
-        <div class="menu-item" onclick="openModal('hist')"><i class="fas fa-file-invoice-dollar"></i><span id="txt-m3">Historial</span></div>
-        <div class="menu-item" onclick="openModal('guide')"><i class="fas fa-shield-halved"></i><span id="txt-m4">Guía</span></div>
-    </div>
+<div class="vault">
+    <div style="font-size:10px; color:#888;">BÓVEDA ACTIVA</div>
+    <div class="amount">$<span id="ui-balance">0.000000</span></div>
+    <div style="font-size:12px; margin-top:10px;">ID: <span id="display-id">...</span></div>
 </div>
 
-<div id="task-loader"><div class="spinner"></div><h2 id="txt-load">SINCRONIZANDO...</h2></div>
-<div id="sys-modal" class="modal"><div class="modal-content" id="modal-inner"></div></div>
+<button class="btn" onclick="mostrarAnuncio()">EJECUTAR PROTOCOLO</button>
+
+<div class="menu" style="margin-top:20px;">
+    <div class="item" onclick="abrirModal('ref')"><i class="fas fa-users"></i><br>Mi Red</div>
+    <div class="item" onclick="abrirModal('info')"><i class="fas fa-info-circle"></i><br>Guía</div>
+</div>
+
+<div id="miModal" class="modal"></div>
 
 <script>
-// CONFIGURACIÓN FIREBASE
-const firebaseConfig = { apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", authDomain: "fruithunter-b5d2d.firebaseapp.com", databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com", projectId: "fruithunter-b5d2d", storageBucket: "fruithunter-b5d2d.appspot.com", messagingSenderId: "910354867578", appId: "1:910354867578:web:30c5a30058c621116622c3" };
+// 1. CONFIGURACIÓN (SU BASE DE DATOS)
+const firebaseConfig = { 
+    apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", 
+    authDomain: "fruithunter-b5d2d.firebaseapp.com", 
+    databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com", 
+    projectId: "fruithunter-b5d2d", 
+    appId: "1:910354867578:web:30c5a30058c621116622c3" 
+};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const TOKEN = "7981775992:AAGmBMWU2jQEL_hstigComicKPUSAqM1qPg", CANAL = "@ALSKSNNSLSMS";
+const BOT_TOKEN = "7981775992:AAGmBMWU2jQEL_hstigComicKPUSAqM1qPg";
+const CANAL_ID = "@ALSKSNNSLSMS";
 
-let userUID = localStorage.getItem('xgrab_uid') || "USR" + Math.floor(Math.random()*89999 + 10000);
+// 2. IDENTIFICACIÓN Y REFERIDOS
+let userUID = localStorage.getItem('xgrab_uid') || "USR" + Math.floor(Math.random()*89999+10000);
 localStorage.setItem('xgrab_uid', userUID);
 document.getElementById('display-id').innerText = userUID;
 
-let currentLang = localStorage.getItem('xgrab_lang') || 'es';
-let balance = 0, adsToday = 0, passiveMined = 0;
-
-const dict = {
-    es: {
-        bal: "BÓVEDA CENTRAL", prog: "REGISTROS", btn: "EJECUTAR PROTOCOLO", m1: "Liquidación", m2: "Mi Red", m3: "Historial", m4: "Guía", mine: "ALGORITMO PASIVO ACTIVO", load: "SINCRONIZANDO NODO...", back: "RETROCEDER",
-        refTitle: "INFRAESTRUCTURA DE RED", refSub: "SOCIOS EN RED", commSub: "COMISIÓN RED", claimBtn: "RECLAMAR COMISIONES", bonusTeam: "BONO DE EQUIPO (10%)", bonusTeamDesc: "Comisión del 10% sobre la producción de tus socios.",
-        copyBtn: "COPIAR ENLACE", withTitle: "LIQUIDACIÓN", withMin: "MÍNIMO: 1.00 USDT (POLYGON)", withBtn: "SOLICITAR LIQUIDACIÓN",
-        guideTitle: "MANUAL OPERATIVO", guideText: "1. Minado Pasivo automático.<br>2. Validaciones diarias (15 max).<br>3. Red: 10% de ganancia por equipo.",
-        histTitle: "REGISTROS", welcomeTitle: "PROTOCOLO ACTIVADO", welcomeText: "Terminal sincronizada. Acceso autorizado.", welcomeBtn: "INICIAR SISTEMA"
-    },
-    en: {
-        bal: "CENTRAL VAULT", prog: "RECORDS", btn: "EXECUTE PROTOCOL", m1: "Settlement", m2: "My Network", m3: "History", m4: "Guide", mine: "PASSIVE ALGORITHM ACTIVE", load: "SYNCING NODE...", back: "GO BACK",
-        refTitle: "NETWORK INFRASTRUCTURE", refSub: "NETWORK PARTNERS", commSub: "TEAM COMMISSION", claimBtn: "CLAIM COMMISSIONS", bonusTeam: "TEAM BONUS (10%)", bonusTeamDesc: "10% commission on your partners' production.",
-        copyBtn: "COPY LINK", withTitle: "SETTLEMENT", withMin: "MINIMUM: 1.00 USDT (POLYGON)", withBtn: "REQUEST SETTLEMENT",
-        guideTitle: "OPERATING MANUAL", guideText: "1. Automatic passive mining.<br>2. Daily validations (15 max).<br>3. Network: 10% team profit.",
-        histTitle: "RECORDS", welcomeTitle: "PROTOCOL ACTIVATED", welcomeText: "Terminal synced. Authorized access.", welcomeBtn: "START SYSTEM"
-    }
-};
-
-function updateUI() {
-    const l = dict[currentLang];
-    document.getElementById('txt-bal-label').innerText = l.bal;
-    document.getElementById('txt-prog').innerText = l.prog;
-    document.getElementById('txt-btn').innerText = l.btn;
-    document.getElementById('txt-m1').innerText = l.m1;
-    document.getElementById('txt-m2').innerText = l.m2;
-    document.getElementById('txt-m3').innerText = l.m3;
-    document.getElementById('txt-m4').innerText = l.m4;
-    document.getElementById('txt-mine').innerText = l.mine;
-    document.getElementById('txt-load').innerText = l.load;
-    document.getElementById('lang-label').innerText = currentLang === 'es' ? 'EN' : 'ES';
-}
-
-function toggleLang() { currentLang = currentLang === 'es' ? 'en' : 'es'; localStorage.setItem('xgrab_lang', currentLang); updateUI(); }
-
-// REGISTRO REFORZADO CON SDK DE TELEGRAM
 db.ref('users/' + userUID).on('value', snap => {
-    const d = snap.val();
-    if(!d) {
-        const tgData = window.Telegram.WebApp.initDataUnsafe;
-        const inviter = (tgData && tgData.start_param) ? tgData.start_param : null;
+    const data = snap.val();
+    if(!data) {
+        // AQUÍ ESTÁ EL TRUCO: Le pedimos a Telegram el "start_param"
+        const tg = window.Telegram.WebApp;
+        const invitadoPor = tg.initDataUnsafe.start_param || null;
 
-        db.ref('users/' + userUID).set({ balance: 0.0001, adsToday: 0, totalAds: 0, pendingComm: 0, invitedBy: inviter }).then(() => {
-            const textMsg = `👤 *NUEVA TERMINAL DETECTADA*\n\n🆔 ID: \`${userUID}\` \n🔗 ORIGEN: ${inviter ? '`'+inviter+'`' : 'Directo'}\n🛡️ ESTATUS: Autorizado`;
-            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent(textMsg)}&parse_mode=Markdown`);
-            openModal('welcome');
+        db.ref('users/' + userUID).set({
+            balance: 0.0001,
+            invitedBy: invitadoPor,
+            ads: 0
+        }).then(() => {
+            // EL CHISMOSO CANTA AQUÍ
+            const mensaje = `👤 *NUEVO USUARIO*\n🆔 ID: \`${userUID}\` \n🔗 REF POR: ${invitadoPor || 'Nadie'}`;
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CANAL_ID}&text=${encodeURIComponent(mensaje)}&parse_mode=Markdown`);
         });
     } else {
-        balance = d.balance || 0; adsToday = d.adsToday || 0;
-        document.getElementById('ui-balance').innerText = balance.toFixed(6);
-        document.getElementById('ads-count').innerText = adsToday;
+        document.getElementById('ui-balance').innerText = (data.balance || 0).toFixed(6);
     }
 });
 
-setInterval(() => {
-    const tick = 0.00000001; passiveMined += tick; balance += tick;
-    document.getElementById('mining-val').innerText = passiveMined.toFixed(8);
-    document.getElementById('ui-balance').innerText = balance.toFixed(6);
-}, 1000);
-
-function openModal(type) {
-    const inner = document.getElementById('modal-inner'), l = dict[currentLang];
-    const backBtn = `<button class="btn-back" onclick="closeModal()">${l.back}</button>`;
-    if(type === 'ref') {
+function abrirModal(tipo) {
+    const m = document.getElementById('miModal');
+    if(tipo === 'ref') {
         const link = `https://t.me/XgrabUSDTbot/app?startapp=${userUID}`;
-        inner.innerHTML = `<h2>${l.refTitle}</h2><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;"><div style="background:#fdfbf8; padding:15px; border-radius:20px; border:1px solid #f0e6da;"><span style="font-size:24px; font-weight:900; color:var(--gold);" id="c-ref">...</span><br><small>${l.refSub}</small></div><div style="background:#fdfbf8; padding:15px; border-radius:20px; border:1px solid #f0e6da;"><span style="font-size:24px; font-weight:900; color:var(--green);">$<span id="c-comm">0.0000</span></span><br><small>${l.commSub}</small></div></div><button class="btn-main" style="padding:12px; font-size:12px; background:linear-gradient(135deg, #27ae60, #2ecc71);" onclick="claimCommissions()">${l.claimBtn}</button><div class="bonus-box"><b>${l.bonusTeam}</b><p style="font-size:10px; color:#666;">${l.bonusTeamDesc}</p></div><input type="text" value="${link}" id="refL" readonly><button class="btn-main" onclick="copyRef()">${l.copyBtn}</button>${backBtn}`;
-        db.ref('users').orderByChild('invitedBy').equalTo(userUID).on('value', s => { document.getElementById('c-ref').innerText = s.numChildren() || 0; });
-        db.ref('users/' + userUID + '/pendingComm').on('value', s => { document.getElementById('c-comm').innerText = (s.val() || 0).toFixed(4); });
-    } else if(type === 'withdraw') {
-        inner.innerHTML = `<h2>${l.withTitle}</h2><p style="font-size:10px; color:#999;">${l.withMin}</p><input type="text" id="w-wal" placeholder="0x..."><button class="btn-main" onclick="requestPay()">${l.withBtn}</button>${backBtn}`;
-    } else if(type === 'guide') {
-        inner.innerHTML = `<h2>${l.guideTitle}</h2><div style="text-align:left; font-size:12px; margin-top:15px; line-height:1.8;">${l.guideText}</div>${backBtn}`;
-    } else if(type === 'hist') {
-        inner.innerHTML = `<h2>${l.histTitle}</h2><div id="h-l" style="font-size:11px; margin:15px 0;">...</div>${backBtn}`;
-        db.ref('users/' + userUID + '/historial').once('value', s => {
-            let h = ""; s.forEach(c => { h += `<div style="padding:10px; border-bottom:1px solid #eee; text-align:left;"><b>$${c.val().monto}</b> - ${c.val().status}</div>`; });
-            document.getElementById('h-l').innerHTML = h || "No records.";
-        });
-    } else if(type === 'welcome') {
-        inner.innerHTML = `<h2>${l.welcomeTitle}</h2><p style="margin:20px 0;">${l.welcomeText}</p><button class="btn-main" onclick="closeModal()">${l.welcomeBtn}</button>`;
+        m.innerHTML = `<h3>MI RED</h3><p>Invite socios y gane el 10%</p>
+                       <input type="text" value="${link}" style="width:80%; padding:10px; text-align:center;" readonly>
+                       <button class="btn" style="margin-top:10px;" onclick="cerrar()">CERRAR</button>`;
+    } else {
+        m.innerHTML = `<h3>GUÍA</h3><p>Vea anuncios y sume USDT a su bóveda.</p><button class="btn" onclick="cerrar()">CERRAR</button>`;
     }
-    document.getElementById('sys-modal').style.display = 'flex';
+    m.style.display = 'flex';
 }
 
-function startTaskProcessing() {
-    if(adsToday >= 15) return alert("Límite diario alcanzado.");
+function cerrar() { document.getElementById('miModal').style.display = 'none'; }
+
+function mostrarAnuncio() {
     const ad = window.Adsgram.init({ blockId: "18897" });
     ad.show().then(() => {
-        document.getElementById('task-loader').style.display = 'flex';
-        setTimeout(() => {
-            const gain = 0.0008, comm = gain * 0.10;
-            db.ref('users/' + userUID).transaction(u => { if(u) { u.balance = (u.balance || 0) + gain; u.adsToday = (u.adsToday || 0) + 1; } return u; });
-            db.ref('users/' + userUID + '/invitedBy').once('value', s => { const mentor = s.val(); if(mentor) db.ref('users/' + mentor + '/pendingComm').transaction(p => (p || 0) + comm); });
-            document.getElementById('task-loader').style.display = 'none';
-        }, 4000);
-    }).catch(() => document.getElementById('task-loader').style.display = 'none');
+        db.ref('users/' + userUID).transaction(u => {
+            if(u) { u.balance = (u.balance || 0) + 0.0008; u.ads = (u.ads || 0) + 1; }
+            return u;
+        });
+    }).catch(() => alert("Anuncio no disponible"));
 }
-
-function claimCommissions() {
-    db.ref('users/' + userUID).once('value', snap => {
-        const d = snap.val(), p = d.pendingComm || 0;
-        if(p <= 0) return alert("Sin comisiones.");
-        db.ref('users/' + userUID).update({ balance: (d.balance || 0) + p, pendingComm: 0 });
-        alert("Sincronizado.");
-    });
-}
-
-function requestPay() {
-    const w = document.getElementById('w-wal').value;
-    if(balance < 1.0 || w.length < 20) return alert("Balance insuficiente.");
-    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CANAL}&text=${encodeURIComponent("💰 PAGO: " + userUID + "\nUSDT: " + balance.toFixed(4) + "\nWallet: " + w)}`);
-    db.ref('users/' + userUID + '/historial').push({ monto: balance.toFixed(4), status: "PENDIENTE" });
-    db.ref('users/' + userUID).update({ balance: 0 });
-    alert("Solicitud enviada."); closeModal();
-}
-function closeModal() { document.getElementById('sys-modal').style.display = 'none'; }
-function copyRef() { document.getElementById('refL').select(); document.execCommand('copy'); alert("Copied!"); }
-window.onload = updateUI;
 </script>
 </body>
 </html>
