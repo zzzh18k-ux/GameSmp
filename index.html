@@ -108,6 +108,7 @@ const langData = {
 
 let currentLang = 'es';
 let activeCat = 'INTERCAMBIO';
+let isProcessing = false;
 
 function setInitialLang(lang) {
     currentLang = lang;
@@ -133,9 +134,24 @@ function openPublish() {
 }
 
 function publicar() {
+    if (isProcessing) return;
+    isProcessing = true;
+    const btn = document.getElementById('tr-p-b');
+    btn.disabled = true;
+    btn.innerText = "...";
+
+    // Salvavidas: Si el anuncio traba el código, forzamos la subida a los 3 seg
+    const rescueTimer = setTimeout(() => {
+        if (isProcessing) procesarPublicacion();
+    }, 3000);
+
     if (typeof show_10747271 === 'function') {
-        show_10747271().finally(() => { procesarPublicacion(); });
+        show_10747271().finally(() => {
+            clearTimeout(rescueTimer);
+            procesarPublicacion();
+        });
     } else {
+        clearTimeout(rescueTimer);
         procesarPublicacion();
     }
 }
@@ -146,14 +162,20 @@ function procesarPublicacion() {
     const data = { category: activeCat, time: now, views: Math.floor(Math.random()*5)+1 };
     
     if (activeCat === 'INTERCAMBIO') {
-        data.desc = document.getElementById('p-desc').value.trim();
-        data.user = document.getElementById('p-user').value.trim();
-        if (!data.desc || !data.user) return;
+        const descEl = document.getElementById('p-desc');
+        const userEl = document.getElementById('p-user');
+        if(!descEl || !userEl) return resetPub();
+        data.desc = descEl.value.trim();
+        data.user = userEl.value.trim();
+        if (!data.desc || !data.user) return resetPub();
         contentCheck = data.desc.toLowerCase();
     } else {
-        data.title = document.getElementById('p-title').value.trim();
-        data.link = document.getElementById('p-link').value.trim();
-        if (!data.title || !data.link) return;
+        const titleEl = document.getElementById('p-title');
+        const linkEl = document.getElementById('p-link');
+        if(!titleEl || !linkEl) return resetPub();
+        data.title = titleEl.value.trim();
+        data.link = linkEl.value.trim();
+        if (!data.title || !data.link) return resetPub();
         contentCheck = data.link.toLowerCase();
     }
 
@@ -166,36 +188,41 @@ function procesarPublicacion() {
 
         if (repeated) {
             alert(langData[currentLang].spam);
+            resetPub();
         } else {
             db.ref('posts').push(data).then(() => {
                 alert(langData[currentLang].ok);
                 document.getElementById('modal-pub').style.display = 'none';
+                resetPub();
             });
         }
     });
 }
 
-// CARGA DE DATOS SIN DUPLICADOS (BUFFER ESTRATEGIA)
+function resetPub() {
+    isProcessing = false;
+    const btn = document.getElementById('tr-p-b');
+    if(btn) {
+        btn.disabled = false;
+        btn.innerText = langData[currentLang].pubB;
+    }
+}
+
 function loadData(category = 'INTERCAMBIO') {
     activeCat = category;
     db.ref('posts').on('value', snap => {
         const feed = document.getElementById('main-feed');
         const now = new Date().getTime();
-        let htmlBuffer = ""; // La "bolsa" de contenido
+        let htmlBuffer = "";
         
         snap.forEach(child => {
             const p = child.val();
             const timeLeft = 86400000 - (now - p.time);
-            
-            if (timeLeft <= 0) { 
-                db.ref('posts/' + child.key).remove(); 
-                return; 
-            }
+            if (timeLeft <= 0) { db.ref('posts/' + child.key).remove(); return; }
 
             if(p.category === category) {
                 const isEx = p.category === 'INTERCAMBIO';
                 const hours = Math.floor(timeLeft / 3600000);
-                
                 htmlBuffer += `
                 <div class="card">
                     <div class="card-title">${isEx ? p.desc : p.title}</div>
@@ -209,8 +236,6 @@ function loadData(category = 'INTERCAMBIO') {
                 </div>`;
             }
         });
-        
-        // Se limpia y se pega todo de un solo golpe al final
         feed.innerHTML = htmlBuffer;
     });
 }
