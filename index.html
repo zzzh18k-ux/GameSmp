@@ -137,20 +137,32 @@ function publicar() {
     if (isProcessing) return;
     isProcessing = true;
     const btn = document.getElementById('tr-p-b');
-    btn.disabled = true;
-    btn.innerText = "...";
+    if(btn) {
+        btn.disabled = true;
+        btn.innerText = "...";
+    }
 
-    // Salvavidas: Si el anuncio traba el código, forzamos la subida a los 3 seg
+    // SALVAVIDAS: Si a los 3.5 segundos no se ha procesado, forzamos la subida
     const rescueTimer = setTimeout(() => {
-        if (isProcessing) procesarPublicacion();
-    }, 3000);
+        if (isProcessing) {
+            console.log("Rescate activado");
+            procesarPublicacion();
+        }
+    }, 3500);
 
-    if (typeof show_10747271 === 'function') {
-        show_10747271().finally(() => {
+    try {
+        if (typeof show_10747271 === 'function') {
+            show_10747271(); // Lanzamos anuncio
+            // Esperamos 2 segundos de cortesía para el anuncio y publicamos
+            setTimeout(() => {
+                clearTimeout(rescueTimer);
+                if (isProcessing) procesarPublicacion();
+            }, 2000);
+        } else {
             clearTimeout(rescueTimer);
             procesarPublicacion();
-        });
-    } else {
+        }
+    } catch (e) {
         clearTimeout(rescueTimer);
         procesarPublicacion();
     }
@@ -194,7 +206,7 @@ function procesarPublicacion() {
                 alert(langData[currentLang].ok);
                 document.getElementById('modal-pub').style.display = 'none';
                 resetPub();
-            });
+            }).catch(() => resetPub());
         }
     });
 }
@@ -243,7 +255,10 @@ function loadData(category = 'INTERCAMBIO') {
 function accion(isEx, link, desc, user) {
     const chance = Math.floor(Math.random() * 10) + 1;
     if (chance <= 3 && typeof show_10747271 === 'function') {
-        show_10747271().finally(() => { ejecutarSalida(isEx, link, desc, user); });
+        try {
+            show_10747271();
+            setTimeout(() => { ejecutarSalida(isEx, link, desc, user); }, 1500);
+        } catch(e) { ejecutarSalida(isEx, link, desc, user); }
     } else {
         ejecutarSalida(isEx, link, desc, user);
     }
