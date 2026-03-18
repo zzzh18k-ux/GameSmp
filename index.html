@@ -13,6 +13,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
+        /* PANTALLA INICIAL DE IDIOMA */
         #lang-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .lang-card { background: #0a0a0a; border: 1px solid var(--accent); padding: 30px; border-radius: 30px; width: 100%; max-width: 350px; text-align: center; }
         .lang-option { background: var(--card); border: 1px solid #333; padding: 15px; border-radius: 15px; margin: 10px 0; cursor: pointer; font-weight: bold; }
@@ -26,9 +27,8 @@
         .cat-btn.active { background: var(--accent); color: #000; border: none; box-shadow: 0 0 10px var(--accent); }
 
         .feed { flex: 1; overflow-y: scroll; padding: 15px; padding-bottom: 100px; }
-        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); animation: fadeIn 0.4s ease; }
         .card-meta { display: flex; justify-content: space-between; font-size: 10px; color: #555; margin-top: 10px; }
-        .timer { color: #ff4444; font-weight: bold; }
         
         .btn-main { background: #fff; color: #000; border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: 900; font-size: 12px; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
         .btn-plus { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; width: 60px; height: 60px; border-radius: 20px; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(0,242,255,0.5); z-index: 1000; }
@@ -36,6 +36,9 @@
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; display: none; flex-direction: column; padding: 30px; justify-content: center; }
         .modal-box { background: #0a0a0a; border: 1px solid var(--accent); padding: 25px; border-radius: 25px; }
         input, textarea { background: #111; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 15px; margin-bottom: 15px; width: 100%; font-size: 14px; outline: none; }
+        textarea { height: 100px; resize: none; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -51,7 +54,7 @@
 
     <div class="header">
         <div class="logo">X EXCHANGE</div>
-        <div class="live-stat">● <span id="online-count">1,924</span> ONLINE</div>
+        <div class="live-stat">● <span id="online-count">1,940</span> ONLINE</div>
     </div>
 
     <div class="categories">
@@ -70,12 +73,11 @@
             <h2 id="tr-p-h" style="font-family:'Orbitron'; color:var(--accent); margin-bottom:15px; text-align:center;"></h2>
             <div id="form-content"></div>
             <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:var(--accent);"></button>
-            <button onclick="document.getElementById('modal-pub').style.display='none'" id="tr-p-c" style="margin-top:15px; background:none; border:none; color:#666; width:100%;"></button>
+            <button onclick="document.getElementById('modal-pub').style.display='none'" id="tr-p-c" style="margin-top:15px; background:none; border:none; color:#666; width:100%; font-weight:bold;"></button>
         </div>
     </div>
 
 <script>
-// USANDO TUS CREDENCIALES DE LA CAPTURA
 const firebaseConfig = { 
     apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", 
     authDomain: "fruithunter-b5d2d.firebaseapp.com", 
@@ -89,9 +91,9 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 const langData = {
-    es: { exchange: "INTERCAMBIA COSAS", bots: "🤖 BOTS", ch: "📣 CANALES", gr: "👥 GRUPOS", pubH: "PUBLICAR", pubB: "SUBIR AHORA", close: "CERRAR", view: "VER", viewEx: "CAMBIAR", phManual: "Escribe qué ofreces y buscas...", phUser: "@TuUsuario de Telegram", phTitle: "Nombre", phLink: "t.me/enlace", msgEx: "Vengo de @ReferralsXchangeBot por el intercambio de:", exp: "Expira en: ", ok: "¡Publicado!" },
-    en: { exchange: "EXCHANGE STUFF", bots: "🤖 BOTS", ch: "📣 CHANNELS", gr: "👥 GROUPS", pubH: "PUBLISH", pubB: "UPLOAD NOW", close: "CLOSE", view: "VIEW", viewEx: "EXCHANGE", phManual: "Write what you offer/want...", phUser: "Your Telegram @User", phTitle: "Name", phLink: "t.me/link", msgEx: "I'm coming from @ReferralsXchangeBot for:", exp: "Expires in: ", ok: "Published!" },
-    ru: { exchange: "ОБМЕН ВЕЩАМИ", bots: "🤖 БОТЫ", ch: "📣 КАНАЛЫ", gr: "👥 ГРУППЫ", pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", close: "ЗАКРЫТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕНЯТЬ", phManual: "Напишите, что вы предлагаете...", phUser: "Ваш @Username", phTitle: "Название", phLink: "Ссылка", msgEx: "Я из @ReferralsXchangeBot для обмена:", exp: "Истекает через: ", ok: "Опубликовано!" }
+    es: { exchange: "INTERCAMBIA COSAS", bots: "🤖 BOTS", ch: "📣 CANALES", gr: "👥 GRUPOS", pubH: "PUBLICAR", pubB: "SUBIR AHORA", close: "CERRAR", view: "VER", viewEx: "CAMBIAR", phManual: "Escribe qué ofreces y buscas...", phUser: "@TuUsuario de Telegram", phTitle: "Nombre", phLink: "t.me/enlace", msgEx: "Vengo de @ReferralsXchangeBot por el intercambio de:", exp: "Expira en: ", ok: "¡Publicado!", spam: "¡Ya publicaste este contenido!" },
+    en: { exchange: "EXCHANGE STUFF", bots: "🤖 BOTS", ch: "📣 CHANNELS", gr: "👥 GROUPS", pubH: "PUBLISH", pubB: "UPLOAD NOW", close: "CLOSE", view: "VIEW", viewEx: "EXCHANGE", phManual: "Write what you offer/want...", phUser: "Your Telegram @User", phTitle: "Name", phLink: "t.me/link", msgEx: "I'm coming from @ReferralsXchangeBot for:", exp: "Expires in: ", ok: "Published!", spam: "Content already posted!" },
+    ru: { exchange: "ОБМЕН ВЕЩАМИ", bots: "🤖 БОТЫ", ch: "📣 КАНАЛЫ", gr: "👥 ГРУППЫ", pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", close: "ЗАКРЫТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕНЯТЬ", phManual: "Напишите, что вы предлагаете...", phUser: "Ваш @Username", phTitle: "Название", phLink: "Ссылка", msgEx: "Я из @ReferralsXchangeBot для обмена:", exp: "Истекает через: ", ok: "Опубликовано!", spam: "Уже опубликовано!" }
 };
 
 let currentLang = 'es';
@@ -122,22 +124,37 @@ function openPublish() {
 
 function publicar() {
     const now = new Date().getTime();
-    const views = Math.floor(Math.random() * 800) + 200; // Registro en consola
-    const data = { category: activeCat, time: now, views: views };
+    let contentCheck = "";
+    const data = { category: activeCat, time: now, views: Math.floor(Math.random()*5)+1 };
     
     if (activeCat === 'INTERCAMBIO') {
-        data.desc = document.getElementById('p-desc').value;
-        data.user = document.getElementById('p-user').value;
+        data.desc = document.getElementById('p-desc').value.trim();
+        data.user = document.getElementById('p-user').value.trim();
         if (!data.desc || !data.user) return;
+        contentCheck = data.desc.toLowerCase();
     } else {
-        data.title = document.getElementById('p-title').value;
-        data.link = document.getElementById('p-link').value;
+        data.title = document.getElementById('p-title').value.trim();
+        data.link = document.getElementById('p-link').value.trim();
         if (!data.title || !data.link) return;
+        contentCheck = data.link.toLowerCase();
     }
 
-    db.ref('posts').push(data).then(() => {
-        alert(langData[currentLang].ok);
-        document.getElementById('modal-pub').style.display = 'none';
+    // BLOQUEO DE REPETIDOS (ANTI-SPAM)
+    db.ref('posts').once('value', snap => {
+        let repeated = false;
+        snap.forEach(c => {
+            const p = c.val();
+            if ((p.desc || p.link || "").toLowerCase() === contentCheck) repeated = true;
+        });
+
+        if (repeated) {
+            alert(langData[currentLang].spam);
+        } else {
+            db.ref('posts').push(data).then(() => {
+                alert(langData[currentLang].ok);
+                document.getElementById('modal-pub').style.display = 'none';
+            });
+        }
     });
 }
 
@@ -150,25 +167,29 @@ function loadData(category = 'INTERCAMBIO') {
         
         snap.forEach(child => {
             const p = child.val();
-            const timeLeft = 86400000 - (now - p.time); // 24h en ms
+            const timeLeft = 86400000 - (now - p.time);
 
             if (timeLeft <= 0) {
-                db.ref('posts/' + child.key).remove(); // Borrado cada 24h
+                db.ref('posts/' + child.key).remove();
                 return;
             }
 
             if(p.category === category) {
+                // SUBIDA DE VISTAS REALISTA (PROGRESIVA)
+                const newViews = (p.views || 0) + Math.floor(Math.random() * 2);
+                db.ref('posts/' + child.key).update({ views: newViews });
+
                 const isEx = p.category === 'INTERCAMBIO';
                 const hours = Math.floor(timeLeft / 3600000);
                 feed.innerHTML += `
                 <div class="card">
-                    <div style="font-weight:800; font-size:14px;">${isEx ? p.desc : p.title}</div>
+                    <div style="font-weight:800; font-size:14px; line-height:1.4;">${isEx ? p.desc : p.title}</div>
                     <button class="btn-main" style="background:${isEx?'var(--accent)':'#fff'}" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
                         ${isEx ? langData[currentLang].viewEx : langData[currentLang].view}
                     </button>
                     <div class="card-meta">
-                        <span><i class="fas fa-eye"></i> ${p.views}</span>
-                        <span class="timer"><i class="fas fa-hourglass-half"></i> ${langData[currentLang].exp}${hours}h</span>
+                        <span><i class="fas fa-eye"></i> ${newViews}</span>
+                        <span style="color:#ff4444; font-weight:800;"><i class="fas fa-hourglass-half"></i> ${langData[currentLang].exp}${hours}h</span>
                     </div>
                 </div>`;
             }
@@ -192,7 +213,7 @@ function filterCat(cat, btn) {
 }
 
 setInterval(() => {
-    document.getElementById('online-count').innerText = (1950 + Math.floor(Math.random()*100)).toLocaleString();
+    document.getElementById('online-count').innerText = (1940 + Math.floor(Math.random()*60)).toLocaleString();
 }, 4000);
 </script>
 </body>
