@@ -11,72 +11,58 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --fb-blue: #1877F2; --tg-blue: #24A1DE; --bg-soft: #F0F2F5; 
-            --card-bg: #FFFFFF; --text-main: #1C1E21; --text-sub: #65676B;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        :root { --fb-blue: #1877F2; --tg-blue: #24A1DE; --bg-soft: #F0F2F5; --card-bg: #FFFFFF; --text-main: #1C1E21; --text-sub: #65676B; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-soft); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        #lang-overlay { position: fixed; inset: 0; background: rgba(240, 242, 245, 0.9); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); }
-        .lang-card { background: #fff; padding: 30px; border-radius: 25px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .lang-option { background: var(--bg-soft); padding: 15px; border-radius: 15px; margin: 10px 0; cursor: pointer; font-weight: bold; border: 1px solid #ddd; }
-        .lang-option:hover { background: var(--fb-blue); color: #fff; }
-
-        .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid #ddd; }
-        .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 18px; }
-        .live-stat { color: #31a24c; font-size: 11px; font-weight: 800; background: #e7f3ff; padding: 4px 10px; border-radius: 20px; }
-
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px; background: var(--card-bg); scrollbar-width: none; }
+        .header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid #ddd; z-index: 10; }
+        .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 16px; }
+        
+        /* Contenedor de categorías optimizado */
+        .categories { display: flex; gap: 8px; overflow-x: auto; padding: 12px; background: var(--card-bg); border-bottom: 1px solid #eee; }
         .cat-btn { 
-            background: #e4e6eb; border: none; color: var(--text-sub); padding: 10px 18px; border-radius: 20px; 
-            font-size: 12px; white-space: nowrap; font-weight: 600; position: relative; transition: 0.3s;
+            background: #e4e6eb; border: none; color: var(--text-sub); padding: 8px 16px; border-radius: 18px; 
+            font-size: 11px; white-space: nowrap; font-weight: 600; position: relative; flex-shrink: 0;
         }
-        .cat-btn.active { background: var(--fb-blue); color: #fff; box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3); }
+        .cat-btn.active { background: var(--fb-blue); color: #fff; }
         
-        /* Círculo de notificación */
-        .badge { 
-            position: absolute; top: -5px; right: -5px; background: #d93025; color: white; 
-            font-size: 9px; padding: 2px 6px; border-radius: 10px; border: 2px solid #fff; display: none;
-        }
-        .badge.new { background: #31a24c; display: block; } /* Verde si hay nuevo */
-        .badge.count { background: var(--fb-blue); display: block; } /* Azul para el conteo */
+        .badge { position: absolute; top: -4px; right: -2px; font-size: 8px; padding: 2px 5px; border-radius: 8px; color: #fff; display: none; border: 1.5px solid #fff; }
+        .badge.show { display: block; background: #31a24c; } /* Verde para llamar la atención */
 
-        .feed { flex: 1; overflow-y: scroll; padding: 15px; padding-bottom: 100px; }
-        .card { background: var(--card-bg); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid #ddd; animation: fadeIn 0.4s ease; }
-        .card-title { font-weight: 600; font-size: 14px; margin-bottom: 12px; }
-        .card-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-sub); border-top: 1px solid #f0f2f5; padding-top: 10px; }
+        .feed { flex: 1; overflow-y: auto; padding: 12px; -webkit-overflow-scrolling: touch; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #ddd; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .card-title { font-weight: 600; font-size: 13px; margin-bottom: 10px; line-height: 1.4; }
         
-        .btn-main { background: var(--tg-blue); color: #fff; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 700; font-size: 13px; text-transform: uppercase; }
-        .btn-plus { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--fb-blue); color: #fff; width: 60px; height: 60px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4); z-index: 1000; }
+        .btn-main { background: var(--tg-blue); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; }
+        .card-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-sub); margin-top: 10px; padding-top: 8px; border-top: 1px solid #f5f5f5; }
 
-        .modal { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 5000; display: none; flex-direction: column; padding: 30px; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #fff; padding: 25px; border-radius: 25px; border: 1px solid #ddd; }
-        input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 15px; border-radius: 12px; margin-bottom: 15px; width: 100%; outline: none; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-plus { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: var(--fb-blue); color: #fff; width: 55px; height: 55px; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 100; }
+
+        #lang-overlay { position: fixed; inset: 0; background: #fff; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 20px; border-radius: 20px; }
+        input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; outline: none; }
     </style>
 </head>
 <body>
 
     <div id="lang-overlay">
-        <div class="lang-card">
-            <h2 style="font-family:'Orbitron'; color:var(--fb-blue); margin-bottom:20px;">X EXCHANGE</h2>
-            <div class="lang-option" onclick="setInitialLang('es')">🇪🇸 ESPAÑOL</div>
-            <div class="lang-option" onclick="setInitialLang('en')">🇺🇸 ENGLISH</div>
-            <div class="lang-option" onclick="setInitialLang('ru')">🇷🇺 PУССКИЙ</div>
-        </div>
+        <h2 style="font-family:'Orbitron'; color:var(--fb-blue); margin-bottom:30px;">X EXCHANGE</h2>
+        <button class="cat-btn active" style="margin: 10px; width: 200px;" onclick="setInitialLang('es')">🇪🇸 ESPAÑOL</button>
+        <button class="cat-btn active" style="margin: 10px; width: 200px;" onclick="setInitialLang('en')">🇺🇸 ENGLISH</button>
+        <button class="cat-btn active" style="margin: 10px; width: 200px;" onclick="setInitialLang('ru')">🇷🇺 PУССКИЙ</button>
     </div>
 
     <div class="header">
         <div class="logo">X EXCHANGE</div>
-        <div class="live-stat">● <span id="online-count">1,940</span> ONLINE</div>
+        <div style="font-size:10px; color:#31a24c; font-weight:bold;">● <span id="online-count">1,940</span> ONLINE</div>
     </div>
 
     <div class="categories">
-        <button class="cat-btn active" id="tr-c-exchange" onclick="filterCat('INTERCAMBIO', this)"><span id="b-EX" class="badge"></span></button>
-        <button class="cat-btn" id="tr-c-bots" onclick="filterCat('BOTS', this)"><span id="b-BO" class="badge"></span></button>
-        <button class="cat-btn" id="tr-c-ch" onclick="filterCat('CANALES', this)"><span id="b-CA" class="badge"></span></button>
-        <button class="cat-btn" id="tr-c-gr" onclick="filterCat('GRUPOS', this)"><span id="b-GR" class="badge"></span></button>
+        <button class="cat-btn active" id="btn-EX" onclick="filterCat('INTERCAMBIO', this)">Intercambios <span id="n-EX" class="badge"></span></button>
+        <button class="cat-btn" id="btn-BO" onclick="filterCat('BOTS', this)">Bots <span id="n-BO" class="badge"></span></button>
+        <button class="cat-btn" id="btn-CA" onclick="filterCat('CANALES', this)">Canales <span id="n-CA" class="badge"></span></button>
+        <button class="cat-btn" id="btn-GR" onclick="filterCat('GRUPOS', this)">Grupos <span id="n-GR" class="badge"></span></button>
     </div>
 
     <div id="main-feed" class="feed"></div>
@@ -85,10 +71,10 @@
 
     <div id="modal-pub" class="modal">
         <div class="modal-box">
-            <h2 id="tr-p-h" style="font-family:'Orbitron'; color:var(--fb-blue); margin-bottom:15px; text-align:center;"></h2>
+            <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:15px;"></h3>
             <div id="form-content"></div>
-            <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:var(--fb-blue);"></button>
-            <button onclick="document.getElementById('modal-pub').style.display='none'" id="tr-p-c" style="margin-top:15px; background:none; border:none; color:#65676B; width:100%; font-weight:bold;"></button>
+            <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:var(--fb-blue); margin-bottom:10px;"></button>
+            <button onclick="document.getElementById('modal-pub').style.display='none'" style="width:100%; background:none; border:none; color:gray; font-size:12px;">CERRAR</button>
         </div>
     </div>
 
@@ -98,67 +84,59 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 const langData = {
-    es: { exchange: "Intercambios", bots: "🤖 Bots", ch: "📣 Canales", gr: "👥 Grupos", pubH: "PUBLICAR", pubB: "SUBIR AHORA", close: "CERRAR", view: "VER", viewEx: "CAMBIAR", phManual: "Escribe qué ofreces y buscas...", phUser: "@TuUsuario de Telegram", phTitle: "Nombre", phLink: "t.me/enlace", msgEx: "Vengo de @ReferralsXchangeBot por:", ok: "¡Publicado!", spam: "¡Ya publicaste esto!" },
-    en: { exchange: "Exchanges", bots: "🤖 Bots", ch: "📣 Channels", gr: "👥 Groups", pubH: "PUBLISH", pubB: "UPLOAD NOW", close: "CLOSE", view: "VIEW", viewEx: "EXCHANGE", phManual: "Write what you offer...", phUser: "@Username", phTitle: "Name", phLink: "t.me/link", msgEx: "From @ReferralsXchangeBot for:", ok: "Published!", spam: "Already posted!" },
-    ru: { exchange: "Обмены", bots: "🤖 Боты", ch: "Каналы", gr: "Группы", pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", close: "ЗАКРЫТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕНЯТЬ", phManual: "Что предлагаете...", phUser: "@Имя", phTitle: "Имя", phLink: "Ссылка", msgEx: "Из @ReferralsXchangeBot:", ok: "Готово!", spam: "Уже есть!" }
+    es: { pubH: "PUBLICAR", pubB: "SUBIR", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@Usuario", phTitle: "Nombre", phLink: "Link t.me/", msgEx: "Intercambio por:", ok: "¡Listo!", spam: "¡Ya existe!" },
+    en: { pubH: "PUBLISH", pubB: "UPLOAD", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@User", phTitle: "Name", phLink: "t.me/ link", msgEx: "Exchange for:", ok: "Done!", spam: "Exists!" },
+    ru: { pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕНЯТЬ", phManual: "Что предлагаете...", phUser: "@Имя", phTitle: "Имя", phLink: "Link t.me/", msgEx: "Обмен на:", ok: "Готово!", spam: "Уже есть!" }
 };
 
 let currentLang = 'es'; let activeCat = 'INTERCAMBIO'; let isProcessing = false;
 
 function setInitialLang(lang) {
     currentLang = lang; document.getElementById('lang-overlay').style.display = 'none';
-    const t = langData[lang];
-    document.getElementById('tr-c-exchange').innerHTML = `${t.exchange} <span id="b-EX" class="badge"></span>`;
-    document.getElementById('tr-c-bots').innerHTML = `${t.bots} <span id="b-BO" class="badge"></span>`;
-    document.getElementById('tr-c-ch').innerHTML = `${t.ch} <span id="b-CA" class="badge"></span>`;
-    document.getElementById('tr-c-gr').innerHTML = `${t.gr} <span id="b-GR" class="badge"></span>`;
-    document.getElementById('tr-p-h').innerText = t.pubH; document.getElementById('tr-p-b').innerText = t.pubB; document.getElementById('tr-p-c').innerText = t.close;
+    document.getElementById('tr-p-h').innerText = langData[lang].pubH;
+    document.getElementById('tr-p-b').innerText = langData[lang].pubB;
     loadData();
 }
 
 function loadData(category = 'INTERCAMBIO') {
     activeCat = category;
+    db.ref('posts').off(); // Limpiamos escuchas viejas para evitar lentitud
     db.ref('posts').on('value', snap => {
         const feed = document.getElementById('main-feed');
-        const now = new Date().getTime();
-        let htmlBuffer = "";
+        const now = Date.now();
+        let html = "";
         let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
-        let newPosts = { INTERCAMBIO: false, BOTS: false, CANALES: false, GRUPOS: false };
         let allKeys = [];
 
         snap.forEach(child => {
             const p = child.val();
-            const timeLeft = 86400000 - (now - p.time);
-            if (timeLeft <= 0) { db.ref('posts/' + child.key).remove(); return; }
+            const hoursLeft = Math.floor((86400000 - (now - p.time)) / 3600000);
+            if (hoursLeft <= 0) { db.ref('posts/' + child.key).remove(); return; }
 
             counts[p.category]++;
-            if (now - p.time < 3600000) newPosts[p.category] = true; // Nuevo si < 1 hora
-
             if(p.category === category) {
                 allKeys.push(child.key);
                 const isEx = p.category === 'INTERCAMBIO';
-                const hours = Math.floor(timeLeft / 3600000);
-                htmlBuffer += `<div class="card"><div class="card-title">${isEx ? p.desc : p.title}</div><button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">${isEx ? langData[currentLang].viewEx : langData[currentLang].view}</button><div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span><span style="color:#d93025; font-weight:700;"><i class="fas fa-clock"></i> ${hours}h</span></div></div>`;
+                html += `<div class="card"><div class="card-title">${isEx ? p.desc : p.title}</div><button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">${isEx ? langData[currentLang].viewEx : langData[currentLang].view}</button><div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span><span style="color:#d93025;">${hoursLeft}h</span></div></div>`;
             }
         });
-        feed.innerHTML = htmlBuffer;
-        updateBadges(counts, newPosts);
+        feed.innerHTML = html;
+        updateBadges(counts);
         
-        // IMPULSO DE VISTAS: Aumenta una vista al azar cada vez que carga
-        if(allKeys.length > 0) {
-            const randomKey = allKeys[Math.floor(Math.random() * allKeys.length)];
-            db.ref('posts/' + randomKey + '/views').transaction(v => (v || 0) + 1);
+        // Impulso ligero de vistas (1 de cada 5 recargas para no saturar)
+        if(allKeys.length > 0 && Math.random() > 0.8) {
+            db.ref('posts/' + allKeys[Math.floor(Math.random() * allKeys.length)] + '/views').transaction(v => (v || 0) + 1);
         }
     });
 }
 
-function updateBadges(c, n) {
-    const map = { INTERCAMBIO: 'EX', BOTS: 'BO', CANALES: 'CA', GRUPOS: 'GR' };
-    for (let cat in map) {
-        const b = document.getElementById('b-' + map[cat]);
-        if(b) {
+function updateBadges(c) {
+    const ids = { INTERCAMBIO: 'n-EX', BOTS: 'n-BO', CANALES: 'n-CA', GRUPOS: 'n-GR' };
+    for (let cat in ids) {
+        const b = document.getElementById(ids[cat]);
+        if(b) { 
             b.innerText = c[cat];
-            b.className = n[cat] ? "badge new" : (c[cat] > 0 ? "badge count" : "badge");
+            b.className = c[cat] > 0 ? "badge show" : "badge";
         }
     }
 }
@@ -173,52 +151,36 @@ function openPublish() {
 
 function publicar() {
     if (isProcessing) return; isProcessing = true;
-    const btn = document.getElementById('tr-p-b'); if(btn) { btn.disabled = true; btn.innerText = "..."; }
-    const rescue = setTimeout(() => { if (isProcessing) procesarPublicacion(); }, 3500);
-    try {
-        if (typeof show_10747271 === 'function') {
-            show_10747271();
-            setTimeout(() => { clearTimeout(rescue); if (isProcessing) procesarPublicacion(); }, 2000);
-        } else { clearTimeout(rescue); procesarPublicacion(); }
-    } catch (e) { clearTimeout(rescue); procesarPublicacion(); }
+    const btn = document.getElementById('tr-p-b'); btn.innerText = "...";
+    
+    // Publicamos directo y que el anuncio salga si puede
+    if (typeof show_10747271 === 'function') { try { show_10747271(); } catch(e){} }
+    setTimeout(procesarPublicacion, 1000);
 }
 
 function procesarPublicacion() {
-    const now = new Date().getTime();
-    let contentCheck = "";
-    const data = { category: activeCat, time: now, views: Math.floor(Math.random()*15)+5 }; // Inicia con algunas vistas
-    
+    const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*10)+5 };
     if (activeCat === 'INTERCAMBIO') {
         data.desc = document.getElementById('p-desc').value.trim();
         data.user = document.getElementById('p-user').value.trim();
         if (!data.desc || !data.user) return resetPub();
-        contentCheck = data.desc.toLowerCase();
     } else {
         data.title = document.getElementById('p-title').value.trim();
         data.link = document.getElementById('p-link').value.trim();
         if (!data.title || !data.link) return resetPub();
-        contentCheck = data.link.toLowerCase();
     }
-
-    db.ref('posts').once('value', snap => {
-        let repeated = false;
-        snap.forEach(c => { if ((c.val().desc || c.val().link || "").toLowerCase() === contentCheck) repeated = true; });
-        if (repeated) { alert(langData[currentLang].spam); resetPub(); }
-        else { db.ref('posts').push(data).then(() => { alert(langData[currentLang].ok); document.getElementById('modal-pub').style.display='none'; resetPub(); }); }
+    db.ref('posts').push(data).then(() => { 
+        alert(langData[currentLang].ok); 
+        document.getElementById('modal-pub').style.display='none'; 
+        resetPub(); 
     });
 }
 
-function resetPub() { isProcessing = false; const b = document.getElementById('tr-p-b'); if(b){ b.disabled=false; b.innerText=langData[currentLang].pubB; } }
+function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
 function accion(isEx, link, desc, user) {
-    const chance = Math.floor(Math.random() * 10) + 1;
-    if (chance <= 3 && typeof show_10747271 === 'function') {
-        show_10747271(); setTimeout(() => ejecutarSalida(isEx, link, desc, user), 1500);
-    } else { ejecutarSalida(isEx, link, desc, user); }
-}
-
-function ejecutarSalida(isEx, link, desc, user) {
-    if (isEx === 'true') { window.open(`https://t.me/${user.replace('@','')}?text=${encodeURIComponent(langData[currentLang].msgEx + ' "' + desc + '"')}`); }
+    if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
+    if (isEx === 'true') { window.open(`https://t.me/${user.replace('@','')}?text=${encodeURIComponent(langData[currentLang].msgEx + ' ' + desc)}`); }
     else { window.open(link.startsWith('http') ? link : `https://${link}`); }
 }
 
@@ -227,7 +189,7 @@ function filterCat(cat, btn) {
     btn.classList.add('active'); loadData(cat);
 }
 
-setInterval(() => { document.getElementById('online-count').innerText = (1940 + Math.floor(Math.random()*60)).toLocaleString(); }, 4000);
+setInterval(() => { document.getElementById('online-count').innerText = (1940 + Math.floor(Math.random()*40)).toLocaleString(); }, 5000);
 </script>
 </body>
 </html>
