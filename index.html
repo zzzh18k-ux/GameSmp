@@ -18,7 +18,14 @@
         .header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid #ddd; z-index: 10; }
         .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 16px; }
         
-        /* Contenedor de categorías optimizado */
+        /* BOTÓN GUÍA PREMIUM */
+        .btn-guide { 
+            background: #fff; border: 1px solid #ddd; color: var(--text-main); 
+            padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+            display: flex; align-items: center; gap: 5px; cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
         .categories { display: flex; gap: 8px; overflow-x: auto; padding: 12px; background: var(--card-bg); border-bottom: 1px solid #eee; }
         .cat-btn { 
             background: #e4e6eb; border: none; color: var(--text-sub); padding: 8px 16px; border-radius: 18px; 
@@ -27,10 +34,10 @@
         .cat-btn.active { background: var(--fb-blue); color: #fff; }
         
         .badge { position: absolute; top: -4px; right: -2px; font-size: 8px; padding: 2px 5px; border-radius: 8px; color: #fff; display: none; border: 1.5px solid #fff; }
-        .badge.show { display: block; background: #31a24c; } /* Verde para llamar la atención */
+        .badge.show { display: block; background: #31a24c; }
 
         .feed { flex: 1; overflow-y: auto; padding: 12px; -webkit-overflow-scrolling: touch; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #ddd; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #ddd; }
         .card-title { font-weight: 600; font-size: 13px; margin-bottom: 10px; line-height: 1.4; }
         
         .btn-main { background: var(--tg-blue); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; }
@@ -39,8 +46,14 @@
         .btn-plus { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: var(--fb-blue); color: #fff; width: 55px; height: 55px; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 100; }
 
         #lang-overlay { position: fixed; inset: 0; background: #fff; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
-        .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 20px; border-radius: 20px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+        .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 80vh; overflow-y: auto; }
+        
+        /* Estilo Guía */
+        .guide-text { font-size: 12px; color: #444; line-height: 1.6; }
+        .guide-item { margin-bottom: 15px; display: flex; gap: 10px; }
+        .guide-icon { color: var(--fb-blue); font-size: 16px; }
+
         input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; outline: none; }
     </style>
 </head>
@@ -55,7 +68,7 @@
 
     <div class="header">
         <div class="logo">X EXCHANGE</div>
-        <div style="font-size:10px; color:#31a24c; font-weight:bold;">● <span id="online-count">1,940</span> ONLINE</div>
+        <button class="btn-guide" onclick="openGuide()">💎 <span id="tr-guide-btn">GUÍA</span></button>
     </div>
 
     <div class="categories">
@@ -74,7 +87,15 @@
             <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:15px;"></h3>
             <div id="form-content"></div>
             <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:var(--fb-blue); margin-bottom:10px;"></button>
-            <button onclick="document.getElementById('modal-pub').style.display='none'" style="width:100%; background:none; border:none; color:gray; font-size:12px;">CERRAR</button>
+            <button onclick="closeModal('modal-pub')" style="width:100%; background:none; border:none; color:gray; font-size:12px; font-weight:bold;">CERRAR</button>
+        </div>
+    </div>
+
+    <div id="modal-guide" class="modal">
+        <div class="modal-box">
+            <h3 style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-family:'Orbitron';">💎 INFO & GUÍA</h3>
+            <div class="guide-text" id="guide-content"></div>
+            <button class="btn-main" onclick="closeModal('modal-guide')" style="margin-top:20px;">ENTENDIDO</button>
         </div>
     </div>
 
@@ -84,23 +105,59 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 const langData = {
-    es: { pubH: "PUBLICAR", pubB: "SUBIR", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@Usuario", phTitle: "Nombre", phLink: "Link t.me/", msgEx: "Intercambio por:", ok: "¡Listo!", spam: "¡Ya existe!" },
-    en: { pubH: "PUBLISH", pubB: "UPLOAD", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@User", phTitle: "Name", phLink: "t.me/ link", msgEx: "Exchange for:", ok: "Done!", spam: "Exists!" },
-    ru: { pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕНЯТЬ", phManual: "Что предлагаете...", phUser: "@Имя", phTitle: "Имя", phLink: "Link t.me/", msgEx: "Обмен на:", ok: "Готово!", spam: "Уже есть!" }
+    es: { 
+        guideBtn: "GUÍA",
+        pubH: "PUBLICAR", pubB: "SUBIR", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@Usuario", phTitle: "Nombre", phLink: "Link t.me/", msgEx: "Intercambio por:", ok: "¡Listo!", spam: "¡Ya existe!",
+        g1: "<b>Intercambios:</b> Publica lo que ofreces (ropa, objetos, apps) y deja tu @usuario para que te contacten.",
+        g2: "<b>Crecimiento:</b> Promociona tus Canales, Grupos o Bots de Telegram totalmente gratis.",
+        g3: "<b>Limpieza:</b> Todo el contenido se borra automáticamente cada 24 horas para mantener la red fresca.",
+        g4: "<b>Seguridad:</b> X Exchange no se hace responsable por tratos entre usuarios. Recomendamos lugares públicos para entregas físicas."
+    },
+    en: { 
+        guideBtn: "GUIDE",
+        pubH: "PUBLISH", pubB: "UPLOAD", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@User", phTitle: "Name", phLink: "t.me/ link", msgEx: "Exchange for:", ok: "Done!", spam: "Exists!",
+        g1: "<b>Exchanges:</b> Post what you offer (clothes, objects, apps) and leave your @username to be contacted.",
+        g2: "<b>Growth:</b> Promote your Telegram Channels, Groups, or Bots for free.",
+        g3: "<b>Cleanup:</b> All content is automatically deleted every 24 hours to keep the network fresh.",
+        g4: "<b>Disclaimer:</b> X Exchange is not responsible for deals between users. Use caution in physical meetups."
+    },
+    ru: { 
+        guideBtn: "ИНФО",
+        pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕНЯТЬ", phManual: "Что предлагаете...", phUser: "@Имя", phTitle: "Имя", phLink: "Link t.me/", msgEx: "Обмен на:", ok: "Готово!", spam: "Уже есть!",
+        g1: "<b>Обмен:</b> Пишите предложения и свой @username для связи.",
+        g2: "<b>Продвижение:</b> Бесплатно рекламируйте свои каналы, группы и боты.",
+        g3: "<b>Очистка:</b> Все посты удаляются каждые 24 часа для обновления сети.",
+        g4: "<b>Отказ от ответственности:</b> Мы не несем ответственности за сделки. Будьте осторожны."
+    }
 };
 
 let currentLang = 'es'; let activeCat = 'INTERCAMBIO'; let isProcessing = false;
 
 function setInitialLang(lang) {
     currentLang = lang; document.getElementById('lang-overlay').style.display = 'none';
-    document.getElementById('tr-p-h').innerText = langData[lang].pubH;
-    document.getElementById('tr-p-b').innerText = langData[lang].pubB;
+    const t = langData[lang];
+    document.getElementById('tr-guide-btn').innerText = t.guideBtn;
+    document.getElementById('tr-p-h').innerText = t.pubH;
+    document.getElementById('tr-p-b').innerText = t.pubB;
     loadData();
 }
 
+function openGuide() {
+    const t = langData[currentLang];
+    document.getElementById('guide-content').innerHTML = `
+        <div class="guide-item"><i class="fas fa-sync guide-icon"></i><p>${t.g1}</p></div>
+        <div class="guide-item"><i class="fas fa-chart-line guide-icon"></i><p>${t.g2}</p></div>
+        <div class="guide-item"><i class="fas fa-bolt guide-icon"></i><p>${t.g3}</p></div>
+        <div class="guide-item"><i class="fas fa-shield-alt guide-icon"></i><p style="color:#d93025; font-weight:600;">${t.g4}</p></div>
+    `;
+    document.getElementById('modal-guide').style.display = 'flex';
+}
+
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
 function loadData(category = 'INTERCAMBIO') {
     activeCat = category;
-    db.ref('posts').off(); // Limpiamos escuchas viejas para evitar lentitud
+    db.ref('posts').off();
     db.ref('posts').on('value', snap => {
         const feed = document.getElementById('main-feed');
         const now = Date.now();
@@ -112,18 +169,15 @@ function loadData(category = 'INTERCAMBIO') {
             const p = child.val();
             const hoursLeft = Math.floor((86400000 - (now - p.time)) / 3600000);
             if (hoursLeft <= 0) { db.ref('posts/' + child.key).remove(); return; }
-
             counts[p.category]++;
             if(p.category === category) {
                 allKeys.push(child.key);
                 const isEx = p.category === 'INTERCAMBIO';
-                html += `<div class="card"><div class="card-title">${isEx ? p.desc : p.title}</div><button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">${isEx ? langData[currentLang].viewEx : langData[currentLang].view}</button><div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span><span style="color:#d93025;">${hoursLeft}h</span></div></div>`;
+                html += `<div class="card"><div class="card-title">${isEx ? p.desc : p.title}</div><button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">${isEx ? langData[currentLang].viewEx : langData[currentLang].view}</button><div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span><span style="color:#d93025; font-weight:700;">${hoursLeft}h</span></div></div>`;
             }
         });
-        feed.innerHTML = html;
+        feed.innerHTML = html || `<p style="text-align:center; color:gray; font-size:12px; margin-top:20px;">No hay publicaciones aún. ¡Sé el primero!</p>`;
         updateBadges(counts);
-        
-        // Impulso ligero de vistas (1 de cada 5 recargas para no saturar)
         if(allKeys.length > 0 && Math.random() > 0.8) {
             db.ref('posts/' + allKeys[Math.floor(Math.random() * allKeys.length)] + '/views').transaction(v => (v || 0) + 1);
         }
@@ -134,10 +188,7 @@ function updateBadges(c) {
     const ids = { INTERCAMBIO: 'n-EX', BOTS: 'n-BO', CANALES: 'n-CA', GRUPOS: 'n-GR' };
     for (let cat in ids) {
         const b = document.getElementById(ids[cat]);
-        if(b) { 
-            b.innerText = c[cat];
-            b.className = c[cat] > 0 ? "badge show" : "badge";
-        }
+        if(b) { b.innerText = c[cat]; b.className = c[cat] > 0 ? "badge show" : "badge"; }
     }
 }
 
@@ -151,9 +202,7 @@ function openPublish() {
 
 function publicar() {
     if (isProcessing) return; isProcessing = true;
-    const btn = document.getElementById('tr-p-b'); btn.innerText = "...";
-    
-    // Publicamos directo y que el anuncio salga si puede
+    document.getElementById('tr-p-b').innerText = "...";
     if (typeof show_10747271 === 'function') { try { show_10747271(); } catch(e){} }
     setTimeout(procesarPublicacion, 1000);
 }
@@ -189,7 +238,11 @@ function filterCat(cat, btn) {
     btn.classList.add('active'); loadData(cat);
 }
 
-setInterval(() => { document.getElementById('online-count').innerText = (1940 + Math.floor(Math.random()*40)).toLocaleString(); }, 5000);
+setInterval(() => {
+    const online = (1940 + Math.floor(Math.random()*40)).toLocaleString();
+    const el = document.getElementById('online-count');
+    if(el) el.innerText = online;
+}, 5000);
 </script>
 </body>
 </html>
