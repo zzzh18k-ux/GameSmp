@@ -16,15 +16,21 @@
         body { background: var(--bg-soft); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
         .header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid #ddd; z-index: 10; }
-        .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 16px; }
+        .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 16px; letter-spacing: 1px; }
         
-        /* BOTÓN GUÍA PREMIUM */
+        /* BOTÓN GUÍA ESTILO PREMIUM */
         .btn-guide { 
-            background: #fff; border: 1px solid #ddd; color: var(--text-main); 
-            padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
-            display: flex; align-items: center; gap: 5px; cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: linear-gradient(145deg, #ffffff, #f0f0f0); border: 1px solid #d1d1d1; color: var(--text-main); 
+            padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 800;
+            display: flex; align-items: center; gap: 6px; cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.07); transition: 0.2s;
         }
+        .btn-guide i { color: #007AFF; font-size: 13px; text-shadow: 0 0 5px rgba(0,122,255,0.3); }
+
+        /* CONTADOR ONLINE */
+        .online-status { font-size: 10px; color: #31a24c; font-weight: 800; padding: 5px 15px; background: #fff; display: flex; align-items: center; gap: 5px; border-bottom: 1px solid #eee; }
+        .dot { height: 6px; width: 6px; background-color: #31a24c; border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
         .categories { display: flex; gap: 8px; overflow-x: auto; padding: 12px; background: var(--card-bg); border-bottom: 1px solid #eee; }
         .cat-btn { 
@@ -49,12 +55,11 @@
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
         .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 80vh; overflow-y: auto; }
         
-        /* Estilo Guía */
         .guide-text { font-size: 12px; color: #444; line-height: 1.6; }
         .guide-item { margin-bottom: 15px; display: flex; gap: 10px; }
-        .guide-icon { color: var(--fb-blue); font-size: 16px; }
+        .guide-icon { color: var(--fb-blue); font-size: 16px; min-width: 20px; text-align: center; }
 
-        input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; outline: none; }
+        input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; outline: none; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -68,7 +73,14 @@
 
     <div class="header">
         <div class="logo">X EXCHANGE</div>
-        <button class="btn-guide" onclick="openGuide()">💎 <span id="tr-guide-btn">GUÍA</span></button>
+        <button class="btn-guide" onclick="openGuide()">
+            <i class="fas fa-gem"></i>
+            <span id="tr-guide-btn">GUÍA</span>
+        </button>
+    </div>
+
+    <div class="online-status">
+        <span class="dot"></span> <span id="online-count">1,940</span> ONLINE
     </div>
 
     <div class="categories">
@@ -84,18 +96,18 @@
 
     <div id="modal-pub" class="modal">
         <div class="modal-box">
-            <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:15px;"></h3>
+            <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:15px; font-weight:800;"></h3>
             <div id="form-content"></div>
-            <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:var(--fb-blue); margin-bottom:10px;"></button>
-            <button onclick="closeModal('modal-pub')" style="width:100%; background:none; border:none; color:gray; font-size:12px; font-weight:bold;">CERRAR</button>
+            <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:var(--fb-blue); margin-bottom:10px; padding:14px;"></button>
+            <button onclick="closeModal('modal-pub')" style="width:100%; background:none; border:none; color:gray; font-size:12px; font-weight:bold; margin-top:10px;">CERRAR</button>
         </div>
     </div>
 
     <div id="modal-guide" class="modal">
         <div class="modal-box">
-            <h3 style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-family:'Orbitron';">💎 INFO & GUÍA</h3>
+            <h3 style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-family:'Orbitron'; font-size:16px;">💎 INFO & GUÍA</h3>
             <div class="guide-text" id="guide-content"></div>
-            <button class="btn-main" onclick="closeModal('modal-guide')" style="margin-top:20px;">ENTENDIDO</button>
+            <button class="btn-main" onclick="closeModal('modal-guide')" style="margin-top:20px; background:#000;">ENTENDIDO</button>
         </div>
     </div>
 
@@ -107,27 +119,19 @@ const db = firebase.database();
 const langData = {
     es: { 
         guideBtn: "GUÍA",
-        pubH: "PUBLICAR", pubB: "SUBIR", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@Usuario", phTitle: "Nombre", phLink: "Link t.me/", msgEx: "Intercambio por:", ok: "¡Listo!", spam: "¡Ya existe!",
-        g1: "<b>Intercambios:</b> Publica lo que ofreces (ropa, objetos, apps) y deja tu @usuario para que te contacten.",
-        g2: "<b>Crecimiento:</b> Promociona tus Canales, Grupos o Bots de Telegram totalmente gratis.",
-        g3: "<b>Limpieza:</b> Todo el contenido se borra automáticamente cada 24 horas para mantener la red fresca.",
-        g4: "<b>Seguridad:</b> X Exchange no se hace responsable por tratos entre usuarios. Recomendamos lugares públicos para entregas físicas."
+        pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Link t.me/...", msgEx: "Intercambio por:", ok: "¡Listo!",
+        g1: "<b>Intercambios:</b> Publica lo que ofreces y tu @usuario. Los tratos son directos por Telegram.",
+        g2: "<b>Crecimiento:</b> Sube tus Canales o Grupos para conseguir seguidores reales gratis.",
+        g3: "<b>Auto-Limpieza:</b> Los posts se borran cada 24 horas. ¡Mantén tu oferta actualizada!",
+        g4: "<b>Responsabilidad:</b> No nos hacemos responsables por negocios fallidos. Verifica siempre con quién tratas."
     },
     en: { 
         guideBtn: "GUIDE",
-        pubH: "PUBLISH", pubB: "UPLOAD", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@User", phTitle: "Name", phLink: "t.me/ link", msgEx: "Exchange for:", ok: "Done!", spam: "Exists!",
-        g1: "<b>Exchanges:</b> Post what you offer (clothes, objects, apps) and leave your @username to be contacted.",
-        g2: "<b>Growth:</b> Promote your Telegram Channels, Groups, or Bots for free.",
-        g3: "<b>Cleanup:</b> All content is automatically deleted every 24 hours to keep the network fresh.",
-        g4: "<b>Disclaimer:</b> X Exchange is not responsible for deals between users. Use caution in physical meetups."
-    },
-    ru: { 
-        guideBtn: "ИНФО",
-        pubH: "ОПУБЛИКОВАТЬ", pubB: "ЗАГРУЗИТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕНЯТЬ", phManual: "Что предлагаете...", phUser: "@Имя", phTitle: "Имя", phLink: "Link t.me/", msgEx: "Обмен на:", ok: "Готово!", spam: "Уже есть!",
-        g1: "<b>Обмен:</b> Пишите предложения и свой @username для связи.",
-        g2: "<b>Продвижение:</b> Бесплатно рекламируйте свои каналы, группы и боты.",
-        g3: "<b>Очистка:</b> Все посты удаляются каждые 24 часа для обновления сети.",
-        g4: "<b>Отказ от ответственности:</b> Мы не несем ответственности за сделки. Будьте осторожны."
+        pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "t.me/ link", msgEx: "Exchange for:", ok: "Done!",
+        g1: "<b>Exchanges:</b> Post your offers and @username. Deals are direct via Telegram.",
+        g2: "<b>Growth:</b> Upload Channels or Groups to get free real followers.",
+        g3: "<b>Auto-Cleanup:</b> Posts are deleted every 24 hours. Keep your offers fresh!",
+        g4: "<b>Disclaimer:</b> We are not responsible for failed deals. Always verify who you deal with."
     }
 };
 
@@ -145,10 +149,10 @@ function setInitialLang(lang) {
 function openGuide() {
     const t = langData[currentLang];
     document.getElementById('guide-content').innerHTML = `
-        <div class="guide-item"><i class="fas fa-sync guide-icon"></i><p>${t.g1}</p></div>
-        <div class="guide-item"><i class="fas fa-chart-line guide-icon"></i><p>${t.g2}</p></div>
-        <div class="guide-item"><i class="fas fa-bolt guide-icon"></i><p>${t.g3}</p></div>
-        <div class="guide-item"><i class="fas fa-shield-alt guide-icon"></i><p style="color:#d93025; font-weight:600;">${t.g4}</p></div>
+        <div class="guide-item"><i class="fas fa-comments guide-icon"></i><p>${t.g1}</p></div>
+        <div class="guide-item"><i class="fas fa-rocket guide-icon"></i><p>${t.g2}</p></div>
+        <div class="guide-item"><i class="fas fa-clock guide-icon"></i><p>${t.g3}</p></div>
+        <div class="guide-item"><i class="fas fa-exclamation-triangle guide-icon" style="color:#d93025;"></i><p style="color:#d93025; font-weight:600;">${t.g4}</p></div>
     `;
     document.getElementById('modal-guide').style.display = 'flex';
 }
@@ -173,10 +177,10 @@ function loadData(category = 'INTERCAMBIO') {
             if(p.category === category) {
                 allKeys.push(child.key);
                 const isEx = p.category === 'INTERCAMBIO';
-                html += `<div class="card"><div class="card-title">${isEx ? p.desc : p.title}</div><button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">${isEx ? langData[currentLang].viewEx : langData[currentLang].view}</button><div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span><span style="color:#d93025; font-weight:700;">${hoursLeft}h</span></div></div>`;
+                html += `<div class="card"><div class="card-title">${isEx ? p.desc : p.title}</div><button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">${isEx ? langData[currentLang].viewEx : langData[currentLang].view}</button><div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span><span style="color:#d93025; font-weight:700;"><i class="far fa-clock"></i> ${hoursLeft}h</span></div></div>`;
             }
         });
-        feed.innerHTML = html || `<p style="text-align:center; color:gray; font-size:12px; margin-top:20px;">No hay publicaciones aún. ¡Sé el primero!</p>`;
+        feed.innerHTML = html || `<p style="text-align:center; color:gray; font-size:12px; margin-top:20px;">No hay publicaciones en esta sección.</p>`;
         updateBadges(counts);
         if(allKeys.length > 0 && Math.random() > 0.8) {
             db.ref('posts/' + allKeys[Math.floor(Math.random() * allKeys.length)] + '/views').transaction(v => (v || 0) + 1);
@@ -195,7 +199,7 @@ function updateBadges(c) {
 function openPublish() {
     const t = langData[currentLang];
     document.getElementById('form-content').innerHTML = activeCat === 'INTERCAMBIO' ? 
-        `<textarea id="p-desc" placeholder="${t.phManual}"></textarea><input type="text" id="p-user" placeholder="${t.phUser}">` :
+        `<textarea id="p-desc" placeholder="${t.phManual}" rows="3"></textarea><input type="text" id="p-user" placeholder="${t.phUser}">` :
         `<input type="text" id="p-title" placeholder="${t.phTitle}"><input type="text" id="p-link" placeholder="${t.phLink}">`;
     document.getElementById('modal-pub').style.display = 'flex';
 }
@@ -208,7 +212,7 @@ function publicar() {
 }
 
 function procesarPublicacion() {
-    const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*10)+5 };
+    const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*15)+5 };
     if (activeCat === 'INTERCAMBIO') {
         data.desc = document.getElementById('p-desc').value.trim();
         data.user = document.getElementById('p-user').value.trim();
