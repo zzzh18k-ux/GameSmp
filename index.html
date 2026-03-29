@@ -15,13 +15,16 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-soft); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
+        /* Optimización de toque: Evita lag al hacer click */
+        button { cursor: pointer; touch-action: manipulation; }
+
         .header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid #ddd; z-index: 10; }
         .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 16px; letter-spacing: 1px; }
         
         .btn-guide { 
             background: linear-gradient(145deg, #ffffff, #f0f0f0); border: 1px solid #d1d1d1; color: var(--text-main); 
             padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 800;
-            display: flex; align-items: center; gap: 6px; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; 
             box-shadow: 2px 2px 5px rgba(0,0,0,0.07); transition: 0.2s;
         }
         .btn-guide i { color: #007AFF; font-size: 13px; text-shadow: 0 0 5px rgba(0,122,255,0.3); }
@@ -30,7 +33,7 @@
         .dot { height: 6px; width: 6px; background-color: #31a24c; border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        .categories { display: flex; gap: 8px; overflow-x: auto; padding: 12px; background: var(--card-bg); border-bottom: 1px solid #eee; }
+        .categories { display: flex; gap: 8px; overflow-x: auto; padding: 12px; background: var(--card-bg); border-bottom: 1px solid #eee; scrollbar-width: none; }
         .cat-btn { 
             background: #e4e6eb; border: none; color: var(--text-sub); padding: 8px 16px; border-radius: 18px; 
             font-size: 11px; white-space: nowrap; font-weight: 600; position: relative; flex-shrink: 0;
@@ -41,10 +44,11 @@
         .badge.show { display: block; background: #31a24c; }
 
         .feed { flex: 1; overflow-y: auto; padding: 12px; -webkit-overflow-scrolling: touch; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #ddd; }
-        .card-title { font-weight: 600; font-size: 13px; margin-bottom: 10px; line-height: 1.4; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #ddd; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        .btn-main { background: var(--tg-blue); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; }
+        .card-title { font-weight: 600; font-size: 13px; margin-bottom: 10px; line-height: 1.4; }
+        .btn-main { background: var(--tg-blue); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: 700; font-size: 12px; }
         .card-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-sub); margin-top: 10px; padding-top: 8px; border-top: 1px solid #f5f5f5; }
 
         .btn-plus { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: var(--fb-blue); color: #fff; width: 55px; height: 55px; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 100; }
@@ -55,7 +59,11 @@
         
         input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; outline: none; font-size: 13px; }
 
-        /* NUEVOS MENSAJES PROFESIONALES */
+        /* Loader profesional */
+        .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 50px; color: var(--text-sub); }
+        .spinner { width: 30px; height: 30px; border: 3px solid #ddd; border-top: 3px solid var(--fb-blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; width: 90%; max-width: 350px; pointer-events: none; }
         .toast { background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 20px; border-radius: 12px; font-size: 12px; font-weight: 600; text-align: center; margin-bottom: 10px; animation: slideIn 0.3s ease-out; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-left: 4px solid var(--fb-blue); }
         .toast.error { border-left-color: #d93025; }
@@ -101,7 +109,7 @@
             <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:15px; font-weight:800;"></h3>
             <div id="form-content"></div>
             <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:var(--fb-blue); margin-bottom:10px; padding:14px;"></button>
-            <button onclick="closeModal('modal-pub')" style="width:100%; background:none; border:none; color:gray; font-size:12px; font-weight:bold; margin-top:10px;">CERRAR</button>
+            <button id="tr-close-pub" onclick="closeModal('modal-pub')" style="width:100%; background:none; border:none; color:gray; font-size:12px; font-weight:bold; margin-top:10px;">CERRAR</button>
         </div>
     </div>
 
@@ -109,7 +117,7 @@
         <div class="modal-box">
             <h3 style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-family:'Orbitron'; font-size:16px;">💎 INFO & GUÍA</h3>
             <div class="guide-text" id="guide-content"></div>
-            <button class="btn-main" onclick="closeModal('modal-guide')" style="margin-top:20px; background:#000;">ENTENDIDO</button>
+            <button class="btn-main" id="tr-close-guide" onclick="closeModal('modal-guide')" style="margin-top:20px; background:#000;">ENTENDIDO</button>
         </div>
     </div>
 
@@ -118,7 +126,6 @@ const firebaseConfig = { apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", auth
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// FUNCION DE AVISOS PROFESIONALES
 function showNotify(msg, isError = false) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -130,7 +137,7 @@ function showNotify(msg, isError = false) {
 
 const langData = {
     es: { 
-        guideBtn: "GUÍA",
+        guideBtn: "GUÍA", cat1: "Intercambios", cat2: "Bots", cat3: "Canales", cat4: "Grupos", close: "CERRAR", understand: "ENTENDIDO", loading: "Cargando...",
         pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Link t.me/...", msgEx: "Intercambio por:", ok: "¡Publicación Exitosa!",
         g1: "<b>Intercambios:</b> Publica lo que ofreces y tu @usuario. Los tratos son directos por Telegram.",
         g2: "<b>Crecimiento:</b> Sube tus Canales o Grupos para conseguir seguidores reales gratis.",
@@ -138,33 +145,50 @@ const langData = {
         g4: "<b>Responsabilidad:</b> No nos hacemos responsables por negocios fallidos. Verifica siempre con quién tratas."
     },
     en: { 
-        guideBtn: "GUIDE",
+        guideBtn: "GUIDE", cat1: "Exchanges", cat2: "Bots", cat3: "Channels", cat4: "Groups", close: "CLOSE", understand: "UNDERSTOOD", loading: "Loading...",
         pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "t.me/ link", msgEx: "Exchange for:", ok: "Published Successfully!",
         g1: "<b>Exchanges:</b> Post your offers and @username. Deals are direct via Telegram.",
         g2: "<b>Growth:</b> Upload Channels or Groups to get free real followers.",
         g3: "<b>Auto-Cleanup:</b> Posts are deleted every 24 hours. Keep your offers fresh!",
         g4: "<b>Disclaimer:</b> We are not responsible for failed deals. Always verify who you deal with."
+    },
+    ru: { 
+        guideBtn: "ГИД", cat1: "Обмен", cat2: "Боты", cat3: "Каналы", cat4: "Группы", close: "ЗАКРЫТЬ", understand: "ПОНЯТНО", loading: "Загрузка...",
+        pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕН", phManual: "Предложение...", phUser: "@ВашЮзернейм", phTitle: "Название проекта", phLink: "t.me/ ссылка", msgEx: "Обмен на:", ok: "Успешно!",
+        g1: "<b>Обмен:</b> Публикуйте предложения. Сделки напрямую в Telegram.",
+        g2: "<b>Рост:</b> Добавляйте каналы для бесплатных подписчиков.",
+        g3: "<b>Очистка:</b> Посты удаляются через 24 часа.",
+        g4: "<b>Отказ:</b> Мы не несем ответственности за сделки."
     }
 };
 
 let currentLang = 'es'; let activeCat = 'INTERCAMBIO'; let isProcessing = false;
 
 function setInitialLang(lang) {
-    currentLang = lang; document.getElementById('lang-overlay').style.display = 'none';
+    currentLang = lang; 
+    document.getElementById('lang-overlay').style.display = 'none';
     const t = langData[lang];
+    // Traducción de Botones Principales
     document.getElementById('tr-guide-btn').innerText = t.guideBtn;
     document.getElementById('tr-p-h').innerText = t.pubH;
     document.getElementById('tr-p-b').innerText = t.pubB;
+    document.getElementById('tr-close-pub').innerText = t.close;
+    document.getElementById('tr-close-guide').innerText = t.understand;
+    // Traducción de Categorías
+    document.getElementById('btn-EX').firstChild.textContent = t.cat1 + " ";
+    document.getElementById('btn-BO').firstChild.textContent = t.cat2 + " ";
+    document.getElementById('btn-CA').firstChild.textContent = t.cat3 + " ";
+    document.getElementById('btn-GR').firstChild.textContent = t.cat4 + " ";
     loadData();
 }
 
 function openGuide() {
     const t = langData[currentLang];
     document.getElementById('guide-content').innerHTML = `
-        <div class="guide-item"><i class="fas fa-comments guide-icon"></i><p>${t.g1}</p></div>
-        <div class="guide-item"><i class="fas fa-rocket guide-icon"></i><p>${t.g2}</p></div>
-        <div class="guide-item"><i class="fas fa-clock guide-icon"></i><p>${t.g3}</p></div>
-        <div class="guide-item"><i class="fas fa-exclamation-triangle guide-icon" style="color:#d93025;"></i><p style="color:#d93025; font-weight:600;">${t.g4}</p></div>
+        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-comments" style="color:var(--fb-blue)"></i><p style="font-size:12px;">${t.g1}</p></div>
+        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-rocket" style="color:#31a24c"></i><p style="font-size:12px;">${t.g2}</p></div>
+        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-clock" style="color:gray"></i><p style="font-size:12px;">${t.g3}</p></div>
+        <div class="guide-item" style="display:flex; gap:10px;"><i class="fas fa-exclamation-triangle" style="color:#d93025"></i><p style="font-size:12px; color:#d93025; font-weight:600;">${t.g4}</p></div>
     `;
     document.getElementById('modal-guide').style.display = 'flex';
 }
@@ -173,30 +197,28 @@ function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
 function loadData(category = 'INTERCAMBIO') {
     activeCat = category;
+    const feed = document.getElementById('main-feed');
+    // Mostrar Loader antes de cargar
+    feed.innerHTML = `<div class="loader-container"><div class="spinner"></div><p style="font-size:11px; font-weight:bold;">${langData[currentLang].loading}</p></div>`;
+    
     db.ref('posts').off();
     db.ref('posts').on('value', snap => {
-        const feed = document.getElementById('main-feed');
         const now = Date.now();
         let html = "";
         let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
-        let allKeys = [];
-
+        
         snap.forEach(child => {
             const p = child.val();
             const hoursLeft = Math.floor((86400000 - (now - p.time)) / 3600000);
             if (hoursLeft <= 0) { db.ref('posts/' + child.key).remove(); return; }
             counts[p.category]++;
             if(p.category === category) {
-                allKeys.push(child.key);
                 const isEx = p.category === 'INTERCAMBIO';
                 html += `<div class="card"><div class="card-title">${isEx ? p.desc : p.title}</div><button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">${isEx ? langData[currentLang].viewEx : langData[currentLang].view}</button><div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span><span style="color:#d93025; font-weight:700;"><i class="far fa-clock"></i> ${hoursLeft}h</span></div></div>`;
             }
         });
-        feed.innerHTML = html || `<p style="text-align:center; color:gray; font-size:12px; margin-top:20px;">No hay publicaciones en esta sección.</p>`;
+        feed.innerHTML = html || `<p style="text-align:center; color:gray; font-size:12px; margin-top:20px;">No hay publicaciones.</p>`;
         updateBadges(counts);
-        if(allKeys.length > 0 && Math.random() > 0.8) {
-            db.ref('posts/' + allKeys[Math.floor(Math.random() * allKeys.length)] + '/views').transaction(v => (v || 0) + 1);
-        }
     });
 }
 
@@ -227,51 +249,25 @@ function publicar() {
 function procesarPublicacion() {
     const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*15)+5 };
     let valActual = "";
-
     if (activeCat === 'INTERCAMBIO') {
         data.desc = document.getElementById('p-desc').value.trim();
         data.user = document.getElementById('p-user').value.trim();
-        if (!data.desc || !data.user) { showNotify("Por favor completa los campos", true); return resetPub(); }
-        
-        const lowerDesc = data.desc.toLowerCase();
-        if (lowerDesc.includes("bot") || lowerDesc.includes("ganar dinero")) {
-            showNotify("Usa la categoría BOTS para este contenido.", true);
-            return resetPub();
-        }
+        if (!data.desc || !data.user) { showNotify("Incompleto", true); return resetPub(); }
         valActual = data.desc;
     } else {
         data.title = document.getElementById('p-title').value.trim();
         data.link = document.getElementById('p-link').value.trim().toLowerCase();
-        if (!data.title || !data.link) { showNotify("Faltan datos por llenar", true); return resetPub(); }
-
-        if (activeCat === 'BOTS' && !data.link.includes("bot")) {
-            showNotify("El link debe ser de un Bot (@...bot)", true);
-            return resetPub();
-        }
-        if ((activeCat === 'CANALES' || activeCat === 'GRUPOS') && !data.link.includes("t.me")) {
-            showNotify("Ingresa un link t.me/ válido", true);
-            return resetPub();
-        }
+        if (!data.title || !data.link) { showNotify("Incompleto", true); return resetPub(); }
         valActual = data.title;
     }
-
-    if(localStorage.getItem('last_p') === valActual) {
-        showNotify("Ya publicaste esto recientemente.", true);
-        return resetPub();
-    }
-
     db.ref('posts').push(data).then(() => { 
-        localStorage.setItem('last_p', valActual);
         showNotify(langData[currentLang].ok); 
         document.getElementById('modal-pub').style.display='none'; 
         resetPub(); 
-    }).catch(() => { showNotify("Error de conexión", true); resetPub(); });
+    }).catch(() => resetPub());
 }
 
-function resetPub() { 
-    isProcessing = false; 
-    document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; 
-}
+function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
 function accion(isEx, link, desc, user) {
     const firma = "\n\n✨ X Exchange PRO";
@@ -290,9 +286,8 @@ function filterCat(cat, btn) {
 }
 
 setInterval(() => {
-    const online = (1940 + Math.floor(Math.random()*40)).toLocaleString();
     const el = document.getElementById('online-count');
-    if(el) el.innerText = online;
+    if(el) el.innerText = (1940 + Math.floor(Math.random()*40)).toLocaleString();
 }, 5000);
 </script>
 </body>
