@@ -18,7 +18,6 @@
         .header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid #ddd; z-index: 10; }
         .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 16px; letter-spacing: 1px; }
         
-        /* BOTÓN GUÍA ESTILO PREMIUM */
         .btn-guide { 
             background: linear-gradient(145deg, #ffffff, #f0f0f0); border: 1px solid #d1d1d1; color: var(--text-main); 
             padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 800;
@@ -27,7 +26,6 @@
         }
         .btn-guide i { color: #007AFF; font-size: 13px; text-shadow: 0 0 5px rgba(0,122,255,0.3); }
 
-        /* CONTADOR ONLINE */
         .online-status { font-size: 10px; color: #31a24c; font-weight: 800; padding: 5px 15px; background: #fff; display: flex; align-items: center; gap: 5px; border-bottom: 1px solid #eee; }
         .dot { height: 6px; width: 6px; background-color: #31a24c; border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
@@ -55,14 +53,18 @@
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
         .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 80vh; overflow-y: auto; }
         
-        .guide-text { font-size: 12px; color: #444; line-height: 1.6; }
-        .guide-item { margin-bottom: 15px; display: flex; gap: 10px; }
-        .guide-icon { color: var(--fb-blue); font-size: 16px; min-width: 20px; text-align: center; }
-
         input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; outline: none; font-size: 13px; }
+
+        /* NUEVOS MENSAJES PROFESIONALES */
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; width: 90%; max-width: 350px; pointer-events: none; }
+        .toast { background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 20px; border-radius: 12px; font-size: 12px; font-weight: 600; text-align: center; margin-bottom: 10px; animation: slideIn 0.3s ease-out; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-left: 4px solid var(--fb-blue); }
+        .toast.error { border-left-color: #d93025; }
+        @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
+
+    <div id="toast-container"></div>
 
     <div id="lang-overlay">
         <h2 style="font-family:'Orbitron'; color:var(--fb-blue); margin-bottom:30px;">X EXCHANGE</h2>
@@ -116,10 +118,20 @@ const firebaseConfig = { apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", auth
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// FUNCION DE AVISOS PROFESIONALES
+function showNotify(msg, isError = false) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${isError ? 'error' : ''}`;
+    toast.innerText = msg;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
+}
+
 const langData = {
     es: { 
         guideBtn: "GUÍA",
-        pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Link t.me/...", msgEx: "Intercambio por:", ok: "¡Listo!",
+        pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Link t.me/...", msgEx: "Intercambio por:", ok: "¡Publicación Exitosa!",
         g1: "<b>Intercambios:</b> Publica lo que ofreces y tu @usuario. Los tratos son directos por Telegram.",
         g2: "<b>Crecimiento:</b> Sube tus Canales o Grupos para conseguir seguidores reales gratis.",
         g3: "<b>Auto-Limpieza:</b> Los posts se borran cada 24 horas. ¡Mantén tu oferta actualizada!",
@@ -127,7 +139,7 @@ const langData = {
     },
     en: { 
         guideBtn: "GUIDE",
-        pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "t.me/ link", msgEx: "Exchange for:", ok: "Done!",
+        pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "t.me/ link", msgEx: "Exchange for:", ok: "Published Successfully!",
         g1: "<b>Exchanges:</b> Post your offers and @username. Deals are direct via Telegram.",
         g2: "<b>Growth:</b> Upload Channels or Groups to get free real followers.",
         g3: "<b>Auto-Cleanup:</b> Posts are deleted every 24 hours. Keep your offers fresh!",
@@ -198,7 +210,6 @@ function updateBadges(c) {
 
 function openPublish() {
     const t = langData[currentLang];
-    // Se añade maxlength para limitar los mensajes largos desde el teclado
     document.getElementById('form-content').innerHTML = activeCat === 'INTERCAMBIO' ? 
         `<textarea id="p-desc" placeholder="${t.phManual}" rows="3" maxlength="150"></textarea><input type="text" id="p-user" placeholder="${t.phUser}" maxlength="35">` :
         `<input type="text" id="p-title" placeholder="${t.phTitle}" maxlength="40"><input type="text" id="p-link" placeholder="${t.phLink}">`;
@@ -206,10 +217,11 @@ function openPublish() {
 }
 
 function publicar() {
-    if (isProcessing) return; isProcessing = true;
+    if (isProcessing) return;
+    isProcessing = true;
     document.getElementById('tr-p-b').innerText = "...";
     if (typeof show_10747271 === 'function') { try { show_10747271(); } catch(e){} }
-    setTimeout(procesarPublicacion, 1000);
+    setTimeout(procesarPublicacion, 400); 
 }
 
 function procesarPublicacion() {
@@ -219,35 +231,50 @@ function procesarPublicacion() {
     if (activeCat === 'INTERCAMBIO') {
         data.desc = document.getElementById('p-desc').value.trim();
         data.user = document.getElementById('p-user').value.trim();
-        if (!data.desc || !data.user) return resetPub();
+        if (!data.desc || !data.user) { showNotify("Por favor completa los campos", true); return resetPub(); }
+        
+        const lowerDesc = data.desc.toLowerCase();
+        if (lowerDesc.includes("bot") || lowerDesc.includes("ganar dinero")) {
+            showNotify("Usa la categoría BOTS para este contenido.", true);
+            return resetPub();
+        }
         valActual = data.desc;
     } else {
         data.title = document.getElementById('p-title').value.trim();
-        data.link = document.getElementById('p-link').value.trim();
-        if (!data.title || !data.link) return resetPub();
+        data.link = document.getElementById('p-link').value.trim().toLowerCase();
+        if (!data.title || !data.link) { showNotify("Faltan datos por llenar", true); return resetPub(); }
+
+        if (activeCat === 'BOTS' && !data.link.includes("bot")) {
+            showNotify("El link debe ser de un Bot (@...bot)", true);
+            return resetPub();
+        }
+        if ((activeCat === 'CANALES' || activeCat === 'GRUPOS') && !data.link.includes("t.me")) {
+            showNotify("Ingresa un link t.me/ válido", true);
+            return resetPub();
+        }
         valActual = data.title;
     }
 
-    // CANDADO ANTI-REPETICIÓN: Evita que la misma persona envíe lo mismo dos veces seguidas
     if(localStorage.getItem('last_p') === valActual) {
-        alert("Ya publicaste esto. ¡Intenta algo nuevo!");
+        showNotify("Ya publicaste esto recientemente.", true);
         return resetPub();
     }
 
     db.ref('posts').push(data).then(() => { 
         localStorage.setItem('last_p', valActual);
-        alert(langData[currentLang].ok); 
+        showNotify(langData[currentLang].ok); 
         document.getElementById('modal-pub').style.display='none'; 
         resetPub(); 
-    });
+    }).catch(() => { showNotify("Error de conexión", true); resetPub(); });
 }
 
-function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
+function resetPub() { 
+    isProcessing = false; 
+    document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; 
+}
 
 function accion(isEx, link, desc, user) {
-    // MARCA DE AGUA: Se añade al final del mensaje de Telegram de forma fácil
     const firma = "\n\n✨ X Exchange PRO";
-    
     if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
     if (isEx === 'true') { 
         const textoFinal = langData[currentLang].msgEx + ' ' + desc + firma;
@@ -258,7 +285,8 @@ function accion(isEx, link, desc, user) {
 
 function filterCat(cat, btn) {
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active'); loadData(cat);
+    btn.classList.add('active'); 
+    loadData(cat);
 }
 
 setInterval(() => {
