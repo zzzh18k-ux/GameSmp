@@ -15,7 +15,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-soft); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* Optimización de toque: Evita lag al hacer click */
         button { cursor: pointer; touch-action: manipulation; }
 
         .header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid #ddd; z-index: 10; }
@@ -59,7 +58,6 @@
         
         input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; outline: none; font-size: 13px; }
 
-        /* Loader profesional */
         .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 50px; color: var(--text-sub); }
         .spinner { width: 30px; height: 30px; border: 3px solid #ddd; border-top: 3px solid var(--fb-blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -138,7 +136,7 @@ function showNotify(msg, isError = false) {
 const langData = {
     es: { 
         guideBtn: "GUÍA", cat1: "Intercambios", cat2: "Bots", cat3: "Canales", cat4: "Grupos", close: "CERRAR", understand: "ENTENDIDO", loading: "Cargando...",
-        pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Link t.me/...", msgEx: "Intercambio por:", ok: "¡Publicación Exitosa!",
+        pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Link t.me/...", msgEx: "Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta:", ok: "¡Publicación Exitosa!",
         g1: "<b>Intercambios:</b> Publica lo que ofreces y tu @usuario. Los tratos son directos por Telegram.",
         g2: "<b>Crecimiento:</b> Sube tus Canales o Grupos para conseguir seguidores reales gratis.",
         g3: "<b>Auto-Limpieza:</b> Los posts se borran cada 24 horas. ¡Mantén tu oferta actualizada!",
@@ -146,7 +144,7 @@ const langData = {
     },
     en: { 
         guideBtn: "GUIDE", cat1: "Exchanges", cat2: "Bots", cat3: "Channels", cat4: "Groups", close: "CLOSE", understand: "UNDERSTOOD", loading: "Loading...",
-        pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "t.me/ link", msgEx: "Exchange for:", ok: "Published Successfully!",
+        pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "t.me/ link", msgEx: "I come from your post on @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Offer:", ok: "Published Successfully!",
         g1: "<b>Exchanges:</b> Post your offers and @username. Deals are direct via Telegram.",
         g2: "<b>Growth:</b> Upload Channels or Groups to get free real followers.",
         g3: "<b>Auto-Cleanup:</b> Posts are deleted every 24 hours. Keep your offers fresh!",
@@ -154,7 +152,7 @@ const langData = {
     },
     ru: { 
         guideBtn: "ГИД", cat1: "Обмен", cat2: "Боты", cat3: "Каналы", cat4: "Группы", close: "ЗАКРЫТЬ", understand: "ПОНЯТНО", loading: "Загрузка...",
-        pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕН", phManual: "Предложение...", phUser: "@ВашЮзернейм", phTitle: "Название проекта", phLink: "t.me/ ссылка", msgEx: "Обмен на:", ok: "Успешно!",
+        pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕН", phManual: "Предложение...", phUser: "@ВашЮзернейм", phTitle: "Название проекта", phLink: "t.me/ ссылка", msgEx: "Я из вашего поста в @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Предложение:", ok: "Успешно!",
         g1: "<b>Обмен:</b> Публикуйте предложения. Сделки напрямую в Telegram.",
         g2: "<b>Рост:</b> Добавляйте каналы для бесплатных подписчиков.",
         g3: "<b>Очистка:</b> Посты удаляются через 24 часа.",
@@ -168,13 +166,11 @@ function setInitialLang(lang) {
     currentLang = lang; 
     document.getElementById('lang-overlay').style.display = 'none';
     const t = langData[lang];
-    // Traducción de Botones Principales
     document.getElementById('tr-guide-btn').innerText = t.guideBtn;
     document.getElementById('tr-p-h').innerText = t.pubH;
     document.getElementById('tr-p-b').innerText = t.pubB;
     document.getElementById('tr-close-pub').innerText = t.close;
     document.getElementById('tr-close-guide').innerText = t.understand;
-    // Traducción de Categorías
     document.getElementById('btn-EX').firstChild.textContent = t.cat1 + " ";
     document.getElementById('btn-BO').firstChild.textContent = t.cat2 + " ";
     document.getElementById('btn-CA').firstChild.textContent = t.cat3 + " ";
@@ -198,7 +194,6 @@ function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 function loadData(category = 'INTERCAMBIO') {
     activeCat = category;
     const feed = document.getElementById('main-feed');
-    // Mostrar Loader antes de cargar
     feed.innerHTML = `<div class="loader-container"><div class="spinner"></div><p style="font-size:11px; font-weight:bold;">${langData[currentLang].loading}</p></div>`;
     
     db.ref('posts').off();
@@ -248,17 +243,14 @@ function publicar() {
 
 function procesarPublicacion() {
     const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*15)+5 };
-    let valActual = "";
     if (activeCat === 'INTERCAMBIO') {
         data.desc = document.getElementById('p-desc').value.trim();
         data.user = document.getElementById('p-user').value.trim();
         if (!data.desc || !data.user) { showNotify("Incompleto", true); return resetPub(); }
-        valActual = data.desc;
     } else {
         data.title = document.getElementById('p-title').value.trim();
         data.link = document.getElementById('p-link').value.trim().toLowerCase();
         if (!data.title || !data.link) { showNotify("Incompleto", true); return resetPub(); }
-        valActual = data.title;
     }
     db.ref('posts').push(data).then(() => { 
         showNotify(langData[currentLang].ok); 
@@ -270,7 +262,7 @@ function procesarPublicacion() {
 function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
 function accion(isEx, link, desc, user) {
-    const firma = "\n\n✨ X Exchange PRO";
+    const firma = "\n\n🚀 Enviado vía: X Exchange PRO App";
     if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
     if (isEx === 'true') { 
         const textoFinal = langData[currentLang].msgEx + ' ' + desc + firma;
