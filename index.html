@@ -14,54 +14,30 @@
         :root { --fb-blue: #1877F2; --tg-blue: #24A1DE; --bg-soft: #F0F2F5; --card-bg: #FFFFFF; --text-main: #1C1E21; --text-sub: #65676B; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-soft); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-        
         button { cursor: pointer; touch-action: manipulation; }
-
         .header { padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border-bottom: 1px solid #ddd; z-index: 10; }
         .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 16px; letter-spacing: 1px; }
-        
-        .btn-guide { 
-            background: linear-gradient(145deg, #ffffff, #f0f0f0); border: 1px solid #d1d1d1; color: var(--text-main); 
-            padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 800;
-            display: flex; align-items: center; gap: 6px; 
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.07); transition: 0.2s;
-        }
-        .btn-guide i { color: #007AFF; font-size: 13px; text-shadow: 0 0 5px rgba(0,122,255,0.3); }
-
+        .btn-guide { background: linear-gradient(145deg, #ffffff, #f0f0f0); border: 1px solid #d1d1d1; color: var(--text-main); padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: 800; display: flex; align-items: center; gap: 6px; box-shadow: 2px 2px 5px rgba(0,0,0,0.07); transition: 0.2s; }
         .online-status { font-size: 10px; color: #31a24c; font-weight: 800; padding: 5px 15px; background: #fff; display: flex; align-items: center; gap: 5px; border-bottom: 1px solid #eee; }
         .dot { height: 6px; width: 6px; background-color: #31a24c; border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
         .categories { display: flex; gap: 8px; overflow-x: auto; padding: 12px; background: var(--card-bg); border-bottom: 1px solid #eee; scrollbar-width: none; }
-        .cat-btn { 
-            background: #e4e6eb; border: none; color: var(--text-sub); padding: 8px 16px; border-radius: 18px; 
-            font-size: 11px; white-space: nowrap; font-weight: 600; position: relative; flex-shrink: 0;
-        }
+        .cat-btn { background: #e4e6eb; border: none; color: var(--text-sub); padding: 8px 16px; border-radius: 18px; font-size: 11px; white-space: nowrap; font-weight: 600; position: relative; flex-shrink: 0; }
         .cat-btn.active { background: var(--fb-blue); color: #fff; }
-        
         .badge { position: absolute; top: -4px; right: -2px; font-size: 8px; padding: 2px 5px; border-radius: 8px; color: #fff; display: none; border: 1.5px solid #fff; }
         .badge.show { display: block; background: #31a24c; }
-
         .feed { flex: 1; overflow-y: auto; padding: 12px; -webkit-overflow-scrolling: touch; }
         .card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #ddd; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        
         .card-title { font-weight: 600; font-size: 13px; margin-bottom: 10px; line-height: 1.4; }
         .btn-main { background: var(--tg-blue); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: 700; font-size: 12px; }
         .card-meta { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-sub); margin-top: 10px; padding-top: 8px; border-top: 1px solid #f5f5f5; }
-
         .btn-plus { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: var(--fb-blue); color: #fff; width: 55px; height: 55px; border-radius: 50%; font-size: 22px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 100; }
-
         #lang-overlay { position: fixed; inset: 0; background: #fff; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
         .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 80vh; overflow-y: auto; }
-        
         input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; outline: none; font-size: 13px; }
-
         .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 50px; color: var(--text-sub); }
         .spinner { width: 30px; height: 30px; border: 3px solid #ddd; border-top: 3px solid var(--fb-blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 10px; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; width: 90%; max-width: 350px; pointer-events: none; }
         .toast { background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 20px; border-radius: 12px; font-size: 12px; font-weight: 600; text-align: center; margin-bottom: 10px; animation: slideIn 0.3s ease-out; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-left: 4px solid var(--fb-blue); }
         .toast.error { border-left-color: #d93025; }
@@ -69,16 +45,13 @@
     </style>
 </head>
 <body>
-
     <div id="toast-container"></div>
-
     <div id="lang-overlay">
         <h2 style="font-family:'Orbitron'; color:var(--fb-blue); margin-bottom:30px;">X EXCHANGE</h2>
         <button class="cat-btn active" style="margin: 10px; width: 200px;" onclick="setInitialLang('es')">🇪🇸 ESPAÑOL</button>
         <button class="cat-btn active" style="margin: 10px; width: 200px;" onclick="setInitialLang('en')">🇺🇸 ENGLISH</button>
         <button class="cat-btn active" style="margin: 10px; width: 200px;" onclick="setInitialLang('ru')">🇷🇺 PУССКИЙ</button>
     </div>
-
     <div class="header">
         <div class="logo">X EXCHANGE</div>
         <button class="btn-guide" onclick="openGuide()">
@@ -86,22 +59,17 @@
             <span id="tr-guide-btn">GUÍA</span>
         </button>
     </div>
-
     <div class="online-status">
         <span class="dot"></span> <span id="online-count">1,940</span> ONLINE
     </div>
-
     <div class="categories">
         <button class="cat-btn active" id="btn-EX" onclick="filterCat('INTERCAMBIO', this)">Intercambios <span id="n-EX" class="badge"></span></button>
         <button class="cat-btn" id="btn-BO" onclick="filterCat('BOTS', this)">Bots <span id="n-BO" class="badge"></span></button>
         <button class="cat-btn" id="btn-CA" onclick="filterCat('CANALES', this)">Canales <span id="n-CA" class="badge"></span></button>
         <button class="cat-btn" id="btn-GR" onclick="filterCat('GRUPOS', this)">Grupos <span id="n-GR" class="badge"></span></button>
     </div>
-
     <div id="main-feed" class="feed"></div>
-
     <button class="btn-plus" onclick="openPublish()"><i class="fas fa-plus"></i></button>
-
     <div id="modal-pub" class="modal">
         <div class="modal-box">
             <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:15px; font-weight:800;"></h3>
@@ -110,7 +78,6 @@
             <button id="tr-close-pub" onclick="closeModal('modal-pub')" style="width:100%; background:none; border:none; color:gray; font-size:12px; font-weight:bold; margin-top:10px;">CERRAR</button>
         </div>
     </div>
-
     <div id="modal-guide" class="modal">
         <div class="modal-box">
             <h3 style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-family:'Orbitron'; font-size:16px;">💎 INFO & GUÍA</h3>
@@ -136,27 +103,15 @@ function showNotify(msg, isError = false) {
 const langData = {
     es: { 
         guideBtn: "GUÍA", cat1: "Intercambios", cat2: "Bots", cat3: "Canales", cat4: "Grupos", close: "CERRAR", understand: "ENTENDIDO", loading: "Cargando...",
-        pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Link t.me/...", msgEx: "Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta:", ok: "¡Publicación Exitosa!",
-        g1: "<b>Intercambios:</b> Publica lo que ofreces y tu @usuario. Los tratos son directos por Telegram.",
-        g2: "<b>Crecimiento:</b> Sube tus Canales o Grupos para conseguir seguidores reales gratis.",
-        g3: "<b>Auto-Limpieza:</b> Los posts se borran cada 24 horas. ¡Mantén tu oferta actualizada!",
-        g4: "<b>Responsabilidad:</b> No nos hacemos responsables por negocios fallidos. Verifica siempre con quién tratas."
+        pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Link t.me/...", msgEx: "Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta:", ok: "¡Publicación Exitosa!", errSpam: "¡Ya publicaste esto hoy!", errCat: "Error: No pongas links en Intercambios."
     },
     en: { 
         guideBtn: "GUIDE", cat1: "Exchanges", cat2: "Bots", cat3: "Channels", cat4: "Groups", close: "CLOSE", understand: "UNDERSTOOD", loading: "Loading...",
-        pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "t.me/ link", msgEx: "I come from your post on @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Offer:", ok: "Published Successfully!",
-        g1: "<b>Exchanges:</b> Post your offers and @username. Deals are direct via Telegram.",
-        g2: "<b>Growth:</b> Upload Channels or Groups to get free real followers.",
-        g3: "<b>Auto-Cleanup:</b> Posts are deleted every 24 hours. Keep your offers fresh!",
-        g4: "<b>Disclaimer:</b> We are not responsible for failed deals. Always verify who you deal with."
+        pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "t.me/ link", msgEx: "I come from your post on @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Offer:", ok: "Published Successfully!", errSpam: "Already posted today!", errCat: "Error: No links in Exchanges."
     },
     ru: { 
         guideBtn: "ГИД", cat1: "Обмен", cat2: "Боты", cat3: "Каналы", cat4: "Группы", close: "ЗАКРЫТЬ", understand: "ПОНЯТНО", loading: "Загрузка...",
-        pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕН", phManual: "Предложение...", phUser: "@ВашЮзернейм", phTitle: "Название проекта", phLink: "t.me/ ссылка", msgEx: "Я из вашего поста в @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Предложение:", ok: "Успешно!",
-        g1: "<b>Обмен:</b> Публикуйте предложения. Сделки напрямую в Telegram.",
-        g2: "<b>Рост:</b> Добавляйте каналы для бесплатных подписчиков.",
-        g3: "<b>Очистка:</b> Посты удаляются через 24 часа.",
-        g4: "<b>Отказ:</b> Мы не несем ответственности за сделки."
+        pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕН", phManual: "Предложение...", phUser: "@ВашЮзернейм", phTitle: "Название проекта", phLink: "t.me/ ссылка", msgEx: "Я из вашего поста в @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Предложение:", ok: "Успешно!", errSpam: "Уже опубликовано сегодня!", errCat: "Ошибка: Ссылки запрещены в Обмене."
     }
 };
 
@@ -181,10 +136,9 @@ function setInitialLang(lang) {
 function openGuide() {
     const t = langData[currentLang];
     document.getElementById('guide-content').innerHTML = `
-        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-comments" style="color:var(--fb-blue)"></i><p style="font-size:12px;">${t.g1}</p></div>
-        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-rocket" style="color:#31a24c"></i><p style="font-size:12px;">${t.g2}</p></div>
-        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-clock" style="color:gray"></i><p style="font-size:12px;">${t.g3}</p></div>
-        <div class="guide-item" style="display:flex; gap:10px;"><i class="fas fa-exclamation-triangle" style="color:#d93025"></i><p style="font-size:12px; color:#d93025; font-weight:600;">${t.g4}</p></div>
+        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-comments" style="color:var(--fb-blue)"></i><p style="font-size:12px;">${t.cat1}: Tratos directos por @usuario.</p></div>
+        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-shield-halved" style="color:#31a24c"></i><p style="font-size:12px;">Categoría: El sistema valida que publiques en el lugar correcto.</p></div>
+        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-clock" style="color:gray"></i><p style="font-size:12px;">Borrado automático cada 24 horas.</p></div>
     `;
     document.getElementById('modal-guide').style.display = 'flex';
 }
@@ -195,13 +149,11 @@ function loadData(category = 'INTERCAMBIO') {
     activeCat = category;
     const feed = document.getElementById('main-feed');
     feed.innerHTML = `<div class="loader-container"><div class="spinner"></div><p style="font-size:11px; font-weight:bold;">${langData[currentLang].loading}</p></div>`;
-    
     db.ref('posts').off();
     db.ref('posts').on('value', snap => {
         const now = Date.now();
         let html = "";
         let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
-        
         snap.forEach(child => {
             const p = child.val();
             const hoursLeft = Math.floor((86400000 - (now - p.time)) / 3600000);
@@ -235,21 +187,61 @@ function openPublish() {
 
 function publicar() {
     if (isProcessing) return;
+    
+    const desc = document.getElementById('p-desc')?.value.trim();
+    const user = document.getElementById('p-user')?.value.trim();
+    const title = document.getElementById('p-title')?.value.trim();
+    const link = document.getElementById('p-link')?.value.trim().toLowerCase();
+
+    // 1. VALIDACIÓN DE CATEGORÍA
+    if (activeCat !== 'INTERCAMBIO') {
+        const isBot = link.includes('bot');
+        const isJoinchat = link.includes('joinchat') || link.includes('+');
+        
+        let errorMsg = "";
+        if (activeCat === 'BOTS' && !isBot) errorMsg = "⚠️ Esta categoría es solo para BOTS.";
+        if (activeCat === 'CANALES' && isBot) errorMsg = "⚠️ Esto es un BOT. Publíquelo en BOTS.";
+        
+        if (errorMsg) {
+            showNotify(errorMsg, true);
+            return;
+        }
+    } else {
+        if (desc.includes('t.me') || desc.includes('http')) {
+            showNotify(langData[currentLang].errCat, true);
+            return;
+        }
+    }
+
     isProcessing = true;
     document.getElementById('tr-p-b').innerText = "...";
-    if (typeof show_10747271 === 'function') { try { show_10747271(); } catch(e){} }
-    setTimeout(procesarPublicacion, 400); 
+
+    // 2. BLOQUEO DE ENLACES REPETIDOS (ANTI-SPAM)
+    db.ref('posts').once('value', snap => {
+        let isDuplicate = false;
+        snap.forEach(child => {
+            const p = child.val();
+            if (activeCat !== 'INTERCAMBIO' && p.link === link) isDuplicate = true;
+            if (activeCat === 'INTERCAMBIO' && p.user === user && p.desc === desc) isDuplicate = true;
+        });
+
+        if (isDuplicate) {
+            showNotify("🚫 Enlace ya registrado. Evite el spam.", true);
+            return resetPub();
+        }
+
+        if (typeof show_10747271 === 'function') { try { show_10747271(); } catch(e){} }
+        setTimeout(() => procesarPublicacion(desc, user, title, link), 400);
+    });
 }
 
-function procesarPublicacion() {
+function procesarPublicacion(desc, user, title, link) {
     const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*15)+5 };
     if (activeCat === 'INTERCAMBIO') {
-        data.desc = document.getElementById('p-desc').value.trim();
-        data.user = document.getElementById('p-user').value.trim();
+        data.desc = desc; data.user = user;
         if (!data.desc || !data.user) { showNotify("Incompleto", true); return resetPub(); }
     } else {
-        data.title = document.getElementById('p-title').value.trim();
-        data.link = document.getElementById('p-link').value.trim().toLowerCase();
+        data.title = title; data.link = link;
         if (!data.title || !data.link) { showNotify("Incompleto", true); return resetPub(); }
     }
     db.ref('posts').push(data).then(() => { 
