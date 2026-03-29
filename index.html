@@ -198,9 +198,10 @@ function updateBadges(c) {
 
 function openPublish() {
     const t = langData[currentLang];
+    // Se añade maxlength para limitar los mensajes largos desde el teclado
     document.getElementById('form-content').innerHTML = activeCat === 'INTERCAMBIO' ? 
-        `<textarea id="p-desc" placeholder="${t.phManual}" rows="3"></textarea><input type="text" id="p-user" placeholder="${t.phUser}">` :
-        `<input type="text" id="p-title" placeholder="${t.phTitle}"><input type="text" id="p-link" placeholder="${t.phLink}">`;
+        `<textarea id="p-desc" placeholder="${t.phManual}" rows="3" maxlength="150"></textarea><input type="text" id="p-user" placeholder="${t.phUser}" maxlength="35">` :
+        `<input type="text" id="p-title" placeholder="${t.phTitle}" maxlength="40"><input type="text" id="p-link" placeholder="${t.phLink}">`;
     document.getElementById('modal-pub').style.display = 'flex';
 }
 
@@ -213,16 +214,28 @@ function publicar() {
 
 function procesarPublicacion() {
     const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*15)+5 };
+    let valActual = "";
+
     if (activeCat === 'INTERCAMBIO') {
         data.desc = document.getElementById('p-desc').value.trim();
         data.user = document.getElementById('p-user').value.trim();
         if (!data.desc || !data.user) return resetPub();
+        valActual = data.desc;
     } else {
         data.title = document.getElementById('p-title').value.trim();
         data.link = document.getElementById('p-link').value.trim();
         if (!data.title || !data.link) return resetPub();
+        valActual = data.title;
     }
+
+    // CANDADO ANTI-REPETICIÓN: Evita que la misma persona envíe lo mismo dos veces seguidas
+    if(localStorage.getItem('last_p') === valActual) {
+        alert("Ya publicaste esto. ¡Intenta algo nuevo!");
+        return resetPub();
+    }
+
     db.ref('posts').push(data).then(() => { 
+        localStorage.setItem('last_p', valActual);
         alert(langData[currentLang].ok); 
         document.getElementById('modal-pub').style.display='none'; 
         resetPub(); 
@@ -232,8 +245,14 @@ function procesarPublicacion() {
 function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
 function accion(isEx, link, desc, user) {
+    // MARCA DE AGUA: Se añade al final del mensaje de Telegram de forma fácil
+    const firma = "\n\n✨ X Exchange PRO";
+    
     if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
-    if (isEx === 'true') { window.open(`https://t.me/${user.replace('@','')}?text=${encodeURIComponent(langData[currentLang].msgEx + ' ' + desc)}`); }
+    if (isEx === 'true') { 
+        const textoFinal = langData[currentLang].msgEx + ' ' + desc + firma;
+        window.open(`https://t.me/${user.replace('@','')}?text=${encodeURIComponent(textoFinal)}`); 
+    }
     else { window.open(link.startsWith('http') ? link : `https://${link}`); }
 }
 
