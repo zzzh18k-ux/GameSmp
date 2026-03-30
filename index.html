@@ -37,15 +37,17 @@
         .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 80vh; overflow-y: auto; }
         input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; outline: none; font-size: 13px; }
         .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 50px; color: var(--text-sub); }
-        
-        /* Ajuste de la rueda de carga para que no se pegue */
         .spinner { width: 30px; height: 30px; border: 3px solid #ddd; border-top: 3px solid var(--fb-blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; width: 90%; max-width: 350px; pointer-events: none; }
         .toast { background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 20px; border-radius: 12px; font-size: 12px; font-weight: 600; text-align: center; margin-bottom: 10px; animation: slideIn 0.3s ease-out; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-left: 4px solid var(--fb-blue); }
         .toast.error { border-left-color: #d93025; }
         @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Estilos nuevos para los botones de ayuda (Tags) */
+        .tag-container { display: flex; gap: 5px; overflow-x: auto; margin-bottom: 10px; padding-bottom: 5px; scrollbar-width: none; }
+        .tag-btn { background: #f0f2f5; border: 1px solid #ddd; padding: 5px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; color: var(--text-main); white-space: nowrap; transition: 0.2s; }
+        .tag-btn:active { background: var(--fb-blue); color: #fff; transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -115,7 +117,7 @@ const langData = {
     },
     ru: { 
         guideBtn: "ГИД", cat1: "Обмен", cat2: "Боты", cat3: "Каналы", cat4: "Группы", close: "ЗАКРЫТЬ", understand: "ПОНЯТНО", loading: "Загрузка...",
-        pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕН", phManual: "Опишите кратко...", phUser: "@ВашЮзернейм", phTitle: "Короткое название", phLink: "t.me/ ссылка", msgEx: "Я из вашего поста в @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Предложение:", ok: "✅ Успешно!", errSpam: "⚠️ Уже опубликовано сегодня.", errCat: "❌ Ошибка: Ссылки запрещены."
+        pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОERT", viewEx: "ОБМЕН", phManual: "Опишите кратко...", phUser: "@ВашЮзернейм", phTitle: "Короткое название", phLink: "t.me/ ссылка", msgEx: "Я из вашего поста в @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Предложение:", ok: "✅ Успешно!", errSpam: "⚠️ Уже опубликовано сегодня.", errCat: "❌ Ошибка: Ссылки запрещены."
     }
 };
 
@@ -181,12 +183,44 @@ function updateBadges(c) {
     }
 }
 
+// Función para insertar tags rápidos
+function addTag(text, targetId) {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    const currentVal = el.value.trim();
+    el.value = currentVal ? currentVal + " | " + text : text;
+    el.focus();
+}
+
 function openPublish() {
     const t = langData[currentLang];
-    // Se limitaron los caracteres para que los textos sean cortos
-    document.getElementById('form-content').innerHTML = activeCat === 'INTERCAMBIO' ? 
-        `<textarea id="p-desc" placeholder="${t.phManual}" rows="2" maxlength="80"></textarea><input type="text" id="p-user" placeholder="${t.phUser}" maxlength="30">` :
-        `<input type="text" id="p-title" placeholder="${t.phTitle}" maxlength="25"><input type="text" id="p-link" placeholder="${t.phLink}">`;
+    let formHTML = "";
+    
+    if (activeCat === 'INTERCAMBIO') {
+        formHTML = `
+            <div class="tag-container">
+                <button class="tag-btn" onclick="addTag('BINANCE', 'p-desc')">Binance</button>
+                <button class="tag-btn" onclick="addTag('ZINLI', 'p-desc')">Zinli</button>
+                <button class="tag-btn" onclick="addTag('WALLY', 'p-desc')">Wally</button>
+                <button class="tag-btn" onclick="addTag('PAGO MÓVIL', 'p-desc')">Pago Móvil</button>
+                <button class="tag-btn" onclick="addTag('USDT', 'p-desc')">USDT</button>
+            </div>
+            <textarea id="p-desc" placeholder="${t.phManual}" rows="2" maxlength="80"></textarea>
+            <input type="text" id="p-user" placeholder="${t.phUser}" maxlength="30">`;
+    } else {
+        const tags = activeCat === 'BOTS' ? 
+            ['MINERÍA', 'TAREAS', 'JUEGO', 'TRADING'] : 
+            ['WHATSAPP', 'TELEGRAM', 'DINERO', 'NOTICIAS'];
+            
+        formHTML = `
+            <div class="tag-container">
+                ${tags.map(tag => `<button class="tag-btn" onclick="addTag('${tag}', 'p-title')">${tag}</button>`).join('')}
+            </div>
+            <input type="text" id="p-title" placeholder="${t.phTitle}" maxlength="25">
+            <input type="text" id="p-link" placeholder="${t.phLink}">`;
+    }
+    
+    document.getElementById('form-content').innerHTML = formHTML;
     document.getElementById('modal-pub').style.display = 'flex';
 }
 
@@ -198,18 +232,12 @@ function publicar() {
     const title = document.getElementById('p-title')?.value.trim();
     const link = document.getElementById('p-link')?.value.trim().toLowerCase();
 
-    // Textos de validación mejorados
     if (activeCat !== 'INTERCAMBIO') {
         const isBot = link.includes('bot');
-        
         let errorMsg = "";
         if (activeCat === 'BOTS' && !isBot) errorMsg = "⚠️ Verifica la categoría. Aquí solo van BOTS.";
         if (activeCat === 'CANALES' && isBot) errorMsg = "⚠️ Enlace de BOT detectado. Por favor, usa la categoría 'Bots'.";
-        
-        if (errorMsg) {
-            showNotify(errorMsg, true);
-            return;
-        }
+        if (errorMsg) { showNotify(errorMsg, true); return; }
     } else {
         if (desc.includes('t.me') || desc.includes('http')) {
             showNotify(langData[currentLang].errCat, true);
