@@ -185,7 +185,8 @@ function openPublish() {
     const t = langData[currentLang];
     let formHTML = "";
     if (activeCat === 'INTERCAMBIO') {
-        formHTML = `<div class="tag-container"><button class="tag-btn" onclick="addTag('BINANCE', 'p-desc')">Binance</button><button class="tag-btn" onclick="addTag('ZINLI', 'p-desc')">Zinli</button><button class="tag-btn" onclick="addTag('WALLY', 'p-desc')">Wally</button><button class="tag-btn" onclick="addTag('PAGO MÓVIL', 'p-desc')">Pago Móvil</button><button class="tag-btn" onclick="addTag('USDT', 'p-desc')">USDT</button></div><textarea id="p-desc" placeholder="${t.phManual}" rows="2" maxlength="80"></textarea><input type="text" id="p-user" placeholder="${t.phUser}" maxlength="30">`;
+        // LÍNEA 156 MODIFICADA SEGÚN TU PEDIDO
+        formHTML = `<div class="tag-container"><button class="tag-btn" onclick="addTag('SEGUIDORES X SEGUIDORES', 'p-desc')">S x S</button><button class="tag-btn" onclick="addTag('REFERENCIAS POR REFERENCIA', 'p-desc')">Ref x Ref</button><button class="tag-btn" onclick="addTag('CAMBIO DE OBJETO', 'p-desc')">Cambio Objeto</button><button class="tag-btn" onclick="addTag('BINANCE', 'p-desc')">Binance</button><button class="tag-btn" onclick="addTag('USDT', 'p-desc')">USDT</button></div><textarea id="p-desc" placeholder="${t.phManual}" rows="2" maxlength="80"></textarea><input type="text" id="p-user" placeholder="${t.phUser}" maxlength="30">`;
     } else {
         const tags = activeCat === 'BOTS' ? ['MINERÍA', 'TAREAS', 'JUEGO', 'TRADING'] : ['WHATSAPP', 'TELEGRAM', 'DINERO', 'NOTICIAS'];
         formHTML = `<div class="tag-container">${tags.map(tag => `<button class="tag-btn" onclick="addTag('${tag}', 'p-title')">${tag}</button>`).join('')}</div><input type="text" id="p-title" placeholder="${t.phTitle}" maxlength="25"><input type="text" id="p-link" placeholder="${t.phLink}">`;
@@ -238,28 +239,38 @@ function procesarPublicacion(desc, user, title, link) {
 
 function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
-// FUNCIÓN DE ACCIÓN ACTUALIZADA PARA LIMPIAR LINKS DE WHATSAPP
+// FUNCIÓN DE ACCIÓN REPARADA CON "GHOST ANCHOR" PARA FORZAR SALIDA DE LA APP
 function accion(isEx, link, desc, user) {
     const firma = "\n\n🚀 Enviado vía: X Exchange PRO App";
     if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
     
+    let urlFinal = "";
+
     if (isEx === 'true') { 
         const textoFinal = langData[currentLang].msgEx + ' ' + desc + firma;
-        window.open(`https://t.me/${user.replace('@','')}?text=${encodeURIComponent(textoFinal)}`, '_blank'); 
+        urlFinal = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(textoFinal)}`;
     }
     else { 
-        let urlFinal = link.trim(); // Limpia espacios accidentales
+        urlFinal = link.trim(); 
         
-        // Si el link es de WhatsApp, corta cualquier "basura" después del signo ?
+        // Limpiamos links de WhatsApp basura
         if (urlFinal.includes('chat.whatsapp.com')) {
             urlFinal = urlFinal.split('?')[0]; 
         }
 
         if (!urlFinal.startsWith('http')) {
-            urlFinal = 'https://' + urlFinal; // Agrega seguridad si falta
+            urlFinal = 'https://' + urlFinal; 
         }
-        window.open(urlFinal, '_blank'); // Abre fuera de la app
     }
+
+    // MÉTODO "GHOST ANCHOR" (Ancla Fantasma)
+    const a = document.createElement('a');
+    a.href = urlFinal;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 function filterCat(cat, btn) {
