@@ -37,7 +37,11 @@
         .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; max-height: 80vh; overflow-y: auto; }
         input, textarea { background: #f0f2f5; border: 1px solid #ddd; padding: 12px; border-radius: 10px; width: 100%; margin-bottom: 10px; outline: none; font-size: 13px; }
         .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 50px; color: var(--text-sub); }
+        
+        /* Ajuste de la rueda de carga para que no se pegue */
         .spinner { width: 30px; height: 30px; border: 3px solid #ddd; border-top: 3px solid var(--fb-blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; width: 90%; max-width: 350px; pointer-events: none; }
         .toast { background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 20px; border-radius: 12px; font-size: 12px; font-weight: 600; text-align: center; margin-bottom: 10px; animation: slideIn 0.3s ease-out; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border-left: 4px solid var(--fb-blue); }
         .toast.error { border-left-color: #d93025; }
@@ -102,16 +106,16 @@ function showNotify(msg, isError = false) {
 
 const langData = {
     es: { 
-        guideBtn: "GUÍA", cat1: "Intercambios", cat2: "Bots", cat3: "Canales", cat4: "Grupos", close: "CERRAR", understand: "ENTENDIDO", loading: "Cargando...",
-        pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Oferta/Busqueda...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Link t.me/...", msgEx: "Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta:", ok: "¡Publicación Exitosa!", errSpam: "¡Ya publicaste esto hoy!", errCat: "Error: No pongas links en Intercambios."
+        guideBtn: "GUÍA", cat1: "Intercambios", cat2: "Bots", cat3: "Canales", cat4: "Grupos", close: "CERRAR", understand: "ENTENDIDO", loading: "Cargando datos...",
+        pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Describe brevemente tu oferta...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre corto del Proyecto", phLink: "Link t.me/...", msgEx: "Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta:", ok: "✅ ¡Publicado con éxito!", errSpam: "⚠️ Ya publicaste esto hoy.", errCat: "❌ Error: No se permiten links en Intercambios."
     },
     en: { 
-        guideBtn: "GUIDE", cat1: "Exchanges", cat2: "Bots", cat3: "Channels", cat4: "Groups", close: "CLOSE", understand: "UNDERSTOOD", loading: "Loading...",
-        pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Offer/Search...", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "t.me/ link", msgEx: "I come from your post on @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Offer:", ok: "Published Successfully!", errSpam: "Already posted today!", errCat: "Error: No links in Exchanges."
+        guideBtn: "GUIDE", cat1: "Exchanges", cat2: "Bots", cat3: "Channels", cat4: "Groups", close: "CLOSE", understand: "UNDERSTOOD", loading: "Loading data...",
+        pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Briefly describe your offer...", phUser: "@YourTelegram", phTitle: "Short Project Name", phLink: "t.me/ link", msgEx: "I come from your post on @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Offer:", ok: "✅ Published Successfully!", errSpam: "⚠️ Already posted today.", errCat: "❌ Error: No links in Exchanges."
     },
     ru: { 
         guideBtn: "ГИД", cat1: "Обмен", cat2: "Боты", cat3: "Каналы", cat4: "Группы", close: "ЗАКРЫТЬ", understand: "ПОНЯТНО", loading: "Загрузка...",
-        pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕН", phManual: "Предложение...", phUser: "@ВашЮзернейм", phTitle: "Название проекта", phLink: "t.me/ ссылка", msgEx: "Я из вашего поста в @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Предложение:", ok: "Успешно!", errSpam: "Уже опубликовано сегодня!", errCat: "Ошибка: Ссылки запрещены в Обмене."
+        pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОТРЕТЬ", viewEx: "ОБМЕН", phManual: "Опишите кратко...", phUser: "@ВашЮзернейм", phTitle: "Короткое название", phLink: "t.me/ ссылка", msgEx: "Я из вашего поста в @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Предложение:", ok: "✅ Успешно!", errSpam: "⚠️ Уже опубликовано сегодня.", errCat: "❌ Ошибка: Ссылки запрещены."
     }
 };
 
@@ -136,9 +140,9 @@ function setInitialLang(lang) {
 function openGuide() {
     const t = langData[currentLang];
     document.getElementById('guide-content').innerHTML = `
-        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-comments" style="color:var(--fb-blue)"></i><p style="font-size:12px;">${t.cat1}: Tratos directos por @usuario.</p></div>
-        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-shield-halved" style="color:#31a24c"></i><p style="font-size:12px;">Categoría: El sistema valida que publiques en el lugar correcto.</p></div>
-        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-clock" style="color:gray"></i><p style="font-size:12px;">Borrado automático cada 24 horas.</p></div>
+        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-comments" style="color:var(--fb-blue)"></i><p style="font-size:12px;"><strong>${t.cat1}:</strong> Acuerdos directos buscando el @usuario. Prohibido dejar enlaces aquí.</p></div>
+        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-shield-halved" style="color:#31a24c"></i><p style="font-size:12px;"><strong>Orden:</strong> El sistema verifica automáticamente que publiques en la categoría correcta para mantener todo organizado.</p></div>
+        <div class="guide-item" style="display:flex; gap:10px; margin-bottom:15px;"><i class="fas fa-clock" style="color:gray"></i><p style="font-size:12px;"><strong>Limpieza:</strong> Toda publicación se elimina a las 24 horas para mantener la aplicación rápida.</p></div>
     `;
     document.getElementById('modal-guide').style.display = 'flex';
 }
@@ -164,7 +168,7 @@ function loadData(category = 'INTERCAMBIO') {
                 html += `<div class="card"><div class="card-title">${isEx ? p.desc : p.title}</div><button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">${isEx ? langData[currentLang].viewEx : langData[currentLang].view}</button><div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span><span style="color:#d93025; font-weight:700;"><i class="far fa-clock"></i> ${hoursLeft}h</span></div></div>`;
             }
         });
-        feed.innerHTML = html || `<p style="text-align:center; color:gray; font-size:12px; margin-top:20px;">No hay publicaciones.</p>`;
+        feed.innerHTML = html || `<p style="text-align:center; color:gray; font-size:12px; margin-top:20px;">Aún no hay publicaciones en esta sección.</p>`;
         updateBadges(counts);
     });
 }
@@ -179,9 +183,10 @@ function updateBadges(c) {
 
 function openPublish() {
     const t = langData[currentLang];
+    // Se limitaron los caracteres para que los textos sean cortos
     document.getElementById('form-content').innerHTML = activeCat === 'INTERCAMBIO' ? 
-        `<textarea id="p-desc" placeholder="${t.phManual}" rows="3" maxlength="150"></textarea><input type="text" id="p-user" placeholder="${t.phUser}" maxlength="35">` :
-        `<input type="text" id="p-title" placeholder="${t.phTitle}" maxlength="40"><input type="text" id="p-link" placeholder="${t.phLink}">`;
+        `<textarea id="p-desc" placeholder="${t.phManual}" rows="2" maxlength="80"></textarea><input type="text" id="p-user" placeholder="${t.phUser}" maxlength="30">` :
+        `<input type="text" id="p-title" placeholder="${t.phTitle}" maxlength="25"><input type="text" id="p-link" placeholder="${t.phLink}">`;
     document.getElementById('modal-pub').style.display = 'flex';
 }
 
@@ -193,14 +198,13 @@ function publicar() {
     const title = document.getElementById('p-title')?.value.trim();
     const link = document.getElementById('p-link')?.value.trim().toLowerCase();
 
-    // 1. VALIDACIÓN DE CATEGORÍA
+    // Textos de validación mejorados
     if (activeCat !== 'INTERCAMBIO') {
         const isBot = link.includes('bot');
-        const isJoinchat = link.includes('joinchat') || link.includes('+');
         
         let errorMsg = "";
-        if (activeCat === 'BOTS' && !isBot) errorMsg = "⚠️ Esta categoría es solo para BOTS.";
-        if (activeCat === 'CANALES' && isBot) errorMsg = "⚠️ Esto es un BOT. Publíquelo en BOTS.";
+        if (activeCat === 'BOTS' && !isBot) errorMsg = "⚠️ Verifica la categoría. Aquí solo van BOTS.";
+        if (activeCat === 'CANALES' && isBot) errorMsg = "⚠️ Enlace de BOT detectado. Por favor, usa la categoría 'Bots'.";
         
         if (errorMsg) {
             showNotify(errorMsg, true);
@@ -216,7 +220,6 @@ function publicar() {
     isProcessing = true;
     document.getElementById('tr-p-b').innerText = "...";
 
-    // 2. BLOQUEO DE ENLACES REPETIDOS (ANTI-SPAM)
     db.ref('posts').once('value', snap => {
         let isDuplicate = false;
         snap.forEach(child => {
@@ -226,7 +229,7 @@ function publicar() {
         });
 
         if (isDuplicate) {
-            showNotify("🚫 Enlace ya registrado. Evite el spam.", true);
+            showNotify("🚫 Este enlace ya se publicó hoy. Evita repetir.", true);
             return resetPub();
         }
 
@@ -239,10 +242,10 @@ function procesarPublicacion(desc, user, title, link) {
     const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*15)+5 };
     if (activeCat === 'INTERCAMBIO') {
         data.desc = desc; data.user = user;
-        if (!data.desc || !data.user) { showNotify("Incompleto", true); return resetPub(); }
+        if (!data.desc || !data.user) { showNotify("⚠️ Faltan datos. Llena todos los campos.", true); return resetPub(); }
     } else {
         data.title = title; data.link = link;
-        if (!data.title || !data.link) { showNotify("Incompleto", true); return resetPub(); }
+        if (!data.title || !data.link) { showNotify("⚠️ Faltan datos. Llena todos los campos.", true); return resetPub(); }
     }
     db.ref('posts').push(data).then(() => { 
         showNotify(langData[currentLang].ok); 
