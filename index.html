@@ -238,7 +238,7 @@ function procesarPublicacion(desc, user, title, link) {
 
 function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
-// FUNCIÓN CORREGIDA: LIMPIA LINKS Y ABRE EN VENTANA NUEVA
+// FUNCIÓN DE ACCIÓN ACTUALIZADA PARA LIMPIAR LINKS DE WHATSAPP
 function accion(isEx, link, desc, user) {
     const firma = "\n\n🚀 Enviado vía: X Exchange PRO App";
     if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
@@ -249,6 +249,12 @@ function accion(isEx, link, desc, user) {
     }
     else { 
         let urlFinal = link.trim(); // Limpia espacios accidentales
+        
+        // Si el link es de WhatsApp, corta cualquier "basura" después del signo ?
+        if (urlFinal.includes('chat.whatsapp.com')) {
+            urlFinal = urlFinal.split('?')[0]; 
+        }
+
         if (!urlFinal.startsWith('http')) {
             urlFinal = 'https://' + urlFinal; // Agrega seguridad si falta
         }
