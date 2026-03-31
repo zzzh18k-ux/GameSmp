@@ -185,8 +185,7 @@ function openPublish() {
     const t = langData[currentLang];
     let formHTML = "";
     if (activeCat === 'INTERCAMBIO') {
-        // TAGS ACTUALIZADOS PARA INTERCAMBIO
-        formHTML = `<div class="tag-container"><button class="tag-btn" onclick="addTag('SEGUIDORES X SEGUIDORES', 'p-desc')">S x S</button><button class="tag-btn" onclick="addTag('REFERENCIAS POR REFERENCIA', 'p-desc')">Ref x Ref</button><button class="tag-btn" onclick="addTag('CAMBIO DE OBJETO', 'p-desc')">Cambio Objeto</button><button class="tag-btn" onclick="addTag('BINANCE', 'p-desc')">Binance</button><button class="tag-btn" onclick="addTag('USDT', 'p-desc')">USDT</button></div><textarea id="p-desc" placeholder="${t.phManual}" rows="2" maxlength="80"></textarea><input type="text" id="p-user" placeholder="${t.phUser}" maxlength="30">`;
+        formHTML = `<div class="tag-container"><button class="tag-btn" onclick="addTag('S x S', 'p-desc')">S x S</button><button class="tag-btn" onclick="addTag('Ref x Ref', 'p-desc')">Ref x Ref</button><button class="tag-btn" onclick="addTag('BINANCE', 'p-desc')">Binance</button><button class="tag-btn" onclick="addTag('USDT', 'p-desc')">USDT</button></div><textarea id="p-desc" placeholder="${t.phManual}" rows="2" maxlength="80"></textarea><input type="text" id="p-user" placeholder="${t.phUser}" maxlength="30">`;
     } else {
         const tags = activeCat === 'BOTS' ? ['MINERÍA', 'TAREAS', 'JUEGO', 'TRADING'] : ['WHATSAPP', 'TELEGRAM', 'DINERO', 'NOTICIAS'];
         formHTML = `<div class="tag-container">${tags.map(tag => `<button class="tag-btn" onclick="addTag('${tag}', 'p-title')">${tag}</button>`).join('')}</div><input type="text" id="p-title" placeholder="${t.phTitle}" maxlength="25"><input type="text" id="p-link" placeholder="${t.phLink}">`;
@@ -219,7 +218,7 @@ function publicar() {
             if (activeCat !== 'INTERCAMBIO' && p.link === link) isDuplicate = true;
             if (activeCat === 'INTERCAMBIO' && p.user === user && p.desc === desc) isDuplicate = true;
         });
-        if (isDuplicate) { showNotify("🚫 Este enlace ya se publicó hoy. Evita repetir.", true); return resetPub(); }
+        if (isDuplicate) { showNotify("🚫 Este enlace ya se publicó hoy.", true); return resetPub(); }
         if (typeof show_10747271 === 'function') { try { show_10747271(); } catch(e){} }
         setTimeout(() => procesarPublicacion(desc, user, title, link), 400);
     });
@@ -229,17 +228,17 @@ function procesarPublicacion(desc, user, title, link) {
     const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*15)+5 };
     if (activeCat === 'INTERCAMBIO') {
         data.desc = desc; data.user = user;
-        if (!data.desc || !data.user) { showNotify("⚠️ Faltan datos. Llena todos los campos.", true); return resetPub(); }
+        if (!data.desc || !data.user) { showNotify("⚠️ Faltan datos.", true); return resetPub(); }
     } else {
         data.title = title; data.link = link;
-        if (!data.title || !data.link) { showNotify("⚠️ Faltan datos. Llena todos los campos.", true); return resetPub(); }
+        if (!data.title || !data.link) { showNotify("⚠️ Faltan datos.", true); return resetPub(); }
     }
     db.ref('posts').push(data).then(() => { showNotify(langData[currentLang].ok); document.getElementById('modal-pub').style.display='none'; resetPub(); }).catch(() => resetPub());
 }
 
 function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
-// FUNCIÓN DE ACCIÓN REFORZADA PARA WHATSAPP Y ENLACES EXTERNOS
+// FUNCIÓN DE ACCIÓN DEFINITIVA CON LIMPIEZA DE ENLACES
 function accion(isEx, link, desc, user) {
     const firma = "\n\n🚀 Enviado vía: X Exchange PRO App";
     if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
@@ -251,30 +250,35 @@ function accion(isEx, link, desc, user) {
         urlFinal = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(textoFinal)}`;
     }
     else { 
-        urlFinal = link.trim(); 
-        if (urlFinal.includes('chat.whatsapp.com')) {
-            if (!urlFinal.startsWith('http')) urlFinal = 'https://' + urlFinal;
-        } else if (!urlFinal.startsWith('http')) {
-            urlFinal = 'https://' + urlFinal; 
+        let rawLink = link.trim();
+        
+        // LIMPIEZA DE PARÁMETROS BASURA (?mode=gi_t, etc)
+        if (rawLink.includes('chat.whatsapp.com')) {
+            rawLink = rawLink.split('?')[0]; 
+            if (!rawLink.startsWith('http')) rawLink = 'https://' + rawLink;
+            urlFinal = rawLink;
+            
+            // INTENTO DE PROTOCOLO DIRECTO PARA SALTAR EL NAVEGADOR
+            const wpCode = rawLink.split('chat.whatsapp.com/')[1];
+            if (wpCode) {
+                window.location.href = `whatsapp://chat?code=${wpCode}`;
+                setTimeout(() => { window.open(urlFinal, '_blank'); }, 800);
+                return;
+            }
+        } else {
+            if (!rawLink.startsWith('http')) rawLink = 'https://' + rawLink;
+            urlFinal = rawLink;
         }
     }
 
-    // ESTRATEGIA DE APERTURA TRIPLE
-    const nuevaVentana = window.open(urlFinal, '_blank');
-    
-    if (!nuevaVentana || nuevaVentana.closed || typeof nuevaVentana.closed == 'undefined') {
-        const a = document.createElement('a');
-        a.href = urlFinal;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        
-        setTimeout(() => {
-            window.location.href = urlFinal;
-        }, 500);
-    }
+    // MÉTODO DE RESPALDO CON ANCLA
+    const a = document.createElement('a');
+    a.href = urlFinal;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 function filterCat(cat, btn) {
