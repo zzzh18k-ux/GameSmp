@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;500;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --fb-blue: #1877F2; --bg-soft: #F0F2F5; --card-bg: #FFFFFF; --text-main: #1C1E21; --text-sub: #65676B; --accent: #31a24c; --gold: #f39c12; }
+        :root { --fb-blue: #1877F2; --bg-soft: #F0F2F5; --card-bg: #FFFFFF; --text-main: #1C1E21; --text-sub: #65676B; --accent: #31a24c; --gold: #f39c12; --wa-green: #25D366; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-soft); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
@@ -81,6 +81,7 @@
         <div class="cat-wrapper">
             <div class="categories">
                 <button class="cat-btn active" id="btn-EX" onclick="filterCat('INTERCAMBIO', this)"><i class="fas fa-handshake"></i> <span id="tr-cat-ex">Intercambios</span> <span id="n-EX" class="badge"></span></button>
+                <button class="cat-btn" id="btn-WA" onclick="filterCat('WHATSAPP', this)"><i class="fab fa-whatsapp"></i> <span>WhatsApp</span> <span id="n-WA" class="badge"></span></button>
                 <button class="cat-btn" id="btn-BO" onclick="filterCat('BOTS', this)"><i class="fas fa-robot"></i> <span id="tr-cat-bo">Bots</span> <span id="n-BO" class="badge"></span></button>
                 <button class="cat-btn" id="btn-CA" onclick="filterCat('CANALES', this)"><i class="fas fa-bullhorn"></i> <span id="tr-cat-ca">Canales</span> <span id="n-CA" class="badge"></span></button>
                 <button class="cat-btn" id="btn-GR" onclick="filterCat('GRUPOS', this)"><i class="fas fa-users"></i> <span id="tr-cat-gr">Grupos</span> <span id="n-GR" class="badge"></span></button>
@@ -121,8 +122,8 @@ const langData = {
         guideBtn: "MANUAL", online: "USUARIOS EN LÍNEA", 
         catEx: "Exchanges", catBo: "Bots", catCa: "Canales", catGr: "Grupos",
         pubH: "CREAR ANUNCIO TOP", pubB: "¡PUBLICAR AHORA!", cancel: "CANCELAR",
-        view: "VER PROYECTO", viewEx: "NEGOCIAR AHORA", empty: "Sin ofertas aún.",
-        phManual: "Venta 50 USDT Pago Móvil...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "t.me/TuEnlace",
+        view: "VER PROYECTO", viewEx: "NEGOCIAR AHORA", viewWa: "ABRIR WHATSAPP", empty: "Sin ofertas aún.",
+        phManual: "Venta 50 USDT Pago Móvil...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Grupo/Proyecto", phLink: "wa.me/TuEnlace o t.me/Link",
         gTitle: "🚀 GUÍA DE ÉXITO PRO", gBtn: "¡ENTENDIDO, A VENDER!",
         gM1: "💎 Negocios Impecables", gD1: "En la sección de <b>Intercambios</b>, solo escribe tu oferta y tu @usuario. ¡Nada de links aquí para evitar el spam!",
         gM2: "📈 Impulsa tu Tráfico", gD2: "Publica tus Bots, Canales o Grupos con su link oficial. ¡Miles de usuarios verán tu proyecto hoy mismo!",
@@ -133,8 +134,8 @@ const langData = {
         guideBtn: "MANUAL", online: "USERS ONLINE", 
         catEx: "Exchanges", catBo: "Bots", catCa: "Channels", catGr: "Groups",
         pubH: "CREATE TOP POST", pubB: "PUBLISH NOW!", cancel: "CANCEL",
-        view: "VIEW PROJECT", viewEx: "TRADE NOW", empty: "No offers yet.",
-        phManual: "Selling 50 USDT...", phUser: "@TelegramUser", phTitle: "Project Name", phLink: "t.me/YourLink",
+        view: "VIEW PROJECT", viewEx: "TRADE NOW", viewWa: "OPEN WHATSAPP", empty: "No offers yet.",
+        phManual: "Selling 50 USDT...", phUser: "@TelegramUser", phTitle: "Project/Group Name", phLink: "wa.me/Link or t.me/Link",
         gTitle: "🚀 PRO SUCCESS GUIDE", gBtn: "GOT IT, LET'S GO!",
         gM1: "💎 Clean Business", gD1: "In <b>Exchanges</b>, only text and your @username. No links allowed here to keep it professional!",
         gM2: "📈 Boost Traffic", gD2: "Post your Bots or Channels with official links. Thousands will see your project today!",
@@ -171,15 +172,20 @@ function notify(msg) {
 function loadData(category = activeCat) {
     activeCat = category;
     db.ref('posts').on('value', snap => {
-        let html = ""; let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
+        let html = ""; let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0, WHATSAPP: 0 };
         snap.forEach(child => {
             const p = child.val(); counts[p.category]++;
             if(p.category === category) {
                 const isEx = p.category === 'INTERCAMBIO';
-                html += `<div class="card">
+                const isWa = p.category === 'WHATSAPP';
+                let btnLabel = isEx ? langData[currentLang].viewEx : (isWa ? langData[currentLang].viewWa : langData[currentLang].view);
+                let btnIcon = isEx ? 'fa-comments' : (isWa ? 'fa-whatsapp' : 'fa-external-link-alt');
+                let btnColor = isWa ? 'background:linear-gradient(135deg, #25D366, #128C7E)' : '';
+
+                html += `<div class="card" style="${isWa ? 'border-left-color:#25D366' : ''}">
                     <div class="card-title">${isEx ? p.desc : p.title}</div>
-                    <button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
-                        <i class="fas ${isEx?'fa-comments':'fa-external-link-alt'}"></i> &nbsp; ${isEx ? langData[currentLang].viewEx : langData[currentLang].view}
+                    <button class="btn-main" style="${btnColor}" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
+                        <i class="fab ${btnIcon} fa-lg"></i> &nbsp; ${btnLabel}
                     </button>
                     <div class="card-meta">
                         <span><i class="fas fa-bolt" style="color:var(--gold)"></i> ${p.views || 0} views</span>
@@ -194,7 +200,7 @@ function loadData(category = activeCat) {
 }
 
 function updateBadges(c) {
-    const ids = { INTERCAMBIO: 'n-EX', BOTS: 'n-BO', CANALES: 'n-CA', GRUPOS: 'n-GR' };
+    const ids = { INTERCAMBIO: 'n-EX', BOTS: 'n-BO', CANALES: 'n-CA', GRUPOS: 'n-GR', WHATSAPP: 'n-WA' };
     for (let cat in ids) {
         const b = document.getElementById(ids[cat]);
         if(b) { b.innerText = c[cat]; b.className = c[cat] > 0 ? "badge show" : "badge"; }
@@ -219,12 +225,14 @@ function publicar() {
     
     if (activeCat === 'INTERCAMBIO') {
         if(!desc || !user) return;
-        if (/(http|https|www|t\.me)/i.test(desc)) { notify(langData[currentLang].errNoLink); return; }
+        if (/(http|https|www|t\.me|wa\.me)/i.test(desc)) { notify(langData[currentLang].errNoLink); return; }
         ejecutarPublicacion({category: activeCat, desc, user, time: Date.now(), views: Math.floor(Math.random()*20)+10});
     } else {
         if(!title || !link) return;
+        
+        // Validación de WhatsApp: solo permite links de WhatsApp en su categoría
+        if (activeCat === 'WHATSAPP' && !link.includes('wa.me') && !link.includes('whatsapp.com')) { notify(langData[currentLang].errLink); return; }
         if (activeCat === 'BOTS' && !link.includes('bot')) { notify(langData[currentLang].errLink); return; }
-        if ((activeCat === 'CANALES' || activeCat === 'GRUPOS') && link.includes('bot')) { notify(langData[currentLang].errLink); return; }
         
         db.ref('posts').once('value', snap => {
             let exists = false;
@@ -249,7 +257,6 @@ function accion(isEx, link, desc, user) {
     
     let url;
     if (isEx === 'true') {
-        // MENSAJE CON MARCA PERSONALIZADO SEGÚN LO PUBLICADO
         let msg = `Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta: ${desc}\n\n🚀 Enviado vía: X Exchange PRO App`;
         url = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(msg)}`;
     } else {
