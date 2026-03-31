@@ -3,189 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>X Exchange PRO | Monetized</title>
+    <title>X Exchange PRO</title>
     
     <script src='//libtl.com/sdk.js' data-zone='10747271' data-sdk='show_10747271'></script>
-    
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;500;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --fb-blue: #1877F2; --tg-blue: #24A1DE; --bg-soft: #F0F2F5; --card-bg: #FFFFFF; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg-soft); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-
+        :root { --fb-blue: #1877F2; --tg-blue: #24A1DE; --bg-soft: #F0F2F5; --card-bg: #FFFFFF; --text-main: #1C1E21; --text-sub: #65676B; --accent: #31a24c; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-soft); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        
         /* Header */
-        .header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 100; }
-        .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 18px; font-weight: 800; }
+        .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 10; }
+        .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 18px; letter-spacing: 1.5px; font-weight: 800; }
+        .btn-guide { background: #f0f2f5; border: none; color: var(--fb-blue); padding: 8px 16px; border-radius: 12px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
 
-        /* BANNER DE ANUNCIO FIJO (MONEY ZONE) */
-        .ad-top-zone { background: #fff; padding: 10px; border-bottom: 1px solid #ddd; text-align: center; min-height: 60px; }
-        .ad-label { font-size: 9px; color: #999; display: block; margin-bottom: 4px; }
+        .online-status { font-size: 11px; color: var(--accent); font-weight: 700; padding: 10px 20px; background: #fff; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #eee; }
+        .dot { height: 8px; width: 8px; background-color: var(--accent); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* CATEGORÍAS CON FLECHA DE SCROLL */
-        .cat-wrapper { position: relative; background: #fff; display: flex; align-items: center; border-bottom: 1px solid #eee; }
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px; scrollbar-width: none; flex: 1; }
+        /* Categorías con AVISO DE DESLIZAR */
+        .cat-container { position: relative; background: var(--card-bg); border-bottom: 1px solid #eee; display: flex; align-items: center; }
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 12px 15px; scrollbar-width: none; flex: 1; }
         .categories::-webkit-scrollbar { display: none; }
         
-        .scroll-indicator { padding: 0 10px; color: var(--fb-blue); animation: bounceX 1.5s infinite; font-size: 14px; }
-        @keyframes bounceX { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+        /* Indicador de deslizar */
+        .swipe-hint { padding: 0 10px; color: var(--fb-blue); font-size: 14px; animation: swipeAnim 1.5s infinite; }
+        @keyframes swipeAnim { 0%, 100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(5px); opacity: 1; } }
 
-        .cat-btn { background: #f0f2f5; border: none; padding: 10px 20px; border-radius: 20px; font-size: 13px; white-space: nowrap; font-weight: 600; color: #65676B; transition: 0.3s; }
-        .cat-btn.active { background: var(--fb-blue); color: #fff; box-shadow: 0 4px 10px rgba(24,119,242,0.3); }
+        .cat-btn { background: #f0f2f5; border: none; color: var(--text-sub); padding: 10px 18px; border-radius: 20px; font-size: 12px; white-space: nowrap; font-weight: 600; transition: 0.3s; }
+        .cat-btn.active { background: var(--fb-blue); color: #fff; }
 
         /* Feed */
-        .feed { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
+        .feed { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; -webkit-overflow-scrolling: touch; }
         
-        /* Tarjetas Estilo Clásico Mejorado */
-        .card { background: #fff; border-radius: 15px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #eee; animation: fadeInUp 0.4s ease; }
-        .card-title { font-size: 15px; font-weight: 600; color: #1c1e21; margin-bottom: 15px; line-height: 1.4; }
-        
-        .btn-main { background: var(--fb-blue); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: 700; font-size: 14px; }
-        
-        /* Botón Plus */
-        .btn-plus { position: fixed; bottom: 30px; right: 20px; background: #000; color: #fff; width: 65px; height: 65px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: none; z-index: 200; }
+        /* Tarjetas */
+        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); animation: slideUp 0.4s ease-out; }
+        .card-title { font-weight: 600; font-size: 14px; margin-bottom: 15px; line-height: 1.5; color: #333; word-wrap: break-word; }
+        .card-meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; color: var(--text-sub); }
+
+        .btn-main { background: var(--fb-blue); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: 700; font-size: 13px; transition: 0.2s; }
 
         /* Modales */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; }
-
-        input, textarea { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #ddd; background: #f9f9f9; outline: none; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 24px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* Estilo para la Guía */
+        .guide-box { border-left: 4px solid var(--fb-blue); background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+        .guide-box h4 { font-size: 13px; color: var(--fb-blue); margin-bottom: 5px; text-transform: uppercase; }
+        .guide-box p { font-size: 12px; color: #444; line-height: 1.4; }
 
-        #lang-overlay { position: fixed; inset: 0; background: #fff; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #form-content { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+        input, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #ddd; background: #f9f9f9; font-size: 14px; outline: none; }
+        
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 3000; width: 90%; max-width: 350px; pointer-events: none; }
+        .toast { background: #333; color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 13px; margin-bottom: 10px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.5s; }
+        
+        .btn-plus { position: fixed; bottom: 30px; right: 25px; background: var(--fb-blue); color: #fff; width: 65px; height: 65px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(24, 119, 242, 0.4); z-index: 100; border: 4px solid #fff; }
+
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        #lang-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .badge { background: #d93025; color: #fff; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; display: none; }
+        .badge.show { display: inline-block; }
     </style>
 </head>
 <body>
-
+    <div id="toast-container"></div>
     <div id="lang-overlay">
-        <h2 style="font-family:'Orbitron'; color:var(--fb-blue); margin-bottom:40px;">X EXCHANGE</h2>
-        <button class="cat-btn active" style="width:200px; margin:10px; padding:15px;" onclick="initApp('es')">ESPAÑOL</button>
-        <button class="cat-btn active" style="width:200px; margin:10px; padding:15px;" onclick="initApp('en')">ENGLISH</button>
+        <h2 style="font-family:'Orbitron'; color:var(--fb-blue); margin-bottom:30px;">X EXCHANGE</h2>
+        <button class="cat-btn active" style="margin: 10px; width: 220px; padding: 15px;" onclick="setInitialLang('es')">🇪🇸 ESPAÑOL</button>
+        <button class="cat-btn active" style="margin: 10px; width: 220px; padding: 15px;" onclick="setInitialLang('en')">🇺🇸 ENGLISH</button>
     </div>
 
     <div class="header">
         <div class="logo">X EXCHANGE</div>
-        <div style="font-size:11px; font-weight:bold; color:var(--accent);"><i class="fas fa-circle"></i> LIVE</div>
+        <button class="btn-guide" onclick="openGuide()">
+            <i class="fas fa-question-circle"></i>
+            <span id="tr-guide-btn">GUÍA</span>
+        </button>
     </div>
 
-    <div class="ad-top-zone">
-        <span class="ad-label">PUBLICIDAD</span>
-        <div id="ad-banner-top">
-            <p style="font-size:10px; color:#666;">Cargando contenido patrocinado...</p>
-        </div>
+    <div class="online-status">
+        <span class="dot"></span> <span id="online-count">2,105</span> USUARIOS ACTIVOS
     </div>
 
-    <div class="cat-wrapper">
-        <div class="categories" id="cat-list">
-            <button class="cat-btn active" onclick="filterCat('INTERCAMBIO', this)">🤝 Intercambios</button>
-            <button class="cat-btn" onclick="filterCat('BOTS', this)">🤖 Bots</button>
-            <button class="cat-btn" onclick="filterCat('CANALES', this)">📢 Canales</button>
-            <button class="cat-btn" onclick="filterCat('GRUPOS', this)">💬 Grupos</button>
+    <div class="cat-container">
+        <div class="categories" id="cat-scroll">
+            <button class="cat-btn active" id="btn-EX" onclick="filterCat('INTERCAMBIO', this)">Intercambios <span id="n-EX" class="badge"></span></button>
+            <button class="cat-btn" id="btn-BO" onclick="filterCat('BOTS', this)">Bots <span id="n-BO" class="badge"></span></button>
+            <button class="cat-btn" id="btn-CA" onclick="filterCat('CANALES', this)">Canales <span id="n-CA" class="badge"></span></button>
+            <button class="cat-btn" id="btn-GR" onclick="filterCat('GRUPOS', this)">Grupos <span id="n-GR" class="badge"></span></button>
         </div>
-        <div class="scroll-indicator"><i class="fas fa-chevron-right"></i></div>
+        <div class="swipe-hint"><i class="fas fa-arrow-right"></i></div>
     </div>
 
     <div id="main-feed" class="feed"></div>
 
-    <button class="btn-plus" onclick="triggerAdThen(openPublish)"><i class="fas fa-plus"></i></button>
+    <button class="btn-plus" onclick="openPublish()"><i class="fas fa-paper-plane"></i></button>
 
     <div id="modal-pub" class="modal">
         <div class="modal-box">
-            <h3 style="text-align:center; margin-bottom:20px;">NUEVO ANUNCIO</h3>
+            <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-weight:800; font-size:18px;"></h3>
             <div id="form-content"></div>
-            <button class="btn-main" onclick="publicar()">PUBLICAR AHORA</button>
-            <button onclick="closeModal()" style="width:100%; border:none; background:none; margin-top:15px; color:gray;">CANCELAR</button>
+            <button class="btn-main" id="tr-p-b" onclick="publicar()" style="padding:16px; font-size:14px; background: #000;"></button>
+            <button onclick="closeModal('modal-pub')" style="width:100%; background:none; border:none; color:gray; font-size:13px; font-weight:bold; margin-top:15px;">CANCELAR</button>
+        </div>
+    </div>
+
+    <div id="modal-guide" class="modal">
+        <div class="modal-box">
+            <h3 style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-family:'Orbitron'; font-size:17px;">MANUAL DE USUARIO</h3>
+            <div id="guide-content"></div>
+            <button class="btn-main" id="tr-close-guide" onclick="closeModal('modal-guide')" style="margin-top:10px;">ENTENDIDO</button>
         </div>
     </div>
 
 <script>
-// CONFIG FIREBASE
 const firebaseConfig = { apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", authDomain: "fruithunter-b5d2d.firebaseapp.com", databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com", projectId: "fruithunter-b5d2d", storageBucket: "fruithunter-b5d2d.appspot.com", messagingSenderId: "910354867578", appId: "1:910354867578:web:30c5a30058c621116622c3" };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let currentCat = 'INTERCAMBIO';
+const langData = {
+    es: { guideBtn: "GUÍA", cat1: "Intercambios", cat2: "Bots", cat3: "Canales", cat4: "Grupos", close: "CANCELAR", understand: "ENTENDIDO", pubH: "NUEVO ANUNCIO", pubB: "PUBLICAR AHORA", view: "VISITAR", viewEx: "NEGOCIAR", phManual: "Escribe tu oferta claramente", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Enlace del proyecto", ok: "🚀 ¡Publicado con éxito!", msgEx: "Hola, vi tu oferta en X Exchange:", errCat: "❌ Enlace no permitido en esta sección." },
+    en: { guideBtn: "GUIDE", cat1: "Exchanges", cat2: "Bots", cat3: "Channels", cat4: "Groups", close: "CANCEL", understand: "GOT IT", pubH: "NEW POST", pubB: "PUBLISH NOW", view: "VISIT", viewEx: "TRADE", phManual: "Describe your offer", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "Project Link", ok: "🚀 Published successfully!", msgEx: "Hi, I saw your offer on X Exchange:", errCat: "❌ Link not allowed here." }
+};
 
-// FUNCIÓN PARA DISPARAR ANUNCIO ANTES DE UNA ACCIÓN (MONETIZACIÓN)
-function triggerAdThen(callback) {
-    if (typeof show_10747271 === 'function') {
-        show_10747271().then(() => {
-            callback();
-        }).catch(() => {
-            callback(); // Si falla el anuncio, sigue igual
-        });
-    } else {
-        callback();
-    }
-}
+let currentLang = 'es'; let activeCat = 'INTERCAMBIO';
 
-function initApp(lang) {
-    document.getElementById('lang-overlay').style.display = 'none';
+function setInitialLang(lang) {
+    currentLang = lang; document.getElementById('lang-overlay').style.display = 'none';
+    const t = langData[lang];
+    document.getElementById('tr-guide-btn').innerText = t.guideBtn;
+    document.getElementById('tr-p-h').innerText = t.pubH;
+    document.getElementById('tr-p-b').innerText = t.pubB;
+    document.getElementById('tr-close-guide').innerText = t.understand;
+    document.getElementById('btn-EX').firstChild.textContent = t.cat1 + " ";
+    document.getElementById('btn-BO').firstChild.textContent = t.cat2 + " ";
+    document.getElementById('btn-CA').firstChild.textContent = t.cat3 + " ";
+    document.getElementById('btn-GR').firstChild.textContent = t.cat4 + " ";
     loadData();
 }
 
-function loadData(cat = 'INTERCAMBIO') {
-    currentCat = cat;
-    const feed = document.getElementById('main-feed');
-    feed.innerHTML = "<p style='text-align:center; padding:20px;'>Cargando...</p>";
+function openGuide() {
+    const isEs = currentLang === 'es';
+    document.getElementById('guide-content').innerHTML = `
+        <div class="guide-box">
+            <h4>${isEs ? '🤝 Intercambios' : '🤝 Exchanges'}</h4>
+            <p>${isEs ? 'Aquí negocias directamente por Telegram. Está prohibido poner enlaces; solo usa tu usuario @.' : 'Trade directly via Telegram. Links are forbidden here; use your @username only.'}</p>
+        </div>
+        <div class="guide-box">
+            <h4>${isEs ? '📱 Categorías' : '📱 Categories'}</h4>
+            <p>${isEs ? 'Desliza los botones de arriba a la derecha para ver Bots, Canales y Grupos.' : 'Swipe the top buttons to the right to see Bots, Channels, and Groups.'}</p>
+        </div>
+        <div class="guide-box">
+            <h4>${isEs ? '⏱️ Duración' : '⏱️ Duration'}</h4>
+            <p>${isEs ? 'Tu anuncio estará visible por 24 horas. Luego se borrará automáticamente para mantener la lista limpia.' : 'Your post will be visible for 24 hours. It will then be deleted to keep the list fresh.'}</p>
+        </div>
+    `;
+    document.getElementById('modal-guide').style.display = 'flex';
+}
 
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+function loadData(category = 'INTERCAMBIO') {
+    activeCat = category;
+    const feed = document.getElementById('main-feed');
+    feed.innerHTML = `<p style="text-align:center; font-size:12px; margin-top:20px;">Cargando...</p>`;
     db.ref('posts').on('value', snap => {
+        const now = Date.now();
         let html = "";
+        let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
         snap.forEach(child => {
             const p = child.val();
-            if(p.category === cat) {
+            const timeLeft = 86400000 - (now - p.time);
+            if (timeLeft <= 0) { db.ref('posts/' + child.key).remove(); return; }
+            counts[p.category]++;
+            if(p.category === category) {
                 const isEx = p.category === 'INTERCAMBIO';
-                html += `
-                <div class="card">
+                html += `<div class="card">
                     <div class="card-title">${isEx ? p.desc : p.title}</div>
-                    <button class="btn-main" onclick="triggerAdThen(() => accion('${isEx}', '${p.link||''}', '${p.user||''}'))">
-                        ${isEx ? '🤝 NEGOCIAR' : '🚀 VISITAR'}
+                    <button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
+                        ${isEx ? langData[currentLang].viewEx : langData[currentLang].view}
                     </button>
+                    <div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span><span><i class="far fa-clock"></i> ${Math.floor(timeLeft/3600000)}h restantes</span></div>
                 </div>`;
             }
         });
-        feed.innerHTML = html || "<p style='text-align:center; color:gray;'>No hay anuncios activos.</p>";
+        feed.innerHTML = html || `<p style="text-align:center; color:gray; font-size:12px; margin-top:40px;">No hay publicaciones activas.</p>`;
+        updateBadges(counts);
     });
 }
 
+function updateBadges(c) {
+    const ids = { INTERCAMBIO: 'n-EX', BOTS: 'n-BO', CANALES: 'n-CA', GRUPOS: 'n-GR' };
+    for (let cat in ids) {
+        const b = document.getElementById(ids[cat]);
+        if(b) { b.innerText = c[cat]; b.className = c[cat] > 0 ? "badge show" : "badge"; }
+    }
+}
+
 function openPublish() {
-    let form = currentCat === 'INTERCAMBIO' ? 
-        `<textarea id="p-desc" placeholder="¿Qué ofreces? (Ej: Cambio 50 USDT por Bs)"></textarea>
-         <input type="text" id="p-user" placeholder="@TuUsuarioTelegram">` :
-        `<input type="text" id="p-title" placeholder="Nombre del Proyecto">
-         <input type="text" id="p-link" placeholder="https://t.me/TuLink">`;
-    document.getElementById('form-content').innerHTML = form;
+    const t = langData[currentLang];
+    document.getElementById('form-content').innerHTML = activeCat === 'INTERCAMBIO' ? 
+        `<textarea id="p-desc" placeholder="${t.phManual}" maxlength="120"></textarea>
+         <input type="text" id="p-user" placeholder="${t.phUser}" maxlength="30">` : 
+        `<input type="text" id="p-title" placeholder="${t.phTitle}" maxlength="60">
+         <input type="text" id="p-link" placeholder="${t.phLink}">`;
     document.getElementById('modal-pub').style.display = 'flex';
 }
 
 function publicar() {
-    const data = { category: currentCat, time: Date.now() };
-    if(currentCat === 'INTERCAMBIO') {
-        data.desc = document.getElementById('p-desc').value;
-        data.user = document.getElementById('p-user').value;
+    const desc = document.getElementById('p-desc')?.value.trim();
+    const user = document.getElementById('p-user')?.value.trim();
+    const title = document.getElementById('p-title')?.value.trim();
+    let link = document.getElementById('p-link')?.value.trim();
+
+    if (activeCat === 'INTERCAMBIO') {
+        if (!desc || !user) return;
+        if (desc.includes('http') || desc.includes('t.me')) { alert(langData[currentLang].errCat); return; }
     } else {
-        data.title = document.getElementById('p-title').value;
-        data.link = document.getElementById('p-link').value;
+        if (!title || !link) return;
     }
-    db.ref('posts').push(data).then(() => closeModal());
+
+    const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*15)+5 };
+    activeCat === 'INTERCAMBIO' ? (data.desc = desc, data.user = user) : (data.title = title, data.link = link);
+    
+    db.ref('posts').push(data).then(() => { closeModal('modal-pub'); });
 }
 
-function accion(isEx, link, user) {
-    let url = isEx === 'true' ? `https://t.me/${user.replace('@','')}` : link;
+function accion(isEx, link, desc, user) {
+    let url = isEx === 'true' ? `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(langData[currentLang].msgEx + ' ' + desc)}` : (link.startsWith('http') ? link : 'https://' + link);
     window.open(url, '_blank');
 }
 
 function filterCat(cat, btn) {
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    loadData(cat);
+    btn.classList.add('active'); loadData(cat);
 }
 
-function closeModal() { document.getElementById('modal-pub').style.display = 'none'; }
+setInterval(() => {
+    const el = document.getElementById('online-count');
+    if(el) el.innerText = (2200 + Math.floor(Math.random()*60)).toLocaleString();
+}, 5000);
 </script>
 </body>
 </html>
