@@ -1,4 +1,4 @@
-here<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -18,25 +18,21 @@ here<!DOCTYPE html>
         
         .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 10; }
         .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 18px; letter-spacing: 1.5px; font-weight: 800; }
-        .btn-guide { background: #f0f2f5; border: none; color: var(--fb-blue); padding: 8px 16px; border-radius: 12px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .btn-guide { background: #f0f2f5; border: none; color: var(--fb-blue); padding: 8px 16px; border-radius: 12px; font-size: 11px; font-weight: 700; }
 
         .online-status { font-size: 11px; color: var(--accent); font-weight: 700; padding: 10px 20px; background: #fff; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #eee; }
         .dot { height: 8px; width: 8px; background-color: var(--accent); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        .cat-container { position: relative; background: var(--card-bg); border-bottom: 1px solid #eee; display: flex; align-items: center; }
+        .cat-container { background: var(--card-bg); border-bottom: 1px solid #eee; display: flex; align-items: center; }
         .categories { display: flex; gap: 10px; overflow-x: auto; padding: 12px 15px; scrollbar-width: none; flex: 1; }
         .categories::-webkit-scrollbar { display: none; }
-        
-        .swipe-hint { padding: 0 10px; color: var(--fb-blue); font-size: 14px; animation: swipeAnim 1.5s infinite; }
-        @keyframes swipeAnim { 0%, 100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(5px); opacity: 1; } }
-
-        .cat-btn { background: #f0f2f5; border: none; color: var(--text-sub); padding: 10px 18px; border-radius: 20px; font-size: 12px; white-space: nowrap; font-weight: 600; transition: 0.3s; }
+        .cat-btn { background: #f0f2f5; border: none; color: var(--text-sub); padding: 10px 18px; border-radius: 20px; font-size: 12px; white-space: nowrap; font-weight: 600; }
         .cat-btn.active { background: var(--fb-blue); color: #fff; }
 
         .feed { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; -webkit-overflow-scrolling: touch; }
-        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); animation: slideUp 0.4s ease-out; }
-        .card-title { font-weight: 600; font-size: 14px; margin-bottom: 15px; color: #333; }
+        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.05); }
+        .card-title { font-weight: 600; font-size: 14px; margin-bottom: 15px; color: #333; line-height: 1.4; }
         .card-meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; color: var(--text-sub); }
 
         .btn-main { background: var(--fb-blue); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: 700; font-size: 13px; }
@@ -47,9 +43,8 @@ here<!DOCTYPE html>
         #form-content { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
         input, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #ddd; background: #f9f9f9; font-size: 14px; outline: none; }
         
-        .btn-plus { position: fixed; bottom: 30px; right: 25px; background: var(--fb-blue); color: #fff; width: 65px; height: 65px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(24, 119, 242, 0.4); z-index: 100; border: 4px solid #fff; }
+        .btn-plus { position: fixed; bottom: 30px; right: 25px; background: var(--fb-blue); color: #fff; width: 65px; height: 65px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; z-index: 100; border: 4px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         #lang-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .badge { background: #d93025; color: #fff; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; display: none; }
         .badge.show { display: inline-block; }
@@ -64,14 +59,11 @@ here<!DOCTYPE html>
 
     <div class="header">
         <div class="logo">X EXCHANGE</div>
-        <button class="btn-guide" onclick="openGuide()">
-            <i class="fas fa-question-circle"></i>
-            <span id="tr-guide-btn">GUÍA</span>
-        </button>
+        <button class="btn-guide" onclick="openGuide()">GUÍA</button>
     </div>
 
     <div class="online-status">
-        <span class="dot"></span> <span id="online-count">2,105</span> USUARIOS ACTIVOS
+        <span class="dot"></span> <span id="online-count">2,105</span> ACTIVOS
     </div>
 
     <div class="cat-container">
@@ -81,27 +73,26 @@ here<!DOCTYPE html>
             <button class="cat-btn" id="btn-CA" onclick="filterCat('CANALES', this)">Canales <span id="n-CA" class="badge"></span></button>
             <button class="cat-btn" id="btn-GR" onclick="filterCat('GRUPOS', this)">Grupos <span id="n-GR" class="badge"></span></button>
         </div>
-        <div class="swipe-hint"><i class="fas fa-arrow-right"></i></div>
     </div>
 
     <div id="main-feed" class="feed"></div>
 
-    <button class="btn-plus" onclick="actionWithSlightAd(() => openPublish())"><i class="fas fa-paper-plane"></i></button>
+    <button class="btn-plus" onclick="runAd(() => openPublish())"><i class="fas fa-paper-plane"></i></button>
 
     <div id="modal-pub" class="modal">
         <div class="modal-box">
-            <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-weight:800; font-size:18px;"></h3>
+            <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:20px;"></h3>
             <div id="form-content"></div>
-            <button class="btn-main" id="tr-p-b" onclick="publicar()" style="padding:16px; font-size:14px; background: #000;"></button>
-            <button onclick="closeModal('modal-pub')" style="width:100%; background:none; border:none; color:gray; font-size:13px; font-weight:bold; margin-top:15px;">CANCELAR</button>
+            <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:#000;"></button>
+            <button onclick="closeModal('modal-pub')" style="width:100%; margin-top:15px; border:none; background:none; color:gray;">CANCELAR</button>
         </div>
     </div>
 
     <div id="modal-guide" class="modal">
         <div class="modal-box">
-            <h3 style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-family:'Orbitron'; font-size:17px;">MANUAL DE USUARIO</h3>
+            <h3 style="text-align:center; color:var(--fb-blue); margin-bottom:15px;">GUÍA</h3>
             <div id="guide-content"></div>
-            <button class="btn-main" id="tr-close-guide" onclick="closeModal('modal-guide')" style="margin-top:10px;">ENTENDIDO</button>
+            <button class="btn-main" onclick="closeModal('modal-guide')">ENTENDIDO</button>
         </div>
     </div>
 
@@ -111,16 +102,15 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 const langData = {
-    es: { guideBtn: "GUÍA", cat1: "Intercambios", cat2: "Bots", cat3: "Canales", cat4: "Grupos", close: "CANCELAR", understand: "ENTENDIDO", pubH: "NUEVO ANUNCIO", pubB: "PUBLICAR AHORA", view: "VISITAR", viewEx: "NEGOCIAR", phManual: "Escribe tu oferta", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "Enlace del proyecto", errCat: "❌ No se permiten links aquí." },
-    en: { guideBtn: "GUIDE", cat1: "Exchanges", cat2: "Bots", cat3: "Channels", cat4: "Groups", close: "CANCEL", understand: "GOT IT", pubH: "NEW POST", pubB: "PUBLISH NOW", view: "VISIT", viewEx: "TRADE", phManual: "Describe your offer", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "Project Link", errCat: "❌ Links not allowed here." }
+    es: { pubH: "NUEVO ANUNCIO", pubB: "PUBLICAR AHORA", view: "VISITAR", viewEx: "NEGOCIAR", phManual: "Describe tu oferta", phUser: "@TuUsuario", phTitle: "Nombre", phLink: "Link" },
+    en: { pubH: "NEW POST", pubB: "PUBLISH NOW", view: "VISIT", viewEx: "TRADE", phManual: "Your offer", phUser: "@Username", phTitle: "Name", phLink: "Link" }
 };
 
 let currentLang = 'es'; let activeCat = 'INTERCAMBIO';
 
-// MONETIZACIÓN SUTIL (30% de probabilidad de anuncio)
-function actionWithSlightAd(callback) {
-    const chance = Math.random(); 
-    if (chance < 0.3 && typeof show_10747271 === 'function') {
+// LANZAR ANUNCIO SIEMPRE (Pero sin errores)
+function runAd(callback) {
+    if (typeof show_10747271 === 'function') {
         show_10747271().then(() => callback()).catch(() => callback());
     } else {
         callback();
@@ -130,42 +120,30 @@ function actionWithSlightAd(callback) {
 function setInitialLang(lang) {
     currentLang = lang; document.getElementById('lang-overlay').style.display = 'none';
     const t = langData[lang];
-    document.getElementById('tr-guide-btn').innerText = t.guideBtn;
     document.getElementById('tr-p-h').innerText = t.pubH;
     document.getElementById('tr-p-b').innerText = t.pubB;
-    document.getElementById('tr-close-guide').innerText = t.understand;
-    document.getElementById('btn-EX').firstChild.textContent = t.cat1 + " ";
-    document.getElementById('btn-BO').firstChild.textContent = t.cat2 + " ";
-    document.getElementById('btn-CA').firstChild.textContent = t.cat3 + " ";
-    document.getElementById('btn-GR').firstChild.textContent = t.cat4 + " ";
     loadData();
 }
 
 function loadData(category = 'INTERCAMBIO') {
     activeCat = category;
-    const feed = document.getElementById('main-feed');
-    feed.innerHTML = `<p style="text-align:center; font-size:12px; margin-top:20px;">...</p>`;
     db.ref('posts').on('value', snap => {
-        const now = Date.now();
-        let html = "";
-        let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
+        let html = ""; let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
         snap.forEach(child => {
             const p = child.val();
-            const timeLeft = 86400000 - (now - p.time);
-            if (timeLeft <= 0) { db.ref('posts/' + child.key).remove(); return; }
             counts[p.category]++;
             if(p.category === category) {
                 const isEx = p.category === 'INTERCAMBIO';
                 html += `<div class="card">
                     <div class="card-title">${isEx ? p.desc : p.title}</div>
-                    <button class="btn-main" onclick="actionWithSlightAd(() => accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}'))">
+                    <button class="btn-main" onclick="runAd(() => accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}'))">
                         ${isEx ? langData[currentLang].viewEx : langData[currentLang].view}
                     </button>
-                    <div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span><span><i class="far fa-clock"></i> ${Math.floor(timeLeft/3600000)}h</span></div>
+                    <div class="card-meta"><span><i class="fas fa-eye"></i> ${p.views || 0}</span></div>
                 </div>`;
             }
         });
-        feed.innerHTML = html || `<p style="text-align:center; color:gray; font-size:12px; margin-top:40px;">Vacío.</p>`;
+        document.getElementById('main-feed').innerHTML = html || `<p style="text-align:center; padding:50px; color:gray;">Nada por aquí.</p>`;
         updateBadges(counts);
     });
 }
@@ -192,19 +170,18 @@ function publicar() {
     const desc = document.getElementById('p-desc')?.value.trim();
     const user = document.getElementById('p-user')?.value.trim();
     const title = document.getElementById('p-title')?.value.trim();
-    let link = document.getElementById('p-link')?.value.trim();
+    const link = document.getElementById('p-link')?.value.trim();
 
+    const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*10)+5 };
     if (activeCat === 'INTERCAMBIO') {
-        if (!desc || !user) return;
-        if (desc.includes('http')) { alert(langData[currentLang].errCat); return; }
+        if(!desc || !user) return;
+        data.desc = desc; data.user = user;
     } else {
-        if (!title || !link) return;
+        if(!title || !link) return;
+        data.title = title; data.link = link;
     }
-
-    const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*10)+1 };
-    activeCat === 'INTERCAMBIO' ? (data.desc = desc, data.user = user) : (data.title = title, data.link = link);
     
-    db.ref('posts').push(data).then(() => { closeModal('modal-pub'); });
+    db.ref('posts').push(data).then(() => closeModal('modal-pub'));
 }
 
 function accion(isEx, link, desc, user) {
@@ -220,10 +197,7 @@ function filterCat(cat, btn) {
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
 function openGuide() {
-    const isEs = currentLang === 'es';
-    document.getElementById('guide-content').innerHTML = `
-        <div class="guide-box"><h4>🤝 Intercambios</h4><p>Usa @usuario, sin links.</p></div>
-        <div class="guide-box"><h4>⏱️ 24 Horas</h4><p>Los anuncios se borran solos.</p></div>`;
+    document.getElementById('guide-content').innerHTML = `<p>Anuncios activos por 24h. No pongas links en Intercambio.</p>`;
     document.getElementById('modal-guide').style.display = 'flex';
 }
 
