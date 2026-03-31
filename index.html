@@ -199,15 +199,15 @@ function publicar() {
     const desc = document.getElementById('p-desc')?.value.trim();
     const user = document.getElementById('p-user')?.value.trim();
     const title = document.getElementById('p-title')?.value.trim();
-    let link = document.getElementById('p-link')?.value.trim().toLowerCase();
+    let link = document.getElementById('p-link')?.value.trim();
 
-    // FILTRO DE LIMPIEZA AL PUBLICAR
+    // LIMPIEZA AUTOMÁTICA AL PUBLICAR PARA TODOS
     if (link && link.includes('chat.whatsapp.com')) {
         link = link.split('?')[0]; 
     }
 
     if (activeCat !== 'INTERCAMBIO') {
-        const isBot = link.includes('bot');
+        const isBot = link.toLowerCase().includes('bot');
         let errorMsg = "";
         if (activeCat === 'BOTS' && !isBot) errorMsg = "⚠️ Verifica la categoría. Aquí solo van BOTS.";
         if (activeCat === 'CANALES' && isBot) errorMsg = "⚠️ Enlace de BOT detectado. Por favor, usa la categoría 'Bots'.";
@@ -244,7 +244,7 @@ function procesarPublicacion(desc, user, title, link) {
 
 function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
-// FUNCIÓN DE ACCIÓN REFORZADA - ABRE FUERA DE LA APP PARA EVITAR CIERRES
+// FUNCIÓN DE ACCIÓN CON PROTOCOLO DIRECTO DE APP
 function accion(isEx, link, desc, user) {
     const firma = "\n\n🚀 Enviado vía: X Exchange PRO App";
     if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
@@ -256,26 +256,27 @@ function accion(isEx, link, desc, user) {
         urlFinal = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(textoFinal)}`;
     }
     else { 
-        let rawLink = link.trim();
+        let rawLink = link.trim().split('?')[0]; // Limpieza forzada
         
-        // Limpieza de parámetros basura por seguridad
-        rawLink = rawLink.split('?')[0]; 
-        
-        if (!rawLink.startsWith('http')) {
-            urlFinal = 'https://' + rawLink;
+        // SI ES WHATSAPP, USAMOS EL PROTOCOLO DE LA APP (MÁS SEGURO)
+        if (rawLink.includes('chat.whatsapp.com')) {
+            const code = rawLink.split('com/')[1];
+            urlFinal = "whatsapp://chat?code=" + code;
         } else {
-            urlFinal = rawLink;
+            urlFinal = rawLink.startsWith('http') ? rawLink : 'https://' + rawLink;
         }
     }
 
-    // MÉTODO DE BOTÓN FANTASMA: Obliga al sistema a abrir el navegador externo
-    const a = document.createElement('a');
-    a.href = urlFinal;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // EL "DISPARADOR" QUE SACA AL USUARIO DE LA APP
+    const win = window.open(urlFinal, '_blank');
+    if (!win) {
+        const a = document.createElement('a');
+        a.href = urlFinal;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
 }
 
 function filterCat(cat, btn) {
