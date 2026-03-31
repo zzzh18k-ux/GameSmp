@@ -31,7 +31,6 @@
         .categories { display: flex; gap: 8px; overflow-x: auto; padding: 12px; scrollbar-width: none; justify-content: flex-start; }
         .categories::-webkit-scrollbar { display: none; }
         
-        /* BOTONES MEDIANOS CORREGIDOS */
         .cat-btn { background: #f0f2f5; border: none; color: var(--text-sub); padding: 10px 15px; border-radius: 15px; font-size: 12px; white-space: nowrap; font-weight: 700; transition: 0.3s; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
         .cat-btn.active { background: #fff; color: var(--fb-blue); border: 2px solid var(--fb-blue); padding: 8px 13px; }
 
@@ -51,7 +50,6 @@
         .badge { background: #d93025; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; display: none; }
         .badge.show { display: inline-block; }
 
-        /* Estilos Manual */
         .g-step { background: #f8f9fa; padding: 15px; border-radius: 20px; margin-bottom: 15px; border-left: 4px solid var(--fb-blue); }
         .g-step h4 { font-size: 14px; color: #111; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
         .g-step p { font-size: 12px; color: var(--text-sub); line-height: 1.4; }
@@ -248,7 +246,15 @@ function ejecutarPublicacion(data) {
 function accion(isEx, link, desc, user) {
     clickCount++;
     if (clickCount >= 6) { if(typeof show_10747271 === 'function') show_10747271(); clickCount = 0; }
-    let url = (isEx === 'true') ? `https://t.me/${user.replace('@','')}?text=Hola, vi tu oferta en X Exchange: ${encodeURIComponent(desc)}` : (link.startsWith('http') ? link : 'https://' + link);
+    
+    let url;
+    if (isEx === 'true') {
+        // MENSAJE CON MARCA PERSONALIZADO SEGÚN LO PUBLICADO
+        let msg = `Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta: ${desc}\n\n🚀 Enviado vía: X Exchange PRO App`;
+        url = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(msg)}`;
+    } else {
+        url = (link.startsWith('http') ? link : 'https://' + link);
+    }
     window.open(url, '_blank');
 }
 
