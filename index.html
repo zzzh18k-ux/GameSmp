@@ -159,10 +159,22 @@ function notify(msg) {
 
 function loadData(category = activeCat) {
     activeCat = category;
+    const ahora = Date.now();
+    const limite24h = 24 * 60 * 60 * 1000;
+
     db.ref('posts').on('value', snap => {
         let html = ""; let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
         snap.forEach(child => {
-            const p = child.val(); if(counts[p.category] !== undefined) counts[p.category]++;
+            const p = child.val();
+            const tiempoPasado = ahora - p.time;
+
+            // SI EL POST TIENE MÁS DE 24 HORAS, SE BORRA
+            if (tiempoPasado > limite24h) {
+                db.ref('posts').child(child.key).remove();
+                return;
+            }
+
+            if(counts[p.category] !== undefined) counts[p.category]++;
             if(p.category === category) {
                 const isEx = p.category === 'INTERCAMBIO';
                 let btnLabel = isEx ? langData[currentLang].viewEx : langData[currentLang].view;
