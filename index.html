@@ -123,12 +123,12 @@ const langData = {
         catEx: "Exchanges", catBo: "Bots", catCa: "Canales", catGr: "Grupos",
         pubH: "CREAR ANUNCIO TOP", pubB: "¡PUBLICAR AHORA!", cancel: "CANCELAR",
         view: "VER PROYECTO", viewEx: "NEGOCIAR AHORA", viewWa: "ABRIR WHATSAPP", empty: "Sin ofertas aún.",
-        phManual: "Venta 50 USDT Pago Móvil...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "wa.me/Link o t.me/Link",
+        phManual: "Venta 50 USDT Pago Móvil...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Grupo/Proyecto", phLink: "wa.me/TuEnlace o t.me/Link",
         gTitle: "🚀 GUÍA DE ÉXITO PRO", gBtn: "¡ENTENDIDO, A VENDER!",
         gM1: "💎 Negocios Impecables", gD1: "En la sección de <b>Intercambios</b>, solo escribe tu oferta y tu @usuario. ¡Nada de links aquí!",
         gM2: "📈 Impulsa tu Tráfico", gD2: "Publica tus Bots, Canales o Grupos con su link oficial.",
-        gM3: "🔥 ¡Vuelve Mañana!", gD3: "Los anuncios duran 24h. ¡Vuelve mañana para estar arriba!",
-        errLink: "❌ Link incorrecto para esta categoría.", errDup: "⚠️ Este enlace ya existe.", errNoLink: "❌ No se permiten links aquí.", ok: "🚀 ¡Publicado!"
+        gM3: "🔥 ¡Vuelve Mañana!", gD3: "Los anuncios duran 24h. ¡La constancia es la clave!",
+        errLink: "❌ Link incorrecto para esta categoría.", errDup: "⚠️ Este enlace ya existe.", errNoLink: "❌ No links en Intercambios.", ok: "🚀 ¡Publicado!"
     },
     en: {
         guideBtn: "MANUAL", online: "USERS ONLINE", 
@@ -140,7 +140,7 @@ const langData = {
         gM1: "💎 Clean Business", gD1: "In <b>Exchanges</b>, only text and @username. No links allowed!",
         gM2: "📈 Boost Traffic", gD2: "Post your Bots/Channels with official links.",
         gM3: "🔥 Come Back Tomorrow!", gD3: "Posts last 24h. Post again tomorrow to stay on top!",
-        errLink: "❌ Incorrect link for this category.", errDup: "⚠️ Link already exists.", errNoLink: "❌ No links allowed here.", ok: "🚀 Published!"
+        errLink: "❌ Incorrect link category.", errDup: "⚠️ Link already exists.", errNoLink: "❌ No links in Exchanges.", ok: "🚀 Published!"
     }
 };
 
@@ -184,7 +184,7 @@ function loadData(category = activeCat) {
 
                 html += `<div class="card" style="${isWa ? 'border-left-color:#25D366' : ''}">
                     <div class="card-title">${isEx ? p.desc : p.title}</div>
-                    <button class="btn-main" style="${btnColor}" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
+                    <button class="btn-main" style="${btnColor}" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}', '${p.category}')">
                         <i class="${isWa ? 'fab' : 'fas'} ${btnIcon} fa-lg"></i> &nbsp; ${btnLabel}
                     </button>
                     <div class="card-meta">
@@ -223,12 +223,9 @@ function publicar() {
     const title = document.getElementById('p-title')?.value.trim();
     const link = document.getElementById('p-link')?.value.trim().toLowerCase();
     
-    // FILTRO ESTRICTO
     if (activeCat === 'INTERCAMBIO') {
         if(!desc || !user) return;
-        if (/(http|https|www|t\.me|wa\.me|whatsapp\.com)/i.test(desc)) { 
-            notify("❌ No pongas links aquí. Usa la sección correcta."); return; 
-        }
+        if (/(http|https|www|t\.me|wa\.me|whatsapp\.com)/i.test(desc)) { notify(langData[currentLang].errNoLink); return; }
         ejecutarPublicacion({category: activeCat, desc, user, time: Date.now(), views: Math.floor(Math.random()*20)+10});
     } else {
         if(!title || !link) return;
@@ -237,9 +234,7 @@ function publicar() {
 
         if (activeCat === 'WHATSAPP' && !esWa) { notify("❌ Solo links de WhatsApp aquí."); return; }
         if (activeCat === 'BOTS' && !esBot) { notify("❌ Solo links de Bots aquí."); return; }
-        if ((activeCat === 'CANALES' || activeCat === 'GRUPOS') && (esWa || esBot)) { 
-            notify("❌ Los grupos de WhatsApp o Bots tienen su propia categoría."); return; 
-        }
+        if ((activeCat === 'CANALES' || activeCat === 'GRUPOS') && (esWa || esBot)) { notify("❌ Usa la categoría correcta."); return; }
         
         db.ref('posts').once('value', snap => {
             let exists = false;
@@ -258,11 +253,43 @@ function ejecutarPublicacion(data) {
     });
 }
 
-function accion(isEx, link, desc, user) {
+function accion(isEx, link, desc, user, category) {
     clickCount++;
     if (clickCount >= 6) { if(typeof show_10747271 === 'function') show_10747271(); clickCount = 0; }
-    let url = (isEx === 'true') ? `https://t.me/${user.replace('@','')}?text=${encodeURIComponent('Vengo de X Exchange PRO:\n' + desc)}` : (link.startsWith('http') ? link : 'https://' + link);
-    window.open(url, '_blank');
+    
+    let url;
+    if (isEx === 'true') {
+        let msg = `Vengo de tu publicación en X Exchange PRO:\n🤝 Oferta: ${desc}`;
+        url = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(msg)}`;
+    } else {
+        // ESTRATEGIA DEEP LINK PARA WHATSAPP
+        if (category === 'WHATSAPP' || link.includes('wa.me') || link.includes('whatsapp.com')) {
+            // Limpiamos el link para sacar solo el código o número
+            let cleanLink = link.replace('https://', '').replace('http://', '').replace('wa.me/', '').replace('chat.whatsapp.com/', '').replace('whatsapp.com/chat/', '');
+            
+            // Si es un chat de grupo (link largo con letras)
+            if (cleanLink.length > 15) {
+                url = `whatsapp://chat?code=${cleanLink}`;
+            } else {
+                // Si es un número personal
+                url = `whatsapp://send?phone=${cleanLink}`;
+            }
+        } else {
+            url = (link.startsWith('http') ? link : 'https://' + link);
+        }
+    }
+    
+    // Intentamos abrir directo. Si falla (como en PC), usamos el link normal de respaldo.
+    const start = Date.now();
+    window.location.href = url;
+    
+    setTimeout(() => {
+        if (Date.now() - start < 1500) {
+            // Si no se abrió la app en 1.5 seg, mandamos al link web normal
+            let fallback = (link.startsWith('http') ? link : 'https://' + link);
+            window.open(fallback, '_blank');
+        }
+    }, 1000);
 }
 
 function openGuide() {
