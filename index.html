@@ -10,111 +10,129 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;500;600;800&display=swap" rel="stylesheet">
+    
     <style>
         :root { --fb-blue: #1877F2; --tg-blue: #24A1DE; --bg-soft: #F0F2F5; --card-bg: #FFFFFF; --text-main: #1C1E21; --text-sub: #65676B; --accent: #31a24c; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-soft); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* Header */
+        /* Header con Estilo */
         .header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 10; }
         .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 18px; letter-spacing: 1.5px; font-weight: 800; }
-        .btn-guide { background: #f0f2f5; border: none; color: var(--fb-blue); padding: 8px 16px; border-radius: 12px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn-guide { background: #e7f3ff; border: none; color: var(--fb-blue); padding: 10px 18px; border-radius: 12px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 2px 5px rgba(24,119,242,0.1); }
 
-        .online-status { font-size: 11px; color: var(--accent); font-weight: 700; padding: 10px 20px; background: #fff; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #eee; }
+        .online-status { font-size: 11px; color: var(--accent); font-weight: 700; padding: 12px 20px; background: #fff; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #eee; }
         .dot { height: 8px; width: 8px; background-color: var(--accent); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* Categorías */
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 12px 15px; background: var(--card-bg); scrollbar-width: none; border-bottom: 1px solid #eee; }
-        .cat-btn { background: #f0f2f5; border: none; color: var(--text-sub); padding: 10px 18px; border-radius: 20px; font-size: 12px; white-space: nowrap; font-weight: 600; transition: 0.3s; }
-        .cat-btn.active { background: var(--fb-blue); color: #fff; }
-
-        /* Feed: Ajustado para no tapar contenido */
-        .feed { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; -webkit-overflow-scrolling: touch; }
+        /* CATEGORÍAS: Mejora visual para indicar scroll */
+        .cat-container { background: var(--card-bg); position: relative; border-bottom: 1px solid #eee; }
+        .cat-container::after { content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 40px; background: linear-gradient(to left, white, transparent); pointer-events: none; }
         
-        /* Tarjetas */
-        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 6px rgba(0,0,0,0.02); animation: slideUp 0.4s ease-out; }
-        .card-title { font-weight: 600; font-size: 14px; margin-bottom: 15px; line-height: 1.5; color: #333; word-wrap: break-word; }
-        .card-meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; color: var(--text-sub); }
+        .categories { display: flex; gap: 12px; overflow-x: auto; padding: 15px; scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth; }
+        .categories::-webkit-scrollbar { display: none; }
+        
+        .cat-btn { background: #f0f2f5; border: none; color: var(--text-sub); padding: 12px 22px; border-radius: 25px; font-size: 13px; white-space: nowrap; font-weight: 600; transition: 0.3s; border: 1px solid transparent; }
+        .cat-btn.active { background: var(--fb-blue); color: #fff; box-shadow: 0 4px 12px rgba(24,119,242,0.3); border-color: var(--fb-blue); }
 
-        .btn-main { background: var(--fb-blue); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 12px; font-weight: 700; font-size: 13px; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.98); }
+        /* Feed */
+        .feed { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 110px; }
+        
+        /* Tarjetas Premium */
+        .card { background: var(--card-bg); border-radius: 20px; padding: 22px; margin-bottom: 18px; box-shadow: 0 8px 20px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.03); animation: slideUp 0.5s ease-out; position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 5px; background: var(--fb-blue); }
+        .card-title { font-weight: 600; font-size: 15px; margin-bottom: 18px; color: #1c1e21; line-height: 1.4; }
+        .card-meta { display: flex; justify-content: space-between; border-top: 1px solid #f0f2f5; pt: 12px; margin-top: 15px; font-size: 12px; color: var(--text-sub); padding-top: 12px; }
+
+        .btn-main { background: var(--fb-blue); color: #fff; border: none; padding: 15px; width: 100%; border-radius: 14px; font-weight: 700; font-size: 14px; transition: 0.2s; letter-spacing: 0.5px; }
+        .btn-main:active { transform: scale(0.96); }
 
         /* Modales */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-        .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 24px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(4px); }
+        .modal-box { background: #fff; width: 100%; max-width: 420px; padding: 30px; border-radius: 30px; max-height: 90vh; overflow-y: auto; position: relative; }
         
-        #form-content { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
-        input, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #ddd; background: #f9f9f9; font-size: 14px; outline: none; }
-        input:focus, textarea:focus { border-color: var(--fb-blue); background: #fff; }
-        textarea { resize: none; min-height: 90px; }
+        /* Guía Mejorada */
+        .guide-item { background: #f8fbff; padding: 18px; border-radius: 18px; margin-bottom: 15px; border-left: 5px solid var(--fb-blue); display: flex; gap: 15px; align-items: flex-start; }
+        .guide-item i { font-size: 20px; color: var(--fb-blue); margin-top: 3px; }
+        .guide-item p { font-size: 13px; line-height: 1.5; color: #444; }
+        .guide-item strong { color: #111; display: block; margin-bottom: 2px; }
 
-        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 5px; }
-        .tag-btn { background: #e7f3ff; border: none; color: var(--fb-blue); padding: 8px 12px; border-radius: 10px; font-size: 11px; font-weight: 600; }
-        .char-count { font-size: 10px; color: var(--text-sub); text-align: right; display: block; margin-top: -10px; }
+        /* Toast UI */
+        #toast-container { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); z-index: 3000; width: 90%; max-width: 380px; }
+        .toast { background: #1c1e21; color: #fff; padding: 15px 25px; border-radius: 16px; font-size: 14px; font-weight: 600; margin-bottom: 10px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideIn 0.3s ease; }
+        .toast.error { border-bottom: 4px solid #d93025; }
 
-        /* Notificaciones Toast */
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 3000; width: 90%; max-width: 350px; pointer-events: none; }
-        .toast { background: #333; color: #fff; padding: 12px 20px; border-radius: 12px; font-size: 13px; margin-bottom: 10px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.5s; }
-        .toast.error { background: #d93025; }
+        /* Botón Flotante */
+        .btn-plus { position: fixed; bottom: 30px; right: 25px; background: #000; color: #fff; width: 70px; height: 70px; border-radius: 24px; font-size: 26px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 100; border: none; transform: rotate(-5deg); transition: 0.3s; }
+        .btn-plus:active { transform: scale(0.9) rotate(0deg); }
 
-        /* Botón Flotante Lateral */
-        .btn-plus { position: fixed; bottom: 30px; right: 25px; background: var(--fb-blue); color: #fff; width: 65px; height: 65px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(24, 119, 242, 0.4); z-index: 100; border: 4px solid #fff; }
-
-        .guide-item { background: #f8f9fa; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 4px solid var(--fb-blue); }
-        .guide-item p { font-size: 12.5px; line-height: 1.6; color: #444; }
-
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        #lang-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .badge { background: #d93025; color: #fff; font-size: 9px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; display: none; }
-        .badge.show { display: inline-block; }
+        @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
+
     <div id="toast-container"></div>
+
     <div id="lang-overlay">
-        <h2 style="font-family:'Orbitron'; color:var(--fb-blue); margin-bottom:30px;">X EXCHANGE</h2>
-        <button class="cat-btn active" style="margin: 10px; width: 220px; padding: 15px;" onclick="setInitialLang('es')">🇪🇸 ESPAÑOL</button>
-        <button class="cat-btn active" style="margin: 10px; width: 220px; padding: 15px;" onclick="setInitialLang('en')">🇺🇸 ENGLISH</button>
+        <h2 style="font-family:'Orbitron'; color:var(--fb-blue); margin-bottom:30px; letter-spacing:2px;">X EXCHANGE</h2>
+        <p style="margin-bottom:20px; font-weight:600; color:#666;">Selecciona tu idioma</p>
+        <button class="cat-btn active" style="margin: 10px; width: 250px; padding: 18px;" onclick="setInitialLang('es')">🇪🇸 ESPAÑOL</button>
+        <button class="cat-btn active" style="margin: 10px; width: 250px; padding: 18px;" onclick="setInitialLang('en')">🇺🇸 ENGLISH</button>
     </div>
 
     <div class="header">
         <div class="logo">X EXCHANGE</div>
         <button class="btn-guide" onclick="openGuide()">
-            <i class="fas fa-info-circle"></i>
-            <span id="tr-guide-btn">AYUDA</span>
+            <i class="fas fa-rocket"></i>
+            <span id="tr-guide-btn">¿CÓMO FUNCIONA?</span>
         </button>
     </div>
 
     <div class="online-status">
-        <span class="dot"></span> <span id="online-count">2,105</span> USUARIOS ACTIVOS
+        <span class="dot"></span> <span id="online-count">2,410</span> PERSONAS CONECTADAS
     </div>
 
-    <div class="categories">
-        <button class="cat-btn active" id="btn-EX" onclick="filterCat('INTERCAMBIO', this)">Intercambios <span id="n-EX" class="badge"></span></button>
-        <button class="cat-btn" id="btn-BO" onclick="filterCat('BOTS', this)">Bots <span id="n-BO" class="badge"></span></button>
-        <button class="cat-btn" id="btn-CA" onclick="filterCat('CANALES', this)">Canales <span id="n-CA" class="badge"></span></button>
-        <button class="cat-btn" id="btn-GR" onclick="filterCat('GRUPOS', this)">Grupos <span id="n-GR" class="badge"></span></button>
+    <div class="cat-container">
+        <div class="categories">
+            <button class="cat-btn active" id="btn-EX" onclick="filterCat('INTERCAMBIO', this)">🤝 Intercambios <span id="n-EX" class="badge"></span></button>
+            <button class="cat-btn" id="btn-BO" onclick="filterCat('BOTS', this)">🤖 Bots USDT <span id="n-BO" class="badge"></span></button>
+            <button class="cat-btn" id="btn-CA" onclick="filterCat('CANALES', this)">📢 Canales <span id="n-CA" class="badge"></span></button>
+            <button class="cat-btn" id="btn-GR" onclick="filterCat('GRUPOS', this)">💬 Grupos WA <span id="n-GR" class="badge"></span></button>
+        </div>
     </div>
 
     <div id="main-feed" class="feed"></div>
 
-    <button class="btn-plus" onclick="openPublish()"><i class="fas fa-paper-plane"></i></button>
-
-    <div id="modal-pub" class="modal">
-        <div class="modal-box">
-            <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-weight:800; font-size:18px;"></h3>
-            <div id="form-content"></div>
-            <button class="btn-main" id="tr-p-b" onclick="publicar()" style="padding:16px; font-size:14px; background: #000;"></button>
-            <button id="tr-close-pub" onclick="closeModal('modal-pub')" style="width:100%; background:none; border:none; color:gray; font-size:13px; font-weight:bold; margin-top:15px;">CANCELAR</button>
-        </div>
-    </div>
+    <button class="btn-plus" onclick="openPublish()"><i class="fas fa-plus"></i></button>
 
     <div id="modal-guide" class="modal">
         <div class="modal-box">
-            <h3 style="text-align:center; color:var(--fb-blue); margin-bottom:25px; font-family:'Orbitron'; font-size:17px; border-bottom: 2px solid var(--fb-blue); padding-bottom: 10px;">👑 MANUAL DE USO</h3>
-            <div id="guide-content"></div>
-            <button class="btn-main" id="tr-close-guide" onclick="closeModal('modal-guide')" style="margin-top:20px;">¡ENTENDIDO!</button>
+            <h3 style="text-align:center; color:var(--fb-blue); margin-bottom:25px; font-family:'Orbitron'; font-size:18px;">🚀 GUÍA DEL EXPERTO</h3>
+            <div id="guide-content">
+                <div class="guide-item">
+                    <i class="fas fa-hand-pointer"></i>
+                    <p><strong>Desliza las categorías:</strong> Los botones de arriba se mueven. Desliza a la derecha para ver Bots, Canales y Grupos.</p>
+                </div>
+                <div class="guide-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <p><strong>Cero Spam:</strong> Cada post dura 24 horas. Si pones un link donde no va, el sistema te bloqueará automáticamente.</p>
+                </div>
+                <div class="guide-item">
+                    <i class="fas fa-comments"></i>
+                    <p><strong>Trato Directo:</strong> En Intercambios no hay links. Hablas directo al Telegram del usuario para negociar seguro.</p>
+                </div>
+            </div>
+            <button class="btn-main" onclick="closeModal('modal-guide')">¡LO TENGO!</button>
+        </div>
+    </div>
+
+    <div id="modal-pub" class="modal">
+        <div class="modal-box">
+            <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:20px; font-weight:800;"></h3>
+            <div id="form-content"></div>
+            <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:#000; margin-top:10px;"></button>
+            <button onclick="closeModal('modal-pub')" style="width:100%; background:none; border:none; color:#999; font-weight:bold; margin-top:20px; font-size:12px;">CERRAR VENTANA</button>
         </div>
     </div>
 
@@ -124,20 +142,11 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 const langData = {
-    es: { guideBtn: "AYUDA", cat1: "Intercambios", cat2: "Bots", cat3: "Canales", cat4: "Grupos", close: "CANCELAR", understand: "¡ENTENDIDO!", loading: "Sincronizando...", pubH: "NUEVA PUBLICACIÓN", pubB: "PUBLICAR AHORA", view: "VISITAR", viewEx: "NEGOCIAR", phManual: "Describe tu oferta (Ej: Doy USDT por Bolívares)", phUser: "@TuUsuarioTelegram", phTitle: "Título del Proyecto", phLink: "Pega el link aquí", msgEx: "Hola, te vi en X Exchange:\n🤝 Oferta:", ok: "🚀 ¡Publicado con éxito!", errSpam: "⚠️ Ya publicaste esto hoy.", errCat: "❌ No pongas links en esta sección." },
-    en: { guideBtn: "HELP", cat1: "Exchanges", cat2: "Bots", cat3: "Channels", cat4: "Groups", close: "CANCEL", understand: "GOT IT!", loading: "Syncing...", pubH: "NEW POST", pubB: "PUBLISH NOW", view: "VISIT", viewEx: "TRADE", phManual: "Describe your offer", phUser: "@YourTelegram", phTitle: "Project Name", phLink: "Paste link here", msgEx: "Hi, I saw you on X Exchange:\n🤝 Offer:", ok: "🚀 Published successfully!", errSpam: "⚠️ Already posted today.", errCat: "❌ No links allowed here." }
+    es: { guideBtn: "¿CÓMO FUNCIONA?", pubH: "CREAR ANUNCIO", pubB: "PUBLICAR AHORA", loading: "Buscando ofertas...", ok: "✅ ¡Listo! Tu anuncio está al aire.", errCat: "❌ Error: Link en categoría equivocada." },
+    en: { guideBtn: "HOW IT WORKS?", pubH: "CREATE POST", pubB: "PUBLISH NOW", loading: "Finding offers...", ok: "✅ Success! Your ad is live.", errCat: "❌ Error: Wrong link for this category." }
 };
 
 let currentLang = 'es'; let activeCat = 'INTERCAMBIO'; let isProcessing = false;
-
-function showNotify(msg, isError = false) {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = `toast ${isError ? 'error' : ''}`;
-    toast.innerText = msg;
-    container.appendChild(toast);
-    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
-}
 
 function setInitialLang(lang) {
     currentLang = lang; document.getElementById('lang-overlay').style.display = 'none';
@@ -145,51 +154,55 @@ function setInitialLang(lang) {
     document.getElementById('tr-guide-btn').innerText = t.guideBtn;
     document.getElementById('tr-p-h').innerText = t.pubH;
     document.getElementById('tr-p-b').innerText = t.pubB;
-    document.getElementById('tr-close-pub').innerText = t.close;
-    document.getElementById('tr-close-guide').innerText = t.understand;
-    document.getElementById('btn-EX').firstChild.textContent = t.cat1 + " ";
-    document.getElementById('btn-BO').firstChild.textContent = t.cat2 + " ";
-    document.getElementById('btn-CA').firstChild.textContent = t.cat3 + " ";
-    document.getElementById('btn-GR').firstChild.textContent = t.cat4 + " ";
     loadData();
+    // Auto abrir guía la primera vez para que no se pierdan
+    setTimeout(openGuide, 1000);
 }
 
-function openGuide() {
-    document.getElementById('guide-content').innerHTML = `
-        <div class="guide-item"><p><strong>Intercambios:</strong> Prohibido poner links. Solo usa tu usuario.</p></div>
-        <div class="guide-item"><p><strong>Filtro:</strong> El sistema bloquea links que no pertenecen a su categoría.</p></div>
-        <div class="guide-item"><p><strong>Duración:</strong> Los posts duran 24 horas.</p></div>
-    `;
-    document.getElementById('modal-guide').style.display = 'flex';
-}
-
+function openGuide() { document.getElementById('modal-guide').style.display = 'flex'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+function showNotify(msg, isError = false) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${isError ? 'error' : ''}`;
+    toast.innerText = msg;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3500);
+}
 
 function loadData(category = 'INTERCAMBIO') {
     activeCat = category;
     const feed = document.getElementById('main-feed');
-    feed.innerHTML = `<p style="text-align:center; font-size:12px;">Cargando...</p>`;
+    feed.innerHTML = `<div style="text-align:center; padding:50px;"><i class="fas fa-circle-notch fa-spin" style="font-size:30px; color:var(--fb-blue);"></i></div>`;
+    
     db.ref('posts').on('value', snap => {
         const now = Date.now();
         let html = "";
         let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
+        
         snap.forEach(child => {
             const p = child.val();
             const hoursLeft = Math.floor((86400000 - (now - p.time)) / 3600000);
             if (hoursLeft <= 0) { db.ref('posts/' + child.key).remove(); return; }
+            
             counts[p.category]++;
             if(p.category === category) {
                 const isEx = p.category === 'INTERCAMBIO';
-                html += `<div class="card">
+                html += `
+                <div class="card">
                     <div class="card-title">${isEx ? p.desc : p.title}</div>
                     <button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
-                        ${isEx ? langData[currentLang].viewEx : langData[currentLang].view}
+                        ${isEx ? '🤝 NEGOCIAR AHORA' : '🚀 VISITAR PROYECTO'}
                     </button>
-                    <div class="card-meta"><span><i class="fas fa-chart-line"></i> ${p.views || 0}</span><span><i class="far fa-clock"></i> ${hoursLeft}h</span></div>
+                    <div class="card-meta">
+                        <span><i class="fas fa-eye"></i> ${p.views || 0}</span>
+                        <span style="color:#d93025; font-weight:700;"><i class="far fa-clock"></i> Expira en ${hoursLeft}h</span>
+                    </div>
                 </div>`;
             }
         });
-        feed.innerHTML = html || `<p style="text-align:center; color:gray; font-size:12px; margin-top:40px;">No hay ofertas activas.</p>`;
+        feed.innerHTML = html || `<div style="text-align:center; color:#999; margin-top:50px;"><i class="fas fa-folder-open" style="font-size:40px; margin-bottom:10px;"></i><p>No hay anuncios aquí.<br>¡Sé el primero!</p></div>`;
         updateBadges(counts);
     });
 }
@@ -202,27 +215,24 @@ function updateBadges(c) {
     }
 }
 
-function updateCharCount(el, max) {
-    const countEl = el.nextElementSibling;
-    if (countEl && countEl.className === 'char-count') countEl.innerText = `${el.value.length} / ${max}`;
-}
-
 function openPublish() {
-    const t = langData[currentLang];
     let formHTML = activeCat === 'INTERCAMBIO' ? `
-        <textarea id="p-desc" placeholder="${t.phManual}" maxlength="120" oninput="updateCharCount(this, 120)"></textarea>
-        <span class="char-count">0 / 120</span>
-        <input type="text" id="p-user" placeholder="${t.phUser}" maxlength="30">
+        <p style="font-size:12px; color:var(--fb-blue); margin-bottom:10px; font-weight:600;">Escribe qué das y qué buscas (Sin links)</p>
+        <textarea id="p-desc" placeholder="Ej: Doy 100 USDT por Bolívares Pago Móvil" maxlength="120" oninput="updateCount(this)"></textarea>
+        <span class="char-count" id="count">0 / 120</span>
+        <input type="text" id="p-user" placeholder="@TuUsuarioDeTelegram">
     ` : `
-        <input type="text" id="p-title" placeholder="${t.phTitle}" maxlength="120" oninput="updateCharCount(this, 120)">
-        <span class="char-count">0 / 120</span>
-        <input type="text" id="p-link" placeholder="${t.phLink}">
+        <p style="font-size:12px; color:var(--fb-blue); margin-bottom:10px; font-weight:600;">Título atractivo y enlace oficial</p>
+        <input type="text" id="p-title" placeholder="Nombre de tu Bot o Canal" maxlength="60" oninput="updateCount(this)">
+        <span class="char-count" id="count">0 / 60</span>
+        <input type="text" id="p-link" placeholder="https://t.me/TuLink">
     `;
     document.getElementById('form-content').innerHTML = formHTML;
     document.getElementById('modal-pub').style.display = 'flex';
 }
 
-// FUNCIÓN DE PUBLICACIÓN CON BLOQUEO POR CATEGORÍA
+function updateCount(el) { document.getElementById('count').innerText = `${el.value.length} / ${el.maxLength}`; }
+
 function publicar() {
     if (isProcessing) return;
     const desc = document.getElementById('p-desc')?.value.trim();
@@ -230,65 +240,44 @@ function publicar() {
     const title = document.getElementById('p-title')?.value.trim();
     let link = document.getElementById('p-link')?.value.trim().toLowerCase();
 
-    // 1. Validaciones de Intercambio (No links)
+    // BLOQUEOS INTELIGENTES
     if (activeCat === 'INTERCAMBIO') {
-        if (!desc || !user) { showNotify("⚠️ Completa los campos.", true); return; }
-        if (desc.includes('t.me') || desc.includes('http') || desc.includes('wa.me')) { 
-            showNotify("❌ Prohibido links en Intercambios.", true); return; 
-        }
+        if (!desc || !user) return showNotify("⚠️ Llena todo.", true);
+        if (desc.includes('http') || desc.includes('t.me')) return showNotify("❌ No uses links aquí.", true);
     } else {
-        if (!title || !link) { showNotify("⚠️ Completa los campos.", true); return; }
-
-        // 2. Filtros por Categoría
-        if (activeCat === 'BOTS' && (!link.includes('t.me') || !link.includes('bot'))) {
-            showNotify("❌ Solo links de Bots de Telegram.", true); return;
-        }
-        if (activeCat === 'CANALES' && (!link.includes('t.me') || link.includes('bot'))) {
-            showNotify("❌ Solo Canales (No bots).", true); return;
-        }
-        if (activeCat === 'GRUPOS' && !link.includes('chat.whatsapp.com') && !link.includes('wa.me')) {
-            showNotify("❌ Solo Grupos de WhatsApp.", true); return;
-        }
+        if (!title || !link) return showNotify("⚠️ Llena todo.", true);
+        if (activeCat === 'BOTS' && (!link.includes('t.me') || !link.includes('bot'))) return showNotify("❌ Solo bots de Telegram.", true);
+        if (activeCat === 'GRUPOS' && !link.includes('whatsapp.com')) return showNotify("❌ Solo grupos de WhatsApp.", true);
     }
 
-    if (link && link.includes('?')) link = link.split('?')[0];
-
     isProcessing = true;
-    document.getElementById('tr-p-b').innerText = "PROCESANDO...";
+    document.getElementById('tr-p-b').innerText = "VERIFICANDO...";
     
-    db.ref('posts').once('value', snap => {
-        let isDup = false;
-        snap.forEach(c => { if (activeCat !== 'INTERCAMBIO' && c.val().link === link) isDup = true; });
-        if (isDup) { showNotify("🚫 Ya existe este enlace.", true); return resetPub(); }
-        
-        const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*10)+5 };
-        if (activeCat === 'INTERCAMBIO') { data.desc = desc; data.user = user; } 
-        else { data.title = title; data.link = link; }
-        
-        db.ref('posts').push(data).then(() => { 
-            showNotify(langData[currentLang].ok); closeModal('modal-pub'); resetPub(); 
-        }).catch(() => resetPub());
+    const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*5)+1 };
+    activeCat === 'INTERCAMBIO' ? (data.desc = desc, data.user = user) : (data.title = title, data.link = link);
+
+    db.ref('posts').push(data).then(() => {
+        showNotify(langData[currentLang].ok);
+        closeModal('modal-pub');
+        isProcessing = false;
+        document.getElementById('tr-p-b').innerText = langData[currentLang].pubB;
     });
 }
 
-function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
-
 function accion(isEx, link, desc, user) {
-    let urlFinal = isEx === 'true' ? 
-        `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(langData[currentLang].msgEx + ' ' + desc)}` : 
-        (link.startsWith('http') ? link : 'https://' + link);
-    window.open(urlFinal, '_blank');
+    let url = isEx === 'true' ? `https://t.me/${user.replace('@','')}?text=Hola, vi tu oferta: ${desc}` : (link.startsWith('http') ? link : 'https://' + link);
+    window.open(url, '_blank');
 }
 
 function filterCat(cat, btn) {
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active'); loadData(cat);
+    btn.classList.add('active');
+    loadData(cat);
 }
 
 setInterval(() => {
-    const el = document.getElementById('online-count');
-    if(el) el.innerText = (2100 + Math.floor(Math.random()*50)).toLocaleString();
-}, 5000);
+    document.getElementById('online-count').innerText = (2400 + Math.floor(Math.random()*40)).toLocaleString();
+}, 4000);
 </script>
 </body>
 </html>
