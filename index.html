@@ -30,7 +30,7 @@
         .cat-btn.active { background: #fff; color: var(--fb-blue); border: 2px solid var(--fb-blue); padding: 8px 13px; }
         .feed { flex: 1; overflow-y: auto; padding: 20px 15px; padding-bottom: 100px; }
         .card { background: var(--card-bg); border-radius: 24px; padding: 22px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.04); border-left: 5px solid var(--fb-blue); }
-        .card-title { font-weight: 700; font-size: 15px; margin-bottom: 18px; color: #111; user-select: none; -webkit-user-select: none; }
+        .card-title { font-weight: 700; font-size: 15px; margin-bottom: 18px; color: var(--fb-blue); user-select: none; -webkit-user-select: none; }
         .card-meta { display: flex; justify-content: space-between; margin-top: 15px; font-size: 12px; color: var(--text-sub); font-weight: 600; border-top: 1px solid #f8f9fa; padding-top: 12px; }
         .btn-main { background: linear-gradient(135deg, #111, #333); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 18px; font-weight: 800; font-size: 13px; }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(8px); }
@@ -125,7 +125,7 @@ const langData = {
         pubH: "CREATE TOP POST", pubB: "PUBLISH NOW!", cancel: "CANCEL",
         view: "VIEW PROJECT", viewEx: "TRADE NOW", empty: "No offers yet.",
         phManual: "Selling 50 USDT...", phUser: "@TelegramUser", phTitle: "Project Name", phLink: "t.me/Link",
-        gTitle: "🚀 PRO SUCCESS GUIDE", gBtn: "GOT IT!",
+        gTit@ReferralsXchangeBotGUIDE", gBtn: "GOT IT!",
         gM1: "💎 Clean Business", gD1: "In <b>Exchanges</b>, only text and @username. No links allowed!",
         gM2: "📈 Boost Traffic", gD2: "Post your Bots/Channels with official links.",
         gM3: "🔥 Come Back Tomorrow!", gD3: "Posts last 24h. Post again tomorrow to stay on top!",
@@ -204,14 +204,14 @@ function loadData(category = activeCat) {
     });
 }
 
-// FUNCION SECRETA: BORRADO POR CLIC LARGO (3 SEGUNDOS) EN EL TITULO
+// FUNCION SECRETA: BORRADO POR CLIC LARGO (40 SEGUNDOS) EN EL TITULO
 function startPress(postId) {
     pressTimer = setTimeout(() => {
-        if(confirm("¿Borrar este anuncio definitivamente?")) {
+        if(confirm("⚠️ ¿BORRAR ESTE ANUNCIO PARA SIEMPRE?")) {
             db.ref('posts').child(postId).remove();
-            notify("🗑️ Eliminado.");
+            notify("🗑️ ¡Eliminado por el Admin!");
         }
-    }, 3000); // 3 SEGUNDOS
+    }, 40000); // 40 SEGUNDOS
 }
 
 function endPress() { clearTimeout(pressTimer); }
@@ -273,7 +273,7 @@ function accion(isEx, link, desc, user) {
     
     if (isEx === 'true') {
         let userClean = user.replace('@', '').trim();
-        let msg = encodeURIComponent("Vengo de tu publicación en X Exchange PRO:\n🤝 Oferta: " + desc);
+        let msg = encodeURIComponent("Vengo de tu publicación en X @ReferralsXchangeBot:\n🤝 Oferta: " + desc);
         window.open(`https://t.me/${userClean}?text=${msg}`, '_blank');
         return;
     }
