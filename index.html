@@ -30,7 +30,7 @@
         .cat-btn.active { background: #fff; color: var(--fb-blue); border: 2px solid var(--fb-blue); padding: 8px 13px; }
         .feed { flex: 1; overflow-y: auto; padding: 20px 15px; padding-bottom: 100px; }
         .card { background: var(--card-bg); border-radius: 24px; padding: 22px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.04); border-left: 5px solid var(--fb-blue); }
-        .card-title { font-weight: 700; font-size: 15px; margin-bottom: 18px; color: #111; user-select: none; -webkit-user-select: none; }
+        .card-title { font-weight: 700; font-size: 15px; margin-bottom: 18px; color: #111; user-select: none; -webkit-user-select: none; word-wrap: break-word; }
         .card-meta { display: flex; justify-content: space-between; margin-top: 15px; font-size: 12px; color: var(--text-sub); font-weight: 600; border-top: 1px solid #f8f9fa; padding-top: 12px; }
         .btn-main { background: linear-gradient(135deg, #111, #333); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 18px; font-weight: 800; font-size: 13px; }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(8px); }
@@ -112,24 +112,26 @@ const langData = {
         catEx: "Exchanges", catBo: "Bots", catCa: "Canales", catGr: "Grupos",
         pubH: "CREAR ANUNCIO TOP", pubB: "¡PUBLICAR AHORA!", cancel: "CANCELAR",
         view: "VER PROYECTO", viewEx: "NEGOCIAR AHORA", empty: "Sin ofertas aún.",
-        phManual: "Venta 50 USDT Pago Móvil...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Grupo/Proyecto", phLink: "t.me/TuEnlace",
+        phManual: "Venta 50 USDT Pago Móvil...", phUser: "@Usuario_Telegram", phTitle: "Nombre del Proyecto", phLink: "t.me/TuEnlace",
         gTitle: "🚀 GUÍA DE ÉXITO PRO", gBtn: "¡ENTENDIDO, A VENDER!",
         gM1: "💎 Negocios Impecables", gD1: "En la sección de <b>Intercambios</b>, solo escribe tu oferta y tu @usuario. ¡Nada de links aquí!",
         gM2: "📈 Impulsa tu Tráfico", gD2: "Publica tus Bots, Canales o Grupos con su link oficial.",
         gM3: "🔥 ¡Vuelve Mañana!", gD3: "Los anuncios duran 24h. ¡La constancia es la clave!",
-        errLink: "❌ Link incorrecto para esta categoría.", errDup: "⚠️ Este enlace ya existe.", errNoLink: "❌ No links en Intercambios.", ok: "🚀 ¡Publicado!"
+        errLink: "❌ Link incorrecto para esta categoría.", errDup: "⚠️ Este enlace ya existe.", errNoLink: "❌ No links en Intercambios.", ok: "🚀 ¡Publicado!",
+        errChar: "⚠️ Descripción muy larga (máx. 120)", errUser: "⚠️ El usuario debe empezar por @"
     },
     en: {
         guideBtn: "MANUAL", online: "USERS ONLINE", 
         catEx: "Exchanges", catBo: "Bots", catCa: "Channels", catGr: "Groups",
         pubH: "CREATE TOP POST", pubB: "PUBLISH NOW!", cancel: "CANCEL",
         view: "VIEW PROJECT", viewEx: "TRADE NOW", empty: "No offers yet.",
-        phManual: "Selling 50 USDT...", phUser: "@TelegramUser", phTitle: "Project Name", phLink: "t.me/Link",
+        phManual: "Selling 50 USDT...", phUser: "@Telegram_User", phTitle: "Project Name", phLink: "t.me/Link",
         gTitle: "🚀 PRO SUCCESS GUIDE", gBtn: "GOT IT!",
         gM1: "💎 Clean Business", gD1: "In <b>Exchanges</b>, only text and @username. No links allowed!",
         gM2: "📈 Boost Traffic", gD2: "Post your Bots/Channels with official links.",
         gM3: "🔥 Come Back Tomorrow!", gD3: "Posts last 24h. Post again tomorrow to stay on top!",
-        errLink: "❌ Incorrect link category.", errDup: "⚠️ Link already exists.", errNoLink: "❌ No links in Exchanges.", ok: "🚀 Published!"
+        errLink: "❌ Incorrect link category.", errDup: "⚠️ Link already exists.", errNoLink: "❌ No links in Exchanges.", ok: "🚀 Published!",
+        errChar: "⚠️ Description too long (max. 120)", errUser: "⚠️ User must start with @"
     }
 };
 
@@ -204,14 +206,13 @@ function loadData(category = activeCat) {
     });
 }
 
-// FUNCION SECRETA: BORRADO POR CLIC LARGO (6 SEGUNDOS) EN EL TITULO
 function startPress(postId) {
     pressTimer = setTimeout(() => {
         if(confirm("¿Borrar este anuncio definitivamente?")) {
             db.ref('posts').child(postId).remove();
             notify("🗑️ Eliminado.");
         }
-    }, 6000); // 6 SEGUNDOS
+    }, 6000); 
 }
 
 function endPress() { clearTimeout(pressTimer); }
@@ -227,9 +228,9 @@ function updateBadges(c) {
 function openPublish() {
     const t = langData[currentLang];
     document.getElementById('form-content').innerHTML = activeCat === 'INTERCAMBIO' ? 
-        `<textarea id="p-desc" placeholder="${t.phManual}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px; height:100px; outline:none;"></textarea>
-         <input type="text" id="p-user" placeholder="${t.phUser}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; outline:none;">` : 
-        `<input type="text" id="p-title" placeholder="${t.phTitle}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px; outline:none;">
+        `<textarea id="p-desc" maxlength="120" placeholder="${t.phManual}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px; height:100px; outline:none;"></textarea>
+         <input type="text" id="p-user" maxlength="30" placeholder="${t.phUser}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; outline:none;">` : 
+        `<input type="text" id="p-title" maxlength="30" placeholder="${t.phTitle}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px; outline:none;">
          <input type="text" id="p-link" placeholder="${t.phLink}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; outline:none;">`;
     document.getElementById('modal-pub').style.display = 'flex';
 }
@@ -242,10 +243,13 @@ function publicar() {
     
     if (activeCat === 'INTERCAMBIO') {
         if(!desc || !user) return;
+        if (!user.startsWith('@')) { notify(langData[currentLang].errUser); return; }
+        if (desc.length > 120) { notify(langData[currentLang].errChar); return; }
         if (/(http|https|www|t\.me|wa\.me|whatsapp\.com)/i.test(desc)) { notify(langData[currentLang].errNoLink); return; }
         ejecutarPublicacion({category: activeCat, desc, user, time: Date.now(), views: Math.floor(Math.random()*20)+10});
     } else {
         if(!title || !link) return;
+        if (title.length > 30) { notify("⚠️ Título muy largo."); return; }
         const esBot = link.includes('bot');
 
         if (activeCat === 'BOTS' && !esBot) { notify("❌ Solo links de Bots aquí."); return; }
