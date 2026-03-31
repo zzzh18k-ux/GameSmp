@@ -238,7 +238,7 @@ function procesarPublicacion(desc, user, title, link) {
 
 function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
-// FUNCIÓN DE ACCIÓN DEFINITIVA CON LIMPIEZA DE ENLACES
+// FUNCIÓN DE ACCIÓN CORREGIDA - ESTABLE Y SIN ERRORES DE PROTOCOLO
 function accion(isEx, link, desc, user) {
     const firma = "\n\n🚀 Enviado vía: X Exchange PRO App";
     if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
@@ -252,33 +252,31 @@ function accion(isEx, link, desc, user) {
     else { 
         let rawLink = link.trim();
         
-        // LIMPIEZA DE PARÁMETROS BASURA (?mode=gi_t, etc)
+        // LIMPIEZA DE PARÁMETROS QUE WHATSAPP NO RECONOCE
         if (rawLink.includes('chat.whatsapp.com')) {
             rawLink = rawLink.split('?')[0]; 
-            if (!rawLink.startsWith('http')) rawLink = 'https://' + rawLink;
-            urlFinal = rawLink;
-            
-            // INTENTO DE PROTOCOLO DIRECTO PARA SALTAR EL NAVEGADOR
-            const wpCode = rawLink.split('chat.whatsapp.com/')[1];
-            if (wpCode) {
-                window.location.href = `whatsapp://chat?code=${wpCode}`;
-                setTimeout(() => { window.open(urlFinal, '_blank'); }, 800);
-                return;
-            }
+        }
+        
+        // ASEGURAR PROTOCOLO HTTPS
+        if (!rawLink.startsWith('http')) {
+            urlFinal = 'https://' + rawLink;
         } else {
-            if (!rawLink.startsWith('http')) rawLink = 'https://' + rawLink;
             urlFinal = rawLink;
         }
     }
 
-    // MÉTODO DE RESPALDO CON ANCLA
-    const a = document.createElement('a');
-    a.href = urlFinal;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // MÉTODO DE APERTURA ESTÁNDAR PARA EVITAR CAÍDAS EN WEBVIEWS
+    const win = window.open(urlFinal, '_blank');
+    
+    if (!win) {
+        const a = document.createElement('a');
+        a.href = urlFinal;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
 }
 
 function filterCat(cat, btn) {
