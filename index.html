@@ -104,6 +104,8 @@ const db = firebase.database();
 let currentLang = 'es'; 
 let activeCat = 'INTERCAMBIO';
 let clickCount = 0;
+let secretClicks = 0;
+let lastPostId = "";
 
 const langData = {
     es: {
@@ -166,9 +168,8 @@ function loadData(category = activeCat) {
         let html = ""; let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
         snap.forEach(child => {
             const p = child.val();
-            const tiempoPasado = ahora - p.time;
+            const tiempoPasado = ahora - (p.time || 0);
 
-            // SI EL POST TIENE MÁS DE 24 HORAS, SE BORRA
             if (tiempoPasado > limite24h) {
                 db.ref('posts').child(child.key).remove();
                 return;
@@ -182,7 +183,7 @@ function loadData(category = activeCat) {
 
                 html += `<div class="card">
                     <div class="card-title">${isEx ? p.desc : p.title}</div>
-                    <button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}', '${p.category}')">
+                    <button class="btn-main" onclick="accion('${child.key}', '${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}', '${p.category}')">
                         <i class="fas ${btnIcon} fa-lg"></i> &nbsp; ${btnLabel}
                     </button>
                     <div class="card-meta">
@@ -248,7 +249,21 @@ function ejecutarPublicacion(data) {
     });
 }
 
-function accion(isEx, link, desc, user, category) {
+function accion(postId, isEx, link, desc, user, category) {
+    // SECRETO DE BORRADO (20 TOQUES)
+    if(lastPostId === postId) {
+        secretClicks++;
+        if(secretClicks >= 20) {
+            db.ref('posts').child(postId).remove();
+            notify("🗑️ ¡Eliminado por el Admin!");
+            secretClicks = 0;
+            return;
+        }
+    } else {
+        secretClicks = 1;
+        lastPostId = postId;
+    }
+
     clickCount++;
     if (clickCount >= 6) { if(typeof show_10747271 === 'function') show_10747271(); clickCount = 0; }
     
