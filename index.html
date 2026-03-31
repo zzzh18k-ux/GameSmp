@@ -212,10 +212,12 @@ function publicar() {
     const link = document.getElementById('p-link')?.value.trim();
     const data = { category: activeCat, time: Date.now(), views: Math.floor(Math.random()*20)+10 };
     
+    // PATRONES DE SEGURIDAD
+    const linkPattern = /(http|https|www|\.com|\.net|\.org|\.me|t\.me)/i;
+    const tgPattern = /(t\.me|telegram\.me)/i;
+
     if (activeCat === 'INTERCAMBIO') { 
         if(!desc || !user) return; 
-        // BLOQUEO DE LINKS EN INTERCAMBIO
-        const linkPattern = /(http|https|www|\.com|\.net|\.org|\.me|t\.me)/i;
         if (linkPattern.test(desc)) {
             alert(currentLang === 'es' ? "❌ No puedes poner links aquí." : "❌ Links not allowed here.");
             return;
@@ -225,7 +227,13 @@ function publicar() {
     } 
     else { 
         if(!title || !link) return; 
-        // ANTI-SPAM DE ENLACES IDÉNTICOS
+        
+        // FILTRO: Solo permite links de Telegram en estas categorías para evitar texto de intercambio
+        if (!tgPattern.test(link)) {
+            alert(currentLang === 'es' ? "❌ Solo se permiten enlaces de Telegram (t.me) en esta sección." : "❌ Only Telegram links (t.me) allowed in this section.");
+            return;
+        }
+
         db.ref('posts').once('value', snap => {
             let esDuplicado = false;
             snap.forEach(child => {
