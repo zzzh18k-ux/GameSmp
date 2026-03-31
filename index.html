@@ -125,7 +125,7 @@ const langData = {
         pubH: "CREATE TOP POST", pubB: "PUBLISH NOW!", cancel: "CANCEL",
         view: "VIEW PROJECT", viewEx: "TRADE NOW", empty: "No offers yet.",
         phManual: "Selling 50 USDT...", phUser: "@TelegramUser", phTitle: "Project Name", phLink: "t.me/Link",
-        gTit@ReferralsXchangeBotGUIDE", gBtn: "GOT IT!",
+        gTitle: "🚀 PRO SUCCESS GUIDE", gBtn: "GOT IT!",
         gM1: "💎 Clean Business", gD1: "In <b>Exchanges</b>, only text and @username. No links allowed!",
         gM2: "📈 Boost Traffic", gD2: "Post your Bots/Channels with official links.",
         gM3: "🔥 Come Back Tomorrow!", gD3: "Posts last 24h. Post again tomorrow to stay on top!",
@@ -204,14 +204,13 @@ function loadData(category = activeCat) {
     });
 }
 
-// FUNCION SECRETA: BORRADO POR CLIC LARGO (40 SEGUNDOS) EN EL TITULO
 function startPress(postId) {
     pressTimer = setTimeout(() => {
         if(confirm("⚠️ ¿BORRAR ESTE ANUNCIO PARA SIEMPRE?")) {
             db.ref('posts').child(postId).remove();
-            notify("🗑️ ¡Eliminado por el Admin!");
+            notify("🗑️ ¡Eliminado!");
         }
-    }, 40000); // 40 SEGUNDOS
+    }, 40000); 
 }
 
 function endPress() { clearTimeout(pressTimer); }
@@ -238,7 +237,7 @@ function publicar() {
     const desc = document.getElementById('p-desc')?.value.trim();
     const user = document.getElementById('p-user')?.value.trim();
     const title = document.getElementById('p-title')?.value.trim();
-    const link = document.getElementById('p-link')?.value.trim().toLowerCase();
+    let link = document.getElementById('p-link')?.value.trim();
     
     if (activeCat === 'INTERCAMBIO') {
         if(!desc || !user) return;
@@ -246,8 +245,12 @@ function publicar() {
         ejecutarPublicacion({category: activeCat, desc, user, time: Date.now(), views: Math.floor(Math.random()*20)+10});
     } else {
         if(!title || !link) return;
-        const esBot = link.includes('bot');
-
+        
+        // Limpiar y validar link para evitar error de Telegram
+        link = link.replace(/^(http:\/\/|https:\/\/)/, '');
+        if (link.startsWith('t.me/')) link = link.replace('t.me/', '');
+        
+        const esBot = link.toLowerCase().includes('bot');
         if (activeCat === 'BOTS' && !esBot) { notify("❌ Solo links de Bots aquí."); return; }
         if ((activeCat === 'CANALES' || activeCat === 'GRUPOS') && esBot) { notify("❌ Usa la categoría correcta."); return; }
         
@@ -273,13 +276,14 @@ function accion(isEx, link, desc, user) {
     
     if (isEx === 'true') {
         let userClean = user.replace('@', '').trim();
-        let msg = encodeURIComponent("Vengo de tu publicación en X @ReferralsXchangeBot:\n🤝 Oferta: " + desc);
+        let msg = encodeURIComponent("Vengo de X Exchange:\n🤝 Oferta: " + desc);
         window.open(`https://t.me/${userClean}?text=${msg}`, '_blank');
         return;
     }
 
     let cleanLink = link.trim();
-    let urlNormal = cleanLink.startsWith('http') ? cleanLink : 'https://' + cleanLink;
+    // Asegurar formato correcto de Telegram
+    let urlNormal = cleanLink.includes('/') ? 'https://' + cleanLink : 'https://t.me/' + cleanLink;
     window.open(urlNormal, '_blank');
 }
 
