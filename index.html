@@ -108,7 +108,7 @@ function showNotify(msg, isError = false) {
 const langData = {
     es: { guideBtn: "GUÍA", cat1: "Intercambios", cat2: "Bots", cat3: "Canales", cat4: "Grupos", close: "CERRAR", understand: "ENTENDIDO", loading: "Cargando datos...", pubH: "CREAR POST", pubB: "PUBLICAR AHORA", view: "VER", viewEx: "CAMBIAR", phManual: "Describe brevemente tu oferta...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre corto del Proyecto", phLink: "Link t.me/...", msgEx: "Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta:", ok: "✅ ¡Publicado con éxito!", errSpam: "⚠️ Ya publicaste esto hoy.", errCat: "❌ Error: No se permiten links en Intercambios." },
     en: { guideBtn: "GUIDE", cat1: "Exchanges", cat2: "Bots", cat3: "Channels", cat4: "Groups", close: "CLOSE", understand: "UNDERSTOOD", loading: "Loading data...", pubH: "CREATE POST", pubB: "PUBLISH NOW", view: "VIEW", viewEx: "EXCHANGE", phManual: "Briefly describe your offer...", phUser: "@YourTelegram", phTitle: "Short Project Name", phLink: "t.me/ link", msgEx: "I come from your post on @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Offer:", ok: "✅ Published Successfully!", errSpam: "⚠️ Already posted today.", errCat: "❌ Error: No links in Exchanges." },
-    ru: { guideBtn: "ГИД", cat1: "Обмен", cat2: "Боты", cat3: "Каналы", cat4: "Группы", close: "ЗАКРЫТЬ", understand: "ПОНЯТНО", loading: "Загрузка...", pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОERT", viewEx: "ОБМЕН", phManual: "Опишите кратко...", phUser: "@ВашЮзернейм", phTitle: "Короткое название", phLink: "t.me/ ссылка", msgEx: "Я из вашего поста в @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Предложение:", ok: "✅ Успешно!", errSpam: "⚠️ Уже опубликовано сегодня.", errCat: "❌ Ошибка: Ссылки запрещены." }
+    ru: { guideBtn: "ГИД", cat1: "Обмен", cat2: "Боты", cat3: "Каналы", cat4: "Группы", close: "ЗАКРЫТЬ", understand: "ПОНЯТНО", loading: "Загрузка...", pubH: "СОЗДАТЬ", pubB: "ОПУБЛИКОВАТЬ", view: "СМОERT", viewEx: "ОБМЕН", phManual: "Опишите кратко...", phUser: "@ВашЮзернейм", phTitle: "Короткое название", phLink: "t.me/ ссылка", msgEx: "Я из вашего поста в @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Предложение:", ok: "✅ Успешно!", errSpam: "⚠️ Уже опубликовано hoy.", errCat: "❌ Error: No se permiten enlaces." }
 };
 
 let currentLang = 'es'; let activeCat = 'INTERCAMBIO'; let isProcessing = false;
@@ -185,7 +185,7 @@ function openPublish() {
     const t = langData[currentLang];
     let formHTML = "";
     if (activeCat === 'INTERCAMBIO') {
-        // LÍNEA 156 MODIFICADA SEGÚN TU PEDIDO
+        // TAGS ACTUALIZADOS PARA INTERCAMBIO
         formHTML = `<div class="tag-container"><button class="tag-btn" onclick="addTag('SEGUIDORES X SEGUIDORES', 'p-desc')">S x S</button><button class="tag-btn" onclick="addTag('REFERENCIAS POR REFERENCIA', 'p-desc')">Ref x Ref</button><button class="tag-btn" onclick="addTag('CAMBIO DE OBJETO', 'p-desc')">Cambio Objeto</button><button class="tag-btn" onclick="addTag('BINANCE', 'p-desc')">Binance</button><button class="tag-btn" onclick="addTag('USDT', 'p-desc')">USDT</button></div><textarea id="p-desc" placeholder="${t.phManual}" rows="2" maxlength="80"></textarea><input type="text" id="p-user" placeholder="${t.phUser}" maxlength="30">`;
     } else {
         const tags = activeCat === 'BOTS' ? ['MINERÍA', 'TAREAS', 'JUEGO', 'TRADING'] : ['WHATSAPP', 'TELEGRAM', 'DINERO', 'NOTICIAS'];
@@ -239,7 +239,7 @@ function procesarPublicacion(desc, user, title, link) {
 
 function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
-// FUNCIÓN DE ACCIÓN REPARADA CON "GHOST ANCHOR" PARA FORZAR SALIDA DE LA APP
+// FUNCIÓN DE ACCIÓN REFORZADA PARA WHATSAPP Y ENLACES EXTERNOS
 function accion(isEx, link, desc, user) {
     const firma = "\n\n🚀 Enviado vía: X Exchange PRO App";
     if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
@@ -252,25 +252,29 @@ function accion(isEx, link, desc, user) {
     }
     else { 
         urlFinal = link.trim(); 
-        
-        // Limpiamos links de WhatsApp basura
         if (urlFinal.includes('chat.whatsapp.com')) {
-            urlFinal = urlFinal.split('?')[0]; 
-        }
-
-        if (!urlFinal.startsWith('http')) {
+            if (!urlFinal.startsWith('http')) urlFinal = 'https://' + urlFinal;
+        } else if (!urlFinal.startsWith('http')) {
             urlFinal = 'https://' + urlFinal; 
         }
     }
 
-    // MÉTODO "GHOST ANCHOR" (Ancla Fantasma)
-    const a = document.createElement('a');
-    a.href = urlFinal;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // ESTRATEGIA DE APERTURA TRIPLE
+    const nuevaVentana = window.open(urlFinal, '_blank');
+    
+    if (!nuevaVentana || nuevaVentana.closed || typeof nuevaVentana.closed == 'undefined') {
+        const a = document.createElement('a');
+        a.href = urlFinal;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        setTimeout(() => {
+            window.location.href = urlFinal;
+        }, 500);
+    }
 }
 
 function filterCat(cat, btn) {
