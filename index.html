@@ -123,24 +123,24 @@ const langData = {
         catEx: "Exchanges", catBo: "Bots", catCa: "Canales", catGr: "Grupos",
         pubH: "CREAR ANUNCIO TOP", pubB: "¡PUBLICAR AHORA!", cancel: "CANCELAR",
         view: "VER PROYECTO", viewEx: "NEGOCIAR AHORA", viewWa: "ABRIR WHATSAPP", empty: "Sin ofertas aún.",
-        phManual: "Venta 50 USDT Pago Móvil...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Grupo/Proyecto", phLink: "wa.me/TuEnlace o t.me/Link",
+        phManual: "Venta 50 USDT Pago Móvil...", phUser: "@TuUsuarioTelegram", phTitle: "Nombre del Proyecto", phLink: "wa.me/Link o t.me/Link",
         gTitle: "🚀 GUÍA DE ÉXITO PRO", gBtn: "¡ENTENDIDO, A VENDER!",
-        gM1: "💎 Negocios Impecables", gD1: "En la sección de <b>Intercambios</b>, solo escribe tu oferta y tu @usuario. ¡Nada de links aquí para evitar el spam!",
-        gM2: "📈 Impulsa tu Tráfico", gD2: "Publica tus Bots, Canales o Grupos con su link oficial. ¡Miles de usuarios verán tu proyecto hoy mismo!",
-        gM3: "🔥 ¡Vuelve Mañana!", gD3: "Los anuncios duran 24h. Si quieres estar siempre arriba y cerrar más tratos, <b>¡vuelve mañana a publicar!</b> La constancia es la clave del éxito.",
-        errLink: "❌ Link incorrecto para esta categoría.", errDup: "⚠️ Este enlace ya existe.", errNoLink: "❌ No links en Intercambios.", ok: "🚀 ¡Publicado!"
+        gM1: "💎 Negocios Impecables", gD1: "En la sección de <b>Intercambios</b>, solo escribe tu oferta y tu @usuario. ¡Nada de links aquí!",
+        gM2: "📈 Impulsa tu Tráfico", gD2: "Publica tus Bots, Canales o Grupos con su link oficial.",
+        gM3: "🔥 ¡Vuelve Mañana!", gD3: "Los anuncios duran 24h. ¡Vuelve mañana para estar arriba!",
+        errLink: "❌ Link incorrecto para esta categoría.", errDup: "⚠️ Este enlace ya existe.", errNoLink: "❌ No se permiten links aquí.", ok: "🚀 ¡Publicado!"
     },
     en: {
         guideBtn: "MANUAL", online: "USERS ONLINE", 
         catEx: "Exchanges", catBo: "Bots", catCa: "Channels", catGr: "Groups",
         pubH: "CREATE TOP POST", pubB: "PUBLISH NOW!", cancel: "CANCEL",
         view: "VIEW PROJECT", viewEx: "TRADE NOW", viewWa: "OPEN WHATSAPP", empty: "No offers yet.",
-        phManual: "Selling 50 USDT...", phUser: "@TelegramUser", phTitle: "Project/Group Name", phLink: "wa.me/Link or t.me/Link",
-        gTitle: "🚀 PRO SUCCESS GUIDE", gBtn: "GOT IT, LET'S GO!",
-        gM1: "💎 Clean Business", gD1: "In <b>Exchanges</b>, only text and your @username. No links allowed here to keep it professional!",
-        gM2: "📈 Boost Traffic", gD2: "Post your Bots or Channels with official links. Thousands will see your project today!",
-        gM3: "🔥 Come Back Tomorrow!", gD3: "Posts last 24h. To stay on top and close more deals, <b>post again tomorrow!</b> Consistency is your best tool.",
-        errLink: "❌ Incorrect link category.", errDup: "⚠️ Link already exists.", errNoLink: "❌ No links in Exchanges.", ok: "🚀 Published!"
+        phManual: "Selling 50 USDT...", phUser: "@TelegramUser", phTitle: "Project Name", phLink: "wa.me/Link or t.me/Link",
+        gTitle: "🚀 PRO SUCCESS GUIDE", gBtn: "GOT IT!",
+        gM1: "💎 Clean Business", gD1: "In <b>Exchanges</b>, only text and @username. No links allowed!",
+        gM2: "📈 Boost Traffic", gD2: "Post your Bots/Channels with official links.",
+        gM3: "🔥 Come Back Tomorrow!", gD3: "Posts last 24h. Post again tomorrow to stay on top!",
+        errLink: "❌ Incorrect link for this category.", errDup: "⚠️ Link already exists.", errNoLink: "❌ No links allowed here.", ok: "🚀 Published!"
     }
 };
 
@@ -185,7 +185,7 @@ function loadData(category = activeCat) {
                 html += `<div class="card" style="${isWa ? 'border-left-color:#25D366' : ''}">
                     <div class="card-title">${isEx ? p.desc : p.title}</div>
                     <button class="btn-main" style="${btnColor}" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
-                        <i class="fab ${btnIcon} fa-lg"></i> &nbsp; ${btnLabel}
+                        <i class="${isWa ? 'fab' : 'fas'} ${btnIcon} fa-lg"></i> &nbsp; ${btnLabel}
                     </button>
                     <div class="card-meta">
                         <span><i class="fas fa-bolt" style="color:var(--gold)"></i> ${p.views || 0} views</span>
@@ -223,16 +223,23 @@ function publicar() {
     const title = document.getElementById('p-title')?.value.trim();
     const link = document.getElementById('p-link')?.value.trim().toLowerCase();
     
+    // FILTRO ESTRICTO
     if (activeCat === 'INTERCAMBIO') {
         if(!desc || !user) return;
-        if (/(http|https|www|t\.me|wa\.me)/i.test(desc)) { notify(langData[currentLang].errNoLink); return; }
+        if (/(http|https|www|t\.me|wa\.me|whatsapp\.com)/i.test(desc)) { 
+            notify("❌ No pongas links aquí. Usa la sección correcta."); return; 
+        }
         ejecutarPublicacion({category: activeCat, desc, user, time: Date.now(), views: Math.floor(Math.random()*20)+10});
     } else {
         if(!title || !link) return;
-        
-        // Validación de WhatsApp: solo permite links de WhatsApp en su categoría
-        if (activeCat === 'WHATSAPP' && !link.includes('wa.me') && !link.includes('whatsapp.com')) { notify(langData[currentLang].errLink); return; }
-        if (activeCat === 'BOTS' && !link.includes('bot')) { notify(langData[currentLang].errLink); return; }
+        const esWa = link.includes('wa.me') || link.includes('whatsapp.com');
+        const esBot = link.includes('bot');
+
+        if (activeCat === 'WHATSAPP' && !esWa) { notify("❌ Solo links de WhatsApp aquí."); return; }
+        if (activeCat === 'BOTS' && !esBot) { notify("❌ Solo links de Bots aquí."); return; }
+        if ((activeCat === 'CANALES' || activeCat === 'GRUPOS') && (esWa || esBot)) { 
+            notify("❌ Los grupos de WhatsApp o Bots tienen su propia categoría."); return; 
+        }
         
         db.ref('posts').once('value', snap => {
             let exists = false;
@@ -254,25 +261,13 @@ function ejecutarPublicacion(data) {
 function accion(isEx, link, desc, user) {
     clickCount++;
     if (clickCount >= 6) { if(typeof show_10747271 === 'function') show_10747271(); clickCount = 0; }
-    
-    let url;
-    if (isEx === 'true') {
-        let msg = `Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta: ${desc}\n\n🚀 Enviado vía: X Exchange PRO App`;
-        url = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(msg)}`;
-    } else {
-        url = (link.startsWith('http') ? link : 'https://' + link);
-    }
+    let url = (isEx === 'true') ? `https://t.me/${user.replace('@','')}?text=${encodeURIComponent('Vengo de X Exchange PRO:\n' + desc)}` : (link.startsWith('http') ? link : 'https://' + link);
     window.open(url, '_blank');
 }
 
 function openGuide() {
     const t = langData[currentLang];
-    document.getElementById('guide-steps').innerHTML = `
-        <div class="g-step"><h4><i class="fas fa-check-circle" style="color:var(--fb-blue)"></i> ${t.gM1}</h4><p>${t.gD1}</p></div>
-        <div class="g-step"><h4><i class="fas fa-chart-line" style="color:var(--accent)"></i> ${t.gM2}</h4><p>${t.gD2}</p></div>
-        <div class="g-step"><h4><i class="fas fa-fire" style="color:var(--gold)"></i> ${t.gM3}</h4><p>${t.gD3}</p></div>
-        <p style="text-align:center; font-size:11px; color:gray; font-weight:600; margin-top:10px;">¡Gracias por ser parte de X EXCHANGE! 💙</p>
-    `;
+    document.getElementById('guide-steps').innerHTML = `<div class="g-step"><h4>${t.gM1}</h4><p>${t.gD1}</p></div><div class="g-step"><h4>${t.gM2}</h4><p>${t.gD2}</p></div><div class="g-step"><h4>${t.gM3}</h4><p>${t.gD3}</p></div>`;
     document.getElementById('modal-guide').style.display = 'flex';
 }
 
