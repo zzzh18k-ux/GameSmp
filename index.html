@@ -257,29 +257,45 @@ function accion(isEx, link, desc, user, category) {
     clickCount++;
     if (clickCount >= 6) { if(typeof show_10747271 === 'function') show_10747271(); clickCount = 0; }
     
-    if (isEx === 'true') {
-        let userClean = user.replace('@', '').trim();
-        let msg = encodeURIComponent("Vengo de tu publicación en X Exchange PRO:\n🤝 Oferta: " + desc);
-        window.open(`https://t.me/${userClean}?text=${msg}`, '_blank');
+    // CASO 1: TELEGRAM (EXCHANGES/BOTS/CANALES)
+    if (isEx === 'true' || category === 'BOTS' || category === 'CANALES' || category === 'GRUPOS') {
+        let finalUrl;
+        if (isEx === 'true') {
+            let userClean = user.replace('@', '').trim();
+            finalUrl = `tg://resolve?domain=${userClean}&text=${encodeURIComponent("Vengo de X Exchange: " + desc)}`;
+        } else {
+            // Extraer el username del link t.me
+            let tgUser = link.replace('https://', '').replace('http://', '').replace('t.me/', '').split('/')[0];
+            finalUrl = `tg://resolve?domain=${tgUser}`;
+        }
+        window.location.href = finalUrl;
+        // Respaldo por si no tiene la app
+        setTimeout(() => { window.open(link.startsWith('http') ? link : 'https://' + link, '_blank'); }, 500);
         return;
     }
 
-    let cleanLink = link.trim();
-    if (category === 'WHATSAPP' || cleanLink.includes('wa.me') || cleanLink.includes('whatsapp.com')) {
-        let idWA = cleanLink.split('/').pop().split('?')[0];
-        let urlFinal;
-        if (cleanLink.includes('chat.whatsapp.com')) {
-            urlFinal = `https://chat.whatsapp.com/${idWA}`;
+    // CASO 2: WHATSAPP (AQUÍ ESTABA EL FALLO)
+    if (category === 'WHATSAPP' || link.includes('wa.me') || link.includes('whatsapp.com')) {
+        let cleanLink = link.replace('https://', '').replace('http://', '').replace('wa.me/', '').replace('chat.whatsapp.com/', '').replace('whatsapp.com/chat/', '');
+        let waUrl;
+
+        if (link.includes('chat.whatsapp.com') || cleanLink.length > 15) {
+            // Protocolo forzado para GRUPOS
+            waUrl = `whatsapp://chat?code=${cleanLink}`;
         } else {
-            let phone = idWA.replace(/[^0-9]/g, '');
-            urlFinal = `https://api.whatsapp.com/send?phone=${phone}`;
+            // Protocolo forzado para CHAT PERSONAL
+            let phone = cleanLink.replace(/[^0-9]/g, '');
+            waUrl = `whatsapp://send?phone=${phone}`;
         }
-        // EL PUENTE INVISIBLE (LA SOLUCIÓN AL PATO)
-        const win = window.open(urlFinal, '_blank', 'noopener,noreferrer');
-        if (win) win.opener = null;
-    } else {
-        let urlNormal = cleanLink.startsWith('http') ? cleanLink : 'https://' + cleanLink;
-        window.open(urlNormal, '_blank');
+
+        // Intento de salto directo a la APP
+        window.location.href = waUrl;
+
+        // Si en 1 segundo no saltó a la app, usamos el link universal como respaldo
+        setTimeout(() => {
+            let fallback = link.startsWith('http') ? link : 'https://' + link;
+            window.open(fallback, '_blank');
+        }, 1000);
     }
 }
 
