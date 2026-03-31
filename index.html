@@ -199,7 +199,13 @@ function publicar() {
     const desc = document.getElementById('p-desc')?.value.trim();
     const user = document.getElementById('p-user')?.value.trim();
     const title = document.getElementById('p-title')?.value.trim();
-    const link = document.getElementById('p-link')?.value.trim().toLowerCase();
+    let link = document.getElementById('p-link')?.value.trim().toLowerCase();
+
+    // FILTRO DE LIMPIEZA AL PUBLICAR
+    if (link && link.includes('chat.whatsapp.com')) {
+        link = link.split('?')[0]; 
+    }
+
     if (activeCat !== 'INTERCAMBIO') {
         const isBot = link.includes('bot');
         let errorMsg = "";
@@ -238,7 +244,7 @@ function procesarPublicacion(desc, user, title, link) {
 
 function resetPub() { isProcessing = false; document.getElementById('tr-p-b').innerText = langData[currentLang].pubB; }
 
-// FUNCIÓN DE ACCIÓN CORREGIDA - ESTABLE Y SIN ERRORES DE PROTOCOLO
+// FUNCIÓN DE ACCIÓN REFORZADA - ABRE FUERA DE LA APP PARA EVITAR CIERRES
 function accion(isEx, link, desc, user) {
     const firma = "\n\n🚀 Enviado vía: X Exchange PRO App";
     if (typeof show_10747271 === 'function' && Math.random() > 0.7) show_10747271();
@@ -252,12 +258,9 @@ function accion(isEx, link, desc, user) {
     else { 
         let rawLink = link.trim();
         
-        // LIMPIEZA DE PARÁMETROS QUE WHATSAPP NO RECONOCE
-        if (rawLink.includes('chat.whatsapp.com')) {
-            rawLink = rawLink.split('?')[0]; 
-        }
+        // Limpieza de parámetros basura por seguridad
+        rawLink = rawLink.split('?')[0]; 
         
-        // ASEGURAR PROTOCOLO HTTPS
         if (!rawLink.startsWith('http')) {
             urlFinal = 'https://' + rawLink;
         } else {
@@ -265,18 +268,14 @@ function accion(isEx, link, desc, user) {
         }
     }
 
-    // MÉTODO DE APERTURA ESTÁNDAR PARA EVITAR CAÍDAS EN WEBVIEWS
-    const win = window.open(urlFinal, '_blank');
-    
-    if (!win) {
-        const a = document.createElement('a');
-        a.href = urlFinal;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
+    // MÉTODO DE BOTÓN FANTASMA: Obliga al sistema a abrir el navegador externo
+    const a = document.createElement('a');
+    a.href = urlFinal;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 function filterCat(cat, btn) {
