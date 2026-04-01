@@ -166,7 +166,8 @@ function loadData(category = activeCat) {
     const limite24h = 24 * 60 * 60 * 1000;
 
     db.ref('posts').on('value', snap => {
-        let html = ""; let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
+        let items = []; let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
+        
         snap.forEach(child => {
             const p = child.val();
             const tiempoPasado = ahora - (p.time || 0);
@@ -178,29 +179,38 @@ function loadData(category = activeCat) {
 
             if(counts[p.category] !== undefined) counts[p.category]++;
             if(p.category === category) {
-                const isEx = p.category === 'INTERCAMBIO';
-                let btnLabel = isEx ? langData[currentLang].viewEx : langData[currentLang].view;
-                let btnIcon = isEx ? 'fa-comments' : 'fa-external-link-alt';
-
-                html += `<div class="card">
-                    <div class="card-title" 
-                         onmousedown="startPress('${child.key}')" 
-                         onmouseup="endPress()" 
-                         onmouseleave="endPress()"
-                         ontouchstart="startPress('${child.key}')" 
-                         ontouchend="endPress()">
-                        ${isEx ? p.desc : p.title}
-                    </div>
-                    <button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
-                        <i class="fas ${btnIcon} fa-lg"></i> &nbsp; ${btnLabel}
-                    </button>
-                    <div class="card-meta">
-                        <span><i class="fas fa-bolt" style="color:var(--gold)"></i> ${p.views || 0} views</span>
-                        <span><i class="far fa-clock"></i> ACTIVE</span>
-                    </div>
-                </div>`;
+                items.push({ key: child.key, ...p });
             }
         });
+
+        // ORDEN POR TIEMPO: El más nuevo arriba
+        items.sort((a, b) => b.time - a.time);
+
+        let html = "";
+        items.forEach(p => {
+            const isEx = p.category === 'INTERCAMBIO';
+            let btnLabel = isEx ? langData[currentLang].viewEx : langData[currentLang].view;
+            let btnIcon = isEx ? 'fa-comments' : 'fa-external-link-alt';
+
+            html += `<div class="card">
+                <div class="card-title" 
+                     onmousedown="startPress('${p.key}')" 
+                     onmouseup="endPress()" 
+                     onmouseleave="endPress()"
+                     ontouchstart="startPress('${p.key}')" 
+                     ontouchend="endPress()">
+                    ${isEx ? p.desc : p.title}
+                </div>
+                <button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
+                    <i class="fas ${btnIcon} fa-lg"></i> &nbsp; ${btnLabel}
+                </button>
+                <div class="card-meta">
+                    <span><i class="fas fa-bolt" style="color:var(--gold)"></i> ${p.views || 0} views</span>
+                    <span><i class="far fa-clock"></i> ACTIVE</span>
+                </div>
+            </div>`;
+        });
+
         document.getElementById('main-feed').innerHTML = html || `<p style="text-align:center; padding:50px; color:gray;">${langData[currentLang].empty}</p>`;
         updateBadges(counts);
     });
@@ -208,7 +218,6 @@ function loadData(category = activeCat) {
 
 function startPress(postId) {
     pressTimer = setTimeout(() => {
-        // CLAVE ACTUALIZADA POR EL USUARIO
         const adminPass = prompt("Seguridad: Ingrese clave para borrar anuncio:");
         if(adminPass === "231606") { 
             db.ref('posts').child(postId).remove();
@@ -240,14 +249,17 @@ function openPublish() {
 }
 
 function publicar() {
-    const desc = document.getElementById('p-desc')?.value.trim();
-    const user = document.getElementById('p-user')?.value.trim();
-    const title = document.getElementById('p-title')?.value.trim();
-    const link = document.getElementById('p-link')?.value.trim().toLowerCase();
+    let desc = document.getElementById('p-desc')?.value.trim();
+    let user = document.getElementById('p-user')?.value.trim();
+    let title = document.getElementById('p-title')?.value.trim();
+    let link = document.getElementById('p-link')?.value.trim().toLowerCase();
     
     if (activeCat === 'INTERCAMBIO') {
         if(!desc || !user) return;
-        if (!user.startsWith('@')) { notify(langData[currentLang].errUser); return; }
+        
+        // VALIDACIÓN DE @: Si no tiene @, lo agregamos automáticamente
+        if (!user.startsWith('@')) { user = '@' + user; }
+        
         if (desc.length > 120) { notify(langData[currentLang].errChar); return; }
         if (/(http|https|www|t\.me|wa\.me|whatsapp\.com)/i.test(desc)) { notify(langData[currentLang].errNoLink); return; }
         ejecutarPublicacion({category: activeCat, desc, user, time: Date.now(), views: Math.floor(Math.random()*20)+10});
