@@ -183,7 +183,6 @@ function loadData(category = activeCat) {
             }
         });
 
-        // ORDEN POR TIEMPO: El más nuevo arriba
         items.sort((a, b) => b.time - a.time);
 
         let html = "";
@@ -201,7 +200,7 @@ function loadData(category = activeCat) {
                      ontouchend="endPress()">
                     ${isEx ? p.desc : p.title}
                 </div>
-                <button class="btn-main" onclick="accion('${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
+                <button class="btn-main" onclick="accion('${p.key}', '${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
                     <i class="fas ${btnIcon} fa-lg"></i> &nbsp; ${btnLabel}
                 </button>
                 <div class="card-meta">
@@ -256,25 +255,23 @@ function publicar() {
     
     if (activeCat === 'INTERCAMBIO') {
         if(!desc || !user) return;
-        
-        // VALIDACIÓN DE @: Si no tiene @, lo agregamos automáticamente
         if (!user.startsWith('@')) { user = '@' + user; }
-        
         if (desc.length > 120) { notify(langData[currentLang].errChar); return; }
         if (/(http|https|www|t\.me|wa\.me|whatsapp\.com)/i.test(desc)) { notify(langData[currentLang].errNoLink); return; }
-        ejecutarPublicacion({category: activeCat, desc, user, time: Date.now(), views: Math.floor(Math.random()*20)+10});
+        // Vistas reales: Empezamos en 0
+        ejecutarPublicacion({category: activeCat, desc, user, time: Date.now(), views: 0});
     } else {
         if(!title || !link) return;
         if (title.length > 30) { notify("⚠️ Título muy largo."); return; }
         const esBot = link.includes('bot');
-
         if (activeCat === 'BOTS' && !esBot) { notify("❌ Solo links de Bots aquí."); return; }
         if ((activeCat === 'CANALES' || activeCat === 'GRUPOS') && esBot) { notify("❌ Usa la categoría correcta."); return; }
         
         db.ref('posts').once('value', snap => {
             let exists = false; snap.forEach(c => { if(c.val().link === link) exists = true; });
             if(exists) notify(langData[currentLang].errDup);
-            else ejecutarPublicacion({category: activeCat, title, link, time: Date.now(), views: Math.floor(Math.random()*20)+10});
+            // Vistas reales: Empezamos en 0
+            else ejecutarPublicacion({category: activeCat, title, link, time: Date.now(), views: 0});
         });
     }
 }
@@ -287,7 +284,12 @@ function ejecutarPublicacion(data) {
     });
 }
 
-function accion(isEx, link, desc, user) {
+function accion(postId, isEx, link, desc, user) {
+    // SUMAR VISTA REAL EN FIREBASE
+    db.ref('posts').child(postId).child('views').transaction(currentViews => {
+        return (currentViews || 0) + 1;
+    });
+
     clickCount++;
     if (clickCount >= 6) { if(typeof show_10747271 === 'function') show_10747271(); clickCount = 0; }
     
