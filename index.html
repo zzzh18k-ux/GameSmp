@@ -208,9 +208,13 @@ function loadData(category = activeCat) {
 
 function startPress(postId) {
     pressTimer = setTimeout(() => {
-        if(confirm("¿Borrar este anuncio definitivamente?")) {
+        // CLAVE ACTUALIZADA POR EL USUARIO
+        const adminPass = prompt("Seguridad: Ingrese clave para borrar anuncio:");
+        if(adminPass === "231606") { 
             db.ref('posts').child(postId).remove();
             notify("🗑️ Eliminado.");
+        } else if (adminPass !== null) {
+            notify("❌ Clave incorrecta.");
         }
     }, 6000); 
 }
