@@ -16,63 +16,67 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-soft); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        /* OVERLAY DE BIENVENIDA PREMIUM */
-        #lang-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .lang-card { background: #fff; padding: 40px; border-radius: 35px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.1); width: 90%; max-width: 400px; border: 1px solid #f0f2f5; }
+        /* OVERLAY DE BIENVENIDA GRANDE */
+        #lang-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .lang-card { background: #fff; padding: 40px 30px; border-radius: 40px; text-align: center; box-shadow: 0 25px 70px rgba(0,0,0,0.1); width: 100%; max-width: 400px; border: 1px solid #f0f2f5; }
+        .welcome-icon { font-size: 50px; color: var(--fb-blue); margin-bottom: 20px; }
         
         #app-content { display: none; flex-direction: column; height: 100vh; }
         
-        /* HEADER EXCLUSIVO */
-        .header { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); box-shadow: 0 4px 20px rgba(0,0,0,0.05); z-index: 100; border-bottom: 1px solid #f0f2f5; }
-        .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 18px; letter-spacing: 3px; font-weight: 800; }
-        .btn-guide { background: #000; border: none; color: #fff; padding: 10px 18px; border-radius: 14px; font-size: 10px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 1px; }
+        /* HEADER */
+        .header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); box-shadow: 0 4px 15px rgba(0,0,0,0.06); z-index: 100; }
+        .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 19px; letter-spacing: 2px; font-weight: 800; }
+        .btn-guide { background: linear-gradient(135deg, var(--fb-blue), #0056b3); border: none; color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3); }
         
-        .online-status { font-size: 11px; color: #444; font-weight: 700; padding: 14px 20px; background: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eee; letter-spacing: 0.5px; }
-        .dot { height: 8px; width: 8px; background-color: var(--accent); border-radius: 50%; display: inline-block; box-shadow: 0 0 10px var(--accent); }
+        .online-status { font-size: 11px; color: #444; font-weight: 700; padding: 12px 20px; background: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eee; }
+        .dot { height: 9px; width: 9px; background-color: var(--accent); border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0px rgba(49, 162, 76, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(49, 162, 76, 0); } 100% { box-shadow: 0 0 0 0px rgba(49, 162, 76, 0); } }
 
         /* CATEGORÍAS */
         .cat-wrapper { background: #fff; border-bottom: 1px solid #eee; overflow-x: auto; scrollbar-width: none; }
-        .categories { display: flex; gap: 10px; padding: 15px 20px; }
-        .cat-btn { background: #f5f6f7; border: none; color: var(--text-sub); padding: 12px 20px; border-radius: 16px; font-size: 12px; font-weight: 700; transition: 0.3s; white-space: nowrap; }
-        .cat-btn.active { background: var(--fb-blue); color: #fff; box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3); }
+        .categories { display: flex; gap: 10px; padding: 12px 15px; }
+        .cat-btn { background: #f0f2f5; border: none; color: var(--text-sub); padding: 10px 18px; border-radius: 16px; font-size: 12px; font-weight: 700; transition: 0.3s; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+        .cat-btn.active { background: #fff; color: var(--fb-blue); border: 2px solid var(--fb-blue); padding: 8px 16px; }
+        .badge { background: #ff4757; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 8px; margin-left: 4px; font-weight: 800; display: none; }
+        .badge.show { display: inline-block; }
 
-        /* FEED Y TARJETAS */
+        /* FEED Y TARJETAS (ESENCIA DEL ANTERIOR) */
         .feed { flex: 1; overflow-y: auto; padding: 20px 15px 120px; }
-        .card { background: var(--card-bg); border-radius: 28px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); position: relative; }
-        .card-title { font-weight: 700; font-size: 16px; margin-bottom: 20px; color: #050505; line-height: 1.5; }
+        .card { background: var(--card-bg); border-radius: 26px; padding: 24px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border-left: 6px solid var(--fb-blue); position: relative; }
+        .card-title { font-weight: 700; font-size: 15px; margin-bottom: 18px; color: #111; line-height: 1.5; word-wrap: break-word; }
         
         /* BOTONES DE ACCIÓN */
-        .btn-main { background: #000; color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 800; font-size: 13px; letter-spacing: 1px; transition: 0.2s; }
-        .btn-main:active { transform: scale(0.97); opacity: 0.9; }
+        .btn-main { background: linear-gradient(135deg, #111, #333); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 18px; font-weight: 800; font-size: 13px; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn-main:active { transform: scale(0.96); }
 
-        /* LIKES REALES */
-        .reactions-bar { display: flex; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid #f5f6f7; }
-        .like-btn { background: none; border: none; color: #65676B; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
-        .like-btn.active i { color: #e41e3f; animation: heartBeat 0.3s ease-in-out; }
-        .like-btn.active { color: #000; }
-        @keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        /* META DATA */
+        .card-meta { display: flex; justify-content: space-between; margin-top: 15px; font-size: 11px; color: var(--text-sub); font-weight: 700; border-top: 1px solid #f8f9fa; padding-top: 12px; }
 
         /* PLUS BUTTON */
-        .btn-plus { position: fixed; bottom: 35px; right: 25px; background: var(--fb-blue); color: #fff; width: 70px; height: 70px; border-radius: 24px; font-size: 24px; display: flex; align-items: center; justify-content: center; z-index: 100; box-shadow: 0 15px 35px rgba(24, 119, 242, 0.4); border: none; }
+        .btn-plus { position: fixed; bottom: 30px; right: 25px; background: #000; color: #fff; width: 70px; height: 70px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; z-index: 100; border: 6px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 
         /* MODALES */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(10px); }
-        .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 35px; border-radius: 40px; }
-        .g-step { background: #f8f9fa; padding: 20px; border-radius: 22px; margin-bottom: 15px; border: 1px solid #eee; }
-        .g-step h4 { font-size: 13px; font-weight: 800; margin-bottom: 8px; color: #000; }
-        .g-step p { font-size: 12px; color: #666; line-height: 1.6; }
+        .modal-box { background: #fff; width: 100%; max-width: 400px; padding: 35px; border-radius: 40px; max-height: 85vh; overflow-y: auto; }
+        .g-step { background: #f8f9fa; padding: 18px; border-radius: 22px; margin-bottom: 15px; border-left: 4px solid var(--fb-blue); }
+        .g-step h4 { font-size: 14px; font-weight: 800; margin-bottom: 5px; color: #000; display: flex; align-items: center; gap: 8px; }
+        .g-step p { font-size: 12px; color: #666; line-height: 1.5; }
 
-        #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 15px 30px; border-radius: 50px; font-size: 12px; font-weight: 700; display: none; z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; width: 85%; }
+        #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #111; color: #fff; padding: 14px 28px; border-radius: 50px; font-size: 12px; font-weight: 700; display: none; z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 85%; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="lang-overlay">
         <div class="lang-card">
+            <div class="welcome-icon"><i class="fas fa-globe-americas"></i></div>
             <h2 style="font-family:'Orbitron'; color:var(--fb-blue); margin-bottom:10px; letter-spacing:2px;">X EXCHANGE</h2>
-            <p id="welcome-msg" style="color:#666; margin-bottom:30px; font-weight:600; font-size:13px; line-height:1.5;">Bienvenido a la red exclusiva de intercambios cripto.</p>
-            <button class="btn-main" style="margin-bottom: 15px; background:var(--fb-blue);" onclick="iniciarApp('es')">ESPAÑOL</button>
-            <button class="btn-main" style="background:#f0f2f5; color:#000;" onclick="iniciarApp('en')">ENGLISH</button>
+            <p style="color:#555; margin-bottom:30px; font-weight:600; font-size:13px; line-height:1.6;">
+                Bienvenido a la red de intercambios más segura. <br>
+                <span style="color:var(--accent)">● Publicaciones activas por 24 horas.</span>
+            </p>
+            <button class="btn-main" style="margin-bottom: 15px; background:var(--fb-blue);" onclick="iniciarApp('es')">ENTRAR EN ESPAÑOL</button>
+            <button class="btn-main" style="background:#f0f2f5; color:#000;" onclick="iniciarApp('en')">ENTER IN ENGLISH</button>
         </div>
     </div>
 
@@ -81,19 +85,20 @@
         <div class="header">
             <div class="logo">X EXCHANGE</div>
             <button class="btn-guide" onclick="openGuide()">
-                <i class="fas fa-shield-alt"></i> <span id="tr-guide-btn">ESTÁNDARES</span>
+                <i class="fas fa-shield-check"></i> <span id="tr-guide-btn">MANUAL</span>
             </button>
         </div>
         
         <div class="online-status">
-            <span class="dot"></span> <span id="tr-online-text">COMUNIDAD ACTIVA AHORA</span>: <span id="online-count">2,450</span>
+            <span class="dot"></span> <span id="tr-online-text">USUARIOS ACTIVOS</span>: <span id="online-count">2,450</span>
         </div>
 
         <div class="cat-wrapper">
             <div class="categories">
-                <button class="cat-btn active" id="btn-EX" onclick="filterCat('INTERCAMBIO', this)"><span id="tr-cat-ex">Intercambios</span> <span id="n-EX" class="badge"></span></button>
-                <button class="cat-btn" id="btn-BO" onclick="filterCat('BOTS', this)"><span id="tr-cat-bo">Bots</span> <span id="n-BO" class="badge"></span></button>
-                <button class="cat-btn" id="btn-CA" onclick="filterCat('CANALES', this)"><span id="tr-cat-ca">Canales</span> <span id="n-CA" class="badge"></span></button>
+                <button class="cat-btn active" id="btn-EX" onclick="filterCat('INTERCAMBIO', this)"><i class="fas fa-comments-dollar"></i> <span id="tr-cat-ex">Intercambios</span> <span id="n-EX" class="badge"></span></button>
+                <button class="cat-btn" id="btn-BO" onclick="filterCat('BOTS', this)"><i class="fas fa-robot"></i> <span id="tr-cat-bo">Bots</span> <span id="n-BO" class="badge"></span></button>
+                <button class="cat-btn" id="btn-CA" onclick="filterCat('CANALES', this)"><i class="fas fa-bullhorn"></i> <span id="tr-cat-ca">Canales</span> <span id="n-CA" class="badge"></span></button>
+                <button class="cat-btn" id="btn-GR" onclick="filterCat('GRUPOS', this)"><i class="fas fa-users"></i> <span id="tr-cat-gr">Grupos</span> <span id="n-GR" class="badge"></span></button>
             </div>
         </div>
 
@@ -103,16 +108,16 @@
 
         <div id="modal-pub" class="modal">
             <div class="modal-box">
-                <h3 id="tr-p-h" style="text-align:center; color:#000; margin-bottom:25px; font-weight:800; letter-spacing:-0.5px;">NUEVA PUBLICACIÓN</h3>
+                <h3 id="tr-p-h" style="text-align:center; color:var(--fb-blue); margin-bottom:25px; font-weight:800;">NUEVO ANUNCIO</h3>
                 <div id="form-content"></div>
-                <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:var(--fb-blue);">REGISTRAR AHORA</button>
-                <button onclick="closeModal('modal-pub')" id="tr-cancel" style="width:100%; margin-top:18px; border:none; background:none; color:gray; font-weight:700; font-size:12px;">CERRAR VENTANA</button>
+                <button class="btn-main" id="tr-p-b" onclick="publicar()" style="background:var(--fb-blue);">¡PUBLICAR AHORA!</button>
+                <button onclick="closeModal('modal-pub')" id="tr-cancel" style="width:100%; margin-top:18px; border:none; background:none; color:gray; font-weight:800; font-size:12px;">DESCARTAR</button>
             </div>
         </div>
 
         <div id="modal-guide" class="modal">
             <div class="modal-box">
-                <h3 id="tr-g-h" style="text-align:center; color:#000; margin-bottom:25px; font-weight:800;">PROTOCOLO DE RED</h3>
+                <h3 id="tr-g-h" style="text-align:center; color:var(--fb-blue); margin-bottom:25px; font-weight:800;">REGLAS DE LA RED</h3>
                 <div id="guide-steps"></div>
                 <button class="btn-main" onclick="closeModal('modal-guide')" id="tr-g-b">ENTENDIDO</button>
             </div>
@@ -127,31 +132,34 @@ const db = firebase.database();
 let currentLang = 'es'; 
 let activeCat = 'INTERCAMBIO';
 let pressTimer;
+let adsShown = 0;
 
 const langData = {
     es: {
-        welcome: "🌍 Idioma configurado: ESPAÑOL.\n\nBienvenido a X Exchange. Tu anuncio tendrá una vigencia exclusiva de 24 horas para garantizar una red limpia y actualizada.",
-        guideBtn: "ESTÁNDARES", online: "COMUNIDAD ACTIVA AHORA", 
-        pubH: "REGISTRO DE ANUNCIO", pubB: "CONFIRMAR PUBLICACIÓN", cancel: "DESCARTAR",
-        view: "🔗 ACCEDER AL PROYECTO", viewEx: "🤝 NEGOCIAR AHORA", 
-        empty: "📭 No hay publicaciones activas. Aprovecha la oportunidad de ser el primero.",
-        ok: "✅ Transacción registrada. Tu anuncio ya está visible para toda la comunidad.",
-        expire: "⏰ Este anuncio ha cumplido su ciclo de 24 horas.\n💡 Publica nuevamente para mantener tu negocio activo.",
-        gM1: "🎯 REGLA #1: INTERCAMBIOS", gD1: "Solo texto y tu @usuario de Telegram. Nada de links. La confianza se gana con transparencia.",
-        gM2: "📈 REGLA #2: BOTS Y CANALES", gD2: "Tu link va aquí. Asegúrate de que sea el correcto para llegar a tu audiencia ideal.",
-        gM3: "⏳ REGLA #3: CADA 24 HORAS", gD3: "Los anuncios se renuevan automáticamente. Publica todos los días para mantenerte en la cima."
+        guideBtn: "MANUAL PRO", online: "COMUNIDAD EN VIVO", 
+        pubH: "CREAR PUBLICACIÓN", pubB: "CONFIRMAR Y SUBIR", cancel: "CANCELAR",
+        view: "VER PROYECTO", viewEx: "NEGOCIAR POR TELEGRAM", 
+        empty: "📭 No hay anuncios aquí todavía. ¡Sé el primero!",
+        ok: "🚀 ¡Tu anuncio ya está en órbita!",
+        errNoLink: "❌ En Intercambios solo texto y @usuario. Sin links.",
+        errDup: "⚠️ Este enlace ya fue publicado hoy.",
+        gTitle: "📋 MANUAL DE ÉXITO", gBtn: "LO TENGO",
+        gM1: "🤝 Intercambios Limpios", gD1: "Escribe tu oferta (ej: Vendo 100 USDT) y tu @usuario. Los links aquí están prohibidos.",
+        gM2: "🚀 Bots y Canales", gD2: "Aquí sí puedes poner tu link. Asegúrate de que funcione correctamente.",
+        gM3: "⏰ Ciclo de 24 Horas", gD3: "Todo se borra cada 24h para mantener la red fresca. ¡Vuelve mañana!"
     },
     en: {
-        welcome: "🌍 Language set to: ENGLISH.\n\nWelcome to X Exchange. Your post will remain active for 24 hours to ensure a high-quality, updated network.",
-        guideBtn: "STANDARDS", online: "ACTIVE COMMUNITY NOW", 
-        pubH: "AD REGISTRATION", pubB: "CONFIRM PUBLICATION", cancel: "DISCARD",
-        view: "🔗 ACCESS PROJECT", viewEx: "🤝 NEGOTIATE NOW", 
-        empty: "📭 No active posts. Take the chance to be the first one.",
-        ok: "✅ Transaction recorded. Your ad is now visible to the entire community.",
-        expire: "⏰ This ad has reached its 24-hour limit.\n💡 Post again to keep your business active.",
-        gM1: "🎯 RULE #1: EXCHANGES", gD1: "Text and @username only. No links allowed. Trust is built through transparency.",
-        gM2: "📈 RULE #2: BOTS & CHANNELS", gD2: "Your link goes here. Ensure it's correct to reach your ideal audience.",
-        gM3: "⏳ RULE #3: EVERY 24 HOURS", gD3: "Ads renew automatically. Post daily to stay at the top of the feed."
+        guideBtn: "PRO MANUAL", online: "LIVE COMMUNITY", 
+        pubH: "CREATE POST", pubB: "CONFIRM & UPLOAD", cancel: "CANCEL",
+        view: "VIEW PROJECT", viewEx: "TRADE VIA TELEGRAM", 
+        empty: "📭 No ads here yet. Be the first!",
+        ok: "🚀 Your ad is now live!",
+        errNoLink: "❌ Only text and @user in Exchanges. No links allowed.",
+        errDup: "⚠️ This link was already posted today.",
+        gTitle: "📋 SUCCESS MANUAL", gBtn: "GOT IT",
+        gM1: "🤝 Clean Trades", gD1: "Write your offer and @username. Links are strictly forbidden here.",
+        gM2: "🚀 Bots & Channels", gD2: "You can use links here. Make sure they work correctly.",
+        gM3: "⏰ 24h Cycle", gD3: "All posts expire after 24h to keep the network updated. Post again tomorrow!"
     }
 };
 
@@ -159,8 +167,6 @@ function iniciarApp(lang) {
     currentLang = lang;
     document.getElementById('lang-overlay').style.display = 'none';
     document.getElementById('app-content').style.display = 'flex';
-    notify(langData[lang].welcome);
-    
     const t = langData[lang];
     document.getElementById('tr-guide-btn').innerText = t.guideBtn;
     document.getElementById('tr-online-text').innerText = t.online;
@@ -173,95 +179,89 @@ function iniciarApp(lang) {
 function notify(msg) {
     const t = document.getElementById('toast');
     t.innerText = msg; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 5000);
+    setTimeout(() => t.style.display = 'none', 4000);
 }
 
 function loadData(category = activeCat) {
     activeCat = category;
     const ahora = Date.now();
     db.ref('posts').on('value', snap => {
-        let items = [];
+        let items = []; let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
         snap.forEach(child => {
             const p = child.val();
-            if (ahora - p.time > 86400000) {
-                db.ref('posts').child(child.key).remove();
-                // Notificar expiración solo si es el dueño (basado en localstorage simple)
-                if(localStorage.getItem('my_post') === child.key) notify(langData[currentLang].expire);
-                return;
-            }
+            if (ahora - p.time > 86400000) { db.ref('posts').child(child.key).remove(); return; }
+            if(counts[p.category] !== undefined) counts[p.category]++;
             if(p.category === category) items.push({ key: child.key, ...p });
         });
         
         items.sort((a, b) => b.time - a.time);
         let html = "";
         items.forEach(p => {
-            const hasLiked = localStorage.getItem('like_' + p.key);
+            const isEx = p.category === 'INTERCAMBIO';
             html += `<div class="card">
                 <div class="card-title" onmousedown="startPress('${p.key}')" onmouseup="endPress()" ontouchstart="startPress('${p.key}')" ontouchend="endPress()">
-                    ${p.category === 'INTERCAMBIO' ? p.desc : p.title}
+                    ${isEx ? p.desc : p.title}
                 </div>
-                <button class="btn-main" onclick="accion('${p.key}', '${p.category === 'INTERCAMBIO'}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
-                    ${p.category === 'INTERCAMBIO' ? langData[currentLang].viewEx : langData[currentLang].view}
+                <button class="btn-main" onclick="accion('${p.key}', '${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">
+                    <i class="fas ${isEx ? 'fa-paper-plane' : 'fa-external-link-alt'}"></i> &nbsp; ${isEx ? langData[currentLang].viewEx : langData[currentLang].view}
                 </button>
-                <div class="reactions-bar">
-                    <button class="like-btn ${hasLiked ? 'active' : ''}" onclick="toggleLike('${p.key}')">
-                        <i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> <span>${p.likes || 0}</span>
-                    </button>
-                    <span style="margin-left:auto; font-size:10px; color:#bbb; font-weight:800;">
-                        <i class="fas fa-history"></i> 24H ACTIVE
-                    </span>
+                <div class="card-meta">
+                    <span><i class="fas fa-eye" style="color:var(--fb-blue)"></i> ${p.views || 0} VISTAS</span>
+                    <span><i class="fas fa-history"></i> 24H ACTIVO</span>
                 </div>
             </div>`;
         });
         document.getElementById('main-feed').innerHTML = html || `<p style="text-align:center; padding:50px; color:#aaa; font-weight:600;">${langData[currentLang].empty}</p>`;
+        updateBadges(counts);
     });
 }
 
-function toggleLike(postId) {
-    const key = 'like_' + postId;
-    const hasLiked = localStorage.getItem(key);
-    
-    if (!hasLiked) {
-        db.ref('posts').child(postId).child('likes').transaction(l => (l || 0) + 1);
-        localStorage.setItem(key, 'true');
-    } else {
-        db.ref('posts').child(postId).child('likes').transaction(l => (l || 0) - 1);
-        localStorage.removeItem(key);
+function updateBadges(c) {
+    const ids = { INTERCAMBIO: 'n-EX', BOTS: 'n-BO', CANALES: 'n-CA', GRUPOS: 'n-GR' };
+    for (let cat in ids) {
+        const b = document.getElementById(ids[cat]);
+        if(b) { b.innerText = c[cat]; b.className = c[cat] > 0 ? "badge show" : "badge"; }
     }
 }
 
 function openPublish() {
     const t = langData[currentLang];
     document.getElementById('form-content').innerHTML = activeCat === 'INTERCAMBIO' ? 
-        `<textarea id="p-desc" maxlength="120" placeholder="Describe tu oferta de intercambio..." style="width:100%; padding:20px; border-radius:20px; border:1px solid #eee; margin-bottom:15px; height:100px; font-weight:600;"></textarea>
-         <input type="text" id="p-user" placeholder="@TuUsuario" style="width:100%; padding:18px; border-radius:18px; border:1px solid #eee; margin-bottom:20px; font-weight:700;">` : 
-        `<input type="text" id="p-title" maxlength="30" placeholder="Nombre del Bot o Canal" style="width:100%; padding:18px; border-radius:18px; border:1px solid #eee; margin-bottom:15px; font-weight:700;">
-         <input type="text" id="p-link" placeholder="t.me/enlace_oficial" style="width:100%; padding:18px; border-radius:18px; border:1px solid #eee; margin-bottom:20px; font-weight:600;">`;
+        `<textarea id="p-desc" maxlength="120" placeholder="Ej: Cambio 50 USDT por BS Pago Móvil..." style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:15px; height:100px; font-weight:600; outline:none;"></textarea>
+         <input type="text" id="p-user" placeholder="@TuTelegram" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:20px; font-weight:700; outline:none;">` : 
+        `<input type="text" id="p-title" maxlength="30" placeholder="Nombre de tu Proyecto" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:15px; font-weight:700; outline:none;">
+         <input type="text" id="p-link" placeholder="t.me/enlace_oficial" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:20px; font-weight:600; outline:none;">`;
     document.getElementById('modal-pub').style.display = 'flex';
 }
 
 function publicar() {
-    let data = { category: activeCat, time: Date.now(), likes: 0 };
+    let data = { category: activeCat, time: Date.now(), views: 0 };
     if (activeCat === 'INTERCAMBIO') {
         data.desc = document.getElementById('p-desc').value.trim();
         data.user = document.getElementById('p-user').value.trim();
         if(!data.desc || !data.user) return;
+        if (/(http|https|www|t\.me)/i.test(data.desc)) { notify(langData[currentLang].errNoLink); return; }
+        if (!data.user.startsWith('@')) data.user = '@' + data.user;
     } else {
         data.title = document.getElementById('p-title').value.trim();
-        data.link = document.getElementById('p-link').value.trim();
+        data.link = document.getElementById('p-link').value.trim().toLowerCase();
         if(!data.title || !data.link) return;
     }
     
     if(typeof show_10747271 === 'function') show_10747271();
-    const newPostRef = db.ref('posts').push(data);
-    localStorage.setItem('my_post', newPostRef.key);
+    db.ref('posts').push(data);
     notify(langData[currentLang].ok);
     closeModal('modal-pub');
 }
 
 function accion(postId, isEx, link, desc, user) {
+    db.ref('posts').child(postId).child('views').transaction(v => (v || 0) + 1);
+    adsShown++;
+    if(adsShown >= 5) { if(typeof show_10747271 === 'function') show_10747271(); adsShown = 0; }
+
     if (isEx === 'true') {
-        window.open(`https://t.me/${user.replace('@', '')}`, '_blank');
+        let msg = encodeURIComponent("Hola, vi tu anuncio en X Exchange:\n" + desc);
+        window.open(`https://t.me/${user.replace('@', '')}?text=${msg}`, '_blank');
     } else {
         window.open(link.startsWith('http') ? link : 'https://' + link, '_blank');
     }
@@ -269,6 +269,8 @@ function accion(postId, isEx, link, desc, user) {
 
 function openGuide() {
     const t = langData[currentLang];
+    document.getElementById('tr-g-h').innerText = t.gTitle;
+    document.getElementById('tr-g-b').innerText = t.gBtn;
     document.getElementById('guide-steps').innerHTML = `<div class="g-step"><h4>${t.gM1}</h4><p>${t.gD1}</p></div><div class="g-step"><h4>${t.gM2}</h4><p>${t.gD2}</p></div><div class="g-step"><h4>${t.gM3}</h4><p>${t.gD3}</p></div>`;
     document.getElementById('modal-guide').style.display = 'flex';
 }
@@ -280,12 +282,12 @@ function filterCat(cat, btn) {
 
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-function startPress(id) { pressTimer = setTimeout(() => { if(prompt("ACCESS:") === "231606") db.ref('posts').child(id).remove(); }, 5000); }
+function startPress(id) { pressTimer = setTimeout(() => { if(prompt("ADMIN KEY:") === "231606") db.ref('posts').child(id).remove(); }, 5000); }
 function endPress() { clearTimeout(pressTimer); }
 
 setInterval(() => {
     document.getElementById('online-count').innerText = (2800 + Math.floor(Math.random()*50)).toLocaleString();
-}, 5000);
+}, 4000);
 </script>
 </body>
 </html>
