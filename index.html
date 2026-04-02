@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+here<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -6,10 +6,10 @@
     <title>X Exchange PRO</title>
     
     <meta name="title" content="X Exchange PRO - Clasificados Cripto">
-    <meta name="description" content="Intercambios USDT, Bots y Grupos Cripto. ¡Publica gratis!">
+    <meta name="description" content="Intercambios USDT, Bots y Grupos. ¡Publica tu anuncio gratis!">
     <meta property="og:type" content="website">
     <meta property="og:title" content="X Exchange PRO 🚀">
-    <meta property="og:description" content="La plataforma líder para tus negocios cripto.">
+    <meta property="og:description" content="La mejor plataforma para tus negocios cripto.">
     <meta property="og:image" content="https://i.ibb.co/LzNfS6P/banner-preview.jpg">
 
     <script src='//libtl.com/sdk.js' data-zone='10747271' data-sdk='show_10747271'></script>
@@ -26,8 +26,8 @@
         #app-content { display: none; flex-direction: column; height: 100vh; }
         .header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); box-shadow: 0 4px 15px rgba(0,0,0,0.06); z-index: 100; }
         .logo { font-family: 'Orbitron'; color: var(--fb-blue); font-size: 20px; letter-spacing: 2px; font-weight: 800; }
-        .header-btns { display: flex; gap: 5px; }
-        .btn-guide { background: linear-gradient(135deg, var(--fb-blue), #0056b3); border: none; color: #fff; padding: 10px 14px; border-radius: 12px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+        .header-btns { display: flex; gap: 6px; }
+        .btn-guide { background: linear-gradient(135deg, var(--fb-blue), #0056b3); border: none; color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 11px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
         .online-status { font-size: 11px; color: var(--accent); font-weight: 800; padding: 12px 20px; background: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eee; }
         .dot { height: 10px; width: 10px; background-color: var(--accent); border-radius: 50%; display: inline-block; animation: blink 1.2s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -37,15 +37,14 @@
         .cat-btn { background: #f0f2f5; border: none; color: var(--text-sub); padding: 10px 15px; border-radius: 15px; font-size: 12px; white-space: nowrap; font-weight: 700; transition: 0.3s; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
         .cat-btn.active { background: #fff; color: var(--fb-blue); border: 2px solid var(--fb-blue); padding: 8px 13px; }
         .feed { flex: 1; overflow-y: auto; padding: 20px 15px; padding-bottom: 100px; }
-        
-        /* ESTILOS DE TARJETAS Y FORO */
         .card { background: var(--card-bg); border-radius: 24px; padding: 22px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.04); border-left: 5px solid var(--fb-blue); position: relative; }
-        .card.featured { border-left-color: var(--gold); background: #fffdf5; border-right: 1px solid var(--gold); }
-        .card-title { font-weight: 700; font-size: 15px; margin-bottom: 18px; color: #111; word-wrap: break-word; }
-        .forum-text { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 15px; white-space: pre-wrap; }
-        .reactions { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #f0f2f5; padding-top: 10px; }
-        .react-btn { border: none; background: #f0f2f5; padding: 5px 10px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
-        
+        /* 4. ESTILO DESTACADOS */
+        .card.featured { border-left-color: var(--gold); background: #fffdf5; border-right: 1px solid rgba(243, 156, 18, 0.2); }
+        .card-title { font-weight: 700; font-size: 15px; margin-bottom: 18px; color: #111; user-select: none; -webkit-user-select: none; word-wrap: break-word; }
+        /* 3. ESTILOS FORO */
+        .forum-body { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 15px; white-space: pre-wrap; }
+        .reactions { display: flex; gap: 8px; border-top: 1px solid #f0f2f5; padding-top: 12px; margin-top: 10px; }
+        .react-btn { border: none; background: #f0f2f5; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
         .card-meta { display: flex; justify-content: space-between; margin-top: 15px; font-size: 12px; color: var(--text-sub); font-weight: 600; border-top: 1px solid #f8f9fa; padding-top: 12px; }
         .btn-main { background: linear-gradient(135deg, #111, #333); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 18px; font-weight: 800; font-size: 13px; }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; backdrop-filter: blur(8px); }
@@ -54,6 +53,9 @@
         #toast { position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 25px; border-radius: 20px; font-size: 12px; font-weight: 700; display: none; z-index: 2000; }
         .badge { background: #d93025; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 5px; display: none; }
         .badge.show { display: inline-block; }
+        .g-step { background: #f8f9fa; padding: 15px; border-radius: 20px; margin-bottom: 15px; border-left: 4px solid var(--fb-blue); }
+        .g-step h4 { font-size: 14px; color: #111; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .g-step p { font-size: 12px; color: var(--text-sub); line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -71,7 +73,7 @@
         <div class="header">
             <div class="logo">X EXCHANGE</div>
             <div class="header-btns">
-                <button class="btn-guide" onclick="compartirApp()" style="background:#000;"><i class="fas fa-share-alt"></i></button>
+                <button class="btn-guide" onclick="compartirApp()" style="background:#000; padding:10px 14px;"><i class="fas fa-share-alt"></i></button>
                 <button class="btn-guide" onclick="openGuide()"><i class="fas fa-crown"></i> <span id="tr-guide-btn">MANUAL</span></button>
             </div>
         </div>
@@ -112,9 +114,17 @@ const db = firebase.database();
 let currentLang = 'es'; let activeCat = 'INTERCAMBIO'; let clickCount = 0; let pressTimer;
 
 const langData = {
-    es: { guideBtn: "MANUAL", online: "USUARIOS EN LÍNEA", catEx: "Exchanges", catBo: "Bots", catCa: "Canales", catGr: "Grupos", pubH: "NUEVO POST", pubB: "¡PUBLICAR!", cancel: "CANCELAR", view: "VER PROYECTO", viewEx: "NEGOCIAR", empty: "Sin ofertas.", ok: "🚀 ¡Publicado!", phManual: "Venta USDT...", phUser: "@Usuario", phTitle: "Título", phLink: "Link", phLong: "Escribe aquí tu post largo para la comunidad..." },
-    en: { guideBtn: "MANUAL", online: "ONLINE", catEx: "Exchanges", catBo: "Bots", catCa: "Channels", catGr: "Groups", pubH: "NEW POST", pubB: "PUBLISH", cancel: "CANCEL", view: "VIEW", viewEx: "TRADE", empty: "Empty.", ok: "🚀 Published!", phManual: "Selling...", phUser: "@User", phTitle: "Title", phLink: "Link", phLong: "Write your long post here..." }
+    es: { guideBtn: "MANUAL", online: "USUARIOS EN LÍNEA", catEx: "Exchanges", catBo: "Bots", catCa: "Canales", catGr: "Grupos", pubH: "NUEVA PUBLICACIÓN", pubB: "¡PUBLICAR AHORA!", cancel: "CANCELAR", view: "VER PROYECTO", viewEx: "NEGOCIAR AHORA", empty: "Sin ofertas aún.", ok: "🚀 ¡Publicado!", phLong: "Escribe tu post (300-500 palabras)...", phTitle: "Título del post" },
+    en: { guideBtn: "MANUAL", online: "USERS ONLINE", catEx: "Exchanges", catBo: "Bots", catCa: "Channels", catGr: "Groups", pubH: "NEW POST", pubB: "PUBLISH NOW!", cancel: "CANCEL", view: "VIEW PROJECT", viewEx: "TRADE NOW", empty: "No offers yet.", ok: "🚀 Published!", phLong: "Write your post (300-500 words)...", phTitle: "Post Title" }
 };
+
+// 2. FUNCIÓN COMPARTIR APP
+function compartirApp() {
+    const linkLimpio = window.location.origin + window.location.pathname;
+    if (navigator.share) {
+        navigator.share({ title: 'X Exchange PRO', text: 'La mejor app cripto:', url: linkLimpio });
+    } else { navigator.clipboard.writeText(linkLimpio); notify("¡Enlace copiado!"); }
+}
 
 function iniciarApp(lang) {
     currentLang = lang; document.getElementById('lang-overlay').style.display = 'none'; document.getElementById('app-content').style.display = 'flex';
@@ -138,56 +148,69 @@ function loadData(category = activeCat) {
             if(counts[p.category] !== undefined) counts[p.category]++;
             if(p.category === category) items.push({ key: child.key, ...p });
         });
-        // 4. ORDENAR: DESTACADOS PRIMERO, LUEGO POR TIEMPO
+        
+        // 4. ORDENAR: DESTACADOS PRIMERO (featured: true)
         items.sort((a, b) => (b.featured || 0) - (a.featured || 0) || b.time - a.time);
+
         let html = "";
         items.forEach(p => {
             const isEx = p.category === 'INTERCAMBIO';
             const isCo = p.category === 'COMUNIDAD';
             html += `<div class="card ${p.featured ? 'featured' : ''}">
-                ${p.featured ? '<span style="position:absolute; top:10px; right:15px; font-size:10px; color:var(--gold); font-weight:800;"><i class="fas fa-star"></i> DESTACADO</span>' : ''}
+                ${p.featured ? '<span style="position:absolute; top:12px; right:15px; font-size:10px; color:var(--gold); font-weight:800;"><i class="fas fa-star"></i> DESTACADO</span>' : ''}
                 <div class="card-title">${isEx ? p.desc : p.title}</div>
-                ${isCo ? `<div class="forum-text">${p.longText}</div>` : ''}
+                ${isCo ? `<div class="forum-body">${p.longText}</div>` : ''}
                 ${!isCo ? `<button class="btn-main" onclick="accion('${p.key}', '${isEx}', '${p.link||''}', '${p.desc||''}', '${p.user||''}')">${isEx ? langData[currentLang].viewEx : langData[currentLang].view}</button>` : ''}
-                <div class="card-meta"><span><i class="fas fa-bolt"></i> ${p.views || 0}</span> <span>${p.featured ? 'PRO' : 'FREE'}</span></div>
+                <div class="card-meta"><span><i class="fas fa-bolt"></i> ${p.views || 0}</span> <span>${p.featured ? 'VIP' : 'FREE'}</span></div>
                 ${isCo ? `<div class="reactions">
-                    <button class="react-btn" onclick="react('${p.key}','👍')">👍 ${p.r1||0}</button>
-                    <button class="react-btn" onclick="react('${p.key}','🔥')">🔥 ${p.r2||0}</button>
-                    <button class="react-btn" onclick="react('${p.key}','💎')">💎 ${p.r3||0}</button>
+                    <button class="react-btn" onclick="reaccionar('${p.key}','r1')">👍 ${p.r1||0}</button>
+                    <button class="react-btn" onclick="reaccionar('${p.key}','r2')">🔥 ${p.r2||0}</button>
+                    <button class="react-btn" onclick="reaccionar('${p.key}','r3')">💎 ${p.r3||0}</button>
+                    <button class="react-btn" onclick="reaccionar('${p.key}','r4')">👎 ${p.r4||0}</button>
                 </div>` : ''}
             </div>`;
         });
-        document.getElementById('main-feed').innerHTML = html || `<p style="text-align:center; padding:50px;">${langData[currentLang].empty}</p>`;
+        document.getElementById('main-feed').innerHTML = html || `<p style="text-align:center; padding:50px; color:gray;">${langData[currentLang].empty}</p>`;
         updateBadges(counts);
     });
 }
 
+// 3. REACCIONES FORO
+function reaccionar(key, tipo) {
+    db.ref('posts').child(key).child(tipo).transaction(c => (c || 0) + 1);
+}
+
 function openPublish() {
     const t = langData[currentLang];
-    let content = "";
+    let htmlForm = "";
     if (activeCat === 'COMUNIDAD') {
-        content = `<input type="text" id="p-title" placeholder="${t.phTitle}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">
-                   <textarea id="p-long" maxlength="2000" placeholder="${t.phLong}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; height:150px;"></textarea>`;
+        htmlForm = `<input type="text" id="p-title" placeholder="${t.phTitle}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">
+                    <textarea id="p-long" placeholder="${t.phLong}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; height:150px; margin-bottom:10px;"></textarea>`;
     } else {
-        content = activeCat === 'INTERCAMBIO' ? 
-        `<textarea id="p-desc" maxlength="120" placeholder="${t.phManual}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px;"></textarea>
-         <input type="text" id="p-user" placeholder="${t.phUser}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee;">` : 
-        `<input type="text" id="p-title" placeholder="${t.phTitle}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">
-         <input type="text" id="p-link" placeholder="${t.phLink}" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee;">`;
+        htmlForm = activeCat === 'INTERCAMBIO' ? 
+        `<textarea id="p-desc" maxlength="120" placeholder="Oferta..." style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px; height:80px;"></textarea>
+         <input type="text" id="p-user" placeholder="@Usuario" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">` : 
+        `<input type="text" id="p-title" placeholder="Nombre" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">
+         <input type="text" id="p-link" placeholder="t.me/Link" style="width:100%; padding:15px; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">`;
     }
-    document.getElementById('form-content').innerHTML = content + `<div style="margin-top:10px; font-size:11px; color:var(--gold); font-weight:700;"><i class="fas fa-ad"></i> Destaca tu anuncio viendo un video al publicar.</div>`;
+    // 4. CHECKBOX PARA DESTACAR
+    htmlForm += `<div style="padding:10px; background:#fff9e6; border-radius:12px; font-size:11px; font-weight:700; color:#856404; display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" id="p-featured" style="width:18px; height:18px;"> ¿Destacar anuncio? (Verás un video publicitario)
+                 </div>`;
+    document.getElementById('form-content').innerHTML = htmlForm;
     document.getElementById('modal-pub').style.display = 'flex';
 }
 
 function publicar() {
-    // 4. SISTEMA DESTACAR POR ADS
-    if(typeof show_10747271 === 'function') show_10747271();
+    const isFeatured = document.getElementById('p-featured').checked;
+    if(isFeatured && typeof show_10747271 === 'function') show_10747271(); // 4. Mostrar anuncio si elige destacar
+
+    let data = { category: activeCat, time: Date.now(), views: 0, featured: isFeatured };
     
-    let data = { category: activeCat, time: Date.now(), views: 0, featured: 1 }; // Le damos featured 1 por ver el ad
     if(activeCat === 'COMUNIDAD') {
         data.title = document.getElementById('p-title').value;
         data.longText = document.getElementById('p-long').value;
-        data.r1 = 0; data.r2 = 0; data.r3 = 0;
+        data.r1 = 0; data.r2 = 0; data.r3 = 0; data.r4 = 0;
     } else if (activeCat === 'INTERCAMBIO') {
         data.desc = document.getElementById('p-desc').value;
         data.user = document.getElementById('p-user').value;
@@ -195,23 +218,13 @@ function publicar() {
         data.title = document.getElementById('p-title').value;
         data.link = document.getElementById('p-link').value;
     }
+    
     db.ref('posts').push(data).then(() => { notify(langData[currentLang].ok); closeModal('modal-pub'); });
 }
 
-function react(key, emoji) {
-    let field = emoji === '👍' ? 'r1' : emoji === '🔥' ? 'r2' : 'r3';
-    db.ref('posts').child(key).child(field).transaction(c => (c || 0) + 1);
-}
-
-function compartirApp() {
-    if (navigator.share) {
-        navigator.share({ title: 'X Exchange PRO', text: 'Cambia USDT y proyectos cripto aquí:', url: window.location.href });
-    } else { notify("Enlace copiado."); navigator.clipboard.writeText(window.location.href); }
-}
-
 function accion(id, isEx, link, desc, user) {
-    db.ref('posts').child(id).child('views').transaction(c => (c || 0) + 1);
-    if(isEx === 'true') window.open(`https://t.me/${user.replace('@','')}`);
+    db.ref('posts').child(id).child('views').transaction(v => (v || 0) + 1);
+    if (isEx === 'true') window.open(`https://t.me/${user.replace('@','')}`);
     else window.open(link.startsWith('http') ? link : 'https://' + link);
 }
 
