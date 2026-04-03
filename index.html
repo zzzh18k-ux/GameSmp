@@ -51,14 +51,10 @@
         .rule-step { background: #F8F9FA; padding: 15px; border-radius: 20px; margin-bottom: 12px; border-left: 4px solid var(--primary); }
         #toast-alert { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #1A1C1E; color: #fff; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; z-index: 9999; display: none; text-align: center; width: 80%; }
 
-        /* NUEVOS ESTILOS LIKES Y CARGA */
-        .like-container { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
-        .btn-like { background: #F0F2F5; border: none; padding: 8px 16px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
-        .btn-like.active { background: #FF3B3015; color: #FF3B30; }
-        .btn-like i { font-size: 16px; }
-        .loading-state { text-align: center; padding: 40px; color: var(--text-secondary); font-weight: 600; }
-        .loading-state i { display: block; font-size: 30px; margin-bottom: 10px; animation: spin 1s linear infinite; color: var(--primary); }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        /* ESTILOS DE LIKES ADICIONADOS */
+        .like-row { display: flex; align-items: center; gap: 10px; margin-top: 15px; }
+        .btn-like { background: #f8f9fa; border: 1px solid #eee; padding: 6px 12px; border-radius: 12px; font-size: 14px; font-weight: 700; color: #555; }
+        .btn-like.active { color: #FF3B30; border-color: #FF3B30; background: #fff1f0; }
     </style>
 </head>
 <body>
@@ -70,7 +66,7 @@
             <div class="hero-icon"><i class="fas fa-shield-halved"></i></div>
             <h1 style="font-family:'Space Grotesk'; font-size: 28px; margin-bottom: 10px;">X EXCHANGE</h1>
             <p id="welcome-text" style="opacity: 0.7; font-size: 13px; margin-bottom: 30px;">Cargando red segura...</p>
-            <button class="action-btn" style="background: var(--primary); margin-bottom: 12px;" onclick="init('es')">ENTRAR AHORA</button>
+            <button class="action-btn" id="entry-btn" style="background: var(--primary); margin-bottom: 12px;" onclick="init('es')">ENTRAR AHORA</button>
             <button class="action-btn" style="background: transparent; border: 1px solid #444;" onclick="init('en')">ENGLISH VERSION</button>
         </div>
     </div>
@@ -151,22 +147,29 @@ const dictionary = {
 };
 
 function init(l) {
-    lang = l;
-    const d = dictionary[lang];
-    document.getElementById('lang-overlay').style.display = 'none';
-    document.getElementById('app-container').style.display = 'flex';
+    // MODO CARGANDO AL ENTRAR
+    const btn = document.getElementById('entry-btn');
+    const txt = document.getElementById('welcome-text');
+    btn.disabled = true;
+    txt.innerText = "Cargando red segura y grupos...";
     
-    // Traducir Interfaz Estática
-    document.getElementById('btn-rules-ui').innerHTML = `<i class="fas fa-file-signature"></i> ${d.rulesBtn}`;
-    document.getElementById('t-ex').innerText = d.trades;
-    document.getElementById('t-bo').innerText = d.bots;
-    document.getElementById('t-ca').innerText = d.channels;
-    document.getElementById('t-gr').innerText = d.groups;
-    document.getElementById('p-title-ui').innerText = d.newPost;
-    document.getElementById('p-confirm-ui').innerText = d.confirm;
-    document.getElementById('p-cancel-ui').innerText = d.cancel;
-    
-    syncData();
+    setTimeout(() => {
+        lang = l;
+        const d = dictionary[lang];
+        document.getElementById('lang-overlay').style.display = 'none';
+        document.getElementById('app-container').style.display = 'flex';
+        
+        document.getElementById('btn-rules-ui').innerHTML = `<i class="fas fa-file-signature"></i> ${d.rulesBtn}`;
+        document.getElementById('t-ex').innerText = d.trades;
+        document.getElementById('t-bo').innerText = d.bots;
+        document.getElementById('t-ca').innerText = d.channels;
+        document.getElementById('t-gr').innerText = d.groups;
+        document.getElementById('p-title-ui').innerText = d.newPost;
+        document.getElementById('p-confirm-ui').innerText = d.confirm;
+        document.getElementById('p-cancel-ui').innerText = d.cancel;
+        
+        syncData();
+    }, 1500);
 }
 
 function msg(text) {
@@ -194,37 +197,32 @@ function syncData() {
 
 function render(list) {
     let html = "";
-    if (list.length === 0) {
-        html = `<div class="loading-state"><i class="fas fa-spinner"></i> CARGANDO ${activeTab}...</div>`;
-    } else {
-        list.forEach(p => {
-            const isTrade = p.category === 'INTERCAMBIO';
-            const d = dictionary[lang];
-            const hasLiked = localStorage.getItem('lk_' + p.id);
-            html += `
-            <div class="card-pro">
-                <div class="card-content" 
-                     onmousedown="startDelete('${p.id}')" onmouseup="stopDelete()" 
-                     ontouchstart="startDelete('${p.id}')" ontouchend="stopDelete()">
-                    ${isTrade ? p.desc : p.title}
-                </div>
-                <button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')">
-                    <i class="fas ${isTrade ? 'fa-paper-plane' : 'fa-link'}"></i>
-                    ${isTrade ? d.tradeBtn : d.viewBtn}
+    list.forEach(p => {
+        const isTrade = p.category === 'INTERCAMBIO';
+        const d = dictionary[lang];
+        const liked = localStorage.getItem('lk_' + p.id);
+        html += `
+        <div class="card-pro">
+            <div class="card-content" 
+                 onmousedown="startDelete('${p.id}')" onmouseup="stopDelete()" 
+                 ontouchstart="startDelete('${p.id}')" ontouchend="stopDelete()">
+                ${isTrade ? p.desc : p.title}
+            </div>
+            <button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')">
+                <i class="fas ${isTrade ? 'fa-paper-plane' : 'fa-link'}"></i>
+                ${isTrade ? d.tradeBtn : d.viewBtn}
+            </button>
+            <div class="like-row">
+                <button class="btn-like ${liked ? 'active' : ''}" onclick="toggleLike('${p.id}')">
+                    <i class="${liked ? 'fas' : 'far'} fa-heart"></i> ${p.likes || 0}
                 </button>
-                <div class="like-container">
-                    <button class="btn-like ${hasLiked ? 'active' : ''}" onclick="toggleLike('${p.id}')">
-                        <i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i>
-                        <span id="lk-cnt-${p.id}">${p.likes || 0}</span>
-                    </button>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:10px; font-weight:800; color:#BBB;">
-                    <span>VISTAS: ${p.views || 0}</span>
-                    <span>EXPIRA: 24H <i class="fas fa-clock"></i></span>
-                </div>
-            </div>`;
-        });
-    }
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:10px; font-weight:800; color:#BBB;">
+                <span>VISTAS: ${p.views || 0}</span>
+                <span>EXPIRA: 24H <i class="fas fa-clock"></i></span>
+            </div>
+        </div>`;
+    });
     document.getElementById('feed-wall').innerHTML = html || `<p style="text-align:center; padding:50px; opacity:0.5;">...</p>`;
 }
 
@@ -299,10 +297,10 @@ function hideModal(id) { document.getElementById(id).style.display = 'none'; }
 
 function toggleLike(id) {
     if (localStorage.getItem('lk_' + id)) {
-        msg("✨ Ya te gusta esto");
+        msg("Ya diste Like");
         return;
     }
-    db.ref('posts').child(id).child('likes').transaction(current => (current || 0) + 1);
+    db.ref('posts').child(id).child('likes').transaction(l => (l || 0) + 1);
     localStorage.setItem('lk_' + id, 'true');
     msg("❤️ ¡Me gusta!");
 }
