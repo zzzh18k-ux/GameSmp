@@ -50,12 +50,6 @@
         input, textarea { width: 100%; padding: 18px; border-radius: 18px; border: 2px solid #F0F2F5; margin-bottom: 15px; font-weight: 600; outline: none; }
         .rule-step { background: #F8F9FA; padding: 15px; border-radius: 20px; margin-bottom: 12px; border-left: 4px solid var(--primary); }
         #toast-alert { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #1A1C1E; color: #fff; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; z-index: 9999; display: none; text-align: center; width: 80%; }
-
-        /* NUEVOS ESTILOS PARA LIKES */
-        .like-container { display: flex; align-items: center; gap: 10px; margin-top: 15px; }
-        .btn-like { background: #F4F7FA; border: 1px solid #E0E0E0; padding: 8px 16px; border-radius: 12px; font-size: 14px; font-weight: 700; color: var(--text-secondary); cursor: pointer; transition: 0.2s; }
-        .btn-like.active { background: #FF3B3010; border-color: #FF3B30; color: #FF3B30; }
-        .loading-text { text-align: center; padding: 40px; color: var(--text-secondary); font-weight: 600; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -67,7 +61,7 @@
             <div class="hero-icon"><i class="fas fa-shield-halved"></i></div>
             <h1 style="font-family:'Space Grotesk'; font-size: 28px; margin-bottom: 10px;">X EXCHANGE</h1>
             <p id="welcome-text" style="opacity: 0.7; font-size: 13px; margin-bottom: 30px;">Cargando red segura...</p>
-            <button class="action-btn" id="entry-btn" style="background: var(--primary); margin-bottom: 12px;" onclick="init('es')">ENTRAR AHORA</button>
+            <button class="action-btn" style="background: var(--primary); margin-bottom: 12px;" onclick="init('es')">ENTRAR AHORA</button>
             <button class="action-btn" style="background: transparent; border: 1px solid #444;" onclick="init('en')">ENGLISH VERSION</button>
         </div>
     </div>
@@ -148,27 +142,22 @@ const dictionary = {
 };
 
 function init(l) {
-    const btn = document.getElementById('entry-btn');
-    btn.disabled = true;
-    document.getElementById('welcome-text').innerText = "Cargando red y grupos...";
+    lang = l;
+    const d = dictionary[lang];
+    document.getElementById('lang-overlay').style.display = 'none';
+    document.getElementById('app-container').style.display = 'flex';
     
-    setTimeout(() => {
-        lang = l;
-        const d = dictionary[lang];
-        document.getElementById('lang-overlay').style.display = 'none';
-        document.getElementById('app-container').style.display = 'flex';
-        
-        document.getElementById('btn-rules-ui').innerHTML = `<i class="fas fa-file-signature"></i> ${d.rulesBtn}`;
-        document.getElementById('t-ex').innerText = d.trades;
-        document.getElementById('t-bo').innerText = d.bots;
-        document.getElementById('t-ca').innerText = d.channels;
-        document.getElementById('t-gr').innerText = d.groups;
-        document.getElementById('p-title-ui').innerText = d.newPost;
-        document.getElementById('p-confirm-ui').innerText = d.confirm;
-        document.getElementById('p-cancel-ui').innerText = d.cancel;
-        
-        syncData();
-    }, 1200);
+    // Traducir Interfaz Estática
+    document.getElementById('btn-rules-ui').innerHTML = `<i class="fas fa-file-signature"></i> ${d.rulesBtn}`;
+    document.getElementById('t-ex').innerText = d.trades;
+    document.getElementById('t-bo').innerText = d.bots;
+    document.getElementById('t-ca').innerText = d.channels;
+    document.getElementById('t-gr').innerText = d.groups;
+    document.getElementById('p-title-ui').innerText = d.newPost;
+    document.getElementById('p-confirm-ui').innerText = d.confirm;
+    document.getElementById('p-cancel-ui').innerText = d.cancel;
+    
+    syncData();
 }
 
 function msg(text) {
@@ -196,37 +185,27 @@ function syncData() {
 
 function render(list) {
     let html = "";
-    if (list.length === 0) {
-        html = `<div class="loading-text"><i class="fas fa-circle-notch fa-spin"></i> Cargando ${activeTab}...</div>`;
-    } else {
-        list.forEach(p => {
-            const isTrade = p.category === 'INTERCAMBIO';
-            const d = dictionary[lang];
-            const hasLiked = localStorage.getItem('lk_' + p.id);
-            html += `
-            <div class="card-pro">
-                <div class="card-content" 
-                     onmousedown="startDelete('${p.id}')" onmouseup="stopDelete()" 
-                     ontouchstart="startDelete('${p.id}')" ontouchend="stopDelete()">
-                    ${isTrade ? p.desc : p.title}
-                </div>
-                <button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')">
-                    <i class="fas ${isTrade ? 'fa-paper-plane' : 'fa-link'}"></i>
-                    ${isTrade ? d.tradeBtn : d.viewBtn}
-                </button>
-                <div class="like-container">
-                    <button class="btn-like ${hasLiked ? 'active' : ''}" onclick="toggleLike('${p.id}')">
-                        <i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i> ${p.likes || 0}
-                    </button>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:10px; font-weight:800; color:#BBB;">
-                    <span>VISTAS: ${p.views || 0}</span>
-                    <span>EXPIRA: 24H <i class="fas fa-clock"></i></span>
-                </div>
-            </div>`;
-        });
-    }
-    document.getElementById('feed-wall').innerHTML = html;
+    list.forEach(p => {
+        const isTrade = p.category === 'INTERCAMBIO';
+        const d = dictionary[lang];
+        html += `
+        <div class="card-pro">
+            <div class="card-content" 
+                 onmousedown="startDelete('${p.id}')" onmouseup="stopDelete()" 
+                 ontouchstart="startDelete('${p.id}')" ontouchend="stopDelete()">
+                ${isTrade ? p.desc : p.title}
+            </div>
+            <button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')">
+                <i class="fas ${isTrade ? 'fa-paper-plane' : 'fa-link'}"></i>
+                ${isTrade ? d.tradeBtn : d.viewBtn}
+            </button>
+            <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:10px; font-weight:800; color:#BBB;">
+                <span>VISTAS: ${p.views || 0}</span>
+                <span>EXPIRA: 24H <i class="fas fa-clock"></i></span>
+            </div>
+        </div>`;
+    });
+    document.getElementById('feed-wall').innerHTML = html || `<p style="text-align:center; padding:50px; opacity:0.5;">...</p>`;
 }
 
 function tab(name, btn) {
@@ -248,12 +227,11 @@ function showPost() {
 }
 
 function sendPost() {
-    let data = { category: activeTab, time: Date.now(), views: 0, likes: 0 };
+    let data = { category: activeTab, time: Date.now(), views: 0 };
     if(activeTab === 'INTERCAMBIO') {
         data.desc = document.getElementById('in-desc').value.trim();
         data.user = document.getElementById('in-user').value.trim();
         if(!data.desc || !data.user) return;
-        // SEGURIDAD DE LINKS EN INTERCAMBIO (TU LÓGICA ORIGINAL)
         if (/(http|https|www|t\.me)/i.test(data.desc)) { msg(dictionary[lang].errLink); return; }
     } else {
         data.title = document.getElementById('in-title').value.trim();
@@ -270,7 +248,7 @@ function go(id, isTrade, link, user) {
     db.ref('posts').child(id).child('views').transaction(v => (v || 0) + 1);
     clickCount++;
     if(clickCount % 4 === 0 && typeof show_10747271 === 'function') show_10747271();
-    if(isTrade === 'true' || isTrade === true) {
+    if(isTrade === 'true') {
         window.open(`https://t.me/${user.replace('@','')}`, '_blank');
     } else {
         let finalLink = link.includes('://') ? link : 'https://' + link;
@@ -298,16 +276,6 @@ function startDelete(id) {
 }
 function stopDelete() { clearTimeout(pressTimer); }
 function hideModal(id) { document.getElementById(id).style.display = 'none'; }
-
-function toggleLike(id) {
-    if (localStorage.getItem('lk_' + id)) {
-        msg("Ya diste me gusta");
-        return;
-    }
-    db.ref('posts').child(id).child('likes').transaction(l => (l || 0) + 1);
-    localStorage.setItem('lk_' + id, 'true');
-    msg("❤️ Guardado");
-}
 
 document.getElementById('welcome-text').innerText = dictionary['es'].welcome;
 </script>
