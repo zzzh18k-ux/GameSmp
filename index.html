@@ -50,6 +50,15 @@
         input, textarea { width: 100%; padding: 18px; border-radius: 18px; border: 2px solid #F0F2F5; margin-bottom: 15px; font-weight: 600; outline: none; }
         .rule-step { background: #F8F9FA; padding: 15px; border-radius: 20px; margin-bottom: 12px; border-left: 4px solid var(--primary); }
         #toast-alert { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #1A1C1E; color: #fff; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; z-index: 9999; display: none; text-align: center; width: 80%; }
+
+        /* NUEVOS ESTILOS LIKES Y CARGA */
+        .like-container { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+        .btn-like { background: #F0F2F5; border: none; padding: 8px 16px; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+        .btn-like.active { background: #FF3B3015; color: #FF3B30; }
+        .btn-like i { font-size: 16px; }
+        .loading-state { text-align: center; padding: 40px; color: var(--text-secondary); font-weight: 600; }
+        .loading-state i { display: block; font-size: 30px; margin-bottom: 10px; animation: spin 1s linear infinite; color: var(--primary); }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -185,26 +194,37 @@ function syncData() {
 
 function render(list) {
     let html = "";
-    list.forEach(p => {
-        const isTrade = p.category === 'INTERCAMBIO';
-        const d = dictionary[lang];
-        html += `
-        <div class="card-pro">
-            <div class="card-content" 
-                 onmousedown="startDelete('${p.id}')" onmouseup="stopDelete()" 
-                 ontouchstart="startDelete('${p.id}')" ontouchend="stopDelete()">
-                ${isTrade ? p.desc : p.title}
-            </div>
-            <button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')">
-                <i class="fas ${isTrade ? 'fa-paper-plane' : 'fa-link'}"></i>
-                ${isTrade ? d.tradeBtn : d.viewBtn}
-            </button>
-            <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:10px; font-weight:800; color:#BBB;">
-                <span>VISTAS: ${p.views || 0}</span>
-                <span>EXPIRA: 24H <i class="fas fa-clock"></i></span>
-            </div>
-        </div>`;
-    });
+    if (list.length === 0) {
+        html = `<div class="loading-state"><i class="fas fa-spinner"></i> CARGANDO ${activeTab}...</div>`;
+    } else {
+        list.forEach(p => {
+            const isTrade = p.category === 'INTERCAMBIO';
+            const d = dictionary[lang];
+            const hasLiked = localStorage.getItem('lk_' + p.id);
+            html += `
+            <div class="card-pro">
+                <div class="card-content" 
+                     onmousedown="startDelete('${p.id}')" onmouseup="stopDelete()" 
+                     ontouchstart="startDelete('${p.id}')" ontouchend="stopDelete()">
+                    ${isTrade ? p.desc : p.title}
+                </div>
+                <button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')">
+                    <i class="fas ${isTrade ? 'fa-paper-plane' : 'fa-link'}"></i>
+                    ${isTrade ? d.tradeBtn : d.viewBtn}
+                </button>
+                <div class="like-container">
+                    <button class="btn-like ${hasLiked ? 'active' : ''}" onclick="toggleLike('${p.id}')">
+                        <i class="${hasLiked ? 'fas' : 'far'} fa-heart"></i>
+                        <span id="lk-cnt-${p.id}">${p.likes || 0}</span>
+                    </button>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:10px; font-weight:800; color:#BBB;">
+                    <span>VISTAS: ${p.views || 0}</span>
+                    <span>EXPIRA: 24H <i class="fas fa-clock"></i></span>
+                </div>
+            </div>`;
+        });
+    }
     document.getElementById('feed-wall').innerHTML = html || `<p style="text-align:center; padding:50px; opacity:0.5;">...</p>`;
 }
 
@@ -227,7 +247,7 @@ function showPost() {
 }
 
 function sendPost() {
-    let data = { category: activeTab, time: Date.now(), views: 0 };
+    let data = { category: activeTab, time: Date.now(), views: 0, likes: 0 };
     if(activeTab === 'INTERCAMBIO') {
         data.desc = document.getElementById('in-desc').value.trim();
         data.user = document.getElementById('in-user').value.trim();
@@ -276,6 +296,16 @@ function startDelete(id) {
 }
 function stopDelete() { clearTimeout(pressTimer); }
 function hideModal(id) { document.getElementById(id).style.display = 'none'; }
+
+function toggleLike(id) {
+    if (localStorage.getItem('lk_' + id)) {
+        msg("✨ Ya te gusta esto");
+        return;
+    }
+    db.ref('posts').child(id).child('likes').transaction(current => (current || 0) + 1);
+    localStorage.setItem('lk_' + id, 'true');
+    msg("❤️ ¡Me gusta!");
+}
 
 document.getElementById('welcome-text').innerText = dictionary['es'].welcome;
 </script>
