@@ -41,6 +41,63 @@
             flex-direction: column; 
         }
 
+        /* Efectos premium para emojis */
+        .hero-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            display: inline-block;
+            animation: softFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(36,129,204,0.15));
+        }
+        
+        @keyframes softFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        
+        .logo-emoji {
+            display: inline-block;
+            animation: gentlePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes gentlePulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+        
+        .cat-item i, .cat-item span:first-child {
+            transition: transform 0.2s ease;
+        }
+        
+        .cat-item:hover i, .cat-item:hover span:first-child {
+            transform: scale(1.1);
+        }
+        
+        .fab {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .fab:hover {
+            transform: scale(1.08) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(36,129,204,0.4);
+        }
+        
+        .action-btn i, .action-btn span {
+            transition: transform 0.2s ease;
+        }
+        
+        .action-btn:active i {
+            transform: translateX(3px);
+        }
+        
+        .btn-safe i {
+            transition: transform 0.2s ease;
+        }
+        
+        .btn-safe:active i {
+            transform: rotate(5deg);
+        }
+
         #lang-overlay { 
             position: fixed; 
             inset: 0; 
@@ -59,11 +116,6 @@
             max-width: 360px; 
             background: var(--tg-bg); 
             border-radius: 20px; 
-        }
-        
-        .hero-icon { 
-            font-size: 64px; 
-            margin-bottom: 24px; 
         }
         
         .welcome-box h1 {
@@ -91,7 +143,15 @@
             font-size: 16px;
             margin-bottom: 12px;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: all 0.2s ease;
+        }
+        
+        .lang-btn i, .lang-btn span {
+            transition: transform 0.2s ease;
+        }
+        
+        .lang-btn:active i {
+            transform: scale(1.2);
         }
         
         .lang-btn.secondary {
@@ -101,6 +161,7 @@
         
         .lang-btn:active {
             opacity: 0.8;
+            transform: scale(0.98);
         }
 
         .header { 
@@ -129,6 +190,7 @@
             font-size: 14px; 
             font-weight: 600; 
             cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .cat-tabs {
@@ -148,7 +210,7 @@
             font-size: 14px; 
             font-weight: 600; 
             color: var(--tg-text); 
-            transition: 0.2s; 
+            transition: all 0.2s ease; 
             display: inline-flex; 
             align-items: center; 
             gap: 6px; 
@@ -159,6 +221,7 @@
         .cat-item.active { 
             background: var(--tg-link); 
             color: #fff; 
+            transform: scale(1.02);
         }
 
         .feed { 
@@ -174,6 +237,11 @@
             padding: 20px; 
             margin-bottom: 12px; 
             border: 1px solid var(--tg-section-separator);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .card-pro:active {
+            transform: scale(0.99);
         }
         
         .card-content { 
@@ -200,6 +268,12 @@
             justify-content: center; 
             gap: 8px; 
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
         }
         
         .count-badge { 
@@ -209,6 +283,12 @@
             border-radius: 20px; 
             font-size: 11px; 
             font-weight: 600;
+            animation: badgePop 0.3s ease;
+        }
+        
+        @keyframes badgePop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .fab { 
@@ -266,6 +346,11 @@
             outline: none; 
             background: var(--tg-secondary-bg);
             color: var(--tg-text);
+            transition: border-color 0.2s ease;
+        }
+        
+        input:focus, textarea:focus {
+            border-color: var(--tg-link);
         }
         
         textarea {
@@ -332,6 +417,12 @@
             text-align: center; 
             max-width: 80%;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: toastSlide 0.3s ease;
+        }
+        
+        @keyframes toastSlide {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
         
         .card-meta {
@@ -352,43 +443,43 @@
             <div class="hero-icon">🤝</div>
             <h1>X Change</h1>
             <p>Elige tu idioma</p>
-            <button class="lang-btn" onclick="init('es')">🇪🇸 Español</button>
-            <button class="lang-btn secondary" onclick="init('en')">🇬🇧 English</button>
+            <button class="lang-btn" onclick="init('es')"><span>🇪🇸</span> Español</button>
+            <button class="lang-btn secondary" onclick="init('en')"><span>🇬🇧</span> English</button>
         </div>
     </div>
 
     <div id="app-container" style="display:none; flex-direction: column; height: 100vh;">
         <div class="header">
-            <div class="logo">✨ X Change</div>
-            <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()">📋 REGLAS</button>
+            <div class="logo"><span class="logo-emoji">✨</span> X Change</div>
+            <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()"><span>📋</span> REGLAS</button>
         </div>
 
         <div class="cat-tabs">
-            <button class="cat-item active" id="b-EX" onclick="tab('INTERCAMBIO', this)">🔄 <span id="t-ex">Intercambios</span> <span id="n-EX" class="count-badge">0</span></button>
-            <button class="cat-item" id="b-BO" onclick="tab('BOTS', this)">🤖 <span id="t-bo">Bots</span> <span id="n-BO" class="count-badge">0</span></button>
-            <button class="cat-item" id="b-CA" onclick="tab('CANALES', this)">📢 <span id="t-ca">Canales</span> <span id="n-CA" class="count-badge">0</span></button>
-            <button class="cat-item" id="b-GR" onclick="tab('GRUPOS', this)">👥 <span id="t-gr">Grupos</span> <span id="n-GR" class="count-badge">0</span></button>
+            <button class="cat-item active" id="b-EX" onclick="tab('INTERCAMBIO', this)"><span>🔄</span> <span id="t-ex">Intercambios</span> <span id="n-EX" class="count-badge">0</span></button>
+            <button class="cat-item" id="b-BO" onclick="tab('BOTS', this)"><span>🤖</span> <span id="t-bo">Bots</span> <span id="n-BO" class="count-badge">0</span></button>
+            <button class="cat-item" id="b-CA" onclick="tab('CANALES', this)"><span>📢</span> <span id="t-ca">Canales</span> <span id="n-CA" class="count-badge">0</span></button>
+            <button class="cat-item" id="b-GR" onclick="tab('GRUPOS', this)"><span>👥</span> <span id="t-gr">Grupos</span> <span id="n-GR" class="count-badge">0</span></button>
         </div>
 
         <div id="feed-wall" class="feed"></div>
 
-        <button class="fab" onclick="showPost()">➕</button>
+        <button class="fab" onclick="showPost()"><span>➕</span></button>
 
         <div id="m-guide" class="modal-full">
             <div class="modal-inner">
-                <h2 id="g-title" style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px; color:var(--tg-link);">📚 GUÍA COMPLETA</h2>
+                <h2 id="g-title" style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px; color:var(--tg-link);"><span>📚</span> GUÍA COMPLETA</h2>
                 <div id="g-content"></div>
-                <button class="action-btn" id="g-close" onclick="hideModal('m-guide')" style="margin-top:16px;">✅ ENTENDIDO</button>
+                <button class="action-btn" id="g-close" onclick="hideModal('m-guide')" style="margin-top:16px;"><span>✅</span> ENTENDIDO</button>
             </div>
         </div>
 
         <div id="m-post" class="modal-full">
             <div class="modal-inner">
-                <h2 id="p-title-ui" style="text-align:center; margin-bottom:24px; font-weight:700; font-size:22px;">✨ NUEVO ANUNCIO</h2>
+                <h2 id="p-title-ui" style="text-align:center; margin-bottom:24px; font-weight:700; font-size:22px;"><span>✨</span> NUEVO ANUNCIO</h2>
                 <div id="post-fields"></div>
                 <div id="char-count-display" class="char-counter"></div>
-                <button class="action-btn" id="p-confirm-ui" onclick="sendPost()">📤 PUBLICAR</button>
-                <button id="p-cancel-ui" style="width:100%; background:none; border:none; margin-top:16px; color:var(--tg-hint); font-weight:600; font-size:15px;" onclick="hideModal('m-post')">❌ Cancelar</button>
+                <button class="action-btn" id="p-confirm-ui" onclick="sendPost()"><span>📤</span> PUBLICAR</button>
+                <button id="p-cancel-ui" style="width:100%; background:none; border:none; margin-top:16px; color:var(--tg-hint); font-weight:600; font-size:15px;" onclick="hideModal('m-post')"><span>❌</span> Cancelar</button>
             </div>
         </div>
     </div>
@@ -408,6 +499,7 @@ let activeTab = 'INTERCAMBIO';
 let clickCount = 0;
 let pressTimer;
 const MAX_DESC_LENGTH = 200;
+const MAX_TITLE_LENGTH = 100;
 
 const dictionary = {
     es: {
@@ -416,9 +508,13 @@ const dictionary = {
         phDesc: "Vendo: 50 USDT | Cambio por: Bs (Pago Móvil)", 
         phUser: "@TuUsuario", phTitle: "Nombre del Proyecto", phLink: "t.me/tu_enlace",
         tradeBtn: "💬 CHAT", viewBtn: "🔗 ABRIR",
-        errLink: "❌ No se permiten enlaces en Intercambios", 
+        errLink: "❌ No se permiten enlaces en Intercambios",
+        errLinkRequired: "❌ Bots/Canales/Grupos requieren un enlace válido",
+        errInvalidLink: "❌ El enlace debe ser de Telegram (t.me/)",
+        errDuplicate: "❌ Esta publicación ya existe",
         success: "✅ ¡Publicado! Visible por 24h",
         errMaxLength: "❌ Máximo 200 caracteres",
+        errMaxTitle: "❌ Máximo 100 caracteres",
         gH: "📖 GUÍA DE USO",
         gIntro: "¡Bienvenido a X Change! Una comunidad para intercambiar, compartir y conectar de forma segura.",
         gR1: "🔒 NORMAS DE SEGURIDAD", 
@@ -437,7 +533,7 @@ const dictionary = {
         gL8: "• Sé claro y específico en tu descripción.",
         gL9: "• Formato recomendado: 'Vendo: [producto] | Cambio por: [lo que buscas]'.",
         gL10: "• Incluye siempre tu @usuario de Telegram.",
-        gL11: "• En Bots/Canales/Grupos sí puedes incluir enlaces oficiales.",
+        gL11: "• En Bots/Canales/Grupos sí puedes incluir enlaces oficiales de Telegram.",
         gR4: "🛡️ CONSEJOS ADICIONALES",
         gD4: "Para una mejor experiencia:",
         gL12: "• Verifica siempre con quién hablas.",
@@ -451,9 +547,13 @@ const dictionary = {
         phDesc: "Selling: 50 USDT | Looking for: Bs (Mobile Payment)", 
         phUser: "@YourUsername", phTitle: "Project Name", phLink: "t.me/your_link",
         tradeBtn: "💬 CHAT", viewBtn: "🔗 OPEN",
-        errLink: "❌ Links not allowed in Exchanges", 
+        errLink: "❌ Links not allowed in Exchanges",
+        errLinkRequired: "❌ Bots/Channels/Groups require a valid link",
+        errInvalidLink: "❌ Link must be from Telegram (t.me/)",
+        errDuplicate: "❌ This post already exists",
         success: "✅ Published! Active for 24h",
         errMaxLength: "❌ Maximum 200 characters",
+        errMaxTitle: "❌ Maximum 100 characters",
         gH: "📖 USER GUIDE",
         gIntro: "Welcome to X Change! A community to exchange, share and connect safely.",
         gR1: "🔒 SECURITY RULES", 
@@ -472,7 +572,7 @@ const dictionary = {
         gL8: "• Be clear and specific in your description.",
         gL9: "• Recommended format: 'Selling: [product] | Looking for: [what you want]'.",
         gL10: "• Always include your Telegram @username.",
-        gL11: "• In Bots/Channels/Groups you can include official links.",
+        gL11: "• In Bots/Channels/Groups you can include official Telegram links.",
         gR4: "🛡️ ADDITIONAL TIPS",
         gD4: "For a better experience:",
         gL12: "• Always verify who you're talking to.",
@@ -488,14 +588,14 @@ function init(l) {
     document.getElementById('lang-overlay').style.display = 'none';
     document.getElementById('app-container').style.display = 'flex';
     
-    document.getElementById('btn-rules-ui').innerHTML = `📋 ${d.rulesBtn}`;
+    document.getElementById('btn-rules-ui').innerHTML = `<span>📋</span> ${d.rulesBtn}`;
     document.getElementById('t-ex').innerText = d.trades;
     document.getElementById('t-bo').innerText = d.bots;
     document.getElementById('t-ca').innerText = d.channels;
     document.getElementById('t-gr').innerText = d.groups;
-    document.getElementById('p-title-ui').innerText = d.newPost;
-    document.getElementById('p-confirm-ui').innerHTML = `📤 ${d.confirm}`;
-    document.getElementById('p-cancel-ui').innerHTML = `❌ ${d.cancel}`;
+    document.getElementById('p-title-ui').innerHTML = `<span>✨</span> ${d.newPost}`;
+    document.getElementById('p-confirm-ui').innerHTML = `<span>📤</span> ${d.confirm}`;
+    document.getElementById('p-cancel-ui').innerHTML = `<span>❌</span> ${d.cancel}`;
     
     syncData();
 }
@@ -539,7 +639,7 @@ function render(list) {
                 ${isTrade ? p.desc : p.title}
             </div>
             <button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')">
-                ${isTrade ? d.tradeBtn : d.viewBtn}
+                <span>${isTrade ? d.tradeBtn : d.viewBtn}</span>
             </button>
             <div class="card-meta">
                 <span>👁️ ${p.views || 0} vistas</span>
@@ -548,7 +648,7 @@ function render(list) {
         </div>`;
     });
     const feedEl = document.getElementById('feed-wall');
-    feedEl.innerHTML = html || `<p style="text-align:center; padding:50px; color:var(--tg-hint);">✨ No hay publicaciones aún</p>`;
+    feedEl.innerHTML = html || `<p style="text-align:center; padding:50px; color:var(--tg-hint);"><span>✨</span> No hay publicaciones aún</p>`;
 }
 
 function tab(name, btn) {
@@ -576,36 +676,79 @@ function showPost() {
         counterDiv.innerText = `0/${MAX_DESC_LENGTH} caracteres`;
     } else {
         fields.innerHTML = `
-            <input type="text" id="in-title" placeholder="${d.phTitle}">
+            <input type="text" id="in-title" placeholder="${d.phTitle}" maxlength="${MAX_TITLE_LENGTH}">
             <input type="text" id="in-link" placeholder="${d.phLink}">
         `;
-        counterDiv.style.display = 'none';
+        counterDiv.style.display = 'block';
+        const titleInput = document.getElementById('in-title');
+        titleInput.addEventListener('input', function() {
+            counterDiv.innerText = `${this.value.length}/${MAX_TITLE_LENGTH} caracteres`;
+        });
+        counterDiv.innerText = `0/${MAX_TITLE_LENGTH} caracteres`;
     }
     document.getElementById('m-post').style.display = 'flex';
 }
 
-function sendPost() {
+async function checkDuplicate(data) {
+    const snapshot = await db.ref('posts').once('value');
+    let isDuplicate = false;
+    snapshot.forEach(child => {
+        const p = child.val();
+        const now = Date.now();
+        if (now - p.time > 86400000) return;
+        
+        if (data.category === 'INTERCAMBIO') {
+            if (p.category === 'INTERCAMBIO' && p.desc === data.desc && p.user === data.user) {
+                isDuplicate = true;
+            }
+        } else {
+            if (p.category === data.category && p.link === data.link) {
+                isDuplicate = true;
+            }
+        }
+    });
+    return isDuplicate;
+}
+
+async function sendPost() {
     let data = { category: activeTab, time: Date.now(), views: 0 };
+    const d = dictionary[lang];
+    
     if(activeTab === 'INTERCAMBIO') {
         data.desc = document.getElementById('in-desc').value.trim();
         data.user = document.getElementById('in-user').value.trim();
         if(!data.desc || !data.user) return;
         if(data.desc.length > MAX_DESC_LENGTH) {
-            msg(dictionary[lang].errMaxLength);
+            msg(d.errMaxLength);
             return;
         }
-        if (/(http|https|www|t\.me)/i.test(data.desc)) { 
-            msg(dictionary[lang].errLink); 
+        if (/(http|https|www|t\.me|telegram)/i.test(data.desc)) { 
+            msg(d.errLink); 
             return; 
         }
     } else {
         data.title = document.getElementById('in-title').value.trim();
         data.link = document.getElementById('in-link').value.trim();
         if(!data.title || !data.link) return;
+        if(data.title.length > MAX_TITLE_LENGTH) {
+            msg(d.errMaxTitle);
+            return;
+        }
+        if (!data.link.includes('t.me/')) {
+            msg(d.errInvalidLink);
+            return;
+        }
     }
+    
+    const isDuplicate = await checkDuplicate(data);
+    if (isDuplicate) {
+        msg(d.errDuplicate);
+        return;
+    }
+    
     if(typeof show_10747271 === 'function') show_10747271();
     db.ref('posts').push(data);
-    msg(dictionary[lang].success);
+    msg(d.success);
     hideModal('m-post');
 }
 
@@ -623,7 +766,7 @@ function go(id, isTrade, link, user) {
 
 function showGuide() {
     const d = dictionary[lang];
-    document.getElementById('g-title').innerText = d.gH;
+    document.getElementById('g-title').innerHTML = `<span>📚</span> ${d.gH}`;
     document.getElementById('g-content').innerHTML = `
         <div class="rule-step">
             <p style="font-size:15px; margin-bottom:16px;">${d.gIntro}</p>
