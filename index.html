@@ -10,46 +10,337 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root { 
-            --primary: #0066FF; --dark: #0A0A0B; --surface: #FFFFFF; 
-            --accent: #00E676; --text-main: #1A1C1E; --text-secondary: #6C757D;
-            --glass: rgba(255, 255, 255, 0.9);
+            --tg-bg: #FFFFFF;
+            --tg-text: #222222;
+            --tg-hint: #999999;
+            --tg-link: #2481CC;
+            --tg-button: #2481CC;
+            --tg-button-text: #FFFFFF;
+            --tg-secondary-bg: #F0F0F0;
+            --tg-section-separator: #E0E0E0;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Montserrat', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: #F4F7FA; color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-
-        #lang-overlay { position: fixed; inset: 0; background: var(--dark); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .welcome-box { text-align: center; color: white; padding: 40px; width: 90%; max-width: 400px; background: linear-gradient(145deg, #161618, #0a0a0b); border-radius: 32px; border: 1px solid #222; }
-        .hero-icon { font-size: 60px; margin-bottom: 20px; background: linear-gradient(to right, #0066FF, #00E676); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .header { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: var(--glass); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid #EEE; }
-        .logo { font-family: 'Space Grotesk'; font-weight: 700; font-size: 22px; letter-spacing: -1px; color: var(--dark); }
-        .btn-safe { background: var(--dark); color: #fff; border: none; padding: 10px 18px; border-radius: 50px; font-size: 11px; font-weight: 800; }
-
-        .cat-scroll { overflow-x: auto; scrollbar-width: none; padding: 15px; display: flex; gap: 12px; background: #fff; border-bottom: 1px solid #EEE; }
-        .cat-item { background: #F0F2F5; border: none; padding: 12px 24px; border-radius: 14px; font-size: 13px; font-weight: 700; color: var(--text-secondary); transition: 0.3s; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-        .cat-item.active { background: var(--primary); color: #fff; box-shadow: 0 8px 20px rgba(0,102,255,0.3); }
-
-        .feed { flex: 1; overflow-y: auto; padding: 20px 16px 120px; }
-        .card-pro { background: var(--surface); border-radius: 28px; padding: 25px; margin-bottom: 20px; box-shadow: 0 12px 24px rgba(0,0,0,0.03); position: relative; border: 1px solid #F0F0F0; }
-        .card-pro::before { content: ""; position: absolute; left: 0; top: 25px; height: 30px; width: 4px; background: var(--primary); border-radius: 0 4px 4px 0; }
-        .card-content { font-size: 16px; font-weight: 600; line-height: 1.5; color: #333; margin-bottom: 20px; user-select: none; }
-
-        .action-btn { width: 100%; padding: 16px; border-radius: 20px; border: none; background: var(--dark); color: #fff; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .count-badge { background: #FF3B30; color: #fff; padding: 2px 8px; border-radius: 20px; font-size: 10px; }
-
-        .fab { position: fixed; bottom: 30px; right: 25px; width: 70px; height: 70px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 15px 35px rgba(0,102,255,0.4); border: 5px solid #fff; z-index: 999; }
-
-        .modal-full { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
-        .modal-inner { background: #fff; width: 100%; max-width: 420px; padding: 35px; border-radius: 35px; max-height: 90vh; overflow-y: auto; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
         
-        input, textarea { width: 100%; padding: 18px; border-radius: 18px; border: 2px solid #F0F2F5; margin-bottom: 15px; font-weight: 600; outline: none; }
-        .rule-step { background: #F8F9FA; padding: 15px; border-radius: 20px; margin-bottom: 12px; border-left: 4px solid var(--primary); }
-        #toast-alert { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: #1A1C1E; color: #fff; padding: 12px 25px; border-radius: 50px; font-size: 12px; font-weight: 700; z-index: 9999; display: none; text-align: center; width: 80%; }
+        body { 
+            background: var(--tg-secondary-bg); 
+            color: var(--tg-text); 
+            height: 100vh; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        #lang-overlay { 
+            position: fixed; 
+            inset: 0; 
+            background: var(--tg-bg); 
+            z-index: 5000; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .welcome-box { 
+            text-align: center; 
+            color: var(--tg-text); 
+            padding: 40px 32px; 
+            width: 90%; 
+            max-width: 360px; 
+            background: var(--tg-bg); 
+            border-radius: 20px; 
+        }
+        
+        .hero-icon { 
+            font-size: 64px; 
+            margin-bottom: 24px; 
+        }
+        
+        .welcome-box h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .welcome-box p {
+            font-size: 15px;
+            color: var(--tg-hint);
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+        
+        .lang-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            background: var(--tg-button);
+            color: var(--tg-button-text);
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .lang-btn.secondary {
+            background: var(--tg-secondary-bg);
+            color: var(--tg-text);
+        }
+        
+        .lang-btn:active {
+            opacity: 0.8;
+        }
+
+        .header { 
+            padding: 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: var(--tg-bg); 
+            z-index: 100; 
+            border-bottom: 1px solid var(--tg-section-separator); 
+        }
+        
+        .logo { 
+            font-weight: 700; 
+            font-size: 20px; 
+            letter-spacing: -0.5px; 
+            color: var(--tg-text); 
+        }
+        
+        .btn-safe { 
+            background: var(--tg-secondary-bg); 
+            color: var(--tg-link); 
+            border: none; 
+            padding: 10px 16px; 
+            border-radius: 12px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            cursor: pointer;
+        }
+
+        .cat-tabs {
+            padding: 12px 16px;
+            display: flex;
+            gap: 8px;
+            background: var(--tg-bg);
+            border-bottom: 1px solid var(--tg-section-separator);
+            flex-wrap: wrap;
+        }
+        
+        .cat-item { 
+            background: var(--tg-secondary-bg); 
+            border: none; 
+            padding: 10px 16px; 
+            border-radius: 20px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            color: var(--tg-text); 
+            transition: 0.2s; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px; 
+            cursor: pointer;
+            flex: 0 0 auto;
+        }
+        
+        .cat-item.active { 
+            background: var(--tg-link); 
+            color: #fff; 
+        }
+
+        .feed { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 16px; 
+            padding-bottom: 100px; 
+        }
+        
+        .card-pro { 
+            background: var(--tg-bg); 
+            border-radius: 16px; 
+            padding: 20px; 
+            margin-bottom: 12px; 
+            border: 1px solid var(--tg-section-separator);
+        }
+        
+        .card-content { 
+            font-size: 15px; 
+            font-weight: 500; 
+            line-height: 1.5; 
+            color: var(--tg-text); 
+            margin-bottom: 16px; 
+            user-select: none; 
+            word-break: break-word;
+        }
+
+        .action-btn { 
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 12px; 
+            border: none; 
+            background: var(--tg-button); 
+            color: var(--tg-button-text); 
+            font-weight: 600; 
+            font-size: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            cursor: pointer;
+        }
+        
+        .count-badge { 
+            background: #FF3B30; 
+            color: #fff; 
+            padding: 2px 8px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: 600;
+        }
+
+        .fab { 
+            position: fixed; 
+            bottom: 24px; 
+            right: 20px; 
+            width: 60px; 
+            height: 60px; 
+            background: var(--tg-link); 
+            color: white; 
+            border-radius: 30px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 24px; 
+            box-shadow: 0 4px 12px rgba(36,129,204,0.3); 
+            z-index: 999; 
+            cursor: pointer;
+            border: none;
+        }
+
+        .modal-full { 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.5); 
+            display: none; 
+            align-items: flex-end; 
+            justify-content: center; 
+            z-index: 2000; 
+        }
+        
+        .modal-inner { 
+            background: var(--tg-bg); 
+            width: 100%; 
+            max-width: 500px; 
+            padding: 24px; 
+            border-radius: 20px 20px 0 0; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+            animation: slideUp 0.3s;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        input, textarea { 
+            width: 100%; 
+            padding: 16px; 
+            border-radius: 14px; 
+            border: 1px solid var(--tg-section-separator); 
+            margin-bottom: 16px; 
+            font-size: 15px;
+            outline: none; 
+            background: var(--tg-secondary-bg);
+            color: var(--tg-text);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .char-counter {
+            text-align: right;
+            font-size: 13px;
+            color: var(--tg-hint);
+            margin-top: -8px;
+            margin-bottom: 12px;
+        }
+        
+        .rule-step { 
+            background: var(--tg-secondary-bg); 
+            padding: 20px; 
+            border-radius: 16px; 
+            margin-bottom: 16px; 
+        }
+        
+        .rule-step h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--tg-link);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .rule-step p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--tg-text);
+            margin-bottom: 12px;
+        }
+        
+        .rule-step ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+        
+        .rule-step li {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--tg-hint);
+        }
+        
+        #toast-alert { 
+            position: fixed; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            background: var(--tg-text); 
+            color: #fff; 
+            padding: 12px 24px; 
+            border-radius: 30px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            z-index: 9999; 
+            display: none; 
+            text-align: center; 
+            max-width: 80%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--tg-hint);
+        }
     </style>
 </head>
 <body>
@@ -58,45 +349,46 @@
 
     <div id="lang-overlay">
         <div class="welcome-box">
-            <div class="hero-icon"><i class="fas fa-shield-halved"></i></div>
-            <h1 style="font-family:'Space Grotesk'; font-size: 28px; margin-bottom: 10px;">X EXCHANGE</h1>
-            <p id="welcome-text" style="opacity: 0.7; font-size: 13px; margin-bottom: 30px;">Cargando red segura...</p>
-            <button class="action-btn" style="background: var(--primary); margin-bottom: 12px;" onclick="init('es')">ENTRAR AHORA</button>
-            <button class="action-btn" style="background: transparent; border: 1px solid #444;" onclick="init('en')">ENGLISH VERSION</button>
+            <div class="hero-icon">🤝</div>
+            <h1>X Change</h1>
+            <p>Elige tu idioma</p>
+            <button class="lang-btn" onclick="init('es')">🇪🇸 Español</button>
+            <button class="lang-btn secondary" onclick="init('en')">🇬🇧 English</button>
         </div>
     </div>
 
     <div id="app-container" style="display:none; flex-direction: column; height: 100vh;">
         <div class="header">
-            <div class="logo">X•PRO</div>
-            <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()"><i class="fas fa-file-signature"></i> REGLAS</button>
+            <div class="logo">✨ X Change</div>
+            <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()">📋 REGLAS</button>
         </div>
 
-        <div class="cat-scroll">
-            <button class="cat-item active" id="b-EX" onclick="tab('INTERCAMBIO', this)"><i class="fas fa-repeat"></i> <span id="t-ex">Trades</span> <span id="n-EX" class="count-badge">0</span></button>
-            <button class="cat-item" id="b-BO" onclick="tab('BOTS', this)"><i class="fas fa-microchip"></i> <span id="t-bo">Bots</span> <span id="n-BO" class="count-badge">0</span></button>
-            <button class="cat-item" id="b-CA" onclick="tab('CANALES', this)"><i class="fas fa-satellite-dish"></i> <span id="t-ca">Canales</span> <span id="n-CA" class="count-badge">0</span></button>
-            <button class="cat-item" id="b-GR" onclick="tab('GRUPOS', this)"><i class="fas fa-layer-group"></i> <span id="t-gr">Grupos</span> <span id="n-GR" class="count-badge">0</span></button>
+        <div class="cat-tabs">
+            <button class="cat-item active" id="b-EX" onclick="tab('INTERCAMBIO', this)">🔄 <span id="t-ex">Intercambios</span> <span id="n-EX" class="count-badge">0</span></button>
+            <button class="cat-item" id="b-BO" onclick="tab('BOTS', this)">🤖 <span id="t-bo">Bots</span> <span id="n-BO" class="count-badge">0</span></button>
+            <button class="cat-item" id="b-CA" onclick="tab('CANALES', this)">📢 <span id="t-ca">Canales</span> <span id="n-CA" class="count-badge">0</span></button>
+            <button class="cat-item" id="b-GR" onclick="tab('GRUPOS', this)">👥 <span id="t-gr">Grupos</span> <span id="n-GR" class="count-badge">0</span></button>
         </div>
 
         <div id="feed-wall" class="feed"></div>
 
-        <button class="fab" onclick="showPost()"><i class="fas fa-plus"></i></button>
+        <button class="fab" onclick="showPost()">➕</button>
 
         <div id="m-guide" class="modal-full">
             <div class="modal-inner">
-                <h2 id="g-title" style="text-align:center; margin-bottom:20px; font-family:'Space Grotesk'; color:var(--primary);">REGLAS</h2>
+                <h2 id="g-title" style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px; color:var(--tg-link);">📚 GUÍA COMPLETA</h2>
                 <div id="g-content"></div>
-                <button class="action-btn" id="g-close" onclick="hideModal('m-guide')">CERRAR</button>
+                <button class="action-btn" id="g-close" onclick="hideModal('m-guide')" style="margin-top:16px;">✅ ENTENDIDO</button>
             </div>
         </div>
 
         <div id="m-post" class="modal-full">
             <div class="modal-inner">
-                <h2 id="p-title-ui" style="text-align:center; margin-bottom:25px; font-family:'Space Grotesk';">NUEVO ANUNCIO</h2>
+                <h2 id="p-title-ui" style="text-align:center; margin-bottom:24px; font-weight:700; font-size:22px;">✨ NUEVO ANUNCIO</h2>
                 <div id="post-fields"></div>
-                <button class="action-btn" id="p-confirm-ui" style="background: var(--primary);" onclick="sendPost()">CONFIRMAR</button>
-                <button id="p-cancel-ui" style="width:100%; background:none; border:none; margin-top:20px; color:#999; font-weight:700;" onclick="hideModal('m-post')">DESCARTAR</button>
+                <div id="char-count-display" class="char-counter"></div>
+                <button class="action-btn" id="p-confirm-ui" onclick="sendPost()">📤 PUBLICAR</button>
+                <button id="p-cancel-ui" style="width:100%; background:none; border:none; margin-top:16px; color:var(--tg-hint); font-weight:600; font-size:15px;" onclick="hideModal('m-post')">❌ Cancelar</button>
             </div>
         </div>
     </div>
@@ -115,29 +407,78 @@ let lang = 'es';
 let activeTab = 'INTERCAMBIO';
 let clickCount = 0;
 let pressTimer;
+const MAX_DESC_LENGTH = 200;
 
 const dictionary = {
     es: {
-        welcome: "● Limpieza de red cada 24 horas. Solo las mejores ofertas sobreviven.",
         rulesBtn: "REGLAS", trades: "Intercambios", bots: "Bots", channels: "Canales", groups: "Grupos",
-        newPost: "NUEVO ANUNCIO", confirm: "PUBLICAR AHORA", cancel: "CANCELAR",
-        phDesc: "Ej: Vendo 50 USDT pago móvil...", phUser: "@TuUsuario", phTitle: "Nombre del Proyecto", phLink: "t.me/tu_enlace",
-        tradeBtn: "CHAT POR TELEGRAM", viewBtn: "IR AL PROYECTO",
-        errLink: "❌ Error: No uses links en Intercambios.", success: "🚀 ¡Publicado! Activo por 24h.",
-        gH: "MANUAL DE RED", gR1: "🔒 Seguridad Total", gD1: "En Intercambios prohibimos links. Solo texto y @usuario.",
-        gR2: "♻️ Auto-Limpieza", gD2: "Todo se borra en 24h para mantener la red fresca.",
-        gR3: "🚀 Proyectos", gD3: "Bots y Canales permiten links oficiales. No hagas spam."
+        newPost: "NUEVO ANUNCIO", confirm: "PUBLICAR", cancel: "Cancelar",
+        phDesc: "Vendo: 50 USDT | Cambio por: Bs (Pago Móvil)", 
+        phUser: "@TuUsuario", phTitle: "Nombre del Proyecto", phLink: "t.me/tu_enlace",
+        tradeBtn: "💬 CHAT", viewBtn: "🔗 ABRIR",
+        errLink: "❌ No se permiten enlaces en Intercambios", 
+        success: "✅ ¡Publicado! Visible por 24h",
+        errMaxLength: "❌ Máximo 200 caracteres",
+        gH: "📖 GUÍA DE USO",
+        gIntro: "¡Bienvenido a X Change! Una comunidad para intercambiar, compartir y conectar de forma segura.",
+        gR1: "🔒 NORMAS DE SEGURIDAD", 
+        gD1: "Para proteger a todos los usuarios, tenemos reglas claras que debes seguir:",
+        gL1: "• En INTERCAMBIOS: NO se permiten enlaces de ningún tipo (http, https, www, t.me).",
+        gL2: "• Solo puedes escribir texto descriptivo y tu nombre de usuario de Telegram (@usuario).",
+        gL3: "• Esto evita estafas y garantiza que las conversaciones sean dentro de Telegram.",
+        gR2: "⏰ SISTEMA DE AUTO-LIMPIEZA", 
+        gD2: "Mantenemos la comunidad fresca y activa con limpieza automática:",
+        gL4: "• Cada publicación dura exactamente 24 horas.",
+        gL5: "• Después de ese tiempo, se elimina automáticamente.",
+        gL6: "• Esto asegura que solo veas ofertas actuales y disponibles.",
+        gL7: "• Vuelve cada día para no perder nuevas oportunidades.",
+        gR3: "📝 CÓMO PUBLICAR CORRECTAMENTE", 
+        gD3: "Sigue este formato para que tu publicación sea efectiva:",
+        gL8: "• Sé claro y específico en tu descripción.",
+        gL9: "• Formato recomendado: 'Vendo: [producto] | Cambio por: [lo que buscas]'.",
+        gL10: "• Incluye siempre tu @usuario de Telegram.",
+        gL11: "• En Bots/Canales/Grupos sí puedes incluir enlaces oficiales.",
+        gR4: "🛡️ CONSEJOS ADICIONALES",
+        gD4: "Para una mejor experiencia:",
+        gL12: "• Verifica siempre con quién hablas.",
+        gL13: "• No compartas información personal sensible.",
+        gL14: "• Reporta cualquier comportamiento sospechoso.",
+        gL15: "• Las vistas indican el interés en tu publicación."
     },
     en: {
-        welcome: "● Network clean-up every 24 hours. Only the best offers survive.",
         rulesBtn: "RULES", trades: "Exchanges", bots: "Bots", channels: "Channels", groups: "Groups",
-        newPost: "NEW POST", confirm: "PUBLISH NOW", cancel: "CANCEL",
-        phDesc: "Ex: Selling 100 USDT via Paypal...", phUser: "@YourUsername", phTitle: "Project Name", phLink: "t.me/your_link",
-        tradeBtn: "TELEGRAM CHAT", viewBtn: "GO TO PROJECT",
-        errLink: "❌ Error: Do not use links in Exchanges.", success: "🚀 Published! Active for 24h.",
-        gH: "NETWORK MANUAL", gR1: "🔒 Total Security", gD1: "Links are forbidden in Exchanges. Text and @user only.",
-        gR2: "♻️ Auto-Clean", gD2: "Everything is deleted every 24h to keep it fresh.",
-        gR3: "🚀 Projects", gD3: "Bots and Channels allow official links. No spam."
+        newPost: "NEW POST", confirm: "PUBLISH", cancel: "Cancel",
+        phDesc: "Selling: 50 USDT | Looking for: Bs (Mobile Payment)", 
+        phUser: "@YourUsername", phTitle: "Project Name", phLink: "t.me/your_link",
+        tradeBtn: "💬 CHAT", viewBtn: "🔗 OPEN",
+        errLink: "❌ Links not allowed in Exchanges", 
+        success: "✅ Published! Active for 24h",
+        errMaxLength: "❌ Maximum 200 characters",
+        gH: "📖 USER GUIDE",
+        gIntro: "Welcome to X Change! A community to exchange, share and connect safely.",
+        gR1: "🔒 SECURITY RULES", 
+        gD1: "To protect all users, we have clear rules you must follow:",
+        gL1: "• In EXCHANGES: Links of any type are NOT allowed (http, https, www, t.me).",
+        gL2: "• You can only write descriptive text and your Telegram username (@user).",
+        gL3: "• This prevents scams and ensures conversations stay within Telegram.",
+        gR2: "⏰ AUTO-CLEAN SYSTEM", 
+        gD2: "We keep the community fresh and active with automatic cleaning:",
+        gL4: "• Each post lasts exactly 24 hours.",
+        gL5: "• After that time, it's automatically deleted.",
+        gL6: "• This ensures you only see current and available offers.",
+        gL7: "• Come back daily to not miss new opportunities.",
+        gR3: "📝 HOW TO POST CORRECTLY", 
+        gD3: "Follow this format for an effective post:",
+        gL8: "• Be clear and specific in your description.",
+        gL9: "• Recommended format: 'Selling: [product] | Looking for: [what you want]'.",
+        gL10: "• Always include your Telegram @username.",
+        gL11: "• In Bots/Channels/Groups you can include official links.",
+        gR4: "🛡️ ADDITIONAL TIPS",
+        gD4: "For a better experience:",
+        gL12: "• Always verify who you're talking to.",
+        gL13: "• Don't share sensitive personal information.",
+        gL14: "• Report any suspicious behavior.",
+        gL15: "• Views indicate interest in your post."
     }
 };
 
@@ -147,15 +488,14 @@ function init(l) {
     document.getElementById('lang-overlay').style.display = 'none';
     document.getElementById('app-container').style.display = 'flex';
     
-    // Traducir Interfaz Estática
-    document.getElementById('btn-rules-ui').innerHTML = `<i class="fas fa-file-signature"></i> ${d.rulesBtn}`;
+    document.getElementById('btn-rules-ui').innerHTML = `📋 ${d.rulesBtn}`;
     document.getElementById('t-ex').innerText = d.trades;
     document.getElementById('t-bo').innerText = d.bots;
     document.getElementById('t-ca').innerText = d.channels;
     document.getElementById('t-gr').innerText = d.groups;
     document.getElementById('p-title-ui').innerText = d.newPost;
-    document.getElementById('p-confirm-ui').innerText = d.confirm;
-    document.getElementById('p-cancel-ui').innerText = d.cancel;
+    document.getElementById('p-confirm-ui').innerHTML = `📤 ${d.confirm}`;
+    document.getElementById('p-cancel-ui').innerHTML = `❌ ${d.cancel}`;
     
     syncData();
 }
@@ -178,7 +518,10 @@ function syncData() {
             if(p.category === activeTab) items.push({ id: child.key, ...p });
         });
         const keys = { INTERCAMBIO: 'n-EX', BOTS: 'n-BO', CANALES: 'n-CA', GRUPOS: 'n-GR' };
-        for(let k in keys) { document.getElementById(keys[k]).innerText = counts[k]; }
+        for(let k in keys) { 
+            const el = document.getElementById(keys[k]);
+            if(el) el.innerText = counts[k]; 
+        }
         render(items.sort((a,b) => b.time - a.time));
     });
 }
@@ -196,16 +539,16 @@ function render(list) {
                 ${isTrade ? p.desc : p.title}
             </div>
             <button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')">
-                <i class="fas ${isTrade ? 'fa-paper-plane' : 'fa-link'}"></i>
                 ${isTrade ? d.tradeBtn : d.viewBtn}
             </button>
-            <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:10px; font-weight:800; color:#BBB;">
-                <span>VISTAS: ${p.views || 0}</span>
-                <span>EXPIRA: 24H <i class="fas fa-clock"></i></span>
+            <div class="card-meta">
+                <span>👁️ ${p.views || 0} vistas</span>
+                <span>⏰ 24h</span>
             </div>
         </div>`;
     });
-    document.getElementById('feed-wall').innerHTML = html || `<p style="text-align:center; padding:50px; opacity:0.5;">...</p>`;
+    const feedEl = document.getElementById('feed-wall');
+    feedEl.innerHTML = html || `<p style="text-align:center; padding:50px; color:var(--tg-hint);">✨ No hay publicaciones aún</p>`;
 }
 
 function tab(name, btn) {
@@ -218,10 +561,25 @@ function tab(name, btn) {
 function showPost() {
     const fields = document.getElementById('post-fields');
     const d = dictionary[lang];
+    const counterDiv = document.getElementById('char-count-display');
+    
     if(activeTab === 'INTERCAMBIO') {
-        fields.innerHTML = `<textarea id="in-desc" placeholder="${d.phDesc}" style="height:100px;"></textarea><input type="text" id="in-user" placeholder="${d.phUser}">`;
+        fields.innerHTML = `
+            <textarea id="in-desc" placeholder="${d.phDesc}" maxlength="${MAX_DESC_LENGTH}"></textarea>
+            <input type="text" id="in-user" placeholder="${d.phUser}">
+        `;
+        counterDiv.style.display = 'block';
+        const textarea = document.getElementById('in-desc');
+        textarea.addEventListener('input', function() {
+            counterDiv.innerText = `${this.value.length}/${MAX_DESC_LENGTH} caracteres`;
+        });
+        counterDiv.innerText = `0/${MAX_DESC_LENGTH} caracteres`;
     } else {
-        fields.innerHTML = `<input type="text" id="in-title" placeholder="${d.phTitle}"><input type="text" id="in-link" placeholder="${d.phLink}">`;
+        fields.innerHTML = `
+            <input type="text" id="in-title" placeholder="${d.phTitle}">
+            <input type="text" id="in-link" placeholder="${d.phLink}">
+        `;
+        counterDiv.style.display = 'none';
     }
     document.getElementById('m-post').style.display = 'flex';
 }
@@ -232,7 +590,14 @@ function sendPost() {
         data.desc = document.getElementById('in-desc').value.trim();
         data.user = document.getElementById('in-user').value.trim();
         if(!data.desc || !data.user) return;
-        if (/(http|https|www|t\.me)/i.test(data.desc)) { msg(dictionary[lang].errLink); return; }
+        if(data.desc.length > MAX_DESC_LENGTH) {
+            msg(dictionary[lang].errMaxLength);
+            return;
+        }
+        if (/(http|https|www|t\.me)/i.test(data.desc)) { 
+            msg(dictionary[lang].errLink); 
+            return; 
+        }
     } else {
         data.title = document.getElementById('in-title').value.trim();
         data.link = document.getElementById('in-link').value.trim();
@@ -260,9 +625,49 @@ function showGuide() {
     const d = dictionary[lang];
     document.getElementById('g-title').innerText = d.gH;
     document.getElementById('g-content').innerHTML = `
-        <div class="rule-step"><h4>${d.gR1}</h4><p>${d.gD1}</p></div>
-        <div class="rule-step"><h4>${d.gR2}</h4><p>${d.gD2}</p></div>
-        <div class="rule-step"><h4>${d.gR3}</h4><p>${d.gD3}</p></div>`;
+        <div class="rule-step">
+            <p style="font-size:15px; margin-bottom:16px;">${d.gIntro}</p>
+        </div>
+        <div class="rule-step">
+            <h4>${d.gR1}</h4>
+            <p>${d.gD1}</p>
+            <ul>
+                <li>${d.gL1}</li>
+                <li>${d.gL2}</li>
+                <li>${d.gL3}</li>
+            </ul>
+        </div>
+        <div class="rule-step">
+            <h4>${d.gR2}</h4>
+            <p>${d.gD2}</p>
+            <ul>
+                <li>${d.gL4}</li>
+                <li>${d.gL5}</li>
+                <li>${d.gL6}</li>
+                <li>${d.gL7}</li>
+            </ul>
+        </div>
+        <div class="rule-step">
+            <h4>${d.gR3}</h4>
+            <p>${d.gD3}</p>
+            <ul>
+                <li>${d.gL8}</li>
+                <li>${d.gL9}</li>
+                <li>${d.gL10}</li>
+                <li>${d.gL11}</li>
+            </ul>
+        </div>
+        <div class="rule-step">
+            <h4>${d.gR4}</h4>
+            <p>${d.gD4}</p>
+            <ul>
+                <li>${d.gL12}</li>
+                <li>${d.gL13}</li>
+                <li>${d.gL14}</li>
+                <li>${d.gL15}</li>
+            </ul>
+        </div>
+    `;
     document.getElementById('m-guide').style.display = 'flex';
 }
 
@@ -276,8 +681,6 @@ function startDelete(id) {
 }
 function stopDelete() { clearTimeout(pressTimer); }
 function hideModal(id) { document.getElementById(id).style.display = 'none'; }
-
-document.getElementById('welcome-text').innerText = dictionary['es'].welcome;
 </script>
 </body>
 </html>
