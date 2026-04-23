@@ -22,6 +22,7 @@
             --tg-button-text: #FFFFFF;
             --tg-secondary-bg: #F0F0F0;
             --tg-section-separator: #E0E0E0;
+            --warning-color: #FF3B30;
         }
 
         * { 
@@ -276,6 +277,16 @@
             opacity: 0.9;
         }
         
+        .warning-btn {
+            background: var(--warning-color);
+        }
+        
+        .outline-btn {
+            background: transparent;
+            border: 1px solid var(--tg-section-separator);
+            color: var(--tg-text);
+        }
+        
         .count-badge { 
             background: #FF3B30; 
             color: #fff; 
@@ -432,6 +443,49 @@
             font-size: 13px;
             color: var(--tg-hint);
         }
+        
+        .warning-icon {
+            font-size: 56px;
+            margin-bottom: 12px;
+            color: var(--warning-color);
+        }
+        
+        .warning-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--tg-text);
+        }
+        
+        .warning-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            color: var(--tg-hint);
+        }
+        
+        .suggest-category {
+            background: var(--tg-secondary-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .suggest-category p {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            background: var(--tg-link);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
@@ -465,6 +519,7 @@
 
         <button class="fab" onclick="showPost()"><span>➕</span></button>
 
+        <!-- Guía modal -->
         <div id="m-guide" class="modal-full">
             <div class="modal-inner">
                 <h2 id="g-title" style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px; color:var(--tg-link);"><span>📚</span> GUÍA COMPLETA</h2>
@@ -473,6 +528,7 @@
             </div>
         </div>
 
+        <!-- Publicar modal -->
         <div id="m-post" class="modal-full">
             <div class="modal-inner">
                 <h2 id="p-title-ui" style="text-align:center; margin-bottom:24px; font-weight:700; font-size:22px;"><span>✨</span> NUEVO ANUNCIO</h2>
@@ -480,6 +536,28 @@
                 <div id="char-count-display" class="char-counter"></div>
                 <button class="action-btn" id="p-confirm-ui" onclick="sendPost()"><span>📤</span> PUBLICAR</button>
                 <button id="p-cancel-ui" style="width:100%; background:none; border:none; margin-top:16px; color:var(--tg-hint); font-weight:600; font-size:15px;" onclick="hideModal('m-post')"><span>❌</span> Cancelar</button>
+            </div>
+        </div>
+        
+        <!-- NUEVO MODAL DE ADVERTENCIA GRANDE PARA ENLACES INCORRECTOS -->
+        <div id="m-link-warning" class="modal-full">
+            <div class="modal-inner" style="text-align: center;">
+                <div class="warning-icon">⛔</div>
+                <h2 class="warning-title" id="warn-title">¡ENLACE NO PERMITIDO!</h2>
+                <p class="warning-text" id="warn-desc">Los enlaces no se permiten en Intercambios. Por seguridad solo se permite texto y @usuario.</p>
+                
+                <div class="suggest-category" id="suggest-box">
+                    <p id="suggest-text">Este enlace parece ser de Telegram. ¿Quieres publicar en:</p>
+                    <span class="category-badge" id="suggest-cat-name">BOTS</span>
+                </div>
+                
+                <button class="action-btn warning-btn" id="btn-go-category" onclick="goToSuggestedCategory()">
+                    <span>🚀</span> <span id="btn-go-text">IR A CATEGORÍA CORRECTA</span>
+                </button>
+                
+                <button class="action-btn outline-btn" id="btn-close-warning" onclick="hideModal('m-link-warning')" style="margin-top:12px;">
+                    <span>↩️</span> <span id="btn-cancel-text">CANCELAR</span>
+                </button>
             </div>
         </div>
     </div>
@@ -501,11 +579,14 @@ let pressTimer;
 const MAX_DESC_LENGTH = 200;
 const MAX_TITLE_LENGTH = 100;
 
+// Variable para recordar la categoría sugerida
+let suggestedCategory = 'BOTS';
+
 const dictionary = {
     es: {
         rulesBtn: "REGLAS", trades: "Intercambios", bots: "Bots", channels: "Canales", groups: "Grupos",
         newPost: "NUEVO ANUNCIO", confirm: "PUBLICAR", cancel: "Cancelar",
-        phDesc: "Vendo: 50 USDT | Cambio por: Bs (Pago Móvil)", 
+        phDesc: "Escribe qué deseas cambiar (ej: 'Cambio X por Y'). Los usuarios te contactarán por Telegram y cuando te escriban, el bot @ReferralsXchangeBot añadirá una marca de agua indicando que proviene de X Change.", 
         phUser: "@TuUsuario", phTitle: "Nombre del Proyecto", phLink: "t.me/tu_enlace",
         tradeBtn: "💬 CHAT", viewBtn: "🔗 ABRIR",
         errLink: "❌ No se permiten enlaces en Intercambios",
@@ -539,12 +620,19 @@ const dictionary = {
         gL12: "• Verifica siempre con quién hablas.",
         gL13: "• No compartas información personal sensible.",
         gL14: "• Reporta cualquier comportamiento sospechoso.",
-        gL15: "• Las vistas indican el interés en tu publicación."
+        gL15: "• Las vistas indican el interés en tu publicación.",
+        // Nuevas claves para el modal de advertencia
+        warnTitle: "⛔ ¡ENLACE NO PERMITIDO!",
+        warnDesc: "En la categoría INTERCAMBIOS no se permiten enlaces de ningún tipo. Por seguridad solo puedes escribir texto y tu @usuario de Telegram.",
+        suggestText: "Parece que intentas compartir un enlace de Telegram. La categoría correcta sería:",
+        btnGo: "IR A CATEGORÍA CORRECTA",
+        btnCancelWarn: "CANCELAR",
+        defaultSuggest: "Si deseas compartir un enlace, por favor usa las categorías Bots, Canales o Grupos."
     },
     en: {
         rulesBtn: "RULES", trades: "Exchanges", bots: "Bots", channels: "Channels", groups: "Groups",
         newPost: "NEW POST", confirm: "PUBLISH", cancel: "Cancel",
-        phDesc: "Selling: 50 USDT | Looking for: Bs (Mobile Payment)", 
+        phDesc: "Write what you want to exchange (e.g., 'Swap X for Y'). Users will contact you on Telegram and when they message you, the bot @ReferralsXchangeBot will add a watermark showing origin.", 
         phUser: "@YourUsername", phTitle: "Project Name", phLink: "t.me/your_link",
         tradeBtn: "💬 CHAT", viewBtn: "🔗 OPEN",
         errLink: "❌ Links not allowed in Exchanges",
@@ -578,7 +666,14 @@ const dictionary = {
         gL12: "• Always verify who you're talking to.",
         gL13: "• Don't share sensitive personal information.",
         gL14: "• Report any suspicious behavior.",
-        gL15: "• Views indicate interest in your post."
+        gL15: "• Views indicate interest in your post.",
+        // Nuevas claves para el modal de advertencia
+        warnTitle: "⛔ LINK NOT ALLOWED!",
+        warnDesc: "Links are not allowed in EXCHANGES category. For security, you can only write text and your Telegram @username.",
+        suggestText: "It looks like you're trying to share a Telegram link. The correct category would be:",
+        btnGo: "GO TO CORRECT CATEGORY",
+        btnCancelWarn: "CANCEL",
+        defaultSuggest: "If you want to share a link, please use Bots, Channels or Groups categories."
     }
 };
 
@@ -597,7 +692,18 @@ function init(l) {
     document.getElementById('p-confirm-ui').innerHTML = `<span>📤</span> ${d.confirm}`;
     document.getElementById('p-cancel-ui').innerHTML = `<span>❌</span> ${d.cancel}`;
     
+    // Inicializar textos del modal de advertencia
+    updateWarningModalTexts();
+    
     syncData();
+}
+
+function updateWarningModalTexts() {
+    const d = dictionary[lang];
+    document.getElementById('warn-title').innerHTML = d.warnTitle;
+    document.getElementById('warn-desc').innerText = d.warnDesc;
+    document.getElementById('btn-go-text').innerText = d.btnGo;
+    document.getElementById('btn-cancel-text').innerText = d.btnCancelWarn;
 }
 
 function msg(text) {
@@ -710,25 +816,111 @@ async function checkDuplicate(data) {
     return isDuplicate;
 }
 
+// Función para detectar categoría sugerida según el texto del enlace
+function detectCategoryFromLink(text) {
+    const lower = text.toLowerCase();
+    if (lower.includes('bot')) return 'BOTS';
+    if (lower.includes('channel') || lower.includes('canal')) return 'CANALES';
+    if (lower.includes('group') || lower.includes('grupo') || lower.includes('joinchat')) return 'GRUPOS';
+    // Por defecto sugerimos BOTS
+    return 'BOTS';
+}
+
+// Muestra la advertencia grande con categoría sugerida
+function showLinkBlockWarning(descText) {
+    const d = dictionary[lang];
+    updateWarningModalTexts();
+    
+    // Extraer lo que parece un enlace de Telegram para sugerir categoría
+    const linkMatch = descText.match(/(?:t\.me|telegram\.me)\/([^\s]+)/i);
+    let detectedCat = 'BOTS';
+    if (linkMatch) {
+        const path = linkMatch[1];
+        detectedCat = path.toLowerCase().includes('bot') ? 'BOTS' 
+                    : (path.toLowerCase().includes('channel') || path.toLowerCase().includes('canal')) ? 'CANALES'
+                    : (path.toLowerCase().includes('group') || path.toLowerCase().includes('grupo') || path.toLowerCase().includes('joinchat')) ? 'GRUPOS'
+                    : 'BOTS';
+    } else {
+        // Si no hay enlace claro, sugerimos BOTS por defecto pero el texto puede ser genérico
+        detectedCat = 'BOTS';
+    }
+    suggestedCategory = detectedCat;
+    
+    // Nombre para mostrar
+    const catNames = {
+        'BOTS': lang === 'es' ? 'Bots' : 'Bots',
+        'CANALES': lang === 'es' ? 'Canales' : 'Channels',
+        'GRUPOS': lang === 'es' ? 'Grupos' : 'Groups'
+    };
+    document.getElementById('suggest-cat-name').innerText = catNames[detectedCat];
+    
+    // Si no se detectó un enlace de Telegram, mostrar un mensaje genérico
+    if (!linkMatch && !/(t\.me|telegram)/i.test(descText)) {
+        document.getElementById('suggest-text').innerText = d.defaultSuggest;
+        document.getElementById('suggest-box').style.display = 'none';
+        document.getElementById('btn-go-category').style.display = 'none';
+        document.getElementById('btn-close-warning').innerHTML = `<span>✅</span> ${lang === 'es' ? 'ENTENDIDO' : 'GOT IT'}`;
+    } else {
+        document.getElementById('suggest-text').innerText = d.suggestText;
+        document.getElementById('suggest-box').style.display = 'block';
+        document.getElementById('btn-go-category').style.display = 'flex';
+        document.getElementById('btn-close-warning').innerHTML = `<span>↩️</span> ${d.btnCancelWarn}`;
+    }
+    
+    document.getElementById('m-link-warning').style.display = 'flex';
+}
+
+// Función llamada al hacer clic en "IR A CATEGORÍA CORRECTA"
+function goToSuggestedCategory() {
+    // Cambiar a la categoría sugerida
+    const catIdMap = {
+        'BOTS': 'b-BO',
+        'CANALES': 'b-CA',
+        'GRUPOS': 'b-GR'
+    };
+    const btnId = catIdMap[suggestedCategory];
+    if (btnId) {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+            tab(suggestedCategory, btn);
+        }
+    }
+    
+    // Cerrar modal de advertencia y abrir el de publicación en la nueva categoría
+    hideModal('m-link-warning');
+    // Pequeño delay para mostrar el formulario con la categoría cambiada
+    setTimeout(() => {
+        showPost();
+    }, 100);
+}
+
 async function sendPost() {
     let data = { category: activeTab, time: Date.now(), views: 0 };
     const d = dictionary[lang];
     
     if(activeTab === 'INTERCAMBIO') {
-        data.desc = document.getElementById('in-desc').value.trim();
-        data.user = document.getElementById('in-user').value.trim();
+        const descEl = document.getElementById('in-desc');
+        const userEl = document.getElementById('in-user');
+        if (!descEl || !userEl) return;
+        data.desc = descEl.value.trim();
+        data.user = userEl.value.trim();
         if(!data.desc || !data.user) return;
         if(data.desc.length > MAX_DESC_LENGTH) {
             msg(d.errMaxLength);
             return;
         }
+        // Verificar si contiene algún enlace o patrón de Telegram
         if (/(http|https|www|t\.me|telegram)/i.test(data.desc)) { 
-            msg(d.errLink); 
+            // En lugar de solo toast, mostramos la advertencia grande
+            showLinkBlockWarning(data.desc);
             return; 
         }
     } else {
-        data.title = document.getElementById('in-title').value.trim();
-        data.link = document.getElementById('in-link').value.trim();
+        const titleEl = document.getElementById('in-title');
+        const linkEl = document.getElementById('in-link');
+        if (!titleEl || !linkEl) return;
+        data.title = titleEl.value.trim();
+        data.link = linkEl.value.trim();
         if(!data.title || !data.link) return;
         if(data.title.length > MAX_TITLE_LENGTH) {
             msg(d.errMaxTitle);
@@ -823,7 +1015,13 @@ function startDelete(id) {
     }, 5000);
 }
 function stopDelete() { clearTimeout(pressTimer); }
-function hideModal(id) { document.getElementById(id).style.display = 'none'; }
+function hideModal(id) { 
+    document.getElementById(id).style.display = 'none'; 
+    // Si se cierra el modal de advertencia y no se va a cambiar categoría, podríamos querer dejar el formulario abierto
+    if (id === 'm-link-warning') {
+        // No hacer nada especial, el formulario de post sigue abierto detrás
+    }
+}
 </script>
 </body>
 </html>
