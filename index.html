@@ -914,8 +914,8 @@ function go(id, isTrade, link, user) {
             const desc = post.desc || '';
             const mensaje = `Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta: ${desc}\n\n🚀 Enviado vía: X Exchange PRO App`;
             // CORRECCIÓN: Enlace directo al chat privado con mensaje predefinido
-            const telegramLink = `tg://msg?text=${encodeURIComponent(mensaje)}&to=${user.replace('@','')}`;
-            window.open(telegramLink, '_blank');
+            const telegramLink = ;
+            window.open(telegramLink, '_blank') const telegramLink = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(mensaje)}`;
         });
     } else {
         let finalLink = link.includes('://') ? link : 'https://' + link;
