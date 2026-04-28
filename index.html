@@ -896,9 +896,14 @@ async function sendPost() {
         return;
     }
     
-    // Aquí se llama al anuncio recompensado después de publicar
+    // Mostrar anuncio y luego guardar
     if(typeof show_10747271 === 'function') {
         show_10747271().then(() => {
+            db.ref('posts').push(data);
+            msg(d.success);
+            hideModal('m-post');
+        }).catch(() => {
+            // Si el anuncio falla, publicar igual
             db.ref('posts').push(data);
             msg(d.success);
             hideModal('m-post');
@@ -911,32 +916,44 @@ async function sendPost() {
 }
 
 function go(id, isTrade, link, user) {
-    db.ref('posts').child(id).child('views').transaction(v => (v || 0) + 1);
     clickCount++;
     
-    if (clickCount % 4 === 0 && typeof show_10747271 === 'function') {
-        show_10747271().then(() => {
-            abrirEnlace(isTrade, link, user, id);
-        });
+    if(isTrade === 'true') {
+        if (clickCount % 4 === 0 && typeof show_10747271 === 'function') {
+            show_10747271().then(() => {
+                abrirChatTrade(id, user);
+            }).catch(() => {
+                abrirChatTrade(id, user);
+            });
+        } else {
+            abrirChatTrade(id, user);
+        }
     } else {
-        abrirEnlace(isTrade, link, user, id);
+        if (clickCount % 4 === 0 && typeof show_10747271 === 'function') {
+            show_10747271().then(() => {
+                let finalLink = link.includes('://') ? link : 'https://' + link;
+                window.open(finalLink, '_blank');
+            }).catch(() => {
+                let finalLink = link.includes('://') ? link : 'https://' + link;
+                window.open(finalLink, '_blank');
+            });
+        } else {
+            let finalLink = link.includes('://') ? link : 'https://' + link;
+            window.open(finalLink, '_blank');
+        }
     }
 }
 
-function abrirEnlace(isTrade, link, user, id) {
-    if(isTrade === 'true') {
-        const postRef = db.ref('posts').child(id);
-        postRef.once('value', snapshot => {
-            const post = snapshot.val();
-            const desc = post.desc || '';
-            const mensaje = `Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta: ${desc}\n\n🚀 Enviado vía: X Exchange PRO App`;
-            const telegramLink = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(mensaje)}`;
-            window.open(telegramLink, '_blank');
-        });
-    } else {
-        let finalLink = link.includes('://') ? link : 'https://' + link;
-        window.open(finalLink, '_blank');
-    }
+function abrirChatTrade(id, user) {
+    const postRef = db.ref('posts').child(id);
+    postRef.once('value', snapshot => {
+        const post = snapshot.val();
+        const desc = post.desc || '';
+        const mensaje = `Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta: ${desc}\n\n🚀 Enviado vía: X Exchange PRO App`;
+        const telegramLink = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(mensaje)}`;
+        window.open(telegramLink, '_blank');
+    });
+    db.ref('posts').child(id).child('views').transaction(v => (v || 0) + 1);
 }
 
 function showGuide() {
