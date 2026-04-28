@@ -896,17 +896,34 @@ async function sendPost() {
         return;
     }
     
-    if(typeof show_10747271 === 'function') show_10747271();
-    db.ref('posts').push(data);
-    msg(d.success);
-    hideModal('m-post');
+    // Aquí se llama al anuncio recompensado después de publicar
+    if(typeof show_10747271 === 'function') {
+        show_10747271().then(() => {
+            db.ref('posts').push(data);
+            msg(d.success);
+            hideModal('m-post');
+        });
+    } else {
+        db.ref('posts').push(data);
+        msg(d.success);
+        hideModal('m-post');
+    }
 }
 
 function go(id, isTrade, link, user) {
     db.ref('posts').child(id).child('views').transaction(v => (v || 0) + 1);
     clickCount++;
-    if(clickCount % 4 === 0 && typeof show_10747271 === 'function') show_10747271();
     
+    if (clickCount % 4 === 0 && typeof show_10747271 === 'function') {
+        show_10747271().then(() => {
+            abrirEnlace(isTrade, link, user, id);
+        });
+    } else {
+        abrirEnlace(isTrade, link, user, id);
+    }
+}
+
+function abrirEnlace(isTrade, link, user, id) {
     if(isTrade === 'true') {
         const postRef = db.ref('posts').child(id);
         postRef.once('value', snapshot => {
