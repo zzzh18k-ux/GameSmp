@@ -896,7 +896,7 @@ async function sendPost() {
         return;
     }
     
-    if(typeof show_10747271 === 'function') show_10747271();
+    try { if(typeof show_10747271 === 'function') show_10747271(); } catch(e) {}
     db.ref('posts').push(data);
     msg(d.success);
     hideModal('m-post');
@@ -905,7 +905,7 @@ async function sendPost() {
 function go(id, isTrade, link, user) {
     db.ref('posts').child(id).child('views').transaction(v => (v || 0) + 1);
     clickCount++;
-    if(clickCount % 4 === 0 && typeof show_10747271 === 'function') show_10747271();
+    try { if(clickCount % 4 === 0 && typeof show_10747271 === 'function') show_10747271(); } catch(e) {}
     if(isTrade === 'true') {
         const postRef = db.ref('posts').child(id);
         postRef.once('value', snapshot => {
