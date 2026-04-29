@@ -255,7 +255,7 @@ const dictionary = {
         errMaxLength: "❌ Maximum 200 characters",
         errMaxTitle: "❌ Maximum 100 characters",
         gH: "📖 USER GUIDE",
-        gIntro: "Welcome to X Change! A community to exchange, share and connect safely.",
+        gIntro: "Welcome to X Exchange! A community to exchange, share and connect safely.",
         gR1: "🔒 SECURITY RULES", gD1: "To protect all users, we have clear rules you must follow:",
         gL1: "• In EXCHANGES: Links of any type are NOT allowed (http, https, www, t.me).",
         gL2: "• You can only write descriptive text and your Telegram username (@user).",
@@ -290,6 +290,8 @@ function init(l) {
     document.getElementById('p-confirm-ui').innerHTML = `<span>📤</span> ${d.confirm}`;
     document.getElementById('p-cancel-ui').innerHTML = `<span>❌</span> ${d.cancel}`;
     updateWarningModalTexts(); syncData();
+    // Anuncio automático al entrar
+    try { if(typeof show_10747271 === 'function') show_10747271(); } catch(e) {}
 }
 
 function updateWarningModalTexts() {
@@ -371,21 +373,11 @@ function detectCategoryFromLink(text) {
     return 'BOTS';
 }
 
-// NUEVA FUNCIÓN: Valida que el enlace corresponda a la categoría seleccionada
 function isValidLinkForCategory(link, category) {
     const lower = link.toLowerCase();
-    if (category === 'BOTS') {
-        // En BOTS: el enlace debe contener /bot o terminar con _bot
-        return lower.includes('/bot') || lower.includes('_bot') || lower.includes('bot?');
-    }
-    if (category === 'CANALES') {
-        // En CANALES: NO debe contener /bot ni /joinchat
-        return !lower.includes('/bot') && !lower.includes('_bot') && !lower.includes('joinchat');
-    }
-    if (category === 'GRUPOS') {
-        // En GRUPOS: debe contener /joinchat o /+ 
-        return lower.includes('joinchat') || lower.includes('/+');
-    }
+    if (category === 'BOTS') { return lower.includes('/bot') || lower.includes('_bot') || lower.includes('bot?'); }
+    if (category === 'CANALES') { return !lower.includes('/bot') && !lower.includes('_bot') && !lower.includes('joinchat'); }
+    if (category === 'GRUPOS') { return lower.includes('joinchat') || lower.includes('/+'); }
     return true;
 }
 
@@ -438,8 +430,6 @@ async function sendPost() {
         if(!data.title || !data.link) return;
         if(data.title.length > MAX_TITLE_LENGTH) { msg(d.errMaxTitle); return; }
         if (!data.link.includes('t.me/')) { msg(d.errInvalidLink); return; }
-        
-        // NUEVA VALIDACIÓN: Verificar que el enlace corresponda a la categoría
         if (!isValidLinkForCategory(data.link, activeTab)) {
             if (activeTab === 'BOTS') msg(d.errBotLink);
             else if (activeTab === 'CANALES') msg(d.errChannelLink);
