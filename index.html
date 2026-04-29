@@ -290,8 +290,10 @@ function init(l) {
     document.getElementById('p-confirm-ui').innerHTML = `<span>📤</span> ${d.confirm}`;
     document.getElementById('p-cancel-ui').innerHTML = `<span>❌</span> ${d.cancel}`;
     updateWarningModalTexts(); syncData();
-    // Anuncio automático al entrar
-    try { if(typeof show_10747271 === 'function') show_10747271(); } catch(e) {}
+    // Anuncio automático al entrar (con .then() y .catch())
+    if (typeof show_10747271 === 'function') {
+        show_10747271().catch(function() {});
+    }
 }
 
 function updateWarningModalTexts() {
@@ -441,14 +443,38 @@ async function sendPost() {
     const isDuplicate = await checkDuplicate(data);
     if (isDuplicate) { msg(d.errDuplicate); return; }
     
-    try { if(typeof show_10747271 === 'function') show_10747271(); } catch(e) {}
-    db.ref('posts').push(data); msg(d.success); hideModal('m-post');
+    if (typeof show_10747271 === 'function') {
+        show_10747271().then(function() {
+            db.ref('posts').push(data);
+            msg(d.success);
+            hideModal('m-post');
+        }).catch(function() {
+            db.ref('posts').push(data);
+            msg(d.success);
+            hideModal('m-post');
+        });
+    } else {
+        db.ref('posts').push(data);
+        msg(d.success);
+        hideModal('m-post');
+    }
 }
 
 function go(id, isTrade, link, user) {
     db.ref('posts').child(id).child('views').transaction(v => (v || 0) + 1);
     clickCount++;
-    try { if(clickCount % 4 === 0 && typeof show_10747271 === 'function') show_10747271(); } catch(e) {}
+    if (clickCount % 4 === 0 && typeof show_10747271 === 'function') {
+        show_10747271().then(function() {
+            abrirEnlace(id, isTrade, link, user);
+        }).catch(function() {
+            abrirEnlace(id, isTrade, link, user);
+        });
+    } else {
+        abrirEnlace(id, isTrade, link, user);
+    }
+}
+
+function abrirEnlace(id, isTrade, link, user) {
     if(isTrade === 'true') {
         const postRef = db.ref('posts').child(id);
         postRef.once('value', snapshot => {
