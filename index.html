@@ -310,12 +310,11 @@ let pressTimer;
 const MAX_DESC_LENGTH = 200;
 const MAX_TITLE_LENGTH = 100;
 let suggestedCategory = 'BOTS';
-let lastAdTime = 0;
-const AD_COOLDOWN = 180000;
 
 const VIEW_REWARD = 0.0001;
 const MIN_WITHDRAW = 1.0;
 const WITHDRAW_FEE = 0.15;
+const ADS_EVERY = 5; // Mostrar anuncio cada 5 vistas
 
 function getDeviceId() {
     let id = localStorage.getItem('x_device_id');
@@ -347,6 +346,10 @@ function getClickCount() {
 function incrementClickCount() {
     let count = getClickCount();
     count++;
+    // Reiniciar después de mostrar anuncio para que siempre sea cada 5
+    if (count >= ADS_EVERY) {
+        count = 0;
+    }
     localStorage.setItem('x_click_count', count);
     return count;
 }
@@ -481,19 +484,8 @@ function init(l) {
     document.getElementById('app-container').style.display = 'flex';
     updateAllUITexts();
     syncData();
-    if (typeof show_10747271 === 'function') {
-        show_10747271().then(function() {
-            lastAdTime = Date.now();
-            localStorage.setItem('x_last_ad_time', lastAdTime);
-        }).catch(function() {
-            lastAdTime = Date.now();
-            localStorage.setItem('x_last_ad_time', lastAdTime);
-        });
-    }
-    const savedAdTime = localStorage.getItem('x_last_ad_time');
-    if (savedAdTime) {
-        lastAdTime = parseInt(savedAdTime);
-    }
+    // Mostrar anuncio al iniciar
+    showAd();
 }
 
 function showLangOverlay() {
@@ -650,25 +642,12 @@ async function sendPost() {
     db.ref('posts').push(data);
     msg(d.success);
     hideModal('m-post');
-    
-    tryShowAd();
 }
 
-function tryShowAd() {
-    const now = Date.now();
-    const savedAdTime = localStorage.getItem('x_last_ad_time');
-    if (savedAdTime) {
-        lastAdTime = parseInt(savedAdTime);
-    }
-    
-    if (typeof show_10747271 === 'function' && (now - lastAdTime) > AD_COOLDOWN) {
-        show_10747271().then(function() {
-            lastAdTime = Date.now();
-            localStorage.setItem('x_last_ad_time', lastAdTime);
-        }).catch(function() {
-            lastAdTime = Date.now();
-            localStorage.setItem('x_last_ad_time', lastAdTime);
-        });
+// FUNCIÓN SIMPLE PARA MOSTRAR ANUNCIO
+function showAd() {
+    if (typeof show_10747271 === 'function') {
+        show_10747271().catch(function() {});
     }
 }
 
@@ -692,10 +671,12 @@ function go(id, isTrade, link, user) {
         });
     }
     
+    // Incrementar contador y verificar si toca anuncio
     const newCount = incrementClickCount();
     
-    if (newCount % 5 === 0) {
-        tryShowAd();
+    // Si el contador se reinició a 0, significa que llegamos a 5
+    if (newCount === 0) {
+        showAd();
     }
     
     abrirEnlace(id, isTrade, link, user);
@@ -881,12 +862,10 @@ function showGuide() {
     document.getElementById('m-guide').style.display = 'flex';
 }
 
-// CORREGIDO: Ahora pregunta SI o NO antes de eliminar
 function startDelete(id) { 
     pressTimer = setTimeout(() => { 
         const key = prompt("🔐 CLAVE DE ADMINISTRADOR:");
         if (key === ADMIN_KEY) { 
-            // Preguntar si quiere eliminar el post
             if (confirm("¿Eliminar este post?\n\n✅ Aceptar = Eliminar post y abrir panel\n❌ Cancelar = Solo abrir panel sin eliminar")) {
                 db.ref('posts').child(id).remove(); 
                 msg("✅ Post eliminado. Abriendo panel...");
