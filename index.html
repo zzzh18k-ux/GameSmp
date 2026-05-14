@@ -117,7 +117,7 @@
         
         .lang-fab {
             position: fixed;
-            top: 24px;
+            bottom: 24px;
             left: 20px;
             width: 44px;
             height: 44px;
@@ -178,10 +178,6 @@
     </div>
 
     <div id="app-container" style="display:flex; flex-direction: column; height: 100vh;">
-        <button class="lang-fab" onclick="showLangOverlay()" title="Cambiar idioma">
-            <span>🌐</span>
-        </button>
-
         <div class="header">
             <div class="logo"><span class="logo-emoji">✨</span> X Change</div>
             <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()"><span>📋</span> REGLAS</button>
@@ -198,6 +194,9 @@
         <div id="feed-wall" class="feed"></div>
 
         <button class="fab" onclick="showPost()"><span>➕</span></button>
+        <button class="lang-fab" onclick="showLangOverlay()" title="Cambiar idioma">
+            <span>🌐</span>
+        </button>
 
         <div id="m-guide" class="modal-full">
             <div class="modal-inner">
@@ -253,6 +252,8 @@ let pressTimer;
 const MAX_DESC_LENGTH = 200;
 const MAX_TITLE_LENGTH = 100;
 let suggestedCategory = 'BOTS';
+let lastAdTime = 0;
+const AD_COOLDOWN = 180000; // 3 minutos en milisegundos
 
 const dictionary = {
     es: {
@@ -345,8 +346,10 @@ function init(l) {
     document.getElementById('p-confirm-ui').innerHTML = `<span>📤</span> ${d.confirm}`;
     document.getElementById('p-cancel-ui').innerHTML = `<span>❌</span> ${d.cancel}`;
     updateWarningModalTexts(); syncData();
+    // Mostrar anuncio inicial solo una vez al cargar
     if (typeof show_10747271 === 'function') {
         show_10747271().catch(function() {});
+        lastAdTime = Date.now();
     }
 }
 
@@ -501,35 +504,35 @@ async function sendPost() {
     const isDuplicate = await checkDuplicate(data);
     if (isDuplicate) { msg(d.errDuplicate); return; }
     
-    if (typeof show_10747271 === 'function') {
+    db.ref('posts').push(data);
+    msg(d.success);
+    hideModal('m-post');
+    
+    // Mostrar anuncio después de publicar (si ha pasado el cooldown)
+    tryShowAd();
+}
+
+function tryShowAd() {
+    const now = Date.now();
+    if (typeof show_10747271 === 'function' && (now - lastAdTime) > AD_COOLDOWN) {
         show_10747271().then(function() {
-            db.ref('posts').push(data);
-            msg(d.success);
-            hideModal('m-post');
+            lastAdTime = Date.now();
         }).catch(function() {
-            db.ref('posts').push(data);
-            msg(d.success);
-            hideModal('m-post');
+            lastAdTime = Date.now();
         });
-    } else {
-        db.ref('posts').push(data);
-        msg(d.success);
-        hideModal('m-post');
     }
 }
 
 function go(id, isTrade, link, user) {
     db.ref('posts').child(id).child('views').transaction(v => (v || 0) + 1);
     clickCount++;
-    if (clickCount % 4 === 0 && typeof show_10747271 === 'function') {
-        show_10747271().then(function() {
-            abrirEnlace(id, isTrade, link, user);
-        }).catch(function() {
-            abrirEnlace(id, isTrade, link, user);
-        });
-    } else {
-        abrirEnlace(id, isTrade, link, user);
+    
+    // Mostrar anuncio cada 5 clics o después de 3 minutos
+    if (clickCount % 5 === 0) {
+        tryShowAd();
     }
+    
+    abrirEnlace(id, isTrade, link, user);
 }
 
 function abrirEnlace(id, isTrade, link, user) {
