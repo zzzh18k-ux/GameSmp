@@ -23,6 +23,7 @@
             --tg-secondary-bg: #F0F0F0;
             --tg-section-separator: #E0E0E0;
             --warning-color: #FF3B30;
+            --sell-color: #FF6B35;
         }
 
         * { 
@@ -55,7 +56,7 @@
         .btn-safe i { transition: transform 0.2s ease; }
         .btn-safe:active i { transform: rotate(5deg); }
 
-        #lang-overlay { position: fixed; inset: 0; background: var(--tg-bg); z-index: 5000; display: flex; align-items: center; justify-content: center; }
+        #lang-overlay { position: fixed; inset: 0; background: var(--tg-bg); z-index: 5000; display: none; align-items: center; justify-content: center; }
         .welcome-box { text-align: center; color: var(--tg-text); padding: 40px 32px; width: 90%; max-width: 360px; background: var(--tg-bg); border-radius: 20px; }
         .welcome-box h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
         .welcome-box p { font-size: 15px; color: var(--tg-hint); margin-bottom: 40px; line-height: 1.5; }
@@ -78,14 +79,62 @@
         .card-pro:active { transform: scale(0.99); }
         .card-content { font-size: 15px; font-weight: 500; line-height: 1.5; color: var(--tg-text); margin-bottom: 16px; user-select: none; word-break: break-word; }
 
-        .action-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--tg-button); color: var(--tg-button-text); font-weight: 600; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; }
+        .action-btn { 
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 12px; 
+            border: 2px solid transparent; 
+            background: var(--tg-button); 
+            color: var(--tg-button-text); 
+            font-weight: 600; 
+            font-size: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            position: relative;
+            z-index: 1;
+        }
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: -3px; left: -3px; right: -3px; bottom: -3px;
+            border-radius: 15px;
+            background: linear-gradient(45deg, #FF6B35, #FF3B30, #2481CC, #34C759, #FFCC00);
+            z-index: -1;
+            opacity: 0.7;
+        }
         .action-btn:active { transform: scale(0.98); opacity: 0.9; }
         .warning-btn { background: var(--warning-color); }
         .outline-btn { background: transparent; border: 1px solid var(--tg-section-separator); color: var(--tg-text); }
+        .outline-btn::before { display: none; }
         .count-badge { background: #FF3B30; color: #fff; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; animation: badgePop 0.3s ease; }
         @keyframes badgePop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
         .fab { position: fixed; bottom: 24px; right: 20px; width: 60px; height: 60px; background: var(--tg-link); color: white; border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(36,129,204,0.3); z-index: 999; cursor: pointer; border: none; }
+        
+        .lang-fab {
+            position: fixed;
+            top: 24px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: var(--tg-bg);
+            color: var(--tg-text);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 999;
+            cursor: pointer;
+            border: 1px solid var(--tg-section-separator);
+            transition: all 0.3s ease;
+        }
+        .lang-fab:active { transform: scale(0.95); }
 
         .modal-full { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; z-index: 2000; }
         .modal-inner { background: var(--tg-bg); width: 100%; max-width: 500px; padding: 24px; border-radius: 20px 20px 0 0; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s; }
@@ -128,14 +177,19 @@
         </div>
     </div>
 
-    <div id="app-container" style="display:none; flex-direction: column; height: 100vh;">
+    <div id="app-container" style="display:flex; flex-direction: column; height: 100vh;">
+        <button class="lang-fab" onclick="showLangOverlay()" title="Cambiar idioma">
+            <span>🌐</span>
+        </button>
+
         <div class="header">
             <div class="logo"><span class="logo-emoji">✨</span> X Change</div>
             <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()"><span>📋</span> REGLAS</button>
         </div>
 
         <div class="cat-tabs">
-            <button class="cat-item active" id="b-EX" onclick="tab('INTERCAMBIO', this)"><span>🔄</span> <span id="t-ex">Intercambios</span> <span id="n-EX" class="count-badge">0</span></button>
+            <button class="cat-item active" id="b-VE" onclick="tab('VENTAS', this)"><span>💰</span> <span id="t-ve">Ventas</span> <span id="n-VE" class="count-badge">0</span></button>
+            <button class="cat-item" id="b-EX" onclick="tab('INTERCAMBIO', this)"><span>🔄</span> <span id="t-ex">Intercambios</span> <span id="n-EX" class="count-badge">0</span></button>
             <button class="cat-item" id="b-BO" onclick="tab('BOTS', this)"><span>🤖</span> <span id="t-bo">Bots</span> <span id="n-BO" class="count-badge">0</span></button>
             <button class="cat-item" id="b-CA" onclick="tab('CANALES', this)"><span>📢</span> <span id="t-ca">Canales</span> <span id="n-CA" class="count-badge">0</span></button>
             <button class="cat-item" id="b-GR" onclick="tab('GRUPOS', this)"><span>👥</span> <span id="t-gr">Grupos</span> <span id="n-GR" class="count-badge">0</span></button>
@@ -167,7 +221,7 @@
             <div class="modal-inner" style="text-align: center;">
                 <div class="warning-icon">⛔</div>
                 <h2 class="warning-title" id="warn-title">¡ENLACE NO PERMITIDO!</h2>
-                <p class="warning-text" id="warn-desc">Los enlaces no se permiten en Intercambios. Por seguridad solo se permite texto y @usuario.</p>
+                <p class="warning-text" id="warn-desc">Los enlaces no se permiten en Ventas o Intercambios. Por seguridad solo se permite texto y @usuario.</p>
                 <div class="suggest-category" id="suggest-box">
                     <p id="suggest-text">Este enlace parece ser de Telegram. ¿Quieres publicar en:</p>
                     <span class="category-badge" id="suggest-cat-name">BOTS</span>
@@ -193,7 +247,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let lang = 'es';
-let activeTab = 'INTERCAMBIO';
+let activeTab = 'VENTAS';
 let clickCount = 0;
 let pressTimer;
 const MAX_DESC_LENGTH = 200;
@@ -202,12 +256,12 @@ let suggestedCategory = 'BOTS';
 
 const dictionary = {
     es: {
-        rulesBtn: "REGLAS", trades: "Intercambios", bots: "Bots", channels: "Canales", groups: "Grupos",
+        rulesBtn: "REGLAS", sales: "Ventas", trades: "Intercambios", bots: "Bots", channels: "Canales", groups: "Grupos",
         newPost: "NUEVO ANUNCIO", confirm: "PUBLICAR", cancel: "Cancelar",
-        phDesc: "Escribe qué deseas cambiar (ej: 'Cambio X por Y'). Los usuarios te contactarán por Telegram y cuando te escriban, el bot @ReferralsXchangeBot añadirá una marca de agua indicando que proviene de X Change.", 
+        phDesc: "Escribe qué deseas vender (ej: 'Vendo cuenta premium'). Los usuarios te contactarán por Telegram.", 
         phUser: "@TuUsuario", phTitle: "Nombre del Proyecto", phLink: "t.me/tu_enlace",
         tradeBtn: "💬 CHAT", viewBtn: "🔗 ABRIR",
-        errLink: "❌ No se permiten enlaces en Intercambios",
+        errLink: "❌ No se permiten enlaces en Ventas o Intercambios",
         errLinkRequired: "❌ Bots/Canales/Grupos requieren un enlace válido",
         errInvalidLink: "❌ El enlace debe ser de Telegram (t.me/)",
         errBotLink: "❌ En BOTS solo se permiten enlaces de bots (t.me/bot)",
@@ -218,33 +272,33 @@ const dictionary = {
         errMaxLength: "❌ Máximo 200 caracteres",
         errMaxTitle: "❌ Máximo 100 caracteres",
         gH: "📖 GUÍA DE USO",
-        gIntro: "¡Bienvenido a X Change! Una comunidad para intercambiar, compartir y conectar de forma segura.",
+        gIntro: "¡Bienvenido a X Change! Una comunidad para vender, intercambiar, compartir y conectar de forma segura.",
         gR1: "🔒 NORMAS DE SEGURIDAD", gD1: "Para proteger a todos los usuarios, tenemos reglas claras que debes seguir:",
-        gL1: "• En INTERCAMBIOS: NO se permiten enlaces de ningún tipo (http, https, www, t.me).",
+        gL1: "• En VENTAS e INTERCAMBIOS: NO se permiten enlaces de ningún tipo (http, https, www, t.me).",
         gL2: "• Solo puedes escribir texto descriptivo y tu nombre de usuario de Telegram (@usuario).",
         gL3: "• Esto evita estafas y garantiza que las conversaciones sean dentro de Telegram.",
         gR2: "⏰ SISTEMA DE AUTO-LIMPIEZA", gD2: "Mantenemos la comunidad fresca y activa con limpieza automática:",
         gL4: "• Cada publicación dura exactamente 24 horas.", gL5: "• Después de ese tiempo, se elimina automáticamente.",
         gL6: "• Esto asegura que solo veas ofertas actuales y disponibles.", gL7: "• Vuelve cada día para no perder nuevas oportunidades.",
         gR3: "📝 CÓMO PUBLICAR CORRECTAMENTE", gD3: "Sigue este formato para que tu publicación sea efectiva:",
-        gL8: "• Sé claro y específico en tu descripción.", gL9: "• Formato recomendado: 'Vendo: [producto] | Cambio por: [lo que buscas]'.",
+        gL8: "• Sé claro y específico en tu descripción.", gL9: "• Formato recomendado: 'Vendo: [producto] | Precio: [precio]'.",
         gL10: "• Incluye siempre tu @usuario de Telegram.", gL11: "• En Bots/Canales/Grupos sí puedes incluir enlaces oficiales de Telegram.",
         gR4: "🛡️ CONSEJOS ADICIONALES", gD4: "Para una mejor experiencia:",
         gL12: "• Verifica siempre con quién hablas.", gL13: "• No compartas información personal sensible.",
         gL14: "• Reporta cualquier comportamiento sospechoso.", gL15: "• Las vistas indican el interés en tu publicación.",
         warnTitle: "⛔ ¡ENLACE NO PERMITIDO!",
-        warnDesc: "En la categoría INTERCAMBIOS no se permiten enlaces de ningún tipo. Por seguridad solo puedes escribir texto y tu @usuario de Telegram.",
+        warnDesc: "En las categorías VENTAS e INTERCAMBIOS no se permiten enlaces de ningún tipo. Por seguridad solo puedes escribir texto y tu @usuario de Telegram.",
         suggestText: "Parece que intentas compartir un enlace de Telegram. La categoría correcta sería:",
         btnGo: "IR A CATEGORÍA CORRECTA", btnCancelWarn: "CANCELAR",
         defaultSuggest: "Si deseas compartir un enlace, por favor usa las categorías Bots, Canales o Grupos."
     },
     en: {
-        rulesBtn: "RULES", trades: "Exchanges", bots: "Bots", channels: "Channels", groups: "Groups",
+        rulesBtn: "RULES", sales: "Sales", trades: "Exchanges", bots: "Bots", channels: "Channels", groups: "Groups",
         newPost: "NEW POST", confirm: "PUBLISH", cancel: "Cancel",
-        phDesc: "Write what you want to exchange (e.g., 'Swap X for Y'). Users will contact you on Telegram and when they message you, the bot @ReferralsXchangeBot will add a watermark showing origin.", 
+        phDesc: "Write what you want to sell (e.g., 'Selling premium account'). Users will contact you on Telegram.", 
         phUser: "@YourUsername", phTitle: "Project Name", phLink: "t.me/your_link",
         tradeBtn: "💬 CHAT", viewBtn: "🔗 OPEN",
-        errLink: "❌ Links not allowed in Exchanges",
+        errLink: "❌ Links not allowed in Sales or Exchanges",
         errLinkRequired: "❌ Bots/Channels/Groups require a valid link",
         errInvalidLink: "❌ Link must be from Telegram (t.me/)",
         errBotLink: "❌ In BOTS only bot links are allowed (t.me/bot)",
@@ -255,22 +309,22 @@ const dictionary = {
         errMaxLength: "❌ Maximum 200 characters",
         errMaxTitle: "❌ Maximum 100 characters",
         gH: "📖 USER GUIDE",
-        gIntro: "Welcome to X Exchange! A community to exchange, share and connect safely.",
+        gIntro: "Welcome to X Exchange! A community to sell, exchange, share and connect safely.",
         gR1: "🔒 SECURITY RULES", gD1: "To protect all users, we have clear rules you must follow:",
-        gL1: "• In EXCHANGES: Links of any type are NOT allowed (http, https, www, t.me).",
+        gL1: "• In SALES and EXCHANGES: Links of any type are NOT allowed (http, https, www, t.me).",
         gL2: "• You can only write descriptive text and your Telegram username (@user).",
         gL3: "• This prevents scams and ensures conversations stay within Telegram.",
         gR2: "⏰ AUTO-CLEAN SYSTEM", gD2: "We keep the community fresh and active with automatic cleaning:",
         gL4: "• Each post lasts exactly 24 hours.", gL5: "• After that time, it's automatically deleted.",
         gL6: "• This ensures you only see current and available offers.", gL7: "• Come back daily to not miss new opportunities.",
         gR3: "📝 HOW TO POST CORRECTLY", gD3: "Follow this format for an effective post:",
-        gL8: "• Be clear and specific in your description.", gL9: "• Recommended format: 'Selling: [product] | Looking for: [what you want]'.",
+        gL8: "• Be clear and specific in your description.", gL9: "• Recommended format: 'Selling: [product] | Price: [price]'.",
         gL10: "• Always include your Telegram @username.", gL11: "• In Bots/Channels/Groups you can include official Telegram links.",
         gR4: "🛡️ ADDITIONAL TIPS", gD4: "For a better experience:",
         gL12: "• Always verify who you're talking to.", gL13: "• Don't share sensitive personal information.",
         gL14: "• Report any suspicious behavior.", gL15: "• Views indicate interest in your post.",
         warnTitle: "⛔ LINK NOT ALLOWED!",
-        warnDesc: "Links are not allowed in EXCHANGES category. For security, you can only write text and your Telegram @username.",
+        warnDesc: "Links are not allowed in SALES and EXCHANGES categories. For security, you can only write text and your Telegram @username.",
         suggestText: "It looks like you're trying to share a Telegram link. The correct category would be:",
         btnGo: "GO TO CORRECT CATEGORY", btnCancelWarn: "CANCEL",
         defaultSuggest: "If you want to share a link, please use Bots, Channels or Groups categories."
@@ -282,6 +336,7 @@ function init(l) {
     document.getElementById('lang-overlay').style.display = 'none';
     document.getElementById('app-container').style.display = 'flex';
     document.getElementById('btn-rules-ui').innerHTML = `<span>📋</span> ${d.rulesBtn}`;
+    document.getElementById('t-ve').innerText = d.sales;
     document.getElementById('t-ex').innerText = d.trades;
     document.getElementById('t-bo').innerText = d.bots;
     document.getElementById('t-ca').innerText = d.channels;
@@ -290,10 +345,13 @@ function init(l) {
     document.getElementById('p-confirm-ui').innerHTML = `<span>📤</span> ${d.confirm}`;
     document.getElementById('p-cancel-ui').innerHTML = `<span>❌</span> ${d.cancel}`;
     updateWarningModalTexts(); syncData();
-    // Anuncio automático al entrar (con .then() y .catch())
     if (typeof show_10747271 === 'function') {
         show_10747271().catch(function() {});
     }
+}
+
+function showLangOverlay() {
+    document.getElementById('lang-overlay').style.display = 'flex';
 }
 
 function updateWarningModalTexts() {
@@ -312,7 +370,7 @@ function msg(text) {
 
 function syncData() {
     db.ref('posts').on('value', snap => {
-        let items = []; let counts = { INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
+        let items = []; let counts = { VENTAS: 0, INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
         const now = Date.now();
         snap.forEach(child => {
             const p = child.val();
@@ -320,7 +378,7 @@ function syncData() {
             counts[p.category]++;
             if(p.category === activeTab) items.push({ id: child.key, ...p });
         });
-        const keys = { INTERCAMBIO: 'n-EX', BOTS: 'n-BO', CANALES: 'n-CA', GRUPOS: 'n-GR' };
+        const keys = { VENTAS: 'n-VE', INTERCAMBIO: 'n-EX', BOTS: 'n-BO', CANALES: 'n-CA', GRUPOS: 'n-GR' };
         for(let k in keys) { const el = document.getElementById(keys[k]); if(el) el.innerText = counts[k]; }
         render(items.sort((a,b) => b.time - a.time));
     });
@@ -329,7 +387,7 @@ function syncData() {
 function render(list) {
     let html = "";
     list.forEach(p => {
-        const isTrade = p.category === 'INTERCAMBIO'; const d = dictionary[lang];
+        const isTrade = p.category === 'INTERCAMBIO' || p.category === 'VENTAS'; const d = dictionary[lang];
         html += `<div class="card-pro"><div class="card-content" onmousedown="startDelete('${p.id}')" onmouseup="stopDelete()" ontouchstart="startDelete('${p.id}')" ontouchend="stopDelete()">${isTrade ? p.desc : p.title}</div><button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')"><span>${isTrade ? d.tradeBtn : d.viewBtn}</span></button><div class="card-meta"><span>👁️ ${p.views || 0} vistas</span><span>⏰ 24h</span></div></div>`;
     });
     document.getElementById('feed-wall').innerHTML = html || `<p style="text-align:center; padding:50px; color:var(--tg-hint);"><span>✨</span> No hay publicaciones aún</p>`;
@@ -342,7 +400,7 @@ function tab(name, btn) {
 
 function showPost() {
     const fields = document.getElementById('post-fields'); const d = dictionary[lang]; const counterDiv = document.getElementById('char-count-display');
-    if(activeTab === 'INTERCAMBIO') {
+    if(activeTab === 'VENTAS' || activeTab === 'INTERCAMBIO') {
         fields.innerHTML = `<textarea id="in-desc" placeholder="${d.phDesc}" maxlength="${MAX_DESC_LENGTH}"></textarea><input type="text" id="in-user" placeholder="${d.phUser}">`;
         counterDiv.style.display = 'block';
         document.getElementById('in-desc').addEventListener('input', function() { counterDiv.innerText = `${this.value.length}/${MAX_DESC_LENGTH} caracteres`; });
@@ -361,7 +419,7 @@ async function checkDuplicate(data) {
     snapshot.forEach(child => {
         const p = child.val(); const now = Date.now();
         if (now - p.time > 86400000) return;
-        if (data.category === 'INTERCAMBIO') { if (p.category === 'INTERCAMBIO' && p.desc === data.desc && p.user === data.user) isDuplicate = true; }
+        if (data.category === 'VENTAS' || data.category === 'INTERCAMBIO') { if ((p.category === 'VENTAS' || p.category === 'INTERCAMBIO') && p.desc === data.desc && p.user === data.user) isDuplicate = true; }
         else { if (p.category === data.category && p.link === data.link) isDuplicate = true; }
     });
     return isDuplicate;
@@ -418,7 +476,7 @@ function goToSuggestedCategory() {
 async function sendPost() {
     let data = { category: activeTab, time: Date.now(), views: 0 }; const d = dictionary[lang];
     
-    if(activeTab === 'INTERCAMBIO') {
+    if(activeTab === 'VENTAS' || activeTab === 'INTERCAMBIO') {
         const descEl = document.getElementById('in-desc'); const userEl = document.getElementById('in-user');
         if (!descEl || !userEl) return;
         data.desc = descEl.value.trim(); data.user = userEl.value.trim();
@@ -499,6 +557,9 @@ function showGuide() {
 function startDelete(id) { pressTimer = setTimeout(() => { if(prompt("ADMIN KEY:") === "231606") { db.ref('posts').child(id).remove(); msg("✅ Eliminado."); } }, 5000); }
 function stopDelete() { clearTimeout(pressTimer); }
 function hideModal(id) { document.getElementById(id).style.display = 'none'; }
+
+// Iniciar automáticamente en español
+init('es');
 </script>
 </body>
 </html>
