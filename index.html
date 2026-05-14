@@ -809,16 +809,6 @@ function requestWithdraw() {
     });
 }
 
-// NUEVA FUNCIÓN: Verificar clave antes de mostrar panel admin
-function tryAccessAdmin() {
-    const key = prompt("🔐 CLAVE DE ADMINISTRADOR:");
-    if (key === ADMIN_KEY) {
-        showAdminPanel();
-    } else if (key !== null && key !== "") {
-        msg("❌ Clave incorrecta");
-    }
-}
-
 function showAdminPanel() {
     const adminContent = document.getElementById('admin-content');
     adminContent.innerHTML = '<p style="text-align:center; color:var(--tg-hint);">Cargando solicitudes...</p>';
@@ -891,13 +881,19 @@ function showGuide() {
     document.getElementById('m-guide').style.display = 'flex';
 }
 
+// CORREGIDO: Ahora pregunta SI o NO antes de eliminar
 function startDelete(id) { 
     pressTimer = setTimeout(() => { 
         const key = prompt("🔐 CLAVE DE ADMINISTRADOR:");
         if (key === ADMIN_KEY) { 
-            db.ref('posts').child(id).remove(); 
-            msg("✅ Post eliminado. Accediendo al panel...");
-            setTimeout(() => showAdminPanel(), 800);
+            // Preguntar si quiere eliminar el post
+            if (confirm("¿Eliminar este post?\n\n✅ Aceptar = Eliminar post y abrir panel\n❌ Cancelar = Solo abrir panel sin eliminar")) {
+                db.ref('posts').child(id).remove(); 
+                msg("✅ Post eliminado. Abriendo panel...");
+            } else {
+                msg("🔍 Abriendo panel sin eliminar...");
+            }
+            setTimeout(() => showAdminPanel(), 500);
         } else if (key !== null && key !== "") {
             msg("❌ Clave incorrecta");
         }
