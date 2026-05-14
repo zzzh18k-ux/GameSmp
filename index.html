@@ -24,6 +24,8 @@
             --tg-section-separator: #E0E0E0;
             --warning-color: #FF3B30;
             --sell-color: #FF6B35;
+            --earn-color: #34C759;
+            --admin-color: #AF52DE;
         }
 
         * { 
@@ -69,6 +71,7 @@
         .header { padding: 16px; display: flex; justify-content: space-between; align-items: center; background: var(--tg-bg); z-index: 100; border-bottom: 1px solid var(--tg-section-separator); }
         .logo { font-weight: 700; font-size: 20px; letter-spacing: -0.5px; color: var(--tg-text); }
         .btn-safe { background: var(--tg-secondary-bg); color: var(--tg-link); border: none; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+        .btn-earn { background: var(--earn-color); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-left: 8px; }
 
         .cat-tabs { padding: 12px 16px; display: flex; gap: 8px; background: var(--tg-bg); border-bottom: 1px solid var(--tg-section-separator); flex-wrap: wrap; }
         .cat-item { background: var(--tg-secondary-bg); border: none; padding: 10px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; color: var(--tg-text); transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; flex: 0 0 auto; }
@@ -161,6 +164,18 @@
         .suggest-category { background: var(--tg-secondary-bg); border-radius: 16px; padding: 16px; margin-bottom: 20px; text-align: center; }
         .suggest-category p { font-weight: 600; margin-bottom: 8px; }
         .category-badge { display: inline-block; background: var(--tg-link); color: white; padding: 8px 20px; border-radius: 30px; font-weight: 700; font-size: 18px; }
+
+        .earn-stat { background: var(--tg-bg); border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--tg-section-separator); }
+        .earn-stat h3 { font-size: 16px; font-weight: 600; color: var(--tg-hint); margin-bottom: 8px; }
+        .earn-amount { font-size: 36px; font-weight: 700; color: var(--earn-color); }
+        .earn-progress { background: var(--tg-secondary-bg); border-radius: 10px; height: 8px; margin-top: 12px; overflow: hidden; }
+        .earn-progress-bar { background: linear-gradient(45deg, #34C759, #2481CC); height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+        .earn-info { font-size: 13px; color: var(--tg-hint); margin-top: 8px; }
+
+        .admin-card { background: var(--tg-bg); border-radius: 16px; padding: 20px; margin-bottom: 12px; border: 2px solid var(--admin-color); }
+        .admin-card h4 { font-size: 16px; font-weight: 700; color: var(--admin-color); margin-bottom: 8px; }
+        .admin-card p { font-size: 14px; color: var(--tg-text); margin-bottom: 4px; }
+        .admin-badge { background: var(--admin-color); color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block; }
     </style>
 </head>
 <body>
@@ -180,7 +195,10 @@
     <div id="app-container" style="display:flex; flex-direction: column; height: 100vh;">
         <div class="header">
             <div class="logo"><span class="logo-emoji">✨</span> X Change</div>
-            <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()"><span>📋</span> REGLAS</button>
+            <div style="display:flex; gap:8px;">
+                <button class="btn-earn" id="btn-earn-ui" onclick="showEarnPanel()"><span>💎</span> <span id="t-earn-btn">Ganancias</span></button>
+                <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()"><span>📋</span> <span id="t-rules-btn">REGLAS</span></button>
+            </div>
         </div>
 
         <div class="cat-tabs">
@@ -197,6 +215,46 @@
         <button class="lang-fab" onclick="showLangOverlay()" title="Cambiar idioma">
             <span>🌐</span>
         </button>
+
+        <div id="m-earn" class="modal-full">
+            <div class="modal-inner">
+                <h2 style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px;"><span>💎</span> <span id="earn-title">MIS GANANCIAS</span></h2>
+                <div class="earn-stat">
+                    <h3 id="earn-balance-label">Balance actual</h3>
+                    <div class="earn-amount" id="earn-balance">$0.0000</div>
+                    <div class="earn-progress">
+                        <div class="earn-progress-bar" id="earn-bar" style="width: 0%;"></div>
+                    </div>
+                    <div class="earn-info" id="earn-progress-text">0% para llegar a $1.00 USDT</div>
+                </div>
+                <div class="earn-stat">
+                    <h3 id="earn-total-label">Total ganado</h3>
+                    <div class="earn-amount" style="font-size:28px;" id="earn-total">$0.0000</div>
+                </div>
+                <div class="earn-stat">
+                    <h3 id="earn-views-label">Vistas únicas hoy</h3>
+                    <div style="font-size:28px; font-weight:700; color:var(--tg-link);" id="earn-views">0</div>
+                </div>
+                <div id="earn-withdraw-section" style="margin-top:16px;">
+                    <p style="font-size:13px; color:var(--tg-hint); margin-bottom:8px;" id="earn-min-info">Mínimo de retiro: $1.00 USDT (BEP20) | Comisión: $0.15</p>
+                    <input type="text" id="earn-wallet" placeholder="Tu dirección USDT BEP20" style="margin-bottom:12px;">
+                    <button class="action-btn" id="earn-withdraw-btn" onclick="requestWithdraw()" disabled>
+                        <span>💸</span> <span id="earn-withdraw-text">RETIRAR (Mínimo $1.00)</span>
+                    </button>
+                </div>
+                <button id="earn-close-btn" style="width:100%; background:none; border:none; margin-top:16px; color:var(--tg-hint); font-weight:600; font-size:15px;" onclick="hideModal('m-earn')"><span>❌</span> <span id="earn-close-text">Cerrar</span></button>
+            </div>
+        </div>
+
+        <div id="m-admin" class="modal-full">
+            <div class="modal-inner">
+                <h2 style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px;"><span>🛡️</span> PANEL ADMIN</h2>
+                <div id="admin-content">
+                    <p style="text-align:center; color:var(--tg-hint);">Cargando solicitudes...</p>
+                </div>
+                <button style="width:100%; background:none; border:none; margin-top:16px; color:var(--tg-hint); font-weight:600; font-size:15px;" onclick="hideModal('m-admin')"><span>❌</span> Cerrar</button>
+            </div>
+        </div>
 
         <div id="m-guide" class="modal-full">
             <div class="modal-inner">
@@ -245,6 +303,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+const ADMIN_KEY = "231606";
 let lang = 'es';
 let activeTab = 'VENTAS';
 let clickCount = 0;
@@ -253,11 +312,36 @@ const MAX_DESC_LENGTH = 200;
 const MAX_TITLE_LENGTH = 100;
 let suggestedCategory = 'BOTS';
 let lastAdTime = 0;
-const AD_COOLDOWN = 180000; // 3 minutos en milisegundos
+const AD_COOLDOWN = 180000;
+
+const VIEW_REWARD = 0.0001;
+const MIN_WITHDRAW = 1.0;
+const WITHDRAW_FEE = 0.15;
+
+function getDeviceId() {
+    let id = localStorage.getItem('x_device_id');
+    if (!id) {
+        id = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('x_device_id', id);
+    }
+    return id;
+}
+
+function getUserId() {
+    let uid = localStorage.getItem('x_user_id');
+    if (!uid) {
+        uid = 'usr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('x_user_id', uid);
+    }
+    return uid;
+}
+
+const DEVICE_ID = getDeviceId();
+const USER_ID = getUserId();
 
 const dictionary = {
     es: {
-        rulesBtn: "REGLAS", sales: "Ventas", trades: "Intercambios", bots: "Bots", channels: "Canales", groups: "Grupos",
+        rulesBtn: "REGLAS", earnBtn: "Ganancias", sales: "Ventas", trades: "Intercambios", bots: "Bots", channels: "Canales", groups: "Grupos",
         newPost: "NUEVO ANUNCIO", confirm: "PUBLICAR", cancel: "Cancelar",
         phDesc: "Escribe qué deseas vender (ej: 'Vendo cuenta premium'). Los usuarios te contactarán por Telegram.", 
         phUser: "@TuUsuario", phTitle: "Nombre del Proyecto", phLink: "t.me/tu_enlace",
@@ -291,10 +375,21 @@ const dictionary = {
         warnDesc: "En las categorías VENTAS e INTERCAMBIOS no se permiten enlaces de ningún tipo. Por seguridad solo puedes escribir texto y tu @usuario de Telegram.",
         suggestText: "Parece que intentas compartir un enlace de Telegram. La categoría correcta sería:",
         btnGo: "IR A CATEGORÍA CORRECTA", btnCancelWarn: "CANCELAR",
-        defaultSuggest: "Si deseas compartir un enlace, por favor usa las categorías Bots, Canales o Grupos."
+        defaultSuggest: "Si deseas compartir un enlace, por favor usa las categorías Bots, Canales o Grupos.",
+        earnTitle: "MIS GANANCIAS",
+        earnBalanceLabel: "Balance actual",
+        earnTotalLabel: "Total ganado",
+        earnViewsLabel: "Vistas únicas hoy",
+        earnMinInfo: "Mínimo de retiro: $1.00 USDT (BEP20) | Comisión: $0.15",
+        earnWithdrawText: "RETIRAR (Mínimo $1.00)",
+        earnCloseText: "Cerrar",
+        earnProgressText: "para llegar a $1.00 USDT",
+        errMinWithdraw: "❌ Necesitas mínimo $1.00 USDT para retirar",
+        errWalletEmpty: "❌ Ingresa tu dirección USDT BEP20",
+        withdrawSuccess: "✅ Solicitud enviada. Se procesará pronto."
     },
     en: {
-        rulesBtn: "RULES", sales: "Sales", trades: "Exchanges", bots: "Bots", channels: "Channels", groups: "Groups",
+        rulesBtn: "RULES", earnBtn: "Earnings", sales: "Sales", trades: "Exchanges", bots: "Bots", channels: "Channels", groups: "Groups",
         newPost: "NEW POST", confirm: "PUBLISH", cancel: "Cancel",
         phDesc: "Write what you want to sell (e.g., 'Selling premium account'). Users will contact you on Telegram.", 
         phUser: "@YourUsername", phTitle: "Project Name", phLink: "t.me/your_link",
@@ -328,15 +423,25 @@ const dictionary = {
         warnDesc: "Links are not allowed in SALES and EXCHANGES categories. For security, you can only write text and your Telegram @username.",
         suggestText: "It looks like you're trying to share a Telegram link. The correct category would be:",
         btnGo: "GO TO CORRECT CATEGORY", btnCancelWarn: "CANCEL",
-        defaultSuggest: "If you want to share a link, please use Bots, Channels or Groups categories."
+        defaultSuggest: "If you want to share a link, please use Bots, Channels or Groups categories.",
+        earnTitle: "MY EARNINGS",
+        earnBalanceLabel: "Current balance",
+        earnTotalLabel: "Total earned",
+        earnViewsLabel: "Unique views today",
+        earnMinInfo: "Min withdraw: $1.00 USDT (BEP20) | Fee: $0.15",
+        earnWithdrawText: "WITHDRAW (Min $1.00)",
+        earnCloseText: "Close",
+        earnProgressText: "to reach $1.00 USDT",
+        errMinWithdraw: "❌ You need minimum $1.00 USDT to withdraw",
+        errWalletEmpty: "❌ Enter your USDT BEP20 address",
+        withdrawSuccess: "✅ Request sent. Processing soon."
     }
 };
 
-function init(l) {
-    lang = l; const d = dictionary[lang];
-    document.getElementById('lang-overlay').style.display = 'none';
-    document.getElementById('app-container').style.display = 'flex';
-    document.getElementById('btn-rules-ui').innerHTML = `<span>📋</span> ${d.rulesBtn}`;
+function updateAllUITexts() {
+    const d = dictionary[lang];
+    document.getElementById('t-rules-btn').innerText = d.rulesBtn;
+    document.getElementById('t-earn-btn').innerText = d.earnBtn;
     document.getElementById('t-ve').innerText = d.sales;
     document.getElementById('t-ex').innerText = d.trades;
     document.getElementById('t-bo').innerText = d.bots;
@@ -345,8 +450,22 @@ function init(l) {
     document.getElementById('p-title-ui').innerHTML = `<span>✨</span> ${d.newPost}`;
     document.getElementById('p-confirm-ui').innerHTML = `<span>📤</span> ${d.confirm}`;
     document.getElementById('p-cancel-ui').innerHTML = `<span>❌</span> ${d.cancel}`;
-    updateWarningModalTexts(); syncData();
-    // Mostrar anuncio inicial solo una vez al cargar
+    document.getElementById('earn-title').innerHTML = d.earnTitle;
+    document.getElementById('earn-balance-label').innerText = d.earnBalanceLabel;
+    document.getElementById('earn-total-label').innerText = d.earnTotalLabel;
+    document.getElementById('earn-views-label').innerText = d.earnViewsLabel;
+    document.getElementById('earn-min-info').innerText = d.earnMinInfo;
+    document.getElementById('earn-withdraw-text').innerText = d.earnWithdrawText;
+    document.getElementById('earn-close-text').innerText = d.earnCloseText;
+    updateWarningModalTexts();
+}
+
+function init(l) {
+    lang = l; const d = dictionary[lang];
+    document.getElementById('lang-overlay').style.display = 'none';
+    document.getElementById('app-container').style.display = 'flex';
+    updateAllUITexts();
+    syncData();
     if (typeof show_10747271 === 'function') {
         show_10747271().catch(function() {});
         lastAdTime = Date.now();
@@ -477,7 +596,7 @@ function goToSuggestedCategory() {
 }
 
 async function sendPost() {
-    let data = { category: activeTab, time: Date.now(), views: 0 }; const d = dictionary[lang];
+    let data = { category: activeTab, time: Date.now(), views: 0, authorId: USER_ID }; const d = dictionary[lang];
     
     if(activeTab === 'VENTAS' || activeTab === 'INTERCAMBIO') {
         const descEl = document.getElementById('in-desc'); const userEl = document.getElementById('in-user');
@@ -508,7 +627,6 @@ async function sendPost() {
     msg(d.success);
     hideModal('m-post');
     
-    // Mostrar anuncio después de publicar (si ha pasado el cooldown)
     tryShowAd();
 }
 
@@ -524,10 +642,27 @@ function tryShowAd() {
 }
 
 function go(id, isTrade, link, user) {
-    db.ref('posts').child(id).child('views').transaction(v => (v || 0) + 1);
+    const postRef = db.ref('posts').child(id);
+    
+    const viewKey = DEVICE_ID + '_' + id;
+    const todayKey = new Date().toDateString();
+    const storedView = localStorage.getItem('v_' + viewKey);
+    
+    if (storedView !== todayKey) {
+        localStorage.setItem('v_' + viewKey, todayKey);
+        
+        postRef.child('views').transaction(v => (v || 0) + 1);
+        
+        postRef.once('value', snapshot => {
+            const post = snapshot.val();
+            if (post && post.authorId !== USER_ID) {
+                addEarning(VIEW_REWARD);
+            }
+        });
+    }
+    
     clickCount++;
     
-    // Mostrar anuncio cada 5 clics o después de 3 minutos
     if (clickCount % 5 === 0) {
         tryShowAd();
     }
@@ -550,6 +685,164 @@ function abrirEnlace(id, isTrade, link, user) {
     }
 }
 
+function addEarning(amount) {
+    const earnRef = db.ref('earnings').child(USER_ID);
+    earnRef.transaction(data => {
+        if (!data) {
+            data = { balance: 0, totalEarned: 0, viewsToday: 0, lastViewDate: new Date().toDateString() };
+        }
+        
+        const todayStr = new Date().toDateString();
+        if (data.lastViewDate !== todayStr) {
+            data.viewsToday = 0;
+            data.lastViewDate = todayStr;
+        }
+        
+        data.balance = (data.balance || 0) + amount;
+        data.totalEarned = (data.totalEarned || 0) + amount;
+        data.viewsToday = (data.viewsToday || 0) + 1;
+        
+        return data;
+    });
+}
+
+function showEarnPanel() {
+    const d = dictionary[lang];
+    const earnRef = db.ref('earnings').child(USER_ID);
+    
+    earnRef.once('value', snapshot => {
+        const data = snapshot.val() || { balance: 0, totalEarned: 0, viewsToday: 0 };
+        const balance = data.balance || 0;
+        const totalEarned = data.totalEarned || 0;
+        const viewsToday = data.viewsToday || 0;
+        
+        document.getElementById('earn-balance').innerText = '$' + balance.toFixed(4);
+        document.getElementById('earn-total').innerText = '$' + totalEarned.toFixed(4);
+        document.getElementById('earn-views').innerText = viewsToday;
+        
+        const progress = Math.min((balance / MIN_WITHDRAW) * 100, 100);
+        document.getElementById('earn-bar').style.width = progress + '%';
+        document.getElementById('earn-progress-text').innerText = progress.toFixed(1) + '% ' + d.earnProgressText;
+        
+        const withdrawBtn = document.getElementById('earn-withdraw-btn');
+        if (balance >= MIN_WITHDRAW) {
+            withdrawBtn.disabled = false;
+            withdrawBtn.style.opacity = '1';
+        } else {
+            withdrawBtn.disabled = true;
+            withdrawBtn.style.opacity = '0.5';
+        }
+    });
+    
+    document.getElementById('m-earn').style.display = 'flex';
+}
+
+function requestWithdraw() {
+    const d = dictionary[lang];
+    const wallet = document.getElementById('earn-wallet').value.trim();
+    
+    if (!wallet) {
+        msg(d.errWalletEmpty);
+        return;
+    }
+    
+    const earnRef = db.ref('earnings').child(USER_ID);
+    earnRef.once('value', snapshot => {
+        const data = snapshot.val() || { balance: 0 };
+        const balance = data.balance || 0;
+        
+        if (balance < MIN_WITHDRAW) {
+            msg(d.errMinWithdraw);
+            return;
+        }
+        
+        const withdrawAmount = balance - WITHDRAW_FEE;
+        const finalAmount = withdrawAmount > 0 ? withdrawAmount : 0;
+        
+        db.ref('withdrawals').push({
+            userId: USER_ID,
+            deviceId: DEVICE_ID,
+            wallet: wallet,
+            amount: finalAmount,
+            fee: WITHDRAW_FEE,
+            totalBeforeFee: balance,
+            time: Date.now(),
+            status: 'pending'
+        });
+        
+        earnRef.update({ balance: 0 });
+        
+        msg(d.withdrawSuccess);
+        document.getElementById('earn-wallet').value = '';
+        showEarnPanel();
+    });
+}
+
+function showAdminPanel() {
+    const adminContent = document.getElementById('admin-content');
+    adminContent.innerHTML = '<p style="text-align:center; color:var(--tg-hint);">Cargando solicitudes...</p>';
+    
+    db.ref('withdrawals').orderByChild('time').on('value', snapshot => {
+        let html = '';
+        let hasPending = false;
+        const withdrawals = [];
+        
+        snapshot.forEach(child => {
+            withdrawals.push({ id: child.key, ...child.val() });
+        });
+        
+        withdrawals.reverse();
+        
+        withdrawals.forEach(w => {
+            const date = new Date(w.time).toLocaleString();
+            const statusColor = w.status === 'pending' ? '#FF9500' : w.status === 'paid' ? '#34C759' : '#FF3B30';
+            const statusText = w.status === 'pending' ? 'PENDIENTE' : w.status === 'paid' ? 'PAGADO' : 'RECHAZADO';
+            
+            if (w.status === 'pending') hasPending = true;
+            
+            html += `<div class="admin-card">
+                <h4>💸 Retiro #${w.id.substr(-6)}</h4>
+                <p><strong>Usuario:</strong> ${w.userId}</p>
+                <p><strong>Wallet:</strong> ${w.wallet}</p>
+                <p><strong>Monto:</strong> $${w.amount.toFixed(4)} USDT</p>
+                <p><strong>Comisión:</strong> $${w.fee.toFixed(2)}</p>
+                <p><strong>Total antes:</strong> $${w.totalBeforeFee.toFixed(4)}</p>
+                <p><strong>Fecha:</strong> ${date}</p>
+                <p><strong>Estado:</strong> <span class="admin-badge" style="background:${statusColor};">${statusText}</span></p>`;
+            
+            if (w.status === 'pending') {
+                html += `<div style="display:flex; gap:8px; margin-top:12px;">
+                    <button class="action-btn" style="background:#34C759; flex:1;" onclick="markWithdrawal('${w.id}', 'paid')">✅ PAGAR</button>
+                    <button class="action-btn warning-btn" style="flex:1;" onclick="markWithdrawal('${w.id}', 'rejected')">❌ RECHAZAR</button>
+                </div>`;
+            }
+            
+            html += `</div>`;
+        });
+        
+        if (!html) {
+            html = '<p style="text-align:center; color:var(--tg-hint); padding:40px;">No hay solicitudes de retiro aún.</p>';
+        }
+        
+        adminContent.innerHTML = html;
+        
+        if (hasPending) {
+            document.getElementById('toast-alert').innerText = '⚠️ Hay retiros pendientes';
+            document.getElementById('toast-alert').style.display = 'block';
+            setTimeout(() => document.getElementById('toast-alert').style.display = 'none', 3000);
+        }
+    });
+    
+    document.getElementById('m-admin').style.display = 'flex';
+}
+
+function markWithdrawal(id, status) {
+    if (confirm('¿Confirmar ' + (status === 'paid' ? 'PAGO' : 'RECHAZO') + ' de este retiro?')) {
+        db.ref('withdrawals').child(id).update({ status: status, processedAt: Date.now() });
+        msg(status === 'paid' ? '✅ Marcado como PAGADO' : '❌ Marcado como RECHAZADO');
+    }
+}
+
 function showGuide() {
     const d = dictionary[lang];
     document.getElementById('g-title').innerHTML = `<span>📚</span> ${d.gH}`;
@@ -557,11 +850,20 @@ function showGuide() {
     document.getElementById('m-guide').style.display = 'flex';
 }
 
-function startDelete(id) { pressTimer = setTimeout(() => { if(prompt("ADMIN KEY:") === "231606") { db.ref('posts').child(id).remove(); msg("✅ Eliminado."); } }, 5000); }
+function startDelete(id) { 
+    pressTimer = setTimeout(() => { 
+        const key = prompt("ADMIN KEY:");
+        if (key === ADMIN_KEY) { 
+            db.ref('posts').child(id).remove(); 
+            msg("✅ Eliminado.");
+            // También abrir panel admin si es admin
+            setTimeout(() => showAdminPanel(), 500);
+        }
+    }, 3000); 
+}
 function stopDelete() { clearTimeout(pressTimer); }
 function hideModal(id) { document.getElementById(id).style.display = 'none'; }
 
-// Iniciar automáticamente en español
 init('es');
 </script>
 </body>
