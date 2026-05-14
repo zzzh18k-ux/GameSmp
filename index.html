@@ -306,7 +306,6 @@ const db = firebase.database();
 const ADMIN_KEY = "231606";
 let lang = 'es';
 let activeTab = 'VENTAS';
-let clickCount = 0;
 let pressTimer;
 const MAX_DESC_LENGTH = 200;
 const MAX_TITLE_LENGTH = 100;
@@ -334,6 +333,22 @@ function getUserId() {
         localStorage.setItem('x_user_id', uid);
     }
     return uid;
+}
+
+function getClickCount() {
+    let count = localStorage.getItem('x_click_count');
+    if (!count) {
+        count = 0;
+        localStorage.setItem('x_click_count', count);
+    }
+    return parseInt(count);
+}
+
+function incrementClickCount() {
+    let count = getClickCount();
+    count++;
+    localStorage.setItem('x_click_count', count);
+    return count;
 }
 
 const DEVICE_ID = getDeviceId();
@@ -467,8 +482,17 @@ function init(l) {
     updateAllUITexts();
     syncData();
     if (typeof show_10747271 === 'function') {
-        show_10747271().catch(function() {});
-        lastAdTime = Date.now();
+        show_10747271().then(function() {
+            lastAdTime = Date.now();
+            localStorage.setItem('x_last_ad_time', lastAdTime);
+        }).catch(function() {
+            lastAdTime = Date.now();
+            localStorage.setItem('x_last_ad_time', lastAdTime);
+        });
+    }
+    const savedAdTime = localStorage.getItem('x_last_ad_time');
+    if (savedAdTime) {
+        lastAdTime = parseInt(savedAdTime);
     }
 }
 
@@ -632,11 +656,18 @@ async function sendPost() {
 
 function tryShowAd() {
     const now = Date.now();
+    const savedAdTime = localStorage.getItem('x_last_ad_time');
+    if (savedAdTime) {
+        lastAdTime = parseInt(savedAdTime);
+    }
+    
     if (typeof show_10747271 === 'function' && (now - lastAdTime) > AD_COOLDOWN) {
         show_10747271().then(function() {
             lastAdTime = Date.now();
+            localStorage.setItem('x_last_ad_time', lastAdTime);
         }).catch(function() {
             lastAdTime = Date.now();
+            localStorage.setItem('x_last_ad_time', lastAdTime);
         });
     }
 }
@@ -661,9 +692,9 @@ function go(id, isTrade, link, user) {
         });
     }
     
-    clickCount++;
+    const newCount = incrementClickCount();
     
-    if (clickCount % 5 === 0) {
+    if (newCount % 5 === 0) {
         tryShowAd();
     }
     
@@ -778,6 +809,16 @@ function requestWithdraw() {
     });
 }
 
+// NUEVA FUNCIÓN: Verificar clave antes de mostrar panel admin
+function tryAccessAdmin() {
+    const key = prompt("🔐 CLAVE DE ADMINISTRADOR:");
+    if (key === ADMIN_KEY) {
+        showAdminPanel();
+    } else if (key !== null && key !== "") {
+        msg("❌ Clave incorrecta");
+    }
+}
+
 function showAdminPanel() {
     const adminContent = document.getElementById('admin-content');
     adminContent.innerHTML = '<p style="text-align:center; color:var(--tg-hint);">Cargando solicitudes...</p>';
@@ -852,12 +893,13 @@ function showGuide() {
 
 function startDelete(id) { 
     pressTimer = setTimeout(() => { 
-        const key = prompt("ADMIN KEY:");
+        const key = prompt("🔐 CLAVE DE ADMINISTRADOR:");
         if (key === ADMIN_KEY) { 
             db.ref('posts').child(id).remove(); 
-            msg("✅ Eliminado.");
-            // También abrir panel admin si es admin
-            setTimeout(() => showAdminPanel(), 500);
+            msg("✅ Post eliminado. Accediendo al panel...");
+            setTimeout(() => showAdminPanel(), 800);
+        } else if (key !== null && key !== "") {
+            msg("❌ Clave incorrecta");
         }
     }, 3000); 
 }
