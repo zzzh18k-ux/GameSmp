@@ -70,17 +70,26 @@
 
         .header { padding: 16px; display: flex; justify-content: space-between; align-items: center; background: var(--tg-bg); z-index: 100; border-bottom: 1px solid var(--tg-section-separator); }
         .logo { font-weight: 700; font-size: 20px; letter-spacing: -0.5px; color: var(--tg-text); }
-        .btn-safe { background: var(--tg-secondary-bg); color: var(--tg-link); border: none; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
-        .btn-earn { background: var(--earn-color); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-left: 8px; }
+        .btn-safe { background: var(--tg-secondary-bg); color: var(--tg-link); border: none; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-left: 8px; }
+        .btn-earn { background: var(--earn-color); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
 
         .cat-tabs { padding: 12px 16px; display: flex; gap: 8px; background: var(--tg-bg); border-bottom: 1px solid var(--tg-section-separator); flex-wrap: wrap; }
         .cat-item { background: var(--tg-secondary-bg); border: none; padding: 10px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; color: var(--tg-text); transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; flex: 0 0 auto; }
         .cat-item.active { background: var(--tg-link); color: #fff; transform: scale(1.02); }
 
         .feed { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 100px; }
-        .card-pro { background: var(--tg-bg); border-radius: 16px; padding: 20px; margin-bottom: 12px; border: 1px solid var(--tg-section-separator); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        
+        .card-pro { background: var(--tg-bg); border-radius: 16px; padding: 20px; margin-bottom: 12px; border: 1px solid var(--tg-section-separator); transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative; }
         .card-pro:active { transform: scale(0.99); }
-        .card-content { font-size: 15px; font-weight: 500; line-height: 1.5; color: var(--tg-text); margin-bottom: 16px; user-select: none; word-break: break-word; }
+        .card-content { font-size: 15px; font-weight: 500; line-height: 1.5; color: var(--tg-text); margin-bottom: 16px; padding-top: 14px; user-select: none; word-break: break-word; }
+
+        .status-badge-corner { position: absolute; top: 12px; right: 12px; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; text-transform: uppercase; }
+        .status-visto { background: rgba(52, 199, 89, 0.15); color: #28a745; border: 1px solid rgba(52, 199, 89, 0.3); }
+        .status-novisto { background: rgba(255, 59, 48, 0.15); color: #dc3545; border: 1px solid rgba(255, 59, 48, 0.3); }
+
+        .profile-card { background: linear-gradient(135deg, #2481CC, #1A5F96); color: white; padding: 16px; border-radius: 14px; margin-bottom: 16px; text-align: left; box-shadow: 0 4px 12px rgba(36,129,204,0.25); }
+        .profile-card div { margin-bottom: 6px; font-size: 13px; opacity: 0.9; }
+        .profile-card strong { font-size: 16px; font-weight: 700; opacity: 1; display: block; margin-top: 2px; }
 
         .action-btn { 
             width: 100%; 
@@ -118,31 +127,17 @@
 
         .fab { position: fixed; bottom: 24px; right: 20px; width: 60px; height: 60px; background: var(--tg-link); color: white; border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(36,129,204,0.3); z-index: 999; cursor: pointer; border: none; }
         
-        .lang-fab {
-            position: fixed;
-            bottom: 24px;
-            left: 20px;
-            width: 44px;
-            height: 44px;
-            background: var(--tg-bg);
-            color: var(--tg-text);
-            border-radius: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            z-index: 999;
-            cursor: pointer;
-            border: 1px solid var(--tg-section-separator);
-            transition: all 0.3s ease;
-        }
+        .lang-fab { position: fixed; bottom: 24px; left: 20px; width: 44px; height: 44px; background: var(--tg-bg); color: var(--tg-text); border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 999; cursor: pointer; border: 1px solid var(--tg-section-separator); transition: all 0.3s ease; }
         .lang-fab:active { transform: scale(0.95); }
 
         .modal-full { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; z-index: 2000; }
         .modal-inner { background: var(--tg-bg); width: 100%; max-width: 500px; padding: 24px; border-radius: 20px 20px 0 0; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
+        #block-screen { position: fixed; inset: 0; background: #000000; color: #FFFFFF; z-index: 99999; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 30px; }
+        #block-screen h2 { color: #FF3B30; font-size: 26px; margin-bottom: 16px; }
+        #block-screen p { color: #AAAAAA; font-size: 15px; line-height: 1.6; max-width: 400px; }
+
         input, textarea { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--tg-section-separator); margin-bottom: 16px; font-size: 15px; outline: none; background: var(--tg-secondary-bg); color: var(--tg-text); transition: border-color 0.2s ease; }
         input:focus, textarea:focus { border-color: var(--tg-link); }
         textarea { resize: vertical; min-height: 100px; }
@@ -180,6 +175,13 @@
 </head>
 <body>
 
+    <!-- Bloqueo Antifraude Total -->
+    <div id="block-screen">
+        <div style="font-size: 64px; margin-bottom: 20px;">🛡️</div>
+        <h2>ACCESO RESTRINGIDO</h2>
+        <p>Se ha detectado un intento de ingreso multicuenta desde este mismo dispositivo electrónico. Para proteger el ecosistema financiero de la app, esta acción ha sido bloqueada permanentemente.</p>
+    </div>
+
     <div id="toast-alert"></div>
 
     <div id="lang-overlay">
@@ -196,7 +198,7 @@
         <div class="header">
             <div class="logo"><span class="logo-emoji">✨</span> X Change</div>
             <div style="display:flex; gap:8px;">
-                <button class="btn-earn" id="btn-earn-ui" onclick="showEarnPanel()"><span>💎</span> <span id="t-earn-btn">Ganancias</span></button>
+                <button class="btn-earn" id="btn-earn-ui" onclick="showEarnPanel()"><span>💎</span> <span id="t-earn-btn">Premios</span></button>
                 <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()"><span>📋</span> <span id="t-rules-btn">REGLAS</span></button>
             </div>
         </div>
@@ -218,9 +220,15 @@
 
         <div id="m-earn" class="modal-full">
             <div class="modal-inner">
-                <h2 style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px;"><span>💎</span> <span id="earn-title">MIS GANANCIAS</span></h2>
+                <h2 style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px;"><span>💎</span> <span id="earn-title">MIS PREMIOS</span></h2>
+                
+                <div class="profile-card">
+                    <div>👤 ID DE CUENTA: <strong id="profile-user-id">USR_CARGANDO...</strong></div>
+                    <div>📱 TOKEN DISPOSITIVO: <strong id="profile-device-id">DEV_CARGANDO...</strong></div>
+                </div>
+
                 <div class="earn-stat">
-                    <h3 id="earn-balance-label">Balance actual</h3>
+                    <h3 id="earn-balance-label">Acumulado actual</h3>
                     <div class="earn-amount" id="earn-balance">$0.0000</div>
                     <div class="earn-progress">
                         <div class="earn-progress-bar" id="earn-bar" style="width: 0%;"></div>
@@ -228,18 +236,18 @@
                     <div class="earn-info" id="earn-progress-text">0% para llegar a $1.00 USDT</div>
                 </div>
                 <div class="earn-stat">
-                    <h3 id="earn-total-label">Total ganado</h3>
+                    <h3 id="earn-total-label">Total recibido</h3>
                     <div class="earn-amount" style="font-size:28px;" id="earn-total">$0.0000</div>
                 </div>
                 <div class="earn-stat">
-                    <h3 id="earn-views-label">Vistas únicas hoy</h3>
+                    <h3 id="earn-views-label">Revisiones únicas hoy</h3>
                     <div style="font-size:28px; font-weight:700; color:var(--tg-link);" id="earn-views">0</div>
                 </div>
                 <div id="earn-withdraw-section" style="margin-top:16px;">
-                    <p style="font-size:13px; color:var(--tg-hint); margin-bottom:8px;" id="earn-min-info">Mínimo de retiro: $1.00 USDT (BEP20) | Comisión: $0.15</p>
+                    <p style="font-size:13px; color:var(--tg-hint); margin-bottom:8px;" id="earn-min-info">Mínimo para envío: $1.00 USDT (BEP20) | Tarifa: $0.15</p>
                     <input type="text" id="earn-wallet" placeholder="Tu dirección USDT BEP20" style="margin-bottom:12px;">
                     <button class="action-btn" id="earn-withdraw-btn" onclick="requestWithdraw()" disabled>
-                        <span>💸</span> <span id="earn-withdraw-text">RETIRAR (Mínimo $1.00)</span>
+                        <span>💸</span> <span id="earn-withdraw-text">SOLICITAR ENVÍO (Mínimo $1.00)</span>
                     </button>
                 </div>
                 <button id="earn-close-btn" style="width:100%; background:none; border:none; margin-top:16px; color:var(--tg-hint); font-weight:600; font-size:15px;" onclick="hideModal('m-earn')"><span>❌</span> <span id="earn-close-text">Cerrar</span></button>
@@ -311,10 +319,11 @@ const MAX_DESC_LENGTH = 200;
 const MAX_TITLE_LENGTH = 100;
 let suggestedCategory = 'BOTS';
 
-const VIEW_REWARD = 0.0001;
+const VIEW_REWARD = 0.0001; 
+const COMISION_PORCENTAJE = 0.10; 
 const MIN_WITHDRAW = 1.0;
 const WITHDRAW_FEE = 0.15;
-const ADS_EVERY = 5; // Mostrar anuncio cada 5 vistas
+const ADS_EVERY = 5; 
 
 function getDeviceId() {
     let id = localStorage.getItem('x_device_id');
@@ -334,22 +343,27 @@ function getUserId() {
     return uid;
 }
 
+function getInvitadorId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let invId = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp');
+    if (!invId && window.Telegram && window.Telegram.WebApp) {
+        const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe;
+        if (initDataUnsafe && initDataUnsafe.start_param) {
+            invId = initDataUnsafe.start_param;
+        }
+    }
+    return invId || null;
+}
+
 function getClickCount() {
     let count = localStorage.getItem('x_click_count');
-    if (!count) {
-        count = 0;
-        localStorage.setItem('x_click_count', count);
-    }
+    if (!count) { count = 0; localStorage.setItem('x_click_count', count); }
     return parseInt(count);
 }
 
 function incrementClickCount() {
-    let count = getClickCount();
-    count++;
-    // Reiniciar después de mostrar anuncio para que siempre sea cada 5
-    if (count >= ADS_EVERY) {
-        count = 0;
-    }
+    let count = getClickCount(); count++;
+    if (count >= ADS_EVERY) { count = 0; }
     localStorage.setItem('x_click_count', count);
     return count;
 }
@@ -357,9 +371,47 @@ function incrementClickCount() {
 const DEVICE_ID = getDeviceId();
 const USER_ID = getUserId();
 
+function comprobarSeguridadDispositivo() {
+    const deviceRef = db.ref('device_tokens').child(DEVICE_ID);
+    deviceRef.once('value', snap => {
+        const datosHardware = snap.val();
+        if (!datosHardware) {
+            deviceRef.set({ dueñoId: USER_ID, vinculadoEn: Date.now() });
+            inicializarFlujoReferidos();
+        } else {
+            if (datosHardware.dueñoId !== USER_ID) {
+                document.getElementById('app-container').style.display = 'none';
+                document.getElementById('lang-overlay').style.display = 'none';
+                document.getElementById('block-screen').style.display = 'flex';
+            } else {
+                inicializarFlujoReferidos();
+            }
+        }
+    });
+}
+
+function inicializarFlujoReferidos() {
+    const rootUserRef = db.ref('earnings').child(USER_ID);
+    rootUserRef.once('value', snap => {
+        if (!snap.exists()) {
+            const idDeQuienInvita = getInvitadorId();
+            rootUserRef.set({
+                balance: 0,
+                totalEarned: 0,
+                viewsToday: 0,
+                lastViewDate: new Date().toDateString(),
+                invitado_por: idDeQuienInvita
+            });
+            if (idDeQuienInvita) {
+                db.ref('earnings').child(idDeQuienInvita).child('referidosTotales').transaction(c => (c || 0) + 1);
+            }
+        }
+    });
+}
+
 const dictionary = {
     es: {
-        rulesBtn: "REGLAS", earnBtn: "Ganancias", sales: "Ventas", trades: "Intercambios", bots: "Bots", channels: "Canales", groups: "Grupos",
+        rulesBtn: "REGLAS", earnBtn: "Premios", sales: "Ventas", trades: "Intercambios", bots: "Bots", channels: "Canales", groups: "Grupos",
         newPost: "NUEVO ANUNCIO", confirm: "PUBLICAR", cancel: "Cancelar",
         phDesc: "Escribe qué deseas vender (ej: 'Vendo cuenta premium'). Los usuarios te contactarán por Telegram.", 
         phUser: "@TuUsuario", phTitle: "Nombre del Proyecto", phLink: "t.me/tu_enlace",
@@ -379,35 +431,35 @@ const dictionary = {
         gR1: "🔒 NORMAS DE SEGURIDAD", gD1: "Para proteger a todos los usuarios, tenemos reglas claras que debes seguir:",
         gL1: "• En VENTAS e INTERCAMBIOS: NO se permiten enlaces de ningún tipo (http, https, www, t.me).",
         gL2: "• Solo puedes escribir texto descriptivo y tu nombre de usuario de Telegram (@usuario).",
-        gL3: "• Esto evita estafas y garantiza que las conversaciones sean dentro de Telegram.",
+        gL3: "• Esto evita inconvenientes y garantiza que las conversaciones sean dentro de Telegram.",
         gR2: "⏰ SISTEMA DE AUTO-LIMPIEZA", gD2: "Mantenemos la comunidad fresca y activa con limpieza automática:",
         gL4: "• Cada publicación dura exactamente 24 horas.", gL5: "• Después de ese tiempo, se elimina automáticamente.",
         gL6: "• Esto asegura que solo veas ofertas actuales y disponibles.", gL7: "• Vuelve cada día para no perder nuevas oportunidades.",
         gR3: "📝 CÓMO PUBLICAR CORRECTAMENTE", gD3: "Sigue este formato para que tu publicación sea efectiva:",
-        gL8: "• Sé claro y específico en tu descripción.", gL9: "• Formato recomendado: 'Vendo: [producto] | Precio: [precio]'.",
+        gL8: "• Sé claro y específico en tu descripción.", gL9: "• Formato recomendado: 'Vendo: [producto] | Valor: [valor]'.",
         gL10: "• Incluye siempre tu @usuario de Telegram.", gL11: "• En Bots/Canales/Grupos sí puedes incluir enlaces oficiales de Telegram.",
         gR4: "🛡️ CONSEJOS ADICIONALES", gD4: "Para una mejor experiencia:",
         gL12: "• Verifica siempre con quién hablas.", gL13: "• No compartas información personal sensible.",
-        gL14: "• Reporta cualquier comportamiento sospechoso.", gL15: "• Las vistas indican el interés en tu publicación.",
+        gL14: "• Reporta cualquier comportamiento sospechoso.", gL15: "• Las revisiones indican el interés en tu publicación.",
         warnTitle: "⛔ ¡ENLACE NO PERMITIDO!",
         warnDesc: "En las categorías VENTAS e INTERCAMBIOS no se permiten enlaces de ningún tipo. Por seguridad solo puedes escribir texto y tu @usuario de Telegram.",
         suggestText: "Parece que intentas compartir un enlace de Telegram. La categoría correcta sería:",
         btnGo: "IR A CATEGORÍA CORRECTA", btnCancelWarn: "CANCELAR",
         defaultSuggest: "Si deseas compartir un enlace, por favor usa las categorías Bots, Canales o Grupos.",
-        earnTitle: "MIS GANANCIAS",
-        earnBalanceLabel: "Balance actual",
-        earnTotalLabel: "Total ganado",
-        earnViewsLabel: "Vistas únicas hoy",
-        earnMinInfo: "Mínimo de retiro: $1.00 USDT (BEP20) | Comisión: $0.15",
-        earnWithdrawText: "RETIRAR (Mínimo $1.00)",
+        earnTitle: "MIS PREMIOS",
+        earnBalanceLabel: "Acumulado actual",
+        earnTotalLabel: "Total recibido",
+        earnViewsLabel: "Revisiones únicas hoy",
+        earnMinInfo: "Mínimo para envío: $1.00 USDT (BEP20) | Tarifa: $0.15",
+        earnWithdrawText: "SOLICITAR ENVÍO (Mínimo $1.00)",
         earnCloseText: "Cerrar",
         earnProgressText: "para llegar a $1.00 USDT",
-        errMinWithdraw: "❌ Necesitas mínimo $1.00 USDT para retirar",
+        errMinWithdraw: "❌ Necesitas mínimo $1.00 USDT para procesar",
         errWalletEmpty: "❌ Ingresa tu dirección USDT BEP20",
         withdrawSuccess: "✅ Solicitud enviada. Se procesará pronto."
     },
     en: {
-        rulesBtn: "RULES", earnBtn: "Earnings", sales: "Sales", trades: "Exchanges", bots: "Bots", channels: "Channels", groups: "Groups",
+        rulesBtn: "RULES", earnBtn: "Rewards", sales: "Sales", trades: "Exchanges", bots: "Bots", channels: "Channels", groups: "Groups",
         newPost: "NEW POST", confirm: "PUBLISH", cancel: "Cancel",
         phDesc: "Write what you want to sell (e.g., 'Selling premium account'). Users will contact you on Telegram.", 
         phUser: "@YourUsername", phTitle: "Project Name", phLink: "t.me/your_link",
@@ -417,7 +469,7 @@ const dictionary = {
         errInvalidLink: "❌ Link must be from Telegram (t.me/)",
         errBotLink: "❌ In BOTS only bot links are allowed (t.me/bot)",
         errChannelLink: "❌ In CHANNELS only channel links are allowed (t.me/channel)",
-        errGroupLink: "❌ In GROUPS only group links are allowed (t.me/group)",
+        errGroupLink: "❌ In GRUPOS only group links are allowed (t.me/group)",
         errDuplicate: "❌ This post already exists",
         success: "✅ Published! Active for 24h",
         errMaxLength: "❌ Maximum 200 characters",
@@ -427,12 +479,12 @@ const dictionary = {
         gR1: "🔒 SECURITY RULES", gD1: "To protect all users, we have clear rules you must follow:",
         gL1: "• In SALES and EXCHANGES: Links of any type are NOT allowed (http, https, www, t.me).",
         gL2: "• You can only write descriptive text and your Telegram username (@user).",
-        gL3: "• This prevents scams and ensures conversations stay within Telegram.",
+        gL3: "• This prevents issues and ensures conversations stay within Telegram.",
         gR2: "⏰ AUTO-CLEAN SYSTEM", gD2: "We keep the community fresh and active with automatic cleaning:",
         gL4: "• Each post lasts exactly 24 hours.", gL5: "• After that time, it's automatically deleted.",
         gL6: "• This ensures you only see current and available offers.", gL7: "• Come back daily to not miss new opportunities.",
         gR3: "📝 HOW TO POST CORRECTLY", gD3: "Follow this format for an effective post:",
-        gL8: "• Be clear and specific in your description.", gL9: "• Recommended format: 'Selling: [product] | Price: [price]'.",
+        gL8: "• Be clear and specific in your description.", gL9: "• Recommended format: 'Selling: [product] | Value: [value]'.",
         gL10: "• Always include your Telegram @username.", gL11: "• In Bots/Channels/Groups you can include official Telegram links.",
         gR4: "🛡️ ADDITIONAL TIPS", gD4: "For a better experience:",
         gL12: "• Always verify who you're talking to.", gL13: "• Don't share sensitive personal information.",
@@ -442,15 +494,15 @@ const dictionary = {
         suggestText: "It looks like you're trying to share a Telegram link. The correct category would be:",
         btnGo: "GO TO CORRECT CATEGORY", btnCancelWarn: "CANCEL",
         defaultSuggest: "If you want to share a link, please use Bots, Channels or Groups categories.",
-        earnTitle: "MY EARNINGS",
+        earnTitle: "MY REWARDS",
         earnBalanceLabel: "Current balance",
-        earnTotalLabel: "Total earned",
-        earnViewsLabel: "Unique views today",
-        earnMinInfo: "Min withdraw: $1.00 USDT (BEP20) | Fee: $0.15",
-        earnWithdrawText: "WITHDRAW (Min $1.00)",
+        earnTotalLabel: "Total received",
+        earnViewsLabel: "Unique reviews today",
+        earnMinInfo: "Min transfer: $1.00 USDT (BEP20) | Fee: $0.15",
+        earnWithdrawText: "REQUEST TRANSFER (Min $1.00)",
         earnCloseText: "Close",
         earnProgressText: "to reach $1.00 USDT",
-        errMinWithdraw: "❌ You need minimum $1.00 USDT to withdraw",
+        errMinWithdraw: "❌ You need minimum $1.00 USDT to proceed",
         errWalletEmpty: "❌ Enter your USDT BEP20 address",
         withdrawSuccess: "✅ Request sent. Processing soon."
     }
@@ -479,12 +531,12 @@ function updateAllUITexts() {
 }
 
 function init(l) {
-    lang = l; const d = dictionary[lang];
+    lang = l;
     document.getElementById('lang-overlay').style.display = 'none';
     document.getElementById('app-container').style.display = 'flex';
     updateAllUITexts();
+    comprobarSeguridadDispositivo();
     syncData();
-    // Mostrar anuncio al iniciar
     showAd();
 }
 
@@ -526,7 +578,21 @@ function render(list) {
     let html = "";
     list.forEach(p => {
         const isTrade = p.category === 'INTERCAMBIO' || p.category === 'VENTAS'; const d = dictionary[lang];
-        html += `<div class="card-pro"><div class="card-content" onmousedown="startDelete('${p.id}')" onmouseup="stopDelete()" ontouchstart="startDelete('${p.id}')" ontouchend="stopDelete()">${isTrade ? p.desc : p.title}</div><button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')"><span>${isTrade ? d.tradeBtn : d.viewBtn}</span></button><div class="card-meta"><span>👁️ ${p.views || 0} vistas</span><span>⏰ 24h</span></div></div>`;
+        
+        const viewKey = DEVICE_ID + '_' + p.id;
+        const todayKey = new Date().toDateString();
+        const yaVisto = localStorage.getItem('v_' + viewKey) === todayKey;
+        
+        const badgeStatus = yaVisto 
+            ? `<span class="status-badge-corner status-visto">🟢 Revisado</span>`
+            : `<span class="status-badge-corner status-novisto">🔴 Nuevo</span>`;
+
+        html += `<div class="card-pro">
+                    ${badgeStatus}
+                    <div class="card-content" onmousedown="startDelete('${p.id}')" onmouseup="stopDelete()" ontouchstart="startDelete('${p.id}')" ontouchend="stopDelete()">${isTrade ? p.desc : p.title}</div>
+                    <button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')"><span>${isTrade ? d.tradeBtn : d.viewBtn}</span></button>
+                    <div class="card-meta"><span>👁️ ${p.views || 0} rev.</span><span>⏰ 24h</span></div>
+                 </div>`;
     });
     document.getElementById('feed-wall').innerHTML = html || `<p style="text-align:center; padding:50px; color:var(--tg-hint);"><span>✨</span> No hay publicaciones aún</p>`;
 }
@@ -563,14 +629,6 @@ async function checkDuplicate(data) {
     return isDuplicate;
 }
 
-function detectCategoryFromLink(text) {
-    const lower = text.toLowerCase();
-    if (lower.includes('bot')) return 'BOTS';
-    if (lower.includes('channel') || lower.includes('canal')) return 'CANALES';
-    if (lower.includes('group') || lower.includes('grupo') || lower.includes('joinchat')) return 'GRUPOS';
-    return 'BOTS';
-}
-
 function isValidLinkForCategory(link, category) {
     const lower = link.toLowerCase();
     if (category === 'BOTS') { return lower.includes('/bot') || lower.includes('_bot') || lower.includes('bot?'); }
@@ -588,7 +646,7 @@ function showLinkBlockWarning(descText) {
         detectedCat = path.toLowerCase().includes('bot') ? 'BOTS' : (path.toLowerCase().includes('channel') || path.toLowerCase().includes('canal')) ? 'CANALES' : (path.toLowerCase().includes('group') || path.toLowerCase().includes('grupo') || path.toLowerCase().includes('joinchat')) ? 'GRUPOS' : 'BOTS';
     }
     suggestedCategory = detectedCat;
-    const catNames = { 'BOTS': lang === 'es' ? 'Bots' : 'Bots', 'CANALES': lang === 'es' ? 'Canales' : 'Channels', 'GRUPOS': lang === 'es' ? 'Grupos' : 'Groups' };
+    const catNames = { 'BOTS': 'Bots', 'CANALES': lang === 'es' ? 'Canales' : 'Channels', 'GRUPOS': lang === 'es' ? 'Grupos' : 'Groups' };
     document.getElementById('suggest-cat-name').innerText = catNames[detectedCat];
     if (!linkMatch && !/(t\.me|telegram)/i.test(descText)) {
         document.getElementById('suggest-text').innerText = d.defaultSuggest;
@@ -644,7 +702,6 @@ async function sendPost() {
     hideModal('m-post');
 }
 
-// FUNCIÓN SIMPLE PARA MOSTRAR ANUNCIO
 function showAd() {
     if (typeof show_10747271 === 'function') {
         show_10747271().catch(function() {});
@@ -653,7 +710,6 @@ function showAd() {
 
 function go(id, isTrade, link, user) {
     const postRef = db.ref('posts').child(id);
-    
     const viewKey = DEVICE_ID + '_' + id;
     const todayKey = new Date().toDateString();
     const storedView = localStorage.getItem('v_' + viewKey);
@@ -665,20 +721,21 @@ function go(id, isTrade, link, user) {
         
         postRef.once('value', snapshot => {
             const post = snapshot.val();
-            if (post && post.authorId !== USER_ID) {
-                addEarning(VIEW_REWARD);
+            if (post) {
+                if (post.authorId !== USER_ID) {
+                    addEarning(USER_ID, VIEW_REWARD); 
+                }
+                if (post.authorId !== USER_ID) {
+                    addEarning(post.authorId, VIEW_REWARD);
+                }
             }
         });
+        
+        setTimeout(() => syncData(), 400);
     }
     
-    // Incrementar contador y verificar si toca anuncio
     const newCount = incrementClickCount();
-    
-    // Si el contador se reinició a 0, significa que llegamos a 5
-    if (newCount === 0) {
-        showAd();
-    }
-    
+    if (newCount === 0) { showAd(); }
     abrirEnlace(id, isTrade, link, user);
 }
 
@@ -697,8 +754,8 @@ function abrirEnlace(id, isTrade, link, user) {
     }
 }
 
-function addEarning(amount) {
-    const earnRef = db.ref('earnings').child(USER_ID);
+function addEarning(targetUserId, amount) {
+    const earnRef = db.ref('earnings').child(targetUserId);
     earnRef.transaction(data => {
         if (!data) {
             data = { balance: 0, totalEarned: 0, viewsToday: 0, lastViewDate: new Date().toDateString() };
@@ -712,7 +769,23 @@ function addEarning(amount) {
         
         data.balance = (data.balance || 0) + amount;
         data.totalEarned = (data.totalEarned || 0) + amount;
-        data.viewsToday = (data.viewsToday || 0) + 1;
+        
+        if (targetUserId === USER_ID) {
+            data.viewsToday = (data.viewsToday || 0) + 1;
+        }
+        
+        if (data.invitado_por) {
+            const comisionEquipo = amount * COMISION_PORCENTAJE;
+            db.ref('earnings').child(data.invitado_por).transaction(inviterData => {
+                if (!inviterData) {
+                    inviterData = { balance: 0, totalEarned: 0, viewsToday: 0, lastViewDate: new Date().toDateString() };
+                }
+                inviterData.balance = (inviterData.balance || 0) + comisionEquipo;
+                inviterData.totalEarned = (inviterData.totalEarned || 0) + comisionEquipo;
+                inviterData.ganadoPorComisionesTotales = (inviterData.ganadoPorComisionesTotales || 0) + comisionEquipo;
+                return inviterData;
+            });
+        }
         
         return data;
     });
@@ -720,8 +793,11 @@ function addEarning(amount) {
 
 function showEarnPanel() {
     const d = dictionary[lang];
-    const earnRef = db.ref('earnings').child(USER_ID);
     
+    document.getElementById('profile-user-id').innerText = USER_ID;
+    document.getElementById('profile-device-id').innerText = DEVICE_ID;
+
+    const earnRef = db.ref('earnings').child(USER_ID);
     earnRef.once('value', snapshot => {
         const data = snapshot.val() || { balance: 0, totalEarned: 0, viewsToday: 0 };
         const balance = data.balance || 0;
@@ -752,38 +828,23 @@ function showEarnPanel() {
 function requestWithdraw() {
     const d = dictionary[lang];
     const wallet = document.getElementById('earn-wallet').value.trim();
-    
-    if (!wallet) {
-        msg(d.errWalletEmpty);
-        return;
-    }
+    if (!wallet) { msg(d.errWalletEmpty); return; }
     
     const earnRef = db.ref('earnings').child(USER_ID);
     earnRef.once('value', snapshot => {
         const data = snapshot.val() || { balance: 0 };
         const balance = data.balance || 0;
-        
-        if (balance < MIN_WITHDRAW) {
-            msg(d.errMinWithdraw);
-            return;
-        }
+        if (balance < MIN_WITHDRAW) { msg(d.errMinWithdraw); return; }
         
         const withdrawAmount = balance - WITHDRAW_FEE;
         const finalAmount = withdrawAmount > 0 ? withdrawAmount : 0;
         
         db.ref('withdrawals').push({
-            userId: USER_ID,
-            deviceId: DEVICE_ID,
-            wallet: wallet,
-            amount: finalAmount,
-            fee: WITHDRAW_FEE,
-            totalBeforeFee: balance,
-            time: Date.now(),
-            status: 'pending'
+            userId: USER_ID, deviceId: DEVICE_ID, wallet: wallet, amount: finalAmount,
+            fee: WITHDRAW_FEE, totalBeforeFee: balance, time: Date.now(), status: 'pending'
         });
         
         earnRef.update({ balance: 0 });
-        
         msg(d.withdrawSuccess);
         document.getElementById('earn-wallet').value = '';
         showEarnPanel();
@@ -795,63 +856,45 @@ function showAdminPanel() {
     adminContent.innerHTML = '<p style="text-align:center; color:var(--tg-hint);">Cargando solicitudes...</p>';
     
     db.ref('withdrawals').orderByChild('time').on('value', snapshot => {
-        let html = '';
-        let hasPending = false;
-        const withdrawals = [];
-        
-        snapshot.forEach(child => {
-            withdrawals.push({ id: child.key, ...child.val() });
-        });
-        
+        let html = ''; let hasPending = false; const withdrawals = [];
+        snapshot.forEach(child => { withdrawals.push({ id: child.key, ...child.val() }); });
         withdrawals.reverse();
         
         withdrawals.forEach(w => {
             const date = new Date(w.time).toLocaleString();
             const statusColor = w.status === 'pending' ? '#FF9500' : w.status === 'paid' ? '#34C759' : '#FF3B30';
-            const statusText = w.status === 'pending' ? 'PENDIENTE' : w.status === 'paid' ? 'PAGADO' : 'RECHAZADO';
-            
+            const statusText = w.status === 'pending' ? 'PENDIENTE' : w.status === 'paid' ? 'PROCESADO' : 'RECHAZADO';
             if (w.status === 'pending') hasPending = true;
             
             html += `<div class="admin-card">
-                <h4>💸 Retiro #${w.id.substr(-6)}</h4>
+                <h4>💸 Solicitud #${w.id.substr(-6)}</h4>
                 <p><strong>Usuario:</strong> ${w.userId}</p>
                 <p><strong>Wallet:</strong> ${w.wallet}</p>
-                <p><strong>Monto:</strong> $${w.amount.toFixed(4)} USDT</p>
-                <p><strong>Comisión:</strong> $${w.fee.toFixed(2)}</p>
+                <p><strong>Incentivo:</strong> $${w.amount.toFixed(4)} USDT</p>
+                <p><strong>Tarifa:</strong> $${w.fee.toFixed(2)}</p>
                 <p><strong>Total antes:</strong> $${w.totalBeforeFee.toFixed(4)}</p>
                 <p><strong>Fecha:</strong> ${date}</p>
                 <p><strong>Estado:</strong> <span class="admin-badge" style="background:${statusColor};">${statusText}</span></p>`;
             
             if (w.status === 'pending') {
                 html += `<div style="display:flex; gap:8px; margin-top:12px;">
-                    <button class="action-btn" style="background:#34C759; flex:1;" onclick="markWithdrawal('${w.id}', 'paid')">✅ PAGAR</button>
+                    <button class="action-btn" style="background:#34C759; flex:1;" onclick="markWithdrawal('${w.id}', 'paid')">✅ PROCESAR</button>
                     <button class="action-btn warning-btn" style="flex:1;" onclick="markWithdrawal('${w.id}', 'rejected')">❌ RECHAZAR</button>
                 </div>`;
             }
-            
             html += `</div>`;
         });
         
-        if (!html) {
-            html = '<p style="text-align:center; color:var(--tg-hint); padding:40px;">No hay solicitudes de retiro aún.</p>';
-        }
-        
+        if (!html) { html = '<p style="text-align:center; color:var(--tg-hint); padding:40px;">No hay solicitudes aún.</p>'; }
         adminContent.innerHTML = html;
-        
-        if (hasPending) {
-            document.getElementById('toast-alert').innerText = '⚠️ Hay retiros pendientes';
-            document.getElementById('toast-alert').style.display = 'block';
-            setTimeout(() => document.getElementById('toast-alert').style.display = 'none', 3000);
-        }
     });
-    
     document.getElementById('m-admin').style.display = 'flex';
 }
 
 function markWithdrawal(id, status) {
-    if (confirm('¿Confirmar ' + (status === 'paid' ? 'PAGO' : 'RECHAZO') + ' de este retiro?')) {
+    if (confirm('¿Confirmar acción en esta solicitud?')) {
         db.ref('withdrawals').child(id).update({ status: status, processedAt: Date.now() });
-        msg(status === 'paid' ? '✅ Marcado como PAGADO' : '❌ Marcado como RECHAZADO');
+        msg(status === 'paid' ? '✅ Marcado como PROCESADO' : '❌ Marcado como RECHAZADO');
     }
 }
 
@@ -867,15 +910,10 @@ function startDelete(id) {
         const key = prompt("🔐 CLAVE DE ADMINISTRADOR:");
         if (key === ADMIN_KEY) { 
             if (confirm("¿Eliminar este post?\n\n✅ Aceptar = Eliminar post y abrir panel\n❌ Cancelar = Solo abrir panel sin eliminar")) {
-                db.ref('posts').child(id).remove(); 
-                msg("✅ Post eliminado. Abriendo panel...");
-            } else {
-                msg("🔍 Abriendo panel sin eliminar...");
-            }
+                db.ref('posts').child(id).remove(); msg("✅ Post eliminado. Abriendo panel...");
+            } else { msg("🔍 Abriendo panel..."); }
             setTimeout(() => showAdminPanel(), 500);
-        } else if (key !== null && key !== "") {
-            msg("❌ Clave incorrecta");
-        }
+        } else if (key !== null && key !== "") { msg("❌ Clave incorrecta"); }
     }, 3000); 
 }
 function stopDelete() { clearTimeout(pressTimer); }
