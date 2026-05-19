@@ -10,174 +10,144 @@
     <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root { 
-            --tg-bg: #FFFFFF;
-            --tg-text: #222222;
-            --tg-hint: #999999;
-            --tg-link: #2481CC;
-            --tg-button: #2481CC;
+            --bg-crema: #FDFBF7;
+            --bg-card: #FFFFFF;
+            --text-main: #1C1A17;
+            --text-muted: #7A756E;
+            --accent-gold: #C5A880;
+            --accent-gold-dark: #A3855C;
+            --accent-gold-light: #F4EFE6;
+            --border-color: #EFEBE4;
+            --tg-button: #C5A880;
             --tg-button-text: #FFFFFF;
-            --tg-secondary-bg: #F0F0F0;
-            --tg-section-separator: #E0E0E0;
-            --warning-color: #FF3B30;
-            --sell-color: #FF6B35;
-            --earn-color: #34C759;
-            --admin-color: #AF52DE;
+            --warning-color: #C94A4A;
+            --earn-color: #4A8B67;
+            --admin-color: #7D5BA6;
         }
 
         * { 
             box-sizing: border-box; 
             margin: 0; 
             padding: 0; 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
             -webkit-tap-highlight-color: transparent; 
         }
         
         body { 
-            background: var(--tg-secondary-bg); 
-            color: var(--tg-text); 
+            background: var(--bg-crema); 
+            color: var(--text-main); 
             height: 100vh; 
             overflow: hidden; 
             display: flex; 
             flex-direction: column; 
         }
 
-        .hero-icon { font-size: 64px; margin-bottom: 24px; display: inline-block; animation: softFloat 3s ease-in-out infinite; filter: drop-shadow(0 4px 8px rgba(36,129,204,0.15)); }
-        @keyframes softFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
-        .logo-emoji { display: inline-block; animation: gentlePulse 2s ease-in-out infinite; }
-        @keyframes gentlePulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.9; } }
-        .cat-item i, .cat-item span:first-child { transition: transform 0.2s ease; }
-        .cat-item:hover i, .cat-item:hover span:first-child { transform: scale(1.1); }
-        .fab { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .fab:hover { transform: scale(1.08) rotate(5deg); box-shadow: 0 8px 20px rgba(36,129,204,0.4); }
-        .action-btn i, .action-btn span { transition: transform 0.2s ease; }
-        .action-btn:active i { transform: translateX(3px); }
-        .btn-safe i { transition: transform 0.2s ease; }
-        .btn-safe:active i { transform: rotate(5deg); }
+        .hero-icon { font-size: 54px; margin-bottom: 20px; display: inline-block; animation: softFloat 4s ease-in-out infinite; }
+        @keyframes softFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
+        
+        .logo-font { font-family: 'Playfair Display', serif; font-weight: 600; font-style: italic; color: var(--text-main); }
 
-        #lang-overlay { position: fixed; inset: 0; background: var(--tg-bg); z-index: 5000; display: none; align-items: center; justify-content: center; }
-        .welcome-box { text-align: center; color: var(--tg-text); padding: 40px 32px; width: 90%; max-width: 360px; background: var(--tg-bg); border-radius: 20px; }
-        .welcome-box h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
-        .welcome-box p { font-size: 15px; color: var(--tg-hint); margin-bottom: 40px; line-height: 1.5; }
-        .lang-btn { width: 100%; padding: 16px; border-radius: 14px; border: none; background: var(--tg-button); color: var(--tg-button-text); font-weight: 600; font-size: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; }
-        .lang-btn i, .lang-btn span { transition: transform 0.2s ease; }
-        .lang-btn:active i { transform: scale(1.2); }
-        .lang-btn.secondary { background: var(--tg-secondary-bg); color: var(--tg-text); }
-        .lang-btn:active { opacity: 0.8; transform: scale(0.98); }
+        #lang-overlay { position: fixed; inset: 0; background: var(--bg-crema); z-index: 5000; display: none; align-items: center; justify-content: center; }
+        .welcome-box { text-align: center; color: var(--text-main); padding: 40px 24px; width: 90%; max-width: 360px; background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 12px 32px rgba(197,168,128,0.08); }
+        .welcome-box h1 { font-size: 28px; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .welcome-box p { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+        .lang-btn { width: 100%; padding: 15px; border-radius: 14px; border: none; background: var(--accent-gold); color: white; font-weight: 600; font-size: 15px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; }
+        .lang-btn.secondary { background: var(--accent-gold-light); color: var(--accent-gold-dark); }
+        .lang-btn:active { transform: scale(0.98); opacity: 0.9; }
 
-        .header { padding: 16px; display: flex; justify-content: space-between; align-items: center; background: var(--tg-bg); z-index: 100; border-bottom: 1px solid var(--tg-section-separator); }
-        .logo { font-weight: 700; font-size: 20px; letter-spacing: -0.5px; color: var(--tg-text); }
-        .btn-safe { background: var(--tg-secondary-bg); color: var(--tg-link); border: none; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-left: 8px; }
-        .btn-earn { background: var(--earn-color); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+        .header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); z-index: 100; border-bottom: 1px solid var(--border-color); }
+        .logo { font-size: 22px; letter-spacing: -0.3px; }
+        
+        .btn-safe { background: var(--accent-gold-light); color: var(--accent-gold-dark); border: none; padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-left: 6px; border: 1px solid rgba(197,168,128,0.2); }
+        .btn-earn { background: var(--text-main); color: var(--bg-crema); border: none; padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+        .btn-safe:active, .btn-earn:active { transform: scale(0.96); }
 
-        .cat-tabs { padding: 12px 16px; display: flex; gap: 8px; background: var(--tg-bg); border-bottom: 1px solid var(--tg-section-separator); flex-wrap: wrap; }
-        .cat-item { background: var(--tg-secondary-bg); border: none; padding: 10px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; color: var(--tg-text); transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; flex: 0 0 auto; }
-        .cat-item.active { background: var(--tg-link); color: #fff; transform: scale(1.02); }
+        .cat-tabs { padding: 14px 16px; display: flex; gap: 8px; background: var(--bg-card); border-bottom: 1px solid var(--border-color); overflow-x: auto; scrollbar-width: none; }
+        .cat-tabs::-webkit-scrollbar { display: none; }
+        .cat-item { background: var(--bg-crema); border: 1px solid var(--border-color); padding: 10px 18px; border-radius: 24px; font-size: 13px; font-weight: 600; color: var(--text-muted); transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; flex: 0 0 auto; }
+        .cat-item.active { background: var(--accent-gold-light); color: var(--accent-gold-dark); border-color: var(--accent-gold); }
 
         .feed { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 100px; }
         
-        .card-pro { background: var(--tg-bg); border-radius: 16px; padding: 20px; margin-bottom: 12px; border: 1px solid var(--tg-section-separator); transition: transform 0.2s ease, box-shadow 0.2s ease; position: relative; }
-        .card-pro:active { transform: scale(0.99); }
-        .card-content { font-size: 15px; font-weight: 500; line-height: 1.5; color: var(--tg-text); margin-bottom: 16px; padding-top: 14px; user-select: none; word-break: break-word; }
+        .card-pro { background: var(--bg-card); border-radius: 20px; padding: 20px; margin-bottom: 14px; border: 1px solid var(--border-color); transition: all 0.2s ease; position: relative; box-shadow: 0 4px 12px rgba(28,26,23,0.01); }
+        .card-content { font-size: 15px; font-weight: 500; line-height: 1.5; color: var(--text-main); margin-bottom: 18px; padding-top: 14px; user-select: none; word-break: break-word; }
 
-        .status-badge-corner { position: absolute; top: 12px; right: 12px; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; text-transform: uppercase; }
-        .status-visto { background: rgba(52, 199, 89, 0.15); color: #28a745; border: 1px solid rgba(52, 199, 89, 0.3); }
-        .status-novisto { background: rgba(255, 59, 48, 0.15); color: #dc3545; border: 1px solid rgba(255, 59, 48, 0.3); }
+        .status-badge-corner { position: absolute; top: 14px; right: 16px; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .status-visto { background: var(--accent-gold-light); color: var(--accent-gold-dark); }
+        .status-novisto { background: rgba(197,168,128,0.1); color: var(--text-main); border: 1px solid var(--border-color); }
 
-        .profile-card { background: linear-gradient(135deg, #2481CC, #1A5F96); color: white; padding: 16px; border-radius: 14px; margin-bottom: 16px; text-align: left; box-shadow: 0 4px 12px rgba(36,129,204,0.25); }
-        .profile-card div { margin-bottom: 6px; font-size: 13px; opacity: 0.9; }
-        .profile-card strong { font-size: 16px; font-weight: 700; opacity: 1; display: block; margin-top: 2px; }
+        .profile-card { background: var(--accent-gold-light); border: 1px solid rgba(197,168,128,0.2); color: var(--text-main); padding: 16px; border-radius: 16px; margin-bottom: 16px; }
+        .profile-card div { margin-bottom: 8px; font-size: 12px; color: var(--text-muted); font-weight: 500; }
+        .profile-card strong { font-size: 14px; font-weight: 700; color: var(--text-main); display: block; margin-top: 2px; word-break: break-all; }
 
-        .action-btn { 
-            width: 100%; 
-            padding: 14px; 
-            border-radius: 12px; 
-            border: 2px solid transparent; 
-            background: var(--tg-button); 
-            color: var(--tg-button-text); 
-            font-weight: 600; 
-            font-size: 15px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            cursor: pointer; 
-            transition: all 0.2s ease; 
-            position: relative;
-            z-index: 1;
-        }
-        .action-btn::before {
-            content: '';
-            position: absolute;
-            top: -3px; left: -3px; right: -3px; bottom: -3px;
-            border-radius: 15px;
-            background: linear-gradient(45deg, #FF6B35, #FF3B30, #2481CC, #34C759, #FFCC00);
-            z-index: -1;
-            opacity: 0.7;
-        }
+        .action-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--text-main); color: var(--bg-crema); font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; }
         .action-btn:active { transform: scale(0.98); opacity: 0.9; }
-        .warning-btn { background: var(--warning-color); }
-        .outline-btn { background: transparent; border: 1px solid var(--tg-section-separator); color: var(--tg-text); }
-        .outline-btn::before { display: none; }
-        .count-badge { background: #FF3B30; color: #fff; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; animation: badgePop 0.3s ease; }
-        @keyframes badgePop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-
-        .fab { position: fixed; bottom: 24px; right: 20px; width: 60px; height: 60px; background: var(--tg-link); color: white; border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(36,129,204,0.3); z-index: 999; cursor: pointer; border: none; }
+        .warning-btn { background: var(--warning-color); color: white; }
+        .outline-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
         
-        .lang-fab { position: fixed; bottom: 24px; left: 20px; width: 44px; height: 44px; background: var(--tg-bg); color: var(--tg-text); border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 999; cursor: pointer; border: 1px solid var(--tg-section-separator); transition: all 0.3s ease; }
-        .lang-fab:active { transform: scale(0.95); }
+        .count-badge { background: var(--text-main); color: var(--bg-crema); padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-left: 2px; }
 
-        .modal-full { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: flex-end; justify-content: center; z-index: 2000; }
-        .modal-inner { background: var(--tg-bg); width: 100%; max-width: 500px; padding: 24px; border-radius: 20px 20px 0 0; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; background: var(--accent-gold); color: white; border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 8px 24px rgba(197,168,128,0.3); z-index: 999; cursor: pointer; border: none; transition: all 0.2s ease; }
+        .fab:active { transform: scale(0.92); }
         
-        #block-screen { position: fixed; inset: 0; background: #000000; color: #FFFFFF; z-index: 99999; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 30px; }
-        #block-screen h2 { color: #FF3B30; font-size: 26px; margin-bottom: 16px; }
-        #block-screen p { color: #AAAAAA; font-size: 15px; line-height: 1.6; max-width: 400px; }
+        .lang-fab { position: fixed; bottom: 24px; left: 20px; width: 44px; height: 44px; background: var(--bg-card); color: var(--text-main); border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); z-index: 999; cursor: pointer; border: 1px solid var(--border-color); transition: all 0.2s ease; }
 
-        input, textarea { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--tg-section-separator); margin-bottom: 16px; font-size: 15px; outline: none; background: var(--tg-secondary-bg); color: var(--tg-text); transition: border-color 0.2s ease; }
-        input:focus, textarea:focus { border-color: var(--tg-link); }
-        textarea { resize: vertical; min-height: 100px; }
-        .char-counter { text-align: right; font-size: 13px; color: var(--tg-hint); margin-top: -8px; margin-bottom: 12px; }
+        .modal-full { position: fixed; inset: 0; background: rgba(28,26,23,0.4); display: none; align-items: flex-end; justify-content: center; z-index: 2000; backdrop-filter: blur(4px); }
+        .modal-inner { background: var(--bg-card); width: 100%; max-width: 500px; padding: 26px 24px; border-radius: 28px 28px 0 0; max-height: 85vh; overflow-y: auto; box-shadow: 0 -8px 32px rgba(0,0,0,0.05); }
         
-        .rule-step { background: var(--tg-secondary-bg); padding: 20px; border-radius: 16px; margin-bottom: 16px; }
-        .rule-step h4 { font-size: 18px; font-weight: 700; margin-bottom: 12px; color: var(--tg-link); display: flex; align-items: center; gap: 8px; }
-        .rule-step p { font-size: 15px; line-height: 1.6; color: var(--tg-text); margin-bottom: 12px; }
-        .rule-step ul { margin-left: 20px; margin-top: 8px; }
-        .rule-step li { font-size: 14px; line-height: 1.8; color: var(--tg-hint); }
-        
-        #toast-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--tg-text); color: #fff; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; z-index: 9999; display: none; text-align: center; max-width: 80%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: toastSlide 0.3s ease; }
-        @keyframes toastSlide { from { transform: translateX(-50%) translateY(-20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
-        
-        .card-meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: 13px; color: var(--tg-hint); }
-        .warning-icon { font-size: 56px; margin-bottom: 12px; color: var(--warning-color); }
-        .warning-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: var(--tg-text); }
-        .warning-text { font-size: 16px; line-height: 1.5; margin-bottom: 24px; color: var(--tg-hint); }
-        .suggest-category { background: var(--tg-secondary-bg); border-radius: 16px; padding: 16px; margin-bottom: 20px; text-align: center; }
-        .suggest-category p { font-weight: 600; margin-bottom: 8px; }
-        .category-badge { display: inline-block; background: var(--tg-link); color: white; padding: 8px 20px; border-radius: 30px; font-weight: 700; font-size: 18px; }
+        #block-screen { position: fixed; inset: 0; background: #1C1A17; color: #FDFBF7; z-index: 99999; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 30px; }
+        #block-screen h2 { color: #E26A6A; font-size: 24px; margin-bottom: 16px; letter-spacing: -0.5px; }
+        #block-screen p { color: #A59E95; font-size: 14px; line-height: 1.6; max-width: 400px; }
 
-        .earn-stat { background: var(--tg-bg); border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--tg-section-separator); }
-        .earn-stat h3 { font-size: 16px; font-weight: 600; color: var(--tg-hint); margin-bottom: 8px; }
-        .earn-amount { font-size: 36px; font-weight: 700; color: var(--earn-color); }
-        .earn-progress { background: var(--tg-secondary-bg); border-radius: 10px; height: 8px; margin-top: 12px; overflow: hidden; }
-        .earn-progress-bar { background: linear-gradient(45deg, #34C759, #2481CC); height: 100%; border-radius: 10px; transition: width 0.5s ease; }
-        .earn-info { font-size: 13px; color: var(--tg-hint); margin-top: 8px; }
+        input, textarea { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 16px; font-size: 14px; outline: none; background: var(--bg-crema); color: var(--text-main); }
+        input:focus, textarea:focus { border-color: var(--accent-gold); }
+        textarea { resize: none; min-height: 100px; }
+        .char-counter { text-align: right; font-size: 12px; color: var(--text-muted); margin-top: -10px; margin-bottom: 14px; }
+        
+        .rule-step { background: var(--bg-crema); padding: 18px; border-radius: 16px; margin-bottom: 14px; border: 1px solid var(--border-color); }
+        .rule-step h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: var(--accent-gold-dark); display: flex; align-items: center; gap: 6px; }
+        .rule-step p { font-size: 13px; line-height: 1.5; color: var(--text-main); }
+        .rule-step ul { margin-left: 16px; margin-top: 6px; }
+        .rule-step li { font-size: 13px; line-height: 1.7; color: var(--text-muted); }
+        
+        #toast-alert { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: var(--bg-crema); padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 600; z-index: 9999; display: none; text-align: center; max-width: 85%; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        
+        .card-meta { display: flex; justify-content: space-between; margin-top: 14px; font-size: 12px; color: var(--text-muted); }
+        .warning-icon { font-size: 48px; margin-bottom: 12px; color: var(--warning-color); }
+        .warning-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .warning-text { font-size: 14px; line-height: 1.5; margin-bottom: 20px; color: var(--text-muted); }
+        .suggest-category { background: var(--bg-crema); border-radius: 16px; padding: 14px; margin-bottom: 20px; text-align: center; border: 1px solid var(--border-color); }
+        .suggest-category p { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        .category-badge { display: inline-block; background: var(--accent-gold); color: white; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 14px; }
 
-        .admin-card { background: var(--tg-bg); border-radius: 16px; padding: 20px; margin-bottom: 12px; border: 2px solid var(--admin-color); }
-        .admin-card h4 { font-size: 16px; font-weight: 700; color: var(--admin-color); margin-bottom: 8px; }
-        .admin-card p { font-size: 14px; color: var(--tg-text); margin-bottom: 4px; }
-        .admin-badge { background: var(--admin-color); color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .earn-stat { background: var(--bg-card); border-radius: 18px; padding: 18px; margin-bottom: 14px; border: 1px solid var(--border-color); }
+        .earn-stat h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+        .earn-amount { font-size: 32px; font-weight: 700; color: var(--text-main); }
+        .earn-progress { background: var(--bg-crema); border-radius: 10px; height: 6px; margin-top: 12px; overflow: hidden; border: 1px solid var(--border-color); }
+        .earn-progress-bar { background: var(--accent-gold); height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+        .earn-info { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+
+        .admin-card { background: var(--bg-card); border-radius: 16px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--admin-color); }
+        .admin-card h4 { font-size: 14px; font-weight: 700; color: var(--admin-color); margin-bottom: 6px; }
+        .admin-card p { font-size: 13px; color: var(--text-main); margin-bottom: 4px; }
+        .admin-badge { background: var(--admin-color); color: white; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; display: inline-block; }
+        
+        .ref-box { background: var(--bg-crema); border: 1px dashed var(--accent-gold); padding: 14px; border-radius: 14px; margin-bottom: 16px; }
+        .ref-title { font-size: 12px; font-weight: 700; color: var(--accent-gold-dark); text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+        .ref-input-group { display: flex; gap: 8px; }
+        .ref-input-group input { margin-bottom: 0; padding: 10px; font-size: 12px; background: var(--bg-card); border: 1px solid var(--border-color); }
+        .ref-copy-btn { background: var(--accent-gold); color: white; border: none; padding: 0 16px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <!-- Bloqueo Antifraude Total -->
     <div id="block-screen">
-        <div style="font-size: 64px; margin-bottom: 20px;">🛡️</div>
+        <div style="font-size: 54px; margin-bottom: 16px;">🛡️</div>
         <h2>ACCESO RESTRINGIDO</h2>
         <p>Se ha detectado un intento de ingreso multicuenta desde este mismo dispositivo electrónico. Para proteger el ecosistema financiero de la app, esta acción ha sido bloqueada permanentemente.</p>
     </div>
@@ -186,9 +156,9 @@
 
     <div id="lang-overlay">
         <div class="welcome-box">
-            <div class="hero-icon">🤝</div>
-            <h1>X Change</h1>
-            <p>Elige tu idioma</p>
+            <div class="hero-icon">💎</div>
+            <h1 class="logo-font">X Exchange</h1>
+            <p>Elige tu idioma / Choose language</p>
             <button class="lang-btn" onclick="init('es')"><span>🇪🇸</span> Español</button>
             <button class="lang-btn secondary" onclick="init('en')"><span>🇬🇧</span> English</button>
         </div>
@@ -196,8 +166,8 @@
 
     <div id="app-container" style="display:flex; flex-direction: column; height: 100vh;">
         <div class="header">
-            <div class="logo"><span class="logo-emoji">✨</span> X Change</div>
-            <div style="display:flex; gap:8px;">
+            <div class="logo logo-font">X Exchange</div>
+            <div style="display:flex; align-items:center;">
                 <button class="btn-earn" id="btn-earn-ui" onclick="showEarnPanel()"><span>💎</span> <span id="t-earn-btn">Premios</span></button>
                 <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()"><span>📋</span> <span id="t-rules-btn">REGLAS</span></button>
             </div>
@@ -220,16 +190,25 @@
 
         <div id="m-earn" class="modal-full">
             <div class="modal-inner">
-                <h2 style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px;"><span>💎</span> <span id="earn-title">MIS PREMIOS</span></h2>
+                <h2 style="text-align:center; margin-bottom:20px; font-weight:700; font-size:20px; letter-spacing:-0.3px;"><span>💎</span> <span id="earn-title">MIS PREMIOS</span></h2>
                 
                 <div class="profile-card">
                     <div>👤 ID DE CUENTA: <strong id="profile-user-id">USR_CARGANDO...</strong></div>
                     <div>📱 TOKEN DISPOSITIVO: <strong id="profile-device-id">DEV_CARGANDO...</strong></div>
                 </div>
 
+                <!-- Bloque de Enlace de Invitación Oficial -->
+                <div class="ref-box">
+                    <div class="ref-title"><span>🔗</span> <span id="ref-ui-title">Tu Enlace de Invitación (Comisión 10%)</span></div>
+                    <div class="ref-input-group">
+                        <input type="text" id="ref-link-input" readonly value="Cargando enlace...">
+                        <button class="ref-copy-btn" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i></button>
+                    </div>
+                </div>
+
                 <div class="earn-stat">
                     <h3 id="earn-balance-label">Acumulado actual</h3>
-                    <div class="earn-amount" id="earn-balance">$0.0000</div>
+                    <div class="earn-amount" id="earn-balance" style="color: var(--earn-color);">$0.0000</div>
                     <div class="earn-progress">
                         <div class="earn-progress-bar" id="earn-bar" style="width: 0%;"></div>
                     </div>
@@ -237,36 +216,36 @@
                 </div>
                 <div class="earn-stat">
                     <h3 id="earn-total-label">Total recibido</h3>
-                    <div class="earn-amount" style="font-size:28px;" id="earn-total">$0.0000</div>
+                    <div class="earn-amount" style="font-size:24px;" id="earn-total">$0.0000</div>
                 </div>
                 <div class="earn-stat">
                     <h3 id="earn-views-label">Revisiones únicas hoy</h3>
-                    <div style="font-size:28px; font-weight:700; color:var(--tg-link);" id="earn-views">0</div>
+                    <div style="font-size:24px; font-weight:700; color:var(--accent-gold-dark);" id="earn-views">0</div>
                 </div>
                 <div id="earn-withdraw-section" style="margin-top:16px;">
-                    <p style="font-size:13px; color:var(--tg-hint); margin-bottom:8px;" id="earn-min-info">Mínimo para envío: $1.00 USDT (BEP20) | Tarifa: $0.15</p>
+                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;" id="earn-min-info">Mínimo para envío: $1.00 USDT (BEP20) | Tarifa: $0.15</p>
                     <input type="text" id="earn-wallet" placeholder="Tu dirección USDT BEP20" style="margin-bottom:12px;">
                     <button class="action-btn" id="earn-withdraw-btn" onclick="requestWithdraw()" disabled>
                         <span>💸</span> <span id="earn-withdraw-text">SOLICITAR ENVÍO (Mínimo $1.00)</span>
                     </button>
                 </div>
-                <button id="earn-close-btn" style="width:100%; background:none; border:none; margin-top:16px; color:var(--tg-hint); font-weight:600; font-size:15px;" onclick="hideModal('m-earn')"><span>❌</span> <span id="earn-close-text">Cerrar</span></button>
+                <button id="earn-close-btn" style="width:100%; background:none; border:none; margin-top:16px; color:var(--text-muted); font-weight:600; font-size:14px;" onclick="hideModal('m-earn')"><span>❌</span> <span id="earn-close-text">Cerrar</span></button>
             </div>
         </div>
 
         <div id="m-admin" class="modal-full">
             <div class="modal-inner">
-                <h2 style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px;"><span>🛡️</span> PANEL ADMIN</h2>
+                <h2 style="text-align:center; margin-bottom:24px; font-weight:700; font-size:20px;"><span>🛡️</span> PANEL ADMIN</h2>
                 <div id="admin-content">
-                    <p style="text-align:center; color:var(--tg-hint);">Cargando solicitudes...</p>
+                    <p style="text-align:center; color:var(--text-muted);">Cargando solicitudes...</p>
                 </div>
-                <button style="width:100%; background:none; border:none; margin-top:16px; color:var(--tg-hint); font-weight:600; font-size:15px;" onclick="hideModal('m-admin')"><span>❌</span> Cerrar</button>
+                <button style="width:100%; background:none; border:none; margin-top:16px; color:var(--text-muted); font-weight:600; font-size:14px;" onclick="hideModal('m-admin')"><span>❌</span> Cerrar</button>
             </div>
         </div>
 
         <div id="m-guide" class="modal-full">
             <div class="modal-inner">
-                <h2 id="g-title" style="text-align:center; margin-bottom:24px; font-weight:700; font-size:24px; color:var(--tg-link);"><span>📚</span> GUÍA COMPLETA</h2>
+                <h2 id="g-title" style="text-align:center; margin-bottom:22px; font-weight:700; font-size:20px; color:var(--text-main);"><span>📚</span> GUÍA COMPLETA</h2>
                 <div id="g-content"></div>
                 <button class="action-btn" id="g-close" onclick="hideModal('m-guide')" style="margin-top:16px;"><span>✅</span> ENTENDIDO</button>
             </div>
@@ -274,11 +253,11 @@
 
         <div id="m-post" class="modal-full">
             <div class="modal-inner">
-                <h2 id="p-title-ui" style="text-align:center; margin-bottom:24px; font-weight:700; font-size:22px;"><span>✨</span> NUEVO ANUNCIO</h2>
+                <h2 id="p-title-ui" style="text-align:center; margin-bottom:22px; font-weight:700; font-size:18px;"><span>✨</span> NUEVO ANUNCIO</h2>
                 <div id="post-fields"></div>
                 <div id="char-count-display" class="char-counter"></div>
                 <button class="action-btn" id="p-confirm-ui" onclick="sendPost()"><span>📤</span> PUBLICAR</button>
-                <button id="p-cancel-ui" style="width:100%; background:none; border:none; margin-top:16px; color:var(--tg-hint); font-weight:600; font-size:15px;" onclick="hideModal('m-post')"><span>❌</span> Cancelar</button>
+                <button id="p-cancel-ui" style="width:100%; background:none; border:none; margin-top:16px; color:var(--text-muted); font-weight:600; font-size:14px;" onclick="hideModal('m-post')"><span>❌</span> Cancelar</button>
             </div>
         </div>
         
@@ -440,7 +419,7 @@ const dictionary = {
         gL10: "• Incluye siempre tu @usuario de Telegram.", gL11: "• En Bots/Canales/Grupos sí puedes incluir enlaces oficiales de Telegram.",
         gR4: "🛡️ CONSEJOS ADICIONALES", gD4: "Para una mejor experiencia:",
         gL12: "• Verifica siempre con quién hablas.", gL13: "• No compartas información personal sensible.",
-        gL14: "• Reporta cualquier comportamiento sospechoso.", gL15: "• Las revisiones indican el interés en tu publicación.",
+        gL14: "• Reporta cualquier comportamiento sospecho.", gL15: "• Las revisiones indican el interés en tu publicación.",
         warnTitle: "⛔ ¡ENLACE NO PERMITIDO!",
         warnDesc: "En las categorías VENTAS e INTERCAMBIOS no se permiten enlaces de ningún tipo. Por seguridad solo puedes escribir texto y tu @usuario de Telegram.",
         suggestText: "Parece que intentas compartir un enlace de Telegram. La categoría correcta sería:",
@@ -456,7 +435,8 @@ const dictionary = {
         earnProgressText: "para llegar a $1.00 USDT",
         errMinWithdraw: "❌ Necesitas mínimo $1.00 USDT para procesar",
         errWalletEmpty: "❌ Ingresa tu dirección USDT BEP20",
-        withdrawSuccess: "✅ Solicitud enviada. Se procesará pronto."
+        withdrawSuccess: "✅ Solicitud enviada. Se procesará pronto.",
+        refTitle: "Tu Enlace de Invitación (Comisión 10%)"
     },
     en: {
         rulesBtn: "RULES", earnBtn: "Rewards", sales: "Sales", trades: "Exchanges", bots: "Bots", channels: "Channels", groups: "Groups",
@@ -504,7 +484,8 @@ const dictionary = {
         earnProgressText: "to reach $1.00 USDT",
         errMinWithdraw: "❌ You need minimum $1.00 USDT to proceed",
         errWalletEmpty: "❌ Enter your USDT BEP20 address",
-        withdrawSuccess: "✅ Request sent. Processing soon."
+        withdrawSuccess: "✅ Request sent. Processing soon.",
+        refTitle: "Your Invitation Link (10% Commission)"
     }
 };
 
@@ -527,6 +508,7 @@ function updateAllUITexts() {
     document.getElementById('earn-min-info').innerText = d.earnMinInfo;
     document.getElementById('earn-withdraw-text').innerText = d.earnWithdrawText;
     document.getElementById('earn-close-text').innerText = d.earnCloseText;
+    document.getElementById('ref-ui-title').innerText = d.refTitle;
     updateWarningModalTexts();
 }
 
@@ -536,8 +518,24 @@ function init(l) {
     document.getElementById('app-container').style.display = 'flex';
     updateAllUITexts();
     comprobarSeguridadDispositivo();
+    
+    // Inyecta dinámicamente el enlace estructurado con el ID único del usuario actual
+    document.getElementById('ref-link-input').value = `https://t.me/ReferralsXchangeBot?startapp=${USER_ID}`;
+    
     syncData();
     showAd();
+}
+
+function copyRefLink() {
+    const copyText = document.getElementById('ref-link-input');
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    try {
+        navigator.clipboard.writeText(copyText.value);
+        msg(lang === 'es' ? "✅ ¡Enlace copiado al portapapeles!" : "✅ Link copied to clipboard!");
+    } catch (err) {
+        msg(lang === 'es' ? "❌ Error al copiar" : "❌ Error copying link");
+    }
 }
 
 function showLangOverlay() {
@@ -594,7 +592,7 @@ function render(list) {
                     <div class="card-meta"><span>👁️ ${p.views || 0} rev.</span><span>⏰ 24h</span></div>
                  </div>`;
     });
-    document.getElementById('feed-wall').innerHTML = html || `<p style="text-align:center; padding:50px; color:var(--tg-hint);"><span>✨</span> No hay publicaciones aún</p>`;
+    document.getElementById('feed-wall').innerHTML = html || `<p style="text-align:center; padding:50px; color:var(--text-muted);"><span>✨</span> No hay publicaciones aún</p>`;
 }
 
 function tab(name, btn) {
@@ -853,7 +851,7 @@ function requestWithdraw() {
 
 function showAdminPanel() {
     const adminContent = document.getElementById('admin-content');
-    adminContent.innerHTML = '<p style="text-align:center; color:var(--tg-hint);">Cargando solicitudes...</p>';
+    adminContent.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Cargando solicitudes...</p>';
     
     db.ref('withdrawals').orderByChild('time').on('value', snapshot => {
         let html = ''; let hasPending = false; const withdrawals = [];
@@ -885,7 +883,7 @@ function showAdminPanel() {
             html += `</div>`;
         });
         
-        if (!html) { html = '<p style="text-align:center; color:var(--tg-hint); padding:40px;">No hay solicitudes aún.</p>'; }
+        if (!html) { html = '<p style="text-align:center; color:var(--text-muted); padding:40px;">No hay solicitudes aún.</p>'; }
         adminContent.innerHTML = html;
     });
     document.getElementById('m-admin').style.display = 'flex';
@@ -901,7 +899,7 @@ function markWithdrawal(id, status) {
 function showGuide() {
     const d = dictionary[lang];
     document.getElementById('g-title').innerHTML = `<span>📚</span> ${d.gH}`;
-    document.getElementById('g-content').innerHTML = `<div class="rule-step"><p style="font-size:15px; margin-bottom:16px;">${d.gIntro}</p></div><div class="rule-step"><h4>${d.gR1}</h4><p>${d.gD1}</p><ul><li>${d.gL1}</li><li>${d.gL2}</li><li>${d.gL3}</li></ul></div><div class="rule-step"><h4>${d.gR2}</h4><p>${d.gD2}</p><ul><li>${d.gL4}</li><li>${d.gL5}</li><li>${d.gL6}</li><li>${d.gL7}</li></ul></div><div class="rule-step"><h4>${d.gR3}</h4><p>${d.gD3}</p><ul><li>${d.gL8}</li><li>${d.gL9}</li><li>${d.gL10}</li><li>${d.gL11}</li></ul></div><div class="rule-step"><h4>${d.gR4}</h4><p>${d.gD4}</p><ul><li>${d.gL12}</li><li>${d.gL13}</li><li>${d.gL14}</li><li>${d.gL15}</li></ul></div>`;
+    document.getElementById('g-content').innerHTML = `<div class="rule-step"><p style="font-size:13px; margin-bottom:16px;">${d.gIntro}</p></div><div class="rule-step"><h4>${d.gR1}</h4><p>${d.gD1}</p><ul><li>${d.gL1}</li><li>${d.gL2}</li><li>${d.gL3}</li></ul></div><div class="rule-step"><h4>${d.gR2}</h4><p>${d.gD2}</p><ul><li>${d.gL4}</li><li>${d.gL5}</li><li>${d.gL6}</li><li>${d.gL7}</li></ul></div><div class="rule-step"><h4>${d.gR3}</h4><p>${d.gD3}</p><ul><li>${d.gL8}</li><li>${d.gL9}</li><li>${d.gL10}</li><li>${d.gL11}</li></ul></div><div class="rule-step"><h4>${d.gR4}</h4><p>${d.gD4}</p><ul><li>${d.gL12}</li><li>${d.gL13}</li><li>${d.gL14}</li><li>${d.gL15}</li></ul></div>`;
     document.getElementById('m-guide').style.display = 'flex';
 }
 
