@@ -2,922 +2,647 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>X Exchange PRO | Premium Network</title>
-    
-    <script src='//libtl.com/sdk.js' data-zone='10747271' data-sdk='show_10747271'></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>GVS Store | Tareas Diarias</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <script src='//libtl.com/sdk.js' data-zone='10747271' data-sdk='show_10747271'></script>
     <style>
-        :root { 
-            --bg-crema: #FDFBF7;
-            --bg-card: #FFFFFF;
-            --text-main: #1C1A17;
-            --text-muted: #7A756E;
-            --accent-gold: #C5A880;
-            --accent-gold-dark: #A3855C;
-            --accent-gold-light: #F4EFE6;
-            --border-color: #EFEBE4;
-            --tg-button: #C5A880;
-            --tg-button-text: #FFFFFF;
-            --warning-color: #C94A4A;
-            --earn-color: #4A8B67;
-            --admin-color: #7D5BA6;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
-        }
-        
-        body { 
-            background: var(--bg-crema); 
-            color: var(--text-main); 
-            height: 100vh; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
+        body {
+            background: #0a0e17;
+            padding: 16px;
+            padding-bottom: 80px;
+            min-height: 100vh;
         }
 
-        .hero-icon { font-size: 54px; margin-bottom: 20px; display: inline-block; animation: softFloat 4s ease-in-out infinite; }
-        @keyframes softFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
-        
-        .logo-font { font-family: 'Playfair Display', serif; font-weight: 600; font-style: italic; color: var(--text-main); }
+        /* Contenedor principal */
+        .app {
+            max-width: 450px;
+            margin: 0 auto;
+            background: #0f1322;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,215,0,0.15);
+        }
 
-        #lang-overlay { position: fixed; inset: 0; background: var(--bg-crema); z-index: 5000; display: none; align-items: center; justify-content: center; }
-        .welcome-box { text-align: center; color: var(--text-main); padding: 40px 24px; width: 90%; max-width: 360px; background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 12px 32px rgba(197,168,128,0.08); }
-        .welcome-box h1 { font-size: 28px; margin-bottom: 8px; letter-spacing: -0.5px; }
-        .welcome-box p { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
-        .lang-btn { width: 100%; padding: 15px; border-radius: 14px; border: none; background: var(--accent-gold); color: white; font-weight: 600; font-size: 15px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; }
-        .lang-btn.secondary { background: var(--accent-gold-light); color: var(--accent-gold-dark); }
-        .lang-btn:active { transform: scale(0.98); opacity: 0.9; }
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0b0e1a, #11172b);
+            padding: 24px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,215,0,0.2);
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFE6A3, #FFB347);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .logo span {
+            font-size: 14px;
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+            color: #7a7f9e;
+            font-weight: normal;
+        }
+        .user-badge {
+            background: #1e243e;
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 40px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #FFD966;
+        }
 
-        .header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); z-index: 100; border-bottom: 1px solid var(--border-color); }
-        .logo { font-size: 22px; letter-spacing: -0.3px; }
-        
-        .btn-safe { background: var(--accent-gold-light); color: var(--accent-gold-dark); border: none; padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; margin-left: 6px; border: 1px solid rgba(197,168,128,0.2); }
-        .btn-earn { background: var(--text-main); color: var(--bg-crema); border: none; padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
-        .btn-safe:active, .btn-earn:active { transform: scale(0.96); }
+        /* Tarjetas de saldo */
+        .balance-row {
+            display: flex;
+            gap: 12px;
+            padding: 20px 16px;
+        }
+        .balance-card {
+            flex: 1;
+            background: #161c2e;
+            border-radius: 20px;
+            padding: 14px;
+            text-align: center;
+        }
+        .balance-label {
+            font-size: 11px;
+            color: #8a8fae;
+            letter-spacing: 1px;
+        }
+        .balance-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #FFD966;
+            margin-top: 6px;
+        }
 
-        .cat-tabs { padding: 14px 16px; display: flex; gap: 8px; background: var(--bg-card); border-bottom: 1px solid var(--border-color); overflow-x: auto; scrollbar-width: none; }
-        .cat-tabs::-webkit-scrollbar { display: none; }
-        .cat-item { background: var(--bg-crema); border: 1px solid var(--border-color); padding: 10px 18px; border-radius: 24px; font-size: 13px; font-weight: 600; color: var(--text-muted); transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; flex: 0 0 auto; }
-        .cat-item.active { background: var(--accent-gold-light); color: var(--accent-gold-dark); border-color: var(--accent-gold); }
+        /* Sección regalo de rescate */
+        .rescue-section {
+            background: linear-gradient(145deg, #131a2c, #0e1324);
+            margin: 0 16px 20px 16px;
+            padding: 20px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid rgba(255,200,100,0.3);
+        }
+        .rescue-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FFD966;
+        }
+        .rescue-sub {
+            font-size: 11px;
+            color: #9aa2c2;
+            margin: 6px 0 14px;
+        }
+        .btn-rescue {
+            background: #FFB347;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #0a0e17;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .btn-rescue:active { transform: scale(0.97); }
 
-        .feed { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 100px; }
-        
-        .card-pro { background: var(--bg-card); border-radius: 20px; padding: 20px; margin-bottom: 14px; border: 1px solid var(--border-color); transition: all 0.2s ease; position: relative; box-shadow: 0 4px 12px rgba(28,26,23,0.01); }
-        .card-content { font-size: 15px; font-weight: 500; line-height: 1.5; color: var(--text-main); margin-bottom: 18px; padding-top: 14px; user-select: none; word-break: break-word; }
+        /* Botones de acción */
+        .actions {
+            display: flex;
+            gap: 12px;
+            padding: 0 16px 20px;
+        }
+        .btn-action {
+            flex: 1;
+            background: #1f2a48;
+            border: none;
+            padding: 14px;
+            border-radius: 50px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-action:active { transform: scale(0.97); background: #2a365a; }
+        .btn-withdraw { background: #2c3e66; border: 1px solid #FFD966; color: #FFE4A3; }
 
-        .status-badge-corner { position: absolute; top: 14px; right: 16px; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
-        .status-visto { background: var(--accent-gold-light); color: var(--accent-gold-dark); }
-        .status-novisto { background: rgba(197,168,128,0.1); color: var(--text-main); border: 1px solid var(--border-color); }
+        /* SECCIÓN DE INVERSIÓN DESACTIVADA (solo decorativa) */
+        .invest-disabled {
+            display: flex;
+            gap: 12px;
+            margin: 0 16px 20px;
+            opacity: 0.5;
+            filter: grayscale(0.3);
+            pointer-events: none;
+        }
+        .inv-card {
+            flex: 1;
+            background: #10152b;
+            border-radius: 16px;
+            padding: 14px;
+            text-align: center;
+            border-left: 2px solid #4a5568;
+        }
+        .inv-label {
+            font-size: 10px;
+            color: #8d99c9;
+            text-decoration: line-through;
+        }
+        .inv-amount {
+            font-size: 14px;
+            font-weight: bold;
+            color: #6c759b;
+        }
+        .lock-icon {
+            font-size: 10px;
+            background: #2d2f42;
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-top: 6px;
+            color: #aaa;
+        }
 
-        .profile-card { background: var(--accent-gold-light); border: 1px solid rgba(197,168,128,0.2); color: var(--text-main); padding: 16px; border-radius: 16px; margin-bottom: 16px; }
-        .profile-card div { margin-bottom: 8px; font-size: 12px; color: var(--text-muted); font-weight: 500; }
-        .profile-card strong { font-size: 14px; font-weight: 700; color: var(--text-main); display: block; margin-top: 2px; word-break: break-all; }
+        /* Panel de referidos */
+        .referral-panel {
+            background: #0b1022;
+            margin: 0 16px 20px;
+            border-radius: 24px;
+            padding: 18px;
+            border: 1px solid #29314e;
+        }
+        .panel-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #FFD966;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ref-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            background: #0a0e1a;
+            padding: 12px;
+            border-radius: 16px;
+        }
+        .ref-stat {
+            text-align: center;
+            flex: 1;
+        }
+        .ref-stat-label {
+            font-size: 11px;
+            color: #8a8fae;
+        }
+        .ref-stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFD966;
+        }
+        .ref-link-box {
+            display: flex;
+            gap: 8px;
+            background: #010311;
+            border-radius: 60px;
+            padding: 8px 12px;
+            margin-top: 8px;
+        }
+        .ref-link {
+            font-size: 11px;
+            font-family: monospace;
+            color: #90e0ff;
+            flex: 1;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: #2c3e66;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+        }
+        .copy-btn:active { transform: scale(0.96); }
 
-        .action-btn { width: 100%; padding: 14px; border-radius: 14px; border: none; background: var(--text-main); color: var(--bg-crema); font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all 0.2s ease; }
-        .action-btn:active { transform: scale(0.98); opacity: 0.9; }
-        .warning-btn { background: var(--warning-color); color: white; }
-        .outline-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
-        
-        .count-badge { background: var(--text-main); color: var(--bg-crema); padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 700; margin-left: 2px; }
+        /* Botón simular referido (para demo, pero sin texto "simular") */
+        .btn-invite {
+            background: #FFB347;
+            border: none;
+            padding: 10px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-top: 12px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #0a0e17;
+            width: 100%;
+        }
+        .btn-invite:active { transform: scale(0.97); }
 
-        .fab { position: fixed; bottom: 24px; right: 20px; width: 56px; height: 56px; background: var(--accent-gold); color: white; border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 8px 24px rgba(197,168,128,0.3); z-index: 999; cursor: pointer; border: none; transition: all 0.2s ease; }
-        .fab:active { transform: scale(0.92); }
-        
-        .lang-fab { position: fixed; bottom: 24px; left: 20px; width: 44px; height: 44px; background: var(--bg-card); color: var(--text-main); border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); z-index: 999; cursor: pointer; border: 1px solid var(--border-color); transition: all 0.2s ease; }
+        /* Tareas diarias */
+        .tasks-section {
+            margin: 0 16px 20px;
+        }
+        .task-item {
+            background: #161c2e;
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-info h4 {
+            font-size: 14px;
+            color: white;
+        }
+        .task-info p {
+            font-size: 11px;
+            color: #8a8fae;
+        }
+        .task-reward {
+            color: #FFD966;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .btn-task {
+            background: #2a365a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-task:active { transform: scale(0.96); }
+        .btn-task.completed {
+            background: #2a5a3a;
+            opacity: 0.6;
+            pointer-events: none;
+        }
 
-        .modal-full { position: fixed; inset: 0; background: rgba(28,26,23,0.4); display: none; align-items: flex-end; justify-content: center; z-index: 2000; backdrop-filter: blur(4px); }
-        .modal-inner { background: var(--bg-card); width: 100%; max-width: 500px; padding: 26px 24px; border-radius: 28px 28px 0 0; max-height: 85vh; overflow-y: auto; box-shadow: 0 -8px 32px rgba(0,0,0,0.05); }
-        
-        #block-screen { position: fixed; inset: 0; background: #1C1A17; color: #FDFBF7; z-index: 99999; display: none; align-items: center; justify-content: center; flex-direction: column; text-align: center; padding: 30px; }
-        #block-screen h2 { color: #E26A6A; font-size: 24px; margin-bottom: 16px; letter-spacing: -0.5px; }
-        #block-screen p { color: #A59E95; font-size: 14px; line-height: 1.6; max-width: 400px; }
+        /* Notificación toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            right: 20px;
+            background: #1a1f2e;
+            backdrop-filter: blur(12px);
+            padding: 12px 20px;
+            border-radius: 60px;
+            color: white;
+            text-align: center;
+            z-index: 1000;
+            animation: fadeUp 0.3s ease;
+            border-left: 4px solid #FFB347;
+            max-width: 400px;
+            margin: 0 auto;
+            font-size: 13px;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        input, textarea { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 16px; font-size: 14px; outline: none; background: var(--bg-crema); color: var(--text-main); }
-        input:focus, textarea:focus { border-color: var(--accent-gold); }
-        textarea { resize: none; min-height: 100px; }
-        .char-counter { text-align: right; font-size: 12px; color: var(--text-muted); margin-top: -10px; margin-bottom: 14px; }
-        
-        .rule-step { background: var(--bg-crema); padding: 18px; border-radius: 16px; margin-bottom: 14px; border: 1px solid var(--border-color); }
-        .rule-step h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; color: var(--accent-gold-dark); display: flex; align-items: center; gap: 6px; }
-        .rule-step p { font-size: 13px; line-height: 1.5; color: var(--text-main); }
-        .rule-step ul { margin-left: 16px; margin-top: 6px; }
-        .rule-step li { font-size: 13px; line-height: 1.7; color: var(--text-muted); }
-        
-        #toast-alert { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: var(--bg-crema); padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 600; z-index: 9999; display: none; text-align: center; max-width: 85%; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
-        
-        .card-meta { display: flex; justify-content: space-between; margin-top: 14px; font-size: 12px; color: var(--text-muted); }
-        .warning-icon { font-size: 48px; margin-bottom: 12px; color: var(--warning-color); }
-        .warning-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-        .warning-text { font-size: 14px; line-height: 1.5; margin-bottom: 20px; color: var(--text-muted); }
-        .suggest-category { background: var(--bg-crema); border-radius: 16px; padding: 14px; margin-bottom: 20px; text-align: center; border: 1px solid var(--border-color); }
-        .suggest-category p { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-        .category-badge { display: inline-block; background: var(--accent-gold); color: white; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 14px; }
-
-        .earn-stat { background: var(--bg-card); border-radius: 18px; padding: 18px; margin-bottom: 14px; border: 1px solid var(--border-color); }
-        .earn-stat h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
-        .earn-amount { font-size: 32px; font-weight: 700; color: var(--text-main); }
-        .earn-progress { background: var(--bg-crema); border-radius: 10px; height: 6px; margin-top: 12px; overflow: hidden; border: 1px solid var(--border-color); }
-        .earn-progress-bar { background: var(--accent-gold); height: 100%; border-radius: 10px; transition: width 0.5s ease; }
-        .earn-info { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
-
-        .admin-card { background: var(--bg-card); border-radius: 16px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--admin-color); }
-        .admin-card h4 { font-size: 14px; font-weight: 700; color: var(--admin-color); margin-bottom: 6px; }
-        .admin-card p { font-size: 13px; color: var(--text-main); margin-bottom: 4px; }
-        .admin-badge { background: var(--admin-color); color: white; padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; display: inline-block; }
-        
-        .ref-box { background: var(--bg-crema); border: 1px dashed var(--accent-gold); padding: 14px; border-radius: 14px; margin-bottom: 16px; }
-        .ref-title { font-size: 12px; font-weight: 700; color: var(--accent-gold-dark); text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
-        .ref-input-group { display: flex; gap: 8px; }
-        .ref-input-group input { margin-bottom: 0; padding: 10px; font-size: 12px; background: var(--bg-card); border: 1px solid var(--border-color); }
-        .ref-copy-btn { background: var(--accent-gold); color: white; border: none; padding: 0 16px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        /* Bottom nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0a0f1cee;
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 20px 20px;
+            border-top: 1px solid #222842;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        .nav-btn {
+            text-align: center;
+            font-size: 12px;
+            color: #8a8fae;
+            cursor: pointer;
+            padding: 6px;
+            flex: 1;
+        }
+        .nav-btn.active {
+            color: #FFD966;
+            font-weight: bold;
+        }
+        .nav-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
-
-    <!-- Bloqueo Antifraude Total -->
-    <div id="block-screen">
-        <div style="font-size: 54px; margin-bottom: 16px;">🛡️</div>
-        <h2>ACCESO RESTRINGIDO</h2>
-        <p>Se ha detectado un intento de ingreso multicuenta desde este mismo dispositivo electrónico. Para proteger el ecosistema financiero de la app, esta acción ha sido bloqueada permanentemente.</p>
+<div class="app">
+    <div class="header">
+        <div class="logo">GVS STORE BOT <span>• tareas</span></div>
+        <div class="user-badge">🆔 ID: <span id="userId">704365</span> | CEL: ****890</div>
     </div>
 
-    <div id="toast-alert"></div>
-
-    <div id="lang-overlay">
-        <div class="welcome-box">
-            <div class="hero-icon">💎</div>
-            <h1 class="logo-font">X Exchange</h1>
-            <p>Elige tu idioma / Choose language</p>
-            <button class="lang-btn" onclick="init('es')"><span>🇪🇸</span> Español</button>
-            <button class="lang-btn secondary" onclick="init('en')"><span>🇬🇧</span> English</button>
+    <div class="balance-row">
+        <div class="balance-card">
+            <div class="balance-label">SALDO PEN</div>
+            <div class="balance-value" id="balancePEN">S/. 0.00</div>
+        </div>
+        <div class="balance-card">
+            <div class="balance-label">SALDO USDT</div>
+            <div class="balance-value" id="balanceUSDT">0.00 U</div>
         </div>
     </div>
 
-    <div id="app-container" style="display:flex; flex-direction: column; height: 100vh;">
-        <div class="header">
-            <div class="logo logo-font">X Exchange</div>
-            <div style="display:flex; align-items:center;">
-                <button class="btn-earn" id="btn-earn-ui" onclick="showEarnPanel()"><span>💎</span> <span id="t-earn-btn">Premios</span></button>
-                <button class="btn-safe" id="btn-rules-ui" onclick="showGuide()"><span>📋</span> <span id="t-rules-btn">REGLAS</span></button>
-            </div>
+    <!-- REGALOS DE RESCATE -->
+    <div class="rescue-section">
+        <div class="rescue-title">🎁 REGALOS DE RESCATE 🎁</div>
+        <div class="rescue-sub">¡Reclama tu bono diario con un clic!</div>
+        <button class="btn-rescue" id="rescueBtn">🔥 RECLAMAR AHORA 🔥</button>
+    </div>
+
+    <!-- Botones Completar / Retirar -->
+    <div class="actions">
+        <button class="btn-action" id="completeTaskBtn">✅ Completar Tarea</button>
+        <button class="btn-action btn-withdraw" id="withdrawBtn">💰 Retirar Efectivo</button>
+    </div>
+
+    <!-- INVERSIÓN DESACTIVADA (solo decoración, no funciona) -->
+    <div class="invest-disabled">
+        <div class="inv-card">
+            <div class="inv-label">Inversión Nivel A</div>
+            <div class="inv-amount">S/. 0.00</div>
+            <div class="lock-icon">🔒 Bloqueado</div>
         </div>
-
-        <div class="cat-tabs">
-            <button class="cat-item active" id="b-VE" onclick="tab('VENTAS', this)"><span>💰</span> <span id="t-ve">Ventas</span> <span id="n-VE" class="count-badge">0</span></button>
-            <button class="cat-item" id="b-EX" onclick="tab('INTERCAMBIO', this)"><span>🔄</span> <span id="t-ex">Intercambios</span> <span id="n-EX" class="count-badge">0</span></button>
-            <button class="cat-item" id="b-BO" onclick="tab('BOTS', this)"><span>🤖</span> <span id="t-bo">Bots</span> <span id="n-BO" class="count-badge">0</span></button>
-            <button class="cat-item" id="b-CA" onclick="tab('CANALES', this)"><span>📢</span> <span id="t-ca">Canales</span> <span id="n-CA" class="count-badge">0</span></button>
-            <button class="cat-item" id="b-GR" onclick="tab('GRUPOS', this)"><span>👥</span> <span id="t-gr">Grupos</span> <span id="n-GR" class="count-badge">0</span></button>
-        </div>
-
-        <div id="feed-wall" class="feed"></div>
-
-        <button class="fab" onclick="showPost()"><span>➕</span></button>
-        <button class="lang-fab" onclick="showLangOverlay()" title="Cambiar idioma">
-            <span>🌐</span>
-        </button>
-
-        <div id="m-earn" class="modal-full">
-            <div class="modal-inner">
-                <h2 style="text-align:center; margin-bottom:20px; font-weight:700; font-size:20px; letter-spacing:-0.3px;"><span>💎</span> <span id="earn-title">MIS PREMIOS</span></h2>
-                
-                <div class="profile-card">
-                    <div>👤 ID DE CUENTA: <strong id="profile-user-id">USR_CARGANDO...</strong></div>
-                    <div>📱 TOKEN DISPOSITIVO: <strong id="profile-device-id">DEV_CARGANDO...</strong></div>
-                </div>
-
-                <!-- Bloque de Enlace de Invitación Oficial -->
-                <div class="ref-box">
-                    <div class="ref-title"><span>🔗</span> <span id="ref-ui-title">Tu Enlace de Invitación (Comisión 10%)</span></div>
-                    <div class="ref-input-group">
-                        <input type="text" id="ref-link-input" readonly value="Cargando enlace...">
-                        <button class="ref-copy-btn" onclick="copyRefLink()"><i class="fa-regular fa-copy"></i></button>
-                    </div>
-                </div>
-
-                <div class="earn-stat">
-                    <h3 id="earn-balance-label">Acumulado actual</h3>
-                    <div class="earn-amount" id="earn-balance" style="color: var(--earn-color);">$0.0000</div>
-                    <div class="earn-progress">
-                        <div class="earn-progress-bar" id="earn-bar" style="width: 0%;"></div>
-                    </div>
-                    <div class="earn-info" id="earn-progress-text">0% para llegar a $1.00 USDT</div>
-                </div>
-                <div class="earn-stat">
-                    <h3 id="earn-total-label">Total recibido</h3>
-                    <div class="earn-amount" style="font-size:24px;" id="earn-total">$0.0000</div>
-                </div>
-                <div class="earn-stat">
-                    <h3 id="earn-views-label">Revisiones únicas hoy</h3>
-                    <div style="font-size:24px; font-weight:700; color:var(--accent-gold-dark);" id="earn-views">0</div>
-                </div>
-                <div id="earn-withdraw-section" style="margin-top:16px;">
-                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;" id="earn-min-info">Mínimo para envío: $1.00 USDT (BEP20) | Tarifa: $0.15</p>
-                    <input type="text" id="earn-wallet" placeholder="Tu dirección USDT BEP20" style="margin-bottom:12px;">
-                    <button class="action-btn" id="earn-withdraw-btn" onclick="requestWithdraw()" disabled>
-                        <span>💸</span> <span id="earn-withdraw-text">SOLICITAR ENVÍO (Mínimo $1.00)</span>
-                    </button>
-                </div>
-                <button id="earn-close-btn" style="width:100%; background:none; border:none; margin-top:16px; color:var(--text-muted); font-weight:600; font-size:14px;" onclick="hideModal('m-earn')"><span>❌</span> <span id="earn-close-text">Cerrar</span></button>
-            </div>
-        </div>
-
-        <div id="m-admin" class="modal-full">
-            <div class="modal-inner">
-                <h2 style="text-align:center; margin-bottom:24px; font-weight:700; font-size:20px;"><span>🛡️</span> PANEL ADMIN</h2>
-                <div id="admin-content">
-                    <p style="text-align:center; color:var(--text-muted);">Cargando solicitudes...</p>
-                </div>
-                <button style="width:100%; background:none; border:none; margin-top:16px; color:var(--text-muted); font-weight:600; font-size:14px;" onclick="hideModal('m-admin')"><span>❌</span> Cerrar</button>
-            </div>
-        </div>
-
-        <div id="m-guide" class="modal-full">
-            <div class="modal-inner">
-                <h2 id="g-title" style="text-align:center; margin-bottom:22px; font-weight:700; font-size:20px; color:var(--text-main);"><span>📚</span> GUÍA COMPLETA</h2>
-                <div id="g-content"></div>
-                <button class="action-btn" id="g-close" onclick="hideModal('m-guide')" style="margin-top:16px;"><span>✅</span> ENTENDIDO</button>
-            </div>
-        </div>
-
-        <div id="m-post" class="modal-full">
-            <div class="modal-inner">
-                <h2 id="p-title-ui" style="text-align:center; margin-bottom:22px; font-weight:700; font-size:18px;"><span>✨</span> NUEVO ANUNCIO</h2>
-                <div id="post-fields"></div>
-                <div id="char-count-display" class="char-counter"></div>
-                <button class="action-btn" id="p-confirm-ui" onclick="sendPost()"><span>📤</span> PUBLICAR</button>
-                <button id="p-cancel-ui" style="width:100%; background:none; border:none; margin-top:16px; color:var(--text-muted); font-weight:600; font-size:14px;" onclick="hideModal('m-post')"><span>❌</span> Cancelar</button>
-            </div>
-        </div>
-        
-        <div id="m-link-warning" class="modal-full">
-            <div class="modal-inner" style="text-align: center;">
-                <div class="warning-icon">⛔</div>
-                <h2 class="warning-title" id="warn-title">¡ENLACE NO PERMITIDO!</h2>
-                <p class="warning-text" id="warn-desc">Los enlaces no se permiten en Ventas o Intercambios. Por seguridad solo se permite texto y @usuario.</p>
-                <div class="suggest-category" id="suggest-box">
-                    <p id="suggest-text">Este enlace parece ser de Telegram. ¿Quieres publicar en:</p>
-                    <span class="category-badge" id="suggest-cat-name">BOTS</span>
-                </div>
-                <button class="action-btn warning-btn" id="btn-go-category" onclick="goToSuggestedCategory()">
-                    <span>🚀</span> <span id="btn-go-text">IR A CATEGORÍA CORRECTA</span>
-                </button>
-                <button class="action-btn outline-btn" id="btn-close-warning" onclick="hideModal('m-link-warning')" style="margin-top:12px;">
-                    <span>↩️</span> <span id="btn-cancel-text">CANCELAR</span>
-                </button>
-            </div>
+        <div class="inv-card">
+            <div class="inv-label">Inversión Niveles ABC</div>
+            <div class="inv-amount">S/. 0.00</div>
+            <div class="lock-icon">🔒 Sin acceso</div>
         </div>
     </div>
+
+    <!-- PANEL DE REFERIDOS Y COMISIONES -->
+    <div class="referral-panel">
+        <div class="panel-title">
+            <i class="fas fa-users"></i> MI RED DE REFERIDOS
+        </div>
+        <div class="ref-stats">
+            <div class="ref-stat">
+                <div class="ref-stat-label">Referidos</div>
+                <div class="ref-stat-number" id="refCount">0</div>
+            </div>
+            <div class="ref-stat">
+                <div class="ref-stat-label">Comisiones</div>
+                <div class="ref-stat-number" id="commissionAmount">S/. 0.00</div>
+            </div>
+            <div class="ref-stat">
+                <div class="ref-stat-label">Comisión x ref.</div>
+                <div class="ref-stat-number">S/. 2.00</div>
+            </div>
+        </div>
+        <div class="ref-link-box">
+            <span class="ref-link" id="refLink">https://t.me/gvsstoreBot?start=704365</span>
+            <button class="copy-btn" id="copyLinkBtn">📋 Copiar</button>
+        </div>
+        <button class="btn-invite" id="inviteFriendBtn">➕ Invitar amigo (+S/. 2.00)</button>
+        <p style="font-size: 10px; color: #6c759b; text-align: center; margin-top: 10px;">
+            * Cada amigo que se una te da S/. 2.00 de comisión
+        </p>
+    </div>
+
+    <!-- LISTA DE TAREAS DIARIAS -->
+    <div class="tasks-section">
+        <div class="panel-title" style="margin-bottom: 12px;">
+            <i class="fas fa-check-circle"></i> TAREAS DISPONIBLES
+        </div>
+        <div class="task-item" id="task1">
+            <div class="task-info">
+                <h4>📺 Ver video promocional</h4>
+                <p>+ S/. 0.50 PEN</p>
+            </div>
+            <button class="btn-task" data-task="1" data-reward="0.5">Hacer</button>
+        </div>
+        <div class="task-item" id="task2">
+            <div class="task-info">
+                <h4>👍 Seguir canal de Telegram</h4>
+                <p>+ S/. 0.75 PEN</p>
+            </div>
+            <button class="btn-task" data-task="2" data-reward="0.75">Hacer</button>
+        </div>
+        <div class="task-item" id="task3">
+            <div class="task-info">
+                <h4>📢 Unirse al grupo oficial</h4>
+                <p>+ S/. 1.00 PEN</p>
+            </div>
+            <button class="btn-task" data-task="3" data-reward="1.0">Hacer</button>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-btn active" data-nav="home">🏠 Hogar</div>
+    <div class="nav-btn" data-nav="tasks">📋 Tareas</div>
+    <div class="nav-btn" data-nav="refer">👥 Referidos</div>
+    <div class="nav-btn" data-nav="profile">👤 Mi Perfil</div>
+</div>
 
 <script>
-const firebaseConfig = { 
-    apiKey: "AIzaSyC5ObLcwYBLrwVU2ZNqCnBDgarTa88DFJE", 
-    authDomain: "fruithunter-b5d2d.firebaseapp.com", 
-    databaseURL: "https://fruithunter-b5d2d-default-rtdb.firebaseio.com", 
-    projectId: "fruithunter-b5d2d" 
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+    // ========== ESTADO DE LA APP ==========
+    let userData = {
+        balancePEN: 0,
+        balanceUSDT: 0,
+        referidos: 0,
+        comisionesTotales: 0,
+        tareasCompletadas: JSON.parse(localStorage.getItem('tareasCompletadas') || '[]')
+    };
 
-const ADMIN_KEY = "231606";
-let lang = 'es';
-let activeTab = 'VENTAS';
-let pressTimer;
-const MAX_DESC_LENGTH = 200;
-const MAX_TITLE_LENGTH = 100;
-let suggestedCategory = 'BOTS';
-
-const VIEW_REWARD = 0.0001; 
-const COMISION_PORCENTAJE = 0.10; 
-const MIN_WITHDRAW = 1.0;
-const WITHDRAW_FEE = 0.15;
-const ADS_EVERY = 5; 
-
-function getDeviceId() {
-    let id = localStorage.getItem('x_device_id');
-    if (!id) {
-        id = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('x_device_id', id);
-    }
-    return id;
-}
-
-function getUserId() {
-    let uid = localStorage.getItem('x_user_id');
-    if (!uid) {
-        uid = 'usr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        localStorage.setItem('x_user_id', uid);
-    }
-    return uid;
-}
-
-function getInvitadorId() {
-    const urlParams = new URLSearchParams(window.location.search);
-    let invId = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp');
-    if (!invId && window.Telegram && window.Telegram.WebApp) {
-        const initDataUnsafe = window.Telegram.WebApp.initDataUnsafe;
-        if (initDataUnsafe && initDataUnsafe.start_param) {
-            invId = initDataUnsafe.start_param;
+    // Cargar datos guardados
+    function loadData() {
+        const saved = localStorage.getItem('gvs_user_data');
+        if(saved) {
+            try {
+                const data = JSON.parse(saved);
+                userData.balancePEN = data.balancePEN || 0;
+                userData.balanceUSDT = data.balanceUSDT || 0;
+                userData.referidos = data.referidos || 0;
+                userData.comisionesTotales = data.comisionesTotales || 0;
+            } catch(e) {}
         }
+        updateUI();
+        actualizarEstadoTareas();
     }
-    return invId || null;
-}
 
-function getClickCount() {
-    let count = localStorage.getItem('x_click_count');
-    if (!count) { count = 0; localStorage.setItem('x_click_count', count); }
-    return parseInt(count);
-}
+    function saveData() {
+        localStorage.setItem('gvs_user_data', JSON.stringify({
+            balancePEN: userData.balancePEN,
+            balanceUSDT: userData.balanceUSDT,
+            referidos: userData.referidos,
+            comisionesTotales: userData.comisionesTotales
+        }));
+    }
 
-function incrementClickCount() {
-    let count = getClickCount(); count++;
-    if (count >= ADS_EVERY) { count = 0; }
-    localStorage.setItem('x_click_count', count);
-    return count;
-}
+    function updateUI() {
+        document.getElementById('balancePEN').innerText = `S/. ${userData.balancePEN.toFixed(2)}`;
+        document.getElementById('balanceUSDT').innerHTML = `${userData.balanceUSDT.toFixed(2)} U`;
+        document.getElementById('refCount').innerText = userData.referidos;
+        document.getElementById('commissionAmount').innerText = `S/. ${userData.comisionesTotales.toFixed(2)}`;
+    }
 
-const DEVICE_ID = getDeviceId();
-const USER_ID = getUserId();
+    // Mostrar anuncio (cada vez que se llama)
+    function showAd(message) {
+        // Anuncio de la red
+        if(typeof show_10747271 === 'function') {
+            try { show_10747271(); } catch(e) {}
+        }
+        // Toast visual
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerText = message || '📢 ANUNCIO: ¡Sigue completando tareas y gana más recompensas!';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
+    }
 
-function comprobarSeguridadDispositivo() {
-    const deviceRef = db.ref('device_tokens').child(DEVICE_ID);
-    deviceRef.once('value', snap => {
-        const datosHardware = snap.val();
-        if (!datosHardware) {
-            deviceRef.set({ dueñoId: USER_ID, vinculadoEn: Date.now() });
-            inicializarFlujoReferidos();
+    // Función para agregar dinero + anuncio
+    function addMoney(amount, reason) {
+        userData.balancePEN += amount;
+        saveData();
+        updateUI();
+        showAd(`🎉 +S/. ${amount.toFixed(2)} por: ${reason}`);
+    }
+
+    // ========== BOTONES PRINCIPALES CON ANUNCIO ==========
+    document.getElementById('rescueBtn').addEventListener('click', () => {
+        const reward = +(Math.random() * 2 + 0.5).toFixed(2);
+        addMoney(reward, 'Regalo de rescate');
+    });
+
+    document.getElementById('completeTaskBtn').addEventListener('click', () => {
+        const reward = +(Math.random() * 1.5 + 0.3).toFixed(2);
+        addMoney(reward, 'Tarea completada (bono extra)');
+    });
+
+    document.getElementById('withdrawBtn').addEventListener('click', () => {
+        showAd('💰 ANUNCIO: Procesando retiro. Mínimo S/. 10.00 para transferir.');
+        if(userData.balancePEN >= 10) {
+            alert(`✅ Retiro de S/. ${userData.balancePEN.toFixed(2)} solicitado. Llegará en 24h.`);
+            userData.balancePEN = 0;
+            saveData();
+            updateUI();
         } else {
-            if (datosHardware.dueñoId !== USER_ID) {
-                document.getElementById('app-container').style.display = 'none';
-                document.getElementById('lang-overlay').style.display = 'none';
-                document.getElementById('block-screen').style.display = 'flex';
+            alert('❌ Saldo mínimo para retiro: S/. 10.00');
+        }
+    });
+
+    // Copiar enlace
+    document.getElementById('copyLinkBtn').addEventListener('click', () => {
+        const link = document.getElementById('refLink').innerText;
+        navigator.clipboard.writeText(link);
+        showAd('🔗 Enlace de invitación copiado! Compártelo y gana S/. 2.00 por cada amigo');
+    });
+
+    // Invitar amigo (aumenta referido)
+    document.getElementById('inviteFriendBtn').addEventListener('click', () => {
+        showAd('👥 ANUNCIO: ¡Nuevo referido! +S/. 2.00 en comisiones');
+        userData.referidos += 1;
+        userData.comisionesTotales += 2.00;
+        userData.balancePEN += 2.00;
+        saveData();
+        updateUI();
+    });
+
+    // Tareas diarias (cada una con anuncio)
+    const taskBtns = document.querySelectorAll('.btn-task');
+    taskBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const taskId = btn.getAttribute('data-task');
+            const reward = parseFloat(btn.getAttribute('data-reward'));
+            
+            if(userData.tareasCompletadas.includes(taskId)) {
+                showAd('⚠️ Ya completaste esta tarea hoy. Vuelve mañana.');
+                return;
+            }
+            
+            showAd(`✅ ANUNCIO: Tarea completada +S/. ${reward.toFixed(2)} PEN`);
+            userData.balancePEN += reward;
+            userData.tareasCompletadas.push(taskId);
+            localStorage.setItem('tareasCompletadas', JSON.stringify(userData.tareasCompletadas));
+            saveData();
+            updateUI();
+            actualizarEstadoTareas();
+        });
+    });
+
+    function actualizarEstadoTareas() {
+        taskBtns.forEach(btn => {
+            const taskId = btn.getAttribute('data-task');
+            if(userData.tareasCompletadas.includes(taskId)) {
+                btn.classList.add('completed');
+                btn.innerText = '✅ Completada';
             } else {
-                inicializarFlujoReferidos();
-            }
-        }
-    });
-}
-
-function inicializarFlujoReferidos() {
-    const rootUserRef = db.ref('earnings').child(USER_ID);
-    rootUserRef.once('value', snap => {
-        if (!snap.exists()) {
-            const idDeQuienInvita = getInvitadorId();
-            rootUserRef.set({
-                balance: 0,
-                totalEarned: 0,
-                viewsToday: 0,
-                lastViewDate: new Date().toDateString(),
-                invitado_por: idDeQuienInvita
-            });
-            if (idDeQuienInvita) {
-                db.ref('earnings').child(idDeQuienInvita).child('referidosTotales').transaction(c => (c || 0) + 1);
-            }
-        }
-    });
-}
-
-const dictionary = {
-    es: {
-        rulesBtn: "REGLAS", earnBtn: "Premios", sales: "Ventas", trades: "Intercambios", bots: "Bots", channels: "Canales", groups: "Grupos",
-        newPost: "NUEVO ANUNCIO", confirm: "PUBLICAR", cancel: "Cancelar",
-        phDesc: "Escribe qué deseas vender (ej: 'Vendo cuenta premium'). Los usuarios te contactarán por Telegram.", 
-        phUser: "@TuUsuario", phTitle: "Nombre del Proyecto", phLink: "t.me/tu_enlace",
-        tradeBtn: "💬 CHAT", viewBtn: "🔗 ABRIR",
-        errLink: "❌ No se permiten enlaces en Ventas o Intercambios",
-        errLinkRequired: "❌ Bots/Canales/Grupos requieren un enlace válido",
-        errInvalidLink: "❌ El enlace debe ser de Telegram (t.me/)",
-        errBotLink: "❌ En BOTS solo se permiten enlaces de bots (t.me/bot)",
-        errChannelLink: "❌ En CANALES solo se permiten enlaces de canales (t.me/canal)",
-        errGroupLink: "❌ En GRUPOS solo se permiten enlaces de grupos (t.me/grupo)",
-        errDuplicate: "❌ Esta publicación ya existe",
-        success: "✅ ¡Publicado! Visible por 24h",
-        errMaxLength: "❌ Máximo 200 caracteres",
-        errMaxTitle: "❌ Máximo 100 caracteres",
-        gH: "📖 GUÍA DE USO",
-        gIntro: "¡Bienvenido a X Change! Una comunidad para vender, intercambiar, compartir y conectar de forma segura.",
-        gR1: "🔒 NORMAS DE SEGURIDAD", gD1: "Para proteger a todos los usuarios, tenemos reglas claras que debes seguir:",
-        gL1: "• En VENTAS e INTERCAMBIOS: NO se permiten enlaces de ningún tipo (http, https, www, t.me).",
-        gL2: "• Solo puedes escribir texto descriptivo y tu nombre de usuario de Telegram (@usuario).",
-        gL3: "• Esto evita inconvenientes y garantiza que las conversaciones sean dentro de Telegram.",
-        gR2: "⏰ SISTEMA DE AUTO-LIMPIEZA", gD2: "Mantenemos la comunidad fresca y activa con limpieza automática:",
-        gL4: "• Cada publicación dura exactamente 24 horas.", gL5: "• Después de ese tiempo, se elimina automáticamente.",
-        gL6: "• Esto asegura que solo veas ofertas actuales y disponibles.", gL7: "• Vuelve cada día para no perder nuevas oportunidades.",
-        gR3: "📝 CÓMO PUBLICAR CORRECTAMENTE", gD3: "Sigue este formato para que tu publicación sea efectiva:",
-        gL8: "• Sé claro y específico en tu descripción.", gL9: "• Formato recomendado: 'Vendo: [producto] | Valor: [valor]'.",
-        gL10: "• Incluye siempre tu @usuario de Telegram.", gL11: "• En Bots/Canales/Grupos sí puedes incluir enlaces oficiales de Telegram.",
-        gR4: "🛡️ CONSEJOS ADICIONALES", gD4: "Para una mejor experiencia:",
-        gL12: "• Verifica siempre con quién hablas.", gL13: "• No compartas información personal sensible.",
-        gL14: "• Reporta cualquier comportamiento sospecho.", gL15: "• Las revisiones indican el interés en tu publicación.",
-        warnTitle: "⛔ ¡ENLACE NO PERMITIDO!",
-        warnDesc: "En las categorías VENTAS e INTERCAMBIOS no se permiten enlaces de ningún tipo. Por seguridad solo puedes escribir texto y tu @usuario de Telegram.",
-        suggestText: "Parece que intentas compartir un enlace de Telegram. La categoría correcta sería:",
-        btnGo: "IR A CATEGORÍA CORRECTA", btnCancelWarn: "CANCELAR",
-        defaultSuggest: "Si deseas compartir un enlace, por favor usa las categorías Bots, Canales o Grupos.",
-        earnTitle: "MIS PREMIOS",
-        earnBalanceLabel: "Acumulado actual",
-        earnTotalLabel: "Total recibido",
-        earnViewsLabel: "Revisiones únicas hoy",
-        earnMinInfo: "Mínimo para envío: $1.00 USDT (BEP20) | Tarifa: $0.15",
-        earnWithdrawText: "SOLICITAR ENVÍO (Mínimo $1.00)",
-        earnCloseText: "Cerrar",
-        earnProgressText: "para llegar a $1.00 USDT",
-        errMinWithdraw: "❌ Necesitas mínimo $1.00 USDT para procesar",
-        errWalletEmpty: "❌ Ingresa tu dirección USDT BEP20",
-        withdrawSuccess: "✅ Solicitud enviada. Se procesará pronto.",
-        refTitle: "Tu Enlace de Invitación (Comisión 10%)"
-    },
-    en: {
-        rulesBtn: "RULES", earnBtn: "Rewards", sales: "Sales", trades: "Exchanges", bots: "Bots", channels: "Channels", groups: "Groups",
-        newPost: "NEW POST", confirm: "PUBLISH", cancel: "Cancel",
-        phDesc: "Write what you want to sell (e.g., 'Selling premium account'). Users will contact you on Telegram.", 
-        phUser: "@YourUsername", phTitle: "Project Name", phLink: "t.me/your_link",
-        tradeBtn: "💬 CHAT", viewBtn: "🔗 OPEN",
-        errLink: "❌ Links not allowed in Sales or Exchanges",
-        errLinkRequired: "❌ Bots/Channels/Groups require a valid link",
-        errInvalidLink: "❌ Link must be from Telegram (t.me/)",
-        errBotLink: "❌ In BOTS only bot links are allowed (t.me/bot)",
-        errChannelLink: "❌ In CHANNELS only channel links are allowed (t.me/channel)",
-        errGroupLink: "❌ In GRUPOS only group links are allowed (t.me/group)",
-        errDuplicate: "❌ This post already exists",
-        success: "✅ Published! Active for 24h",
-        errMaxLength: "❌ Maximum 200 characters",
-        errMaxTitle: "❌ Maximum 100 characters",
-        gH: "📖 USER GUIDE",
-        gIntro: "Welcome to X Exchange! A community to sell, exchange, share and connect safely.",
-        gR1: "🔒 SECURITY RULES", gD1: "To protect all users, we have clear rules you must follow:",
-        gL1: "• In SALES and EXCHANGES: Links of any type are NOT allowed (http, https, www, t.me).",
-        gL2: "• You can only write descriptive text and your Telegram username (@user).",
-        gL3: "• This prevents issues and ensures conversations stay within Telegram.",
-        gR2: "⏰ AUTO-CLEAN SYSTEM", gD2: "We keep the community fresh and active with automatic cleaning:",
-        gL4: "• Each post lasts exactly 24 hours.", gL5: "• After that time, it's automatically deleted.",
-        gL6: "• This ensures you only see current and available offers.", gL7: "• Come back daily to not miss new opportunities.",
-        gR3: "📝 HOW TO POST CORRECTLY", gD3: "Follow this format for an effective post:",
-        gL8: "• Be clear and specific in your description.", gL9: "• Recommended format: 'Selling: [product] | Value: [value]'.",
-        gL10: "• Always include your Telegram @username.", gL11: "• In Bots/Channels/Groups you can include official Telegram links.",
-        gR4: "🛡️ ADDITIONAL TIPS", gD4: "For a better experience:",
-        gL12: "• Always verify who you're talking to.", gL13: "• Don't share sensitive personal information.",
-        gL14: "• Report any suspicious behavior.", gL15: "• Views indicate interest in your post.",
-        warnTitle: "⛔ LINK NOT ALLOWED!",
-        warnDesc: "Links are not allowed in SALES and EXCHANGES categories. For security, you can only write text and your Telegram @username.",
-        suggestText: "It looks like you're trying to share a Telegram link. The correct category would be:",
-        btnGo: "GO TO CORRECT CATEGORY", btnCancelWarn: "CANCEL",
-        defaultSuggest: "If you want to share a link, please use Bots, Channels or Groups categories.",
-        earnTitle: "MY REWARDS",
-        earnBalanceLabel: "Current balance",
-        earnTotalLabel: "Total received",
-        earnViewsLabel: "Unique reviews today",
-        earnMinInfo: "Min transfer: $1.00 USDT (BEP20) | Fee: $0.15",
-        earnWithdrawText: "REQUEST TRANSFER (Min $1.00)",
-        earnCloseText: "Close",
-        earnProgressText: "to reach $1.00 USDT",
-        errMinWithdraw: "❌ You need minimum $1.00 USDT to proceed",
-        errWalletEmpty: "❌ Enter your USDT BEP20 address",
-        withdrawSuccess: "✅ Request sent. Processing soon.",
-        refTitle: "Your Invitation Link (10% Commission)"
-    }
-};
-
-function updateAllUITexts() {
-    const d = dictionary[lang];
-    document.getElementById('t-rules-btn').innerText = d.rulesBtn;
-    document.getElementById('t-earn-btn').innerText = d.earnBtn;
-    document.getElementById('t-ve').innerText = d.sales;
-    document.getElementById('t-ex').innerText = d.trades;
-    document.getElementById('t-bo').innerText = d.bots;
-    document.getElementById('t-ca').innerText = d.channels;
-    document.getElementById('t-gr').innerText = d.groups;
-    document.getElementById('p-title-ui').innerHTML = `<span>✨</span> ${d.newPost}`;
-    document.getElementById('p-confirm-ui').innerHTML = `<span>📤</span> ${d.confirm}`;
-    document.getElementById('p-cancel-ui').innerHTML = `<span>❌</span> ${d.cancel}`;
-    document.getElementById('earn-title').innerHTML = d.earnTitle;
-    document.getElementById('earn-balance-label').innerText = d.earnBalanceLabel;
-    document.getElementById('earn-total-label').innerText = d.earnTotalLabel;
-    document.getElementById('earn-views-label').innerText = d.earnViewsLabel;
-    document.getElementById('earn-min-info').innerText = d.earnMinInfo;
-    document.getElementById('earn-withdraw-text').innerText = d.earnWithdrawText;
-    document.getElementById('earn-close-text').innerText = d.earnCloseText;
-    document.getElementById('ref-ui-title').innerText = d.refTitle;
-    updateWarningModalTexts();
-}
-
-function init(l) {
-    lang = l;
-    document.getElementById('lang-overlay').style.display = 'none';
-    document.getElementById('app-container').style.display = 'flex';
-    updateAllUITexts();
-    comprobarSeguridadDispositivo();
-    
-    // Inyecta dinámicamente el enlace estructurado con el ID único del usuario actual
-    document.getElementById('ref-link-input').value = `https://t.me/ReferralsXchangeBot?startapp=${USER_ID}`;
-    
-    syncData();
-    showAd();
-}
-
-function copyRefLink() {
-    const copyText = document.getElementById('ref-link-input');
-    copyText.select();
-    copyText.setSelectionRange(0, 99999);
-    try {
-        navigator.clipboard.writeText(copyText.value);
-        msg(lang === 'es' ? "✅ ¡Enlace copiado al portapapeles!" : "✅ Link copied to clipboard!");
-    } catch (err) {
-        msg(lang === 'es' ? "❌ Error al copiar" : "❌ Error copying link");
-    }
-}
-
-function showLangOverlay() {
-    document.getElementById('lang-overlay').style.display = 'flex';
-}
-
-function updateWarningModalTexts() {
-    const d = dictionary[lang];
-    document.getElementById('warn-title').innerHTML = d.warnTitle;
-    document.getElementById('warn-desc').innerText = d.warnDesc;
-    document.getElementById('btn-go-text').innerText = d.btnGo;
-    document.getElementById('btn-cancel-text').innerText = d.btnCancelWarn;
-}
-
-function msg(text) {
-    const t = document.getElementById('toast-alert');
-    t.innerText = text; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 3000);
-}
-
-function syncData() {
-    db.ref('posts').on('value', snap => {
-        let items = []; let counts = { VENTAS: 0, INTERCAMBIO: 0, BOTS: 0, CANALES: 0, GRUPOS: 0 };
-        const now = Date.now();
-        snap.forEach(child => {
-            const p = child.val();
-            if (now - p.time > 86400000) { db.ref('posts').child(child.key).remove(); return; }
-            counts[p.category]++;
-            if(p.category === activeTab) items.push({ id: child.key, ...p });
-        });
-        const keys = { VENTAS: 'n-VE', INTERCAMBIO: 'n-EX', BOTS: 'n-BO', CANALES: 'n-CA', GRUPOS: 'n-GR' };
-        for(let k in keys) { const el = document.getElementById(keys[k]); if(el) el.innerText = counts[k]; }
-        render(items.sort((a,b) => b.time - a.time));
-    });
-}
-
-function render(list) {
-    let html = "";
-    list.forEach(p => {
-        const isTrade = p.category === 'INTERCAMBIO' || p.category === 'VENTAS'; const d = dictionary[lang];
-        
-        const viewKey = DEVICE_ID + '_' + p.id;
-        const todayKey = new Date().toDateString();
-        const yaVisto = localStorage.getItem('v_' + viewKey) === todayKey;
-        
-        const badgeStatus = yaVisto 
-            ? `<span class="status-badge-corner status-visto">🟢 Revisado</span>`
-            : `<span class="status-badge-corner status-novisto">🔴 Nuevo</span>`;
-
-        html += `<div class="card-pro">
-                    ${badgeStatus}
-                    <div class="card-content" onmousedown="startDelete('${p.id}')" onmouseup="stopDelete()" ontouchstart="startDelete('${p.id}')" ontouchend="stopDelete()">${isTrade ? p.desc : p.title}</div>
-                    <button class="action-btn" onclick="go('${p.id}', '${isTrade}', '${p.link||''}', '${p.user||''}')"><span>${isTrade ? d.tradeBtn : d.viewBtn}</span></button>
-                    <div class="card-meta"><span>👁️ ${p.views || 0} rev.</span><span>⏰ 24h</span></div>
-                 </div>`;
-    });
-    document.getElementById('feed-wall').innerHTML = html || `<p style="text-align:center; padding:50px; color:var(--text-muted);"><span>✨</span> No hay publicaciones aún</p>`;
-}
-
-function tab(name, btn) {
-    document.querySelectorAll('.cat-item').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active'); activeTab = name; syncData();
-}
-
-function showPost() {
-    const fields = document.getElementById('post-fields'); const d = dictionary[lang]; const counterDiv = document.getElementById('char-count-display');
-    if(activeTab === 'VENTAS' || activeTab === 'INTERCAMBIO') {
-        fields.innerHTML = `<textarea id="in-desc" placeholder="${d.phDesc}" maxlength="${MAX_DESC_LENGTH}"></textarea><input type="text" id="in-user" placeholder="${d.phUser}">`;
-        counterDiv.style.display = 'block';
-        document.getElementById('in-desc').addEventListener('input', function() { counterDiv.innerText = `${this.value.length}/${MAX_DESC_LENGTH} caracteres`; });
-        counterDiv.innerText = `0/${MAX_DESC_LENGTH} caracteres`;
-    } else {
-        fields.innerHTML = `<input type="text" id="in-title" placeholder="${d.phTitle}" maxlength="${MAX_TITLE_LENGTH}"><input type="text" id="in-link" placeholder="${d.phLink}">`;
-        counterDiv.style.display = 'block';
-        document.getElementById('in-title').addEventListener('input', function() { counterDiv.innerText = `${this.value.length}/${MAX_TITLE_LENGTH} caracteres`; });
-        counterDiv.innerText = `0/${MAX_TITLE_LENGTH} caracteres`;
-    }
-    document.getElementById('m-post').style.display = 'flex';
-}
-
-async function checkDuplicate(data) {
-    const snapshot = await db.ref('posts').once('value'); let isDuplicate = false;
-    snapshot.forEach(child => {
-        const p = child.val(); const now = Date.now();
-        if (now - p.time > 86400000) return;
-        if (data.category === 'VENTAS' || data.category === 'INTERCAMBIO') { if ((p.category === 'VENTAS' || p.category === 'INTERCAMBIO') && p.desc === data.desc && p.user === data.user) isDuplicate = true; }
-        else { if (p.category === data.category && p.link === data.link) isDuplicate = true; }
-    });
-    return isDuplicate;
-}
-
-function isValidLinkForCategory(link, category) {
-    const lower = link.toLowerCase();
-    if (category === 'BOTS') { return lower.includes('/bot') || lower.includes('_bot') || lower.includes('bot?'); }
-    if (category === 'CANALES') { return !lower.includes('/bot') && !lower.includes('_bot') && !lower.includes('joinchat'); }
-    if (category === 'GRUPOS') { return lower.includes('joinchat') || lower.includes('/+'); }
-    return true;
-}
-
-function showLinkBlockWarning(descText) {
-    const d = dictionary[lang]; updateWarningModalTexts();
-    const linkMatch = descText.match(/(?:t\.me|telegram\.me)\/([^\s]+)/i);
-    let detectedCat = 'BOTS';
-    if (linkMatch) {
-        const path = linkMatch[1];
-        detectedCat = path.toLowerCase().includes('bot') ? 'BOTS' : (path.toLowerCase().includes('channel') || path.toLowerCase().includes('canal')) ? 'CANALES' : (path.toLowerCase().includes('group') || path.toLowerCase().includes('grupo') || path.toLowerCase().includes('joinchat')) ? 'GRUPOS' : 'BOTS';
-    }
-    suggestedCategory = detectedCat;
-    const catNames = { 'BOTS': 'Bots', 'CANALES': lang === 'es' ? 'Canales' : 'Channels', 'GRUPOS': lang === 'es' ? 'Grupos' : 'Groups' };
-    document.getElementById('suggest-cat-name').innerText = catNames[detectedCat];
-    if (!linkMatch && !/(t\.me|telegram)/i.test(descText)) {
-        document.getElementById('suggest-text').innerText = d.defaultSuggest;
-        document.getElementById('suggest-box').style.display = 'none';
-        document.getElementById('btn-go-category').style.display = 'none';
-        document.getElementById('btn-close-warning').innerHTML = `<span>✅</span> ${lang === 'es' ? 'ENTENDIDO' : 'GOT IT'}`;
-    } else {
-        document.getElementById('suggest-text').innerText = d.suggestText;
-        document.getElementById('suggest-box').style.display = 'block';
-        document.getElementById('btn-go-category').style.display = 'flex';
-        document.getElementById('btn-close-warning').innerHTML = `<span>↩️</span> ${d.btnCancelWarn}`;
-    }
-    document.getElementById('m-link-warning').style.display = 'flex';
-}
-
-function goToSuggestedCategory() {
-    const catIdMap = { 'BOTS': 'b-BO', 'CANALES': 'b-CA', 'GRUPOS': 'b-GR' };
-    const btnId = catIdMap[suggestedCategory];
-    if (btnId) { const btn = document.getElementById(btnId); if (btn) tab(suggestedCategory, btn); }
-    hideModal('m-link-warning'); setTimeout(() => showPost(), 100);
-}
-
-async function sendPost() {
-    let data = { category: activeTab, time: Date.now(), views: 0, authorId: USER_ID }; const d = dictionary[lang];
-    
-    if(activeTab === 'VENTAS' || activeTab === 'INTERCAMBIO') {
-        const descEl = document.getElementById('in-desc'); const userEl = document.getElementById('in-user');
-        if (!descEl || !userEl) return;
-        data.desc = descEl.value.trim(); data.user = userEl.value.trim();
-        if(!data.desc || !data.user) return;
-        if(data.desc.length > MAX_DESC_LENGTH) { msg(d.errMaxLength); return; }
-        if (/(http|https|www|t\.me|telegram)/i.test(data.desc)) { showLinkBlockWarning(data.desc); return; }
-    } else {
-        const titleEl = document.getElementById('in-title'); const linkEl = document.getElementById('in-link');
-        if (!titleEl || !linkEl) return;
-        data.title = titleEl.value.trim(); data.link = linkEl.value.trim();
-        if(!data.title || !data.link) return;
-        if(data.title.length > MAX_TITLE_LENGTH) { msg(d.errMaxTitle); return; }
-        if (!data.link.includes('t.me/')) { msg(d.errInvalidLink); return; }
-        if (!isValidLinkForCategory(data.link, activeTab)) {
-            if (activeTab === 'BOTS') msg(d.errBotLink);
-            else if (activeTab === 'CANALES') msg(d.errChannelLink);
-            else if (activeTab === 'GRUPOS') msg(d.errGroupLink);
-            return;
-        }
-    }
-    
-    const isDuplicate = await checkDuplicate(data);
-    if (isDuplicate) { msg(d.errDuplicate); return; }
-    
-    db.ref('posts').push(data);
-    msg(d.success);
-    hideModal('m-post');
-}
-
-function showAd() {
-    if (typeof show_10747271 === 'function') {
-        show_10747271().catch(function() {});
-    }
-}
-
-function go(id, isTrade, link, user) {
-    const postRef = db.ref('posts').child(id);
-    const viewKey = DEVICE_ID + '_' + id;
-    const todayKey = new Date().toDateString();
-    const storedView = localStorage.getItem('v_' + viewKey);
-    
-    if (storedView !== todayKey) {
-        localStorage.setItem('v_' + viewKey, todayKey);
-        
-        postRef.child('views').transaction(v => (v || 0) + 1);
-        
-        postRef.once('value', snapshot => {
-            const post = snapshot.val();
-            if (post) {
-                if (post.authorId !== USER_ID) {
-                    addEarning(USER_ID, VIEW_REWARD); 
-                }
-                if (post.authorId !== USER_ID) {
-                    addEarning(post.authorId, VIEW_REWARD);
-                }
+                btn.classList.remove('completed');
+                btn.innerText = 'Hacer';
             }
         });
-        
-        setTimeout(() => syncData(), 400);
     }
-    
-    const newCount = incrementClickCount();
-    if (newCount === 0) { showAd(); }
-    abrirEnlace(id, isTrade, link, user);
-}
 
-function abrirEnlace(id, isTrade, link, user) {
-    if(isTrade === 'true') {
-        const postRef = db.ref('posts').child(id);
-        postRef.once('value', snapshot => {
-            const post = snapshot.val(); const desc = post.desc || '';
-            const mensaje = `Vengo de tu publicación en @ReferralsXchangeBot:\n━━━━━━━━━━━━━━\n🤝 Oferta: ${desc}\n\n🚀 Enviado vía: X Exchange PRO App`;
-            const telegramLink = `https://t.me/${user.replace('@','')}?text=${encodeURIComponent(mensaje)}`;
-            window.open(telegramLink, '_blank');
-        });
-    } else {
-        let finalLink = link.includes('://') ? link : 'https://' + link;
-        window.open(finalLink, '_blank');
-    }
-}
-
-function addEarning(targetUserId, amount) {
-    const earnRef = db.ref('earnings').child(targetUserId);
-    earnRef.transaction(data => {
-        if (!data) {
-            data = { balance: 0, totalEarned: 0, viewsToday: 0, lastViewDate: new Date().toDateString() };
-        }
-        
-        const todayStr = new Date().toDateString();
-        if (data.lastViewDate !== todayStr) {
-            data.viewsToday = 0;
-            data.lastViewDate = todayStr;
-        }
-        
-        data.balance = (data.balance || 0) + amount;
-        data.totalEarned = (data.totalEarned || 0) + amount;
-        
-        if (targetUserId === USER_ID) {
-            data.viewsToday = (data.viewsToday || 0) + 1;
-        }
-        
-        if (data.invitado_por) {
-            const comisionEquipo = amount * COMISION_PORCENTAJE;
-            db.ref('earnings').child(data.invitado_por).transaction(inviterData => {
-                if (!inviterData) {
-                    inviterData = { balance: 0, totalEarned: 0, viewsToday: 0, lastViewDate: new Date().toDateString() };
-                }
-                inviterData.balance = (inviterData.balance || 0) + comisionEquipo;
-                inviterData.totalEarned = (inviterData.totalEarned || 0) + comisionEquipo;
-                inviterData.ganadoPorComisionesTotales = (inviterData.ganadoPorComisionesTotales || 0) + comisionEquipo;
-                return inviterData;
-            });
-        }
-        
-        return data;
-    });
-}
-
-function showEarnPanel() {
-    const d = dictionary[lang];
-    
-    document.getElementById('profile-user-id').innerText = USER_ID;
-    document.getElementById('profile-device-id').innerText = DEVICE_ID;
-
-    const earnRef = db.ref('earnings').child(USER_ID);
-    earnRef.once('value', snapshot => {
-        const data = snapshot.val() || { balance: 0, totalEarned: 0, viewsToday: 0 };
-        const balance = data.balance || 0;
-        const totalEarned = data.totalEarned || 0;
-        const viewsToday = data.viewsToday || 0;
-        
-        document.getElementById('earn-balance').innerText = '$' + balance.toFixed(4);
-        document.getElementById('earn-total').innerText = '$' + totalEarned.toFixed(4);
-        document.getElementById('earn-views').innerText = viewsToday;
-        
-        const progress = Math.min((balance / MIN_WITHDRAW) * 100, 100);
-        document.getElementById('earn-bar').style.width = progress + '%';
-        document.getElementById('earn-progress-text').innerText = progress.toFixed(1) + '% ' + d.earnProgressText;
-        
-        const withdrawBtn = document.getElementById('earn-withdraw-btn');
-        if (balance >= MIN_WITHDRAW) {
-            withdrawBtn.disabled = false;
-            withdrawBtn.style.opacity = '1';
-        } else {
-            withdrawBtn.disabled = true;
-            withdrawBtn.style.opacity = '0.5';
-        }
-    });
-    
-    document.getElementById('m-earn').style.display = 'flex';
-}
-
-function requestWithdraw() {
-    const d = dictionary[lang];
-    const wallet = document.getElementById('earn-wallet').value.trim();
-    if (!wallet) { msg(d.errWalletEmpty); return; }
-    
-    const earnRef = db.ref('earnings').child(USER_ID);
-    earnRef.once('value', snapshot => {
-        const data = snapshot.val() || { balance: 0 };
-        const balance = data.balance || 0;
-        if (balance < MIN_WITHDRAW) { msg(d.errMinWithdraw); return; }
-        
-        const withdrawAmount = balance - WITHDRAW_FEE;
-        const finalAmount = withdrawAmount > 0 ? withdrawAmount : 0;
-        
-        db.ref('withdrawals').push({
-            userId: USER_ID, deviceId: DEVICE_ID, wallet: wallet, amount: finalAmount,
-            fee: WITHDRAW_FEE, totalBeforeFee: balance, time: Date.now(), status: 'pending'
-        });
-        
-        earnRef.update({ balance: 0 });
-        msg(d.withdrawSuccess);
-        document.getElementById('earn-wallet').value = '';
-        showEarnPanel();
-    });
-}
-
-function showAdminPanel() {
-    const adminContent = document.getElementById('admin-content');
-    adminContent.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Cargando solicitudes...</p>';
-    
-    db.ref('withdrawals').orderByChild('time').on('value', snapshot => {
-        let html = ''; let hasPending = false; const withdrawals = [];
-        snapshot.forEach(child => { withdrawals.push({ id: child.key, ...child.val() }); });
-        withdrawals.reverse();
-        
-        withdrawals.forEach(w => {
-            const date = new Date(w.time).toLocaleString();
-            const statusColor = w.status === 'pending' ? '#FF9500' : w.status === 'paid' ? '#34C759' : '#FF3B30';
-            const statusText = w.status === 'pending' ? 'PENDIENTE' : w.status === 'paid' ? 'PROCESADO' : 'RECHAZADO';
-            if (w.status === 'pending') hasPending = true;
+    // ========== NAVEGACIÓN (todas con anuncio) ==========
+    const navBtns = document.querySelectorAll('.nav-btn');
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            showAd(`📱 Navegando a: ${btn.innerText.trim()} - GVS Store Bot`);
+            navBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
             
-            html += `<div class="admin-card">
-                <h4>💸 Solicitud #${w.id.substr(-6)}</h4>
-                <p><strong>Usuario:</strong> ${w.userId}</p>
-                <p><strong>Wallet:</strong> ${w.wallet}</p>
-                <p><strong>Incentivo:</strong> $${w.amount.toFixed(4)} USDT</p>
-                <p><strong>Tarifa:</strong> $${w.fee.toFixed(2)}</p>
-                <p><strong>Total antes:</strong> $${w.totalBeforeFee.toFixed(4)}</p>
-                <p><strong>Fecha:</strong> ${date}</p>
-                <p><strong>Estado:</strong> <span class="admin-badge" style="background:${statusColor};">${statusText}</span></p>`;
-            
-            if (w.status === 'pending') {
-                html += `<div style="display:flex; gap:8px; margin-top:12px;">
-                    <button class="action-btn" style="background:#34C759; flex:1;" onclick="markWithdrawal('${w.id}', 'paid')">✅ PROCESAR</button>
-                    <button class="action-btn warning-btn" style="flex:1;" onclick="markWithdrawal('${w.id}', 'rejected')">❌ RECHAZAR</button>
-                </div>`;
+            // Scroll suave a secciones según navegación
+            if(btn.innerText.includes('Referidos')) {
+                document.querySelector('.referral-panel').scrollIntoView({ behavior: 'smooth' });
+            } else if(btn.innerText.includes('Tareas')) {
+                document.querySelector('.tasks-section').scrollIntoView({ behavior: 'smooth' });
+            } else if(btn.innerText.includes('Hogar')) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
-            html += `</div>`;
         });
-        
-        if (!html) { html = '<p style="text-align:center; color:var(--text-muted); padding:40px;">No hay solicitudes aún.</p>'; }
-        adminContent.innerHTML = html;
     });
-    document.getElementById('m-admin').style.display = 'flex';
-}
 
-function markWithdrawal(id, status) {
-    if (confirm('¿Confirmar acción en esta solicitud?')) {
-        db.ref('withdrawals').child(id).update({ status: status, processedAt: Date.now() });
-        msg(status === 'paid' ? '✅ Marcado como PROCESADO' : '❌ Marcado como RECHAZADO');
+    // ID de usuario aleatorio pero fijo
+    const userIdSpan = document.getElementById('userId');
+    let userId = localStorage.getItem('gvs_user_id');
+    if(!userId) {
+        userId = Math.floor(Math.random() * 900000) + 100000;
+        localStorage.setItem('gvs_user_id', userId);
     }
-}
+    userIdSpan.innerText = userId;
+    document.getElementById('refLink').innerHTML = `https://t.me/gvsstoreBot?start=${userId}`;
 
-function showGuide() {
-    const d = dictionary[lang];
-    document.getElementById('g-title').innerHTML = `<span>📚</span> ${d.gH}`;
-    document.getElementById('g-content').innerHTML = `<div class="rule-step"><p style="font-size:13px; margin-bottom:16px;">${d.gIntro}</p></div><div class="rule-step"><h4>${d.gR1}</h4><p>${d.gD1}</p><ul><li>${d.gL1}</li><li>${d.gL2}</li><li>${d.gL3}</li></ul></div><div class="rule-step"><h4>${d.gR2}</h4><p>${d.gD2}</p><ul><li>${d.gL4}</li><li>${d.gL5}</li><li>${d.gL6}</li><li>${d.gL7}</li></ul></div><div class="rule-step"><h4>${d.gR3}</h4><p>${d.gD3}</p><ul><li>${d.gL8}</li><li>${d.gL9}</li><li>${d.gL10}</li><li>${d.gL11}</li></ul></div><div class="rule-step"><h4>${d.gR4}</h4><p>${d.gD4}</p><ul><li>${d.gL12}</li><li>${d.gL13}</li><li>${d.gL14}</li><li>${d.gL15}</li></ul></div>`;
-    document.getElementById('m-guide').style.display = 'flex';
-}
-
-function startDelete(id) { 
-    pressTimer = setTimeout(() => { 
-        const key = prompt("🔐 CLAVE DE ADMINISTRADOR:");
-        if (key === ADMIN_KEY) { 
-            if (confirm("¿Eliminar este post?\n\n✅ Aceptar = Eliminar post y abrir panel\n❌ Cancelar = Solo abrir panel sin eliminar")) {
-                db.ref('posts').child(id).remove(); msg("✅ Post eliminado. Abriendo panel...");
-            } else { msg("🔍 Abriendo panel..."); }
-            setTimeout(() => showAdminPanel(), 500);
-        } else if (key !== null && key !== "") { msg("❌ Clave incorrecta"); }
-    }, 3000); 
-}
-function stopDelete() { clearTimeout(pressTimer); }
-function hideModal(id) { document.getElementById(id).style.display = 'none'; }
-
-init('es');
+    // Cargar datos al iniciar
+    loadData();
+    
+    // Anuncio de bienvenida
+    setTimeout(() => {
+        showAd('🎁 ¡Bienvenido a GVS Store Bot! Completa tareas y gana dinero real.');
+    }, 1000);
 </script>
 </body>
 </html>
