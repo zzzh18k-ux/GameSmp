@@ -2,83 +2,579 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GVS Store | Professional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>GVS Store | Premium Tasks</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- El SDK se mantiene para la carga de anuncios -->
     <script src='//libtl.com/sdk.js' data-zone='10747271' data-sdk='show_10747271'></script>
     <style>
-        /* (Se mantienen estilos base para estética profesional) */
-        body { background: #0D1117; color: #fff; font-family: sans-serif; padding-bottom: 100px; }
-        .app { max-width: 480px; margin: 0 auto; }
-        .btn-withdraw { 
-            background: #FFD966; color: #000; padding: 15px; width: 100%; 
-            border: none; border-radius: 20px; font-weight: bold; margin-top: 20px; cursor: pointer;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .task-reward { color: #10B981; font-weight: 700; }
-        /* ... resto de estilos ... */
+
+        body {
+            background: #0A0F1A;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 16px;
+            padding-bottom: 90px;
+            min-height: 100vh;
+        }
+
+        .app {
+            max-width: 480px;
+            margin: 0 auto;
+            background: rgba(15, 20, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 200, 100, 0.25);
+        }
+
+        /* Header Premium */
+        .header {
+            background: linear-gradient(135deg, #0A0E18 0%, #101624 100%);
+            padding: 28px 24px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 200, 100, 0.3);
+            position: relative;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FFD966, #FFA500, #FFD966);
+        }
+        .logo {
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #FFE6A3, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .logo-sub {
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: #6B7280;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+        .user-badge {
+            background: rgba(30, 36, 62, 0.9);
+            backdrop-filter: blur(10px);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 20px;
+            border-radius: 60px;
+            margin-top: 16px;
+            font-size: 12px;
+            border: 1px solid rgba(255, 200, 100, 0.3);
+        }
+        .user-badge i { color: #FFD966; }
+        .user-badge span { color: #FFD966; font-weight: 700; }
+
+        /* Balance Cards */
+        .balance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            padding: 24px 20px;
+        }
+        .balance-card {
+            background: linear-gradient(145deg, #111827, #0D1119);
+            border-radius: 28px;
+            padding: 20px 16px;
+            border: 1px solid rgba(255, 200, 100, 0.12);
+            transition: all 0.2s;
+        }
+        .balance-icon { font-size: 28px; margin-bottom: 10px; }
+        .balance-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #9CA3AF;
+            font-weight: 500;
+        }
+        .balance-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #FFD966;
+            margin-top: 8px;
+        }
+
+        /* Sección de Tareas (sin inversión, solo tareas) */
+        .tasks-container {
+            padding: 0 20px 20px 20px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 18px;
+        }
+        .section-header h3 {
+            color: #F3F4F6;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .task-item {
+            background: #131A2C;
+            border-radius: 24px;
+            padding: 16px 18px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #1F2937;
+            transition: 0.2s;
+        }
+        .task-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+        }
+        .task-info p {
+            font-size: 11px;
+            color: #9CA3AF;
+            margin-top: 4px;
+        }
+        .task-reward {
+            color: #FFD966;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .btn-task {
+            background: #2D3748;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            color: white;
+            transition: 0.1s;
+            min-width: 90px;
+        }
+        .btn-task.active-task { background: #FFA500; color: #0A0E18; }
+        .btn-task.disabled-task { background: #374151; opacity: 0.5; cursor: not-allowed; }
+        .btn-task.completed-task { background: #10B981; cursor: default; opacity: 0.7; }
+
+        /* Panel de Referidos Premium */
+        .referral-panel {
+            background: linear-gradient(145deg, #0E1324, #0A0E1A);
+            margin: 0 20px 20px 20px;
+            border-radius: 32px;
+            padding: 20px;
+            border: 1px solid #29314E;
+        }
+        .stats-grid {
+            display: flex;
+            gap: 16px;
+            margin: 18px 0;
+        }
+        .stat-box {
+            flex: 1;
+            background: #0B0F1A;
+            border-radius: 20px;
+            padding: 14px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #8A8FAE;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: 800;
+            color: #FFD966;
+            margin-top: 6px;
+        }
+        .ref-link-container {
+            display: flex;
+            gap: 10px;
+            background: #070A14;
+            border-radius: 60px;
+            padding: 6px 12px;
+            margin: 12px 0;
+            align-items: center;
+        }
+        .ref-link-text {
+            flex: 1;
+            font-size: 11px;
+            font-family: monospace;
+            color: #60A5FA;
+            word-break: break-all;
+        }
+        .btn-copy {
+            background: #2D3748;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-copy:active { transform: scale(0.96); }
+
+        /* Botón de retiro BLOQUEADO (solo decorativo) */
+        .withdraw-blocked {
+            background: linear-gradient(145deg, #1F1A2E, #16122A);
+            margin: 0 20px 20px 20px;
+            border-radius: 28px;
+            padding: 18px;
+            text-align: center;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .withdraw-blocked p {
+            color: #F87171;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .btn-withdraw-blocked {
+            background: #2D1F2A;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #9CA3AF;
+            margin-top: 12px;
+            cursor: not-allowed;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 23, 0.98);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 20px 24px;
+            border-top: 1px solid #1F2937;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        .nav-item {
+            text-align: center;
+            font-size: 12px;
+            color: #6B7280;
+            cursor: pointer;
+            transition: 0.1s;
+            padding: 6px;
+            flex: 1;
+        }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
+        .nav-item.active { color: #FFA500; }
+        .nav-item:active { transform: scale(0.95); }
+
+        /* Toast premium */
+        .toast-premium {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            right: 20px;
+            background: #1E293B;
+            border-left: 4px solid #FFA500;
+            padding: 14px 18px;
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+            max-width: 440px;
+            margin: 0 auto;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
 <div class="app">
-    <!-- Header -->
     <div class="header">
         <div class="logo">GVS STORE</div>
-    </div>
-
-    <!-- Balance -->
-    <div class="balance-card">
-        <div class="balance-label">SALDO</div>
-        <div class="balance-value" id="balanceUSD">$0.00</div>
-        <!-- Botón de retiro bloqueado -->
-        <button class="btn-withdraw" onclick="intentarRetiro()">RETIRAR FONDOS</button>
-    </div>
-
-    <!-- Tareas ajustadas a 0.04$ -->
-    <div class="tasks-container">
-        <div class="task-item">
-            <h4>Tarea Diaria</h4>
-            <div class="task-reward" id="rewardValue">+$0.04</div>
-            <button class="btn-task" onclick="completarTarea()">Completar</button>
+        <div class="logo-sub">PREMIUM EARNINGS • TASKS</div>
+        <div class="user-badge">
+            <i class="fas fa-id-card"></i> ID: <span id="userId">870215</span>
+            <i class="fas fa-shield-alt"></i> VERIFIED
         </div>
     </div>
 
-    <!-- Referidos ajustados a 0.01$ -->
+    <!-- Balance en USD -->
+    <div class="balance-grid">
+        <div class="balance-card">
+            <div class="balance-icon">💰</div>
+            <div class="balance-label">SALDO DISPONIBLE</div>
+            <div class="balance-value" id="balanceUSD">$0.00</div>
+        </div>
+        <div class="balance-card">
+            <div class="balance-icon">⭐</div>
+            <div class="balance-label">GANADO TOTAL</div>
+            <div class="balance-value" id="totalEarned">$0.00</div>
+        </div>
+    </div>
+
+    <!-- LISTA DE TAREAS (Todas disponibles, SIN inversión ni recarga) -->
+    <div class="tasks-container">
+        <div class="section-header">
+            <h3><i class="fas fa-tasks"></i> Misiones Diarias</h3>
+            <span style="font-size: 10px; background: #2D2F42; padding: 4px 10px; border-radius: 30px;">🔓 GRATIS</span>
+        </div>
+        <div id="tasksList">
+            <!-- Tarea 1: $0.04 -->
+            <div class="task-item" data-task-id="1">
+                <div class="task-info">
+                    <h4>📺 Ver video exclusivo</h4>
+                    <p>Visualiza 30 segundos</p>
+                </div>
+                <div style="text-align: right;">
+                    <div class="task-reward">+$0.04</div>
+                    <button class="btn-task active-task" id="taskBtn1">Hacer tarea</button>
+                </div>
+            </div>
+            <!-- Tarea 2: $0.04 -->
+            <div class="task-item" data-task-id="2">
+                <div class="task-info">
+                    <h4>👍 Seguir canal VIP</h4>
+                    <p>Síguenos en Telegram</p>
+                </div>
+                <div style="text-align: right;">
+                    <div class="task-reward">+$0.04</div>
+                    <button class="btn-task active-task" id="taskBtn2">Hacer tarea</button>
+                </div>
+            </div>
+            <!-- Tarea 3: $0.04 -->
+            <div class="task-item" data-task-id="3">
+                <div class="task-info">
+                    <h4>📢 Unirse al grupo</h4>
+                    <p>Comunidad oficial</p>
+                </div>
+                <div style="text-align: right;">
+                    <div class="task-reward">+$0.04</div>
+                    <button class="btn-task active-task" id="taskBtn3">Hacer tarea</button>
+                </div>
+            </div>
+            <!-- Tarea 4: $0.04 -->
+            <div class="task-item" data-task-id="4">
+                <div class="task-info">
+                    <h4>🤖 Probar nuevo bot</h4>
+                    <p>Interactúa con el asistente</p>
+                </div>
+                <div style="text-align: right;">
+                    <div class="task-reward">+$0.04</div>
+                    <button class="btn-task active-task" id="taskBtn4">Hacer tarea</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel de Referidos y Comisiones (0.01$ por referido) -->
     <div class="referral-panel">
-        <h3>Referidos</h3>
-        <p>Recompensa por referido: <b>$0.01</b></p>
-        <button onclick="simularReferido()">Invitar Amigo</button>
+        <h3 style="color: white; font-size: 16px;"><i class="fas fa-users"></i> Red de Referidos</h3>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">REFERIDOS</div>
+                <div class="stat-number" id="refCountStat">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">COMISIONES</div>
+                <div class="stat-number" id="commissionStat">$0.00</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">COMISIÓN X REF</div>
+                <div class="stat-number">$0.01</div>
+            </div>
+        </div>
+        <div class="ref-link-container">
+            <span class="ref-link-text" id="refLinkDisplay">Cargando...</span>
+            <button class="btn-copy" id="copyRefBtn">Copiar</button>
+        </div>
+        <button class="btn-copy" id="addReferralBtn" style="width: 100%; margin-top: 8px; background: #FFA500; color: #0A0E18; font-weight: 700;">➕ Invitar Amigo (+$0.01)</button>
+        <p style="font-size: 10px; color: #6B7280; text-align: center; margin-top: 12px;">Cada referido te otorga $0.01 de comisión</p>
+    </div>
+
+    <!-- RETIRO BLOQUEADO (solo decorativo, no funcional) -->
+    <div class="withdraw-blocked">
+        <p><i class="fas fa-lock"></i> RETIROS TEMPORALMENTE BLOQUEADOS</p>
+        <button class="btn-withdraw-blocked" disabled>💰 RETIRAR FONDOS (PRÓXIMAMENTE)</button>
+        <p style="font-size: 10px; color: #6B7280; margin-top: 10px;">Mínimo $10.00 - Sistema en mantenimiento</p>
     </div>
 </div>
 
+<div class="bottom-nav">
+    <div class="nav-item active" data-nav="home"><i class="fas fa-home"></i><span>Inicio</span></div>
+    <div class="nav-item" data-nav="tasks"><i class="fas fa-clipboard-list"></i><span>Tareas</span></div>
+    <div class="nav-item" data-nav="refer"><i class="fas fa-user-friends"></i><span>Referidos</span></div>
+    <div class="nav-item" data-nav="profile"><i class="fas fa-user-circle"></i><span>Perfil</span></div>
+</div>
+
 <script>
-    let balance = 0.00;
-
-    // Tarea de 0.04$
-    function completarTarea() {
-        balance += 0.04;
-        actualizarUI();
-        alert("Tarea completada. Se han sumado $0.04 a tu saldo.");
+    // ==================== VARIABLES ÚNICAS POR CADA BOTÓN ====================
+    let userBalance = 0.00;
+    let totalEarnedMoney = 0.00;
+    let referralsCount = 0;
+    let totalCommissions = 0.00;
+    
+    // Estado de tareas (cada una con su variable única)
+    let task1Completed = false;
+    let task2Completed = false;
+    let task3Completed = false;
+    let task4Completed = false;
+    
+    // Recompensas: tarea = $0.04, referido = $0.01
+    const TASK_REWARD = 0.04;
+    const REF_REWARD = 0.01;
+    
+    // Cargar datos desde localStorage
+    function loadUserData() {
+        const saved = localStorage.getItem('gvs_premium_final');
+        if(saved) {
+            try {
+                const data = JSON.parse(saved);
+                userBalance = data.userBalance || 0;
+                totalEarnedMoney = data.totalEarnedMoney || 0;
+                referralsCount = data.referralsCount || 0;
+                totalCommissions = data.totalCommissions || 0;
+                task1Completed = data.task1Completed || false;
+                task2Completed = data.task2Completed || false;
+                task3Completed = data.task3Completed || false;
+                task4Completed = data.task4Completed || false;
+            } catch(e) {}
+        }
+        updateAllUI();
+        updateTasksUI();
     }
-
-    // Referido de 0.01$
-    function simularReferido() {
-        balance += 0.01;
-        actualizarUI();
-        alert("Referido registrado. Has ganado $0.01");
+    
+    function saveAllData() {
+        localStorage.setItem('gvs_premium_final', JSON.stringify({
+            userBalance, totalEarnedMoney, referralsCount, totalCommissions,
+            task1Completed, task2Completed, task3Completed, task4Completed
+        }));
     }
-
-    // Bloqueo de retiros
-    function intentarRetiro() {
-        // Mensaje disimulado de error de sistema
-        alert("Error de validación: El sistema de retiros se encuentra en mantenimiento técnico para actualizaciones de seguridad. Intente nuevamente en 48 horas.");
+    
+    // Mostrar anuncio profesional
+    function showPremiumAd(customMessage) {
+        if(typeof show_10747271 === 'function') {
+            try { show_10747271(); } catch(e) {}
+        }
+        const toast = document.createElement('div');
+        toast.className = 'toast-premium';
+        toast.innerHTML = `<i class="fas fa-bullhorn"></i> ${customMessage || '📢 Gana dinero completando tareas diarias'}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2800);
     }
-
-    function actualizarUI() {
-        document.getElementById('balanceUSD').innerText = "$" + balance.toFixed(2);
+    
+    function updateAllUI() {
+        document.getElementById('balanceUSD').innerText = `$${userBalance.toFixed(4)}`;
+        document.getElementById('totalEarned').innerText = `$${totalEarnedMoney.toFixed(4)}`;
+        document.getElementById('refCountStat').innerText = referralsCount;
+        document.getElementById('commissionStat').innerText = `$${totalCommissions.toFixed(4)}`;
     }
+    
+    function updateTasksUI() {
+        const btn1 = document.getElementById('taskBtn1');
+        if(task1Completed) { btn1.className = 'btn-task completed-task'; btn1.innerText = '✅ Completada'; btn1.disabled = true; }
+        else { btn1.className = 'btn-task active-task'; btn1.innerText = 'Hacer tarea'; btn1.disabled = false; }
+        
+        const btn2 = document.getElementById('taskBtn2');
+        if(task2Completed) { btn2.className = 'btn-task completed-task'; btn2.innerText = '✅ Completada'; btn2.disabled = true; }
+        else { btn2.className = 'btn-task active-task'; btn2.innerText = 'Hacer tarea'; btn2.disabled = false; }
+        
+        const btn3 = document.getElementById('taskBtn3');
+        if(task3Completed) { btn3.className = 'btn-task completed-task'; btn3.innerText = '✅ Completada'; btn3.disabled = true; }
+        else { btn3.className = 'btn-task active-task'; btn3.innerText = 'Hacer tarea'; btn3.disabled = false; }
+        
+        const btn4 = document.getElementById('taskBtn4');
+        if(task4Completed) { btn4.className = 'btn-task completed-task'; btn4.innerText = '✅ Completada'; btn4.disabled = true; }
+        else { btn4.className = 'btn-task active-task'; btn4.innerText = 'Hacer tarea'; btn4.disabled = false; }
+    }
+    
+    // Función para completar tareas
+    function completeTask(taskId, taskCompletedFlag, setter) {
+        if(taskCompletedFlag) {
+            showPremiumAd('⚠️ Ya completaste esta tarea hoy. Vuelve mañana.');
+            return;
+        }
+        showPremiumAd(`🎉 Tarea completada +$${TASK_REWARD.toFixed(2)} USD`);
+        userBalance += TASK_REWARD;
+        totalEarnedMoney += TASK_REWARD;
+        setter(true);
+        saveAllData();
+        updateAllUI();
+        updateTasksUI();
+    }
+    
+    // ========== EVENTOS CON SUS VARIABLES ÚNICAS ==========
+    document.getElementById('taskBtn1').addEventListener('click', () => {
+        completeTask(1, task1Completed, (val) => task1Completed = val);
+    });
+    document.getElementById('taskBtn2').addEventListener('click', () => {
+        completeTask(2, task2Completed, (val) => task2Completed = val);
+    });
+    document.getElementById('taskBtn3').addEventListener('click', () => {
+        completeTask(3, task3Completed, (val) => task3Completed = val);
+    });
+    document.getElementById('taskBtn4').addEventListener('click', () => {
+        completeTask(4, task4Completed, (val) => task4Completed = val);
+    });
+    
+    // Referidos
+    document.getElementById('copyRefBtn').addEventListener('click', () => {
+        const link = document.getElementById('refLinkDisplay').innerText;
+        navigator.clipboard.writeText(link);
+        showPremiumAd('🔗 Enlace copiado. ¡Comparte y gana $0.01 por cada amigo!');
+    });
+    
+    document.getElementById('addReferralBtn').addEventListener('click', () => {
+        showPremiumAd('👥 Nuevo referido registrado +$0.01 USD');
+        referralsCount++;
+        totalCommissions += REF_REWARD;
+        userBalance += REF_REWARD;
+        totalEarnedMoney += REF_REWARD;
+        saveAllData();
+        updateAllUI();
+    });
+    
+    // Navegación (anuncios)
+    const navs = document.querySelectorAll('.nav-item');
+    navs.forEach(nav => {
+        nav.addEventListener('click', () => {
+            showPremiumAd(`📱 Navegando a ${nav.innerText.trim()}`);
+            navs.forEach(n => n.classList.remove('active'));
+            nav.classList.add('active');
+            const section = nav.innerText.trim().toLowerCase();
+            if(section === 'tareas') document.querySelector('.tasks-container').scrollIntoView({ behavior: 'smooth' });
+            else if(section === 'referidos') document.querySelector('.referral-panel').scrollIntoView({ behavior: 'smooth' });
+            else window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+    
+    // Generar ID único y enlace gvsstoreBot
+    let userId = localStorage.getItem('gvs_user_uuid_final');
+    if(!userId) {
+        userId = Math.floor(100000 + Math.random() * 900000).toString();
+        localStorage.setItem('gvs_user_uuid_final', userId);
+    }
+    document.getElementById('userId').innerText = userId;
+    document.getElementById('refLinkDisplay').innerHTML = `https://t.me/gvsstoreBot?start=${userId}`;
+    
+    loadUserData();
+    showPremiumAd('✨ Bienvenido a GVS Store. Completa tareas y gana $0.04 por misión.');
 </script>
-
 </body>
-</html>
+                                                                      </html>
