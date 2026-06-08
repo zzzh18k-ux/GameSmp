@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>GVS Store | Wealth Tasks</title>
+    <title>GVS Store | Earnings Platform</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src='//libtl.com/sdk.js' data-zone='10747271' data-sdk='show_10747271'></script>
     <style>
@@ -14,52 +14,41 @@
         }
 
         body {
-            background: #E8E3D9;  /* crema cálido de fondo */
+            background: #EBE5D9;
             font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             padding: 24px 16px;
             padding-bottom: 100px;
             min-height: 100vh;
         }
 
-        /* Contenedor principal estilo "tarjeta de lujo" */
         .app {
             max-width: 500px;
             margin: 0 auto;
             background: #FFFFFF;
             border-radius: 48px;
             overflow: hidden;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(0, 0, 0, 0.02);
-            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
         }
 
-        /* Header con acento verde esmeralda */
+        /* Header */
         .header {
-            background: linear-gradient(135deg, #FFFFFF 0%, #F8F6F2 100%);
+            background: #FFFFFF;
             padding: 32px 28px 24px;
             text-align: center;
-            border-bottom: 1px solid #E9E2D6;
+            border-bottom: 1px solid #EDE6DD;
         }
         .logo {
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 700;
             letter-spacing: -0.5px;
             color: #1F3D2C;
-            font-family: 'Inter', sans-serif;
         }
         .logo span {
             font-weight: 300;
             color: #B2905A;
         }
-        .logo-sub {
-            font-size: 11px;
-            letter-spacing: 2.5px;
-            color: #A3967C;
-            margin-top: 8px;
-            text-transform: uppercase;
-            font-weight: 500;
-        }
         .user-badge {
-            background: #F0EDE7;
+            background: #F5F2ED;
             display: inline-flex;
             align-items: center;
             gap: 12px;
@@ -67,53 +56,50 @@
             border-radius: 60px;
             margin-top: 18px;
             font-size: 13px;
-            border: 1px solid #DDD5C8;
+            border: 1px solid #E2D9CE;
             color: #4A5B4A;
         }
         .user-badge i { color: #7E9A6B; }
         .user-badge span { font-weight: 700; color: #2C5F2D; }
 
-        /* Tarjetas de balance - estilo "wealth card" */
-        .wealth-grid {
+        /* Balance Cards */
+        .balance-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
             padding: 28px 24px;
             background: #FFFFFF;
         }
-        .wealth-card {
+        .balance-card {
             background: #F9F7F3;
             border-radius: 32px;
             padding: 22px 18px;
             border: 1px solid #E8E0D4;
-            transition: all 0.2s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         }
-        .wealth-icon {
+        .balance-icon {
             font-size: 26px;
             margin-bottom: 12px;
             color: #7E9A6B;
         }
-        .wealth-label {
+        .balance-label {
             font-size: 12px;
             letter-spacing: 1px;
             color: #A3967C;
             font-weight: 500;
             text-transform: uppercase;
         }
-        .wealth-value {
+        .balance-value {
             font-size: 32px;
             font-weight: 700;
             color: #2C5F2D;
             margin-top: 8px;
-            letter-spacing: -0.5px;
         }
 
-        /* Sección de misiones (tareas) - diseño refinado */
-        .missions-section {
+        /* Sección de Tareas */
+        .tasks-section {
             padding: 0 24px 24px 24px;
         }
-        .section-title {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
@@ -121,13 +107,12 @@
             padding-bottom: 6px;
             border-bottom: 2px solid #E8E0D4;
         }
-        .section-title h3 {
+        .section-header h3 {
             font-size: 18px;
             font-weight: 600;
             color: #2C3E2B;
-            letter-spacing: -0.3px;
         }
-        .badge-gratis {
+        .free-badge {
             background: #E9F0E6;
             color: #5B8C5A;
             font-size: 11px;
@@ -136,8 +121,8 @@
             font-weight: 600;
         }
 
-        /* Cada tarea es una tarjeta vertical con diseño limpio */
-        .mission-card {
+        /* Tarjeta de tarea individual */
+        .task-card {
             background: #FDFCFA;
             border-radius: 28px;
             padding: 18px 20px;
@@ -146,27 +131,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: 0.2s;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
         }
-        .mission-info h4 {
+        .task-info h4 {
             font-size: 16px;
             font-weight: 600;
             color: #2B3B2A;
         }
-        .mission-info p {
+        .task-info p {
             font-size: 12px;
             color: #9B8E74;
             margin-top: 4px;
         }
-        .mission-reward {
+        .task-reward {
             font-weight: 700;
             font-size: 15px;
             color: #7E9A6B;
             margin-bottom: 6px;
             text-align: right;
         }
-        .btn-mission {
+        .task-button {
             background: #FFFFFF;
             border: 1.5px solid #D6CDBE;
             padding: 10px 22px;
@@ -175,56 +158,53 @@
             font-size: 13px;
             cursor: pointer;
             color: #4A6741;
-            transition: all 0.15s;
             min-width: 110px;
         }
-        .btn-mission.active {
+        .task-button.active {
             background: #E8F1E5;
             border-color: #7E9A6B;
             color: #2C5F2D;
         }
-        .btn-mission.completed {
+        .task-button.completed {
             background: #2C5F2D;
             border-color: #2C5F2D;
             color: white;
             cursor: default;
-            opacity: 0.8;
         }
 
-        /* Panel de referidos - estilo premium */
-        .referral-luxury {
+        /* Panel de Referidos */
+        .referral-panel {
             background: #F9F7F3;
             margin: 8px 24px 24px 24px;
             border-radius: 36px;
             padding: 24px;
             border: 1px solid #E8E0D4;
         }
-        .stats-row {
+        .stats-container {
             display: flex;
             gap: 18px;
             margin: 20px 0;
         }
-        .stat-gem {
+        .stat-card {
             flex: 1;
             background: #FFFFFF;
             border-radius: 24px;
             padding: 16px 12px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
             border: 1px solid #ECE3D8;
         }
-        .stat-gem .label {
+        .stat-card .stat-label {
             font-size: 11px;
             color: #A3967C;
             text-transform: uppercase;
         }
-        .stat-gem .number {
+        .stat-card .stat-number {
             font-size: 28px;
             font-weight: 800;
             color: #2C5F2D;
             margin-top: 6px;
         }
-        .ref-link-group {
+        .ref-link-container {
             display: flex;
             gap: 12px;
             background: #FFFFFF;
@@ -233,14 +213,14 @@
             border: 1px solid #E2D9CE;
             margin: 16px 0;
         }
-        .ref-link {
+        .ref-link-text {
             flex: 1;
             font-size: 12px;
             font-family: monospace;
             color: #7E9A6B;
             word-break: break-all;
         }
-        .btn-copy-lux {
+        .copy-button {
             background: #F0EDE7;
             border: none;
             padding: 8px 18px;
@@ -250,7 +230,7 @@
             cursor: pointer;
             color: #4A6741;
         }
-        .btn-invite-emerald {
+        .invite-button {
             background: #2C5F2D;
             color: white;
             border: none;
@@ -263,8 +243,8 @@
             margin-top: 8px;
         }
 
-        /* Bloque de retiro deshabilitado (elegante) */
-        .withdraw-locked {
+        /* Retiro deshabilitado */
+        .withdraw-blocked {
             background: #F4F1EB;
             margin: 0 24px 28px 24px;
             border-radius: 32px;
@@ -272,12 +252,12 @@
             text-align: center;
             border: 1px solid #E0D6C8;
         }
-        .withdraw-locked p {
+        .withdraw-blocked p {
             color: #B2905A;
             font-weight: 500;
             font-size: 13px;
         }
-        .btn-locked {
+        .withdraw-button-disabled {
             background: #E8E2D9;
             border: none;
             width: 100%;
@@ -289,8 +269,8 @@
             cursor: not-allowed;
         }
 
-        /* Navegación inferior refinada */
-        .bottom-lux {
+        /* Navegación inferior */
+        .bottom-nav {
             background: #FFFFFF;
             border-top: 1px solid #EDE6DD;
             display: flex;
@@ -303,19 +283,19 @@
             max-width: 500px;
             margin: 0 auto;
         }
-        .nav-lux-item {
+        .nav-item {
             text-align: center;
             font-size: 12px;
             color: #B6A992;
             cursor: pointer;
             padding: 6px;
             flex: 1;
-            transition: 0.1s;
         }
-        .nav-lux-item i { font-size: 22px; display: block; margin-bottom: 4px; }
-        .nav-lux-item.active { color: #2C5F2D; font-weight: 500; }
+        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-item.active { color: #2C5F2D; font-weight: 500; }
 
-        .toast-luxury {
+        /* Toast notificación */
+        .toast-premium {
             position: fixed;
             bottom: 100px;
             left: 24px;
@@ -342,289 +322,284 @@
 <div class="app">
     <div class="header">
         <div class="logo">GVS<span>STORE</span></div>
-        <div class="logo-sub">WEALTH TASKS • PREMIUM</div>
         <div class="user-badge">
-            <i class="fas fa-leaf"></i> ID: <span id="globalUserId">482160</span>
-            <i class="fas fa-check-circle"></i> ACTIVO
+            <i class="fas fa-leaf"></i> IDENTIFICADOR: <span id="globalUserId">482160</span>
+            <i class="fas fa-shield-alt"></i> VERIFICADO
         </div>
     </div>
 
     <!-- Balance principal -->
-    <div class="wealth-grid">
-        <div class="wealth-card">
-            <div class="wealth-icon"><i class="fas fa-wallet"></i></div>
-            <div class="wealth-label">SALDO DISPONIBLE</div>
-            <div class="wealth-value" id="mainBalance">$0.0000</div>
+    <div class="balance-grid">
+        <div class="balance-card">
+            <div class="balance-icon"><i class="fas fa-coins"></i></div>
+            <div class="balance-label">SALDO DISPONIBLE</div>
+            <div class="balance-value" id="mainBalanceDisplay">$0.0000</div>
         </div>
-        <div class="wealth-card">
-            <div class="wealth-icon"><i class="fas fa-chart-line"></i></div>
-            <div class="wealth-label">GANADO TOTAL</div>
-            <div class="wealth-value" id="totalProfit">$0.0000</div>
-        </div>
-    </div>
-
-    <!-- SECCIÓN DE TAREAS (cada botón con su variable) -->
-    <div class="missions-section">
-        <div class="section-title">
-            <h3><i class="fas fa-spa"></i> Misiones diarias</h3>
-            <span class="badge-gratis">🔓 100% gratuito</span>
-        </div>
-
-        <!-- TAREA 1 - variable única: missionOneCompleted -->
-        <div class="mission-card">
-            <div class="mission-info">
-                <h4>📺 Visualizar contenido</h4>
-                <p>Ver video de 30 segundos</p>
-            </div>
-            <div>
-                <div class="mission-reward">+ $0.04</div>
-                <button class="btn-mission active" id="missionOneBtn">Iniciar</button>
-            </div>
-        </div>
-        <!-- TAREA 2 - variable única: missionTwoCompleted -->
-        <div class="mission-card">
-            <div class="mission-info">
-                <h4>👍 Seguir canal oficial</h4>
-                <p>Telegram verified</p>
-            </div>
-            <div>
-                <div class="mission-reward">+ $0.04</div>
-                <button class="btn-mission active" id="missionTwoBtn">Iniciar</button>
-            </div>
-        </div>
-        <!-- TAREA 3 - variable única: missionThreeCompleted -->
-        <div class="mission-card">
-            <div class="mission-info">
-                <h4>📢 Unirse a comunidad</h4>
-                <p>Grupo exclusivo</p>
-            </div>
-            <div>
-                <div class="mission-reward">+ $0.04</div>
-                <button class="btn-mission active" id="missionThreeBtn">Iniciar</button>
-            </div>
-        </div>
-        <!-- TAREA 4 - variable única: missionFourCompleted -->
-        <div class="mission-card">
-            <div class="mission-info">
-                <h4>🤖 Interactuar con bot</h4>
-                <p>GVS Assistant</p>
-            </div>
-            <div>
-                <div class="mission-reward">+ $0.04</div>
-                <button class="btn-mission active" id="missionFourBtn">Iniciar</button>
-            </div>
+        <div class="balance-card">
+            <div class="balance-icon"><i class="fas fa-chart-simple"></i></div>
+            <div class="balance-label">ACUMULADO TOTAL</div>
+            <div class="balance-value" id="totalEarnedDisplay">$0.0000</div>
         </div>
     </div>
 
-    <!-- PANEL DE REFERIDOS (comisión 0.01$ por cada referido) -->
-    <div class="referral-luxury">
-        <h3 style="font-size: 18px; font-weight: 600; color: #2C3E2B;"><i class="fas fa-handshake"></i> Círculo de referidos</h3>
-        <div class="stats-row">
-            <div class="stat-gem">
-                <div class="label">REFERIDOS</div>
-                <div class="number" id="referralsCountDisplay">0</div>
+    <!-- ========== SECCIÓN DE TAREAS (CADA BOTÓN ES ÚNICO Y SOLO HACE TAREAS) ========== -->
+    <div class="tasks-section">
+        <div class="section-header">
+            <h3><i class="fas fa-calendar-check"></i> Misiones disponibles</h3>
+            <span class="free-badge">ACTIVO</span>
+        </div>
+
+        <!-- TAREA UNO - variable única: taskOneState -->
+        <div class="task-card">
+            <div class="task-info">
+                <h4>Contenido audiovisual</h4>
+                <p>Visualización de treinta segundos</p>
             </div>
-            <div class="stat-gem">
-                <div class="label">COMISIONES</div>
-                <div class="number" id="commissionsDisplay">$0.0000</div>
-            </div>
-            <div class="stat-gem">
-                <div class="label">BONO X REF</div>
-                <div class="number">$0.01</div>
+            <div>
+                <div class="task-reward">+ $0.04</div>
+                <button class="task-button active" id="taskOneButton">Comenzar</button>
             </div>
         </div>
-        <div class="ref-link-group">
-            <span class="ref-link" id="dynamicRefLink">cargando...</span>
-            <button class="btn-copy-lux" id="copyRefLuxBtn"><i class="far fa-copy"></i> Copiar</button>
+
+        <!-- TAREA DOS - variable única: taskTwoState -->
+        <div class="task-card">
+            <div class="task-info">
+                <h4>Canal de actualizaciones</h4>
+                <p>Suscripción oficial</p>
+            </div>
+            <div>
+                <div class="task-reward">+ $0.04</div>
+                <button class="task-button active" id="taskTwoButton">Comenzar</button>
+            </div>
         </div>
-        <button class="btn-invite-emerald" id="addReferralLuxBtn"><i class="fas fa-user-plus"></i> Invitar amigo (+$0.01)</button>
-        <p style="font-size: 11px; color: #A3967C; text-align: center; margin-top: 14px;">Cada nuevo usuario que se una te otorga $0.01 USD</p>
+
+        <!-- TAREA TRES - variable única: taskThreeState -->
+        <div class="task-card">
+            <div class="task-info">
+                <h4>Comunidad privada</h4>
+                <p>Ingreso al grupo</p>
+            </div>
+            <div>
+                <div class="task-reward">+ $0.04</div>
+                <button class="task-button active" id="taskThreeButton">Comenzar</button>
+            </div>
+        </div>
+
+        <!-- TAREA CUATRO - variable única: taskFourState -->
+        <div class="task-card">
+            <div class="task-info">
+                <h4>Asistente interactivo</h4>
+                <p>Primer uso del bot</p>
+            </div>
+            <div>
+                <div class="task-reward">+ $0.04</div>
+                <button class="task-button active" id="taskFourButton">Comenzar</button>
+            </div>
+        </div>
     </div>
 
-    <!-- RETIRO DESHABILITADO (solo estético) -->
-    <div class="withdraw-locked">
-        <p><i class="fas fa-clock"></i> Sistema de retiros en actualización</p>
-        <button class="btn-locked" disabled>💰 Retirar fondos (Próximamente)</button>
-        <p style="font-size: 10px; margin-top: 8px;">Monto mínimo: $10.00 — mantenimiento seguro</p>
+    <!-- ========== SECCIÓN DE REFERIDOS (SOLO REFERIDOS, CADA BOTÓN ES ÚNICO) ========== -->
+    <div class="referral-panel">
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-label">REFERIDOS ACTIVOS</div>
+                <div class="stat-number" id="referralsCountValue">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">COMISIONES GENERADAS</div>
+                <div class="stat-number" id="commissionsValue">$0.0000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">VALOR POR REFERIDO</div>
+                <div class="stat-number">$0.01</div>
+            </div>
+        </div>
+        <div class="ref-link-container">
+            <span class="ref-link-text" id="dynamicReferralLink">Cargando enlace...</span>
+            <button class="copy-button" id="copyReferralLinkButton">Duplicar enlace</button>
+        </div>
+        <button class="invite-button" id="addReferralButton">Registrar nuevo referido</button>
+        <p style="font-size: 11px; color: #A3967C; text-align: center; margin-top: 14px;">Cada usuario que ingrese mediante tu enlace genera una comisión de 0.01 USD</p>
+    </div>
+
+    <!-- RETIRO DESHABILITADO (SOLO DECORATIVO) -->
+    <div class="withdraw-blocked">
+        <p><i class="fas fa-lock"></i> Procesos de retiro en mantenimiento</p>
+        <button class="withdraw-button-disabled" disabled>Solicitar retiro</button>
+        <p style="font-size: 10px; margin-top: 8px;">Monto mínimo requerido: 10.00 USD — disponible próximamente</p>
     </div>
 </div>
 
-<div class="bottom-lux">
-    <div class="nav-lux-item active" data-nav="home"><i class="fas fa-home"></i><span>Inicio</span></div>
-    <div class="nav-lux-item" data-nav="tasks"><i class="fas fa-tasks"></i><span>Tareas</span></div>
-    <div class="nav-lux-item" data-nav="refer"><i class="fas fa-users"></i><span>Referidos</span></div>
-    <div class="nav-lux-item" data-nav="profile"><i class="fas fa-user"></i><span>Perfil</span></div>
+<div class="bottom-nav">
+    <div class="nav-item active" data-nav="home"><i class="fas fa-home"></i><span>Inicio</span></div>
+    <div class="nav-item" data-nav="tasks"><i class="fas fa-list-check"></i><span>Misiones</span></div>
+    <div class="nav-item" data-nav="refer"><i class="fas fa-user-group"></i><span>Referidos</span></div>
+    <div class="nav-item" data-nav="profile"><i class="fas fa-id-card"></i><span>Perfil</span></div>
 </div>
 
 <script>
     // ============================================================
-    // CADA BOTÓN Y CADA VARIABLE ESTÁ CLARAMENTE DEFINIDA
-    // VARIABLES PRINCIPALES:
-    // - userWalletBalance: saldo actual del usuario
-    // - totalLifetimeEarned: total acumulado histórico
-    // - referralCount: número de referidos
-    // - totalReferralCommissions: comisiones acumuladas por referidos
-    // - missionOneCompleted, missionTwoCompleted, missionThreeCompleted, missionFourCompleted: estado de tareas
-    // - REWARD_PER_TASK = 0.04, REWARD_PER_REFERRAL = 0.01
+    // CADA VARIABLE ES ÚNICA Y PERTENECE EXCLUSIVAMENTE A SU FUNCIÓN
     // ============================================================
-
-    let userWalletBalance = 0.00;           // Saldo actual del usuario
-    let totalLifetimeEarned = 0.00;         // Total ganado desde siempre
-    let referralCount = 0;                  // Cantidad de referidos
-    let totalReferralCommissions = 0.00;    // Comisiones por referidos
     
-    // Estados individuales de cada misión (cada botón tiene su propia variable)
-    let missionOneCompleted = false;
-    let missionTwoCompleted = false;
-    let missionThreeCompleted = false;
-    let missionFourCompleted = false;
+    // Variables del sistema de balance
+    let availableBalance = 0.00;           // Saldo disponible del usuario
+    let totalHistoricalEarned = 0.00;       // Total acumulado de todas las ganancias
     
-    // Constantes de recompensa
-    const REWARD_PER_TASK = 0.04;
-    const REWARD_PER_REFERRAL = 0.01;
+    // Variables exclusivas para el sistema de REFERIDOS (solo referidos)
+    let referralActiveCount = 0;             // Número total de referidos activos
+    let referralCommissionsTotal = 0.00;     // Comisiones acumuladas por referidos
     
-    // --------------------- CARGAR Y GUARDAR DATOS ---------------------
-    function loadUserState() {
-        const saved = localStorage.getItem('gvs_luxury_wealth');
-        if(saved) {
+    // Variables exclusivas para el sistema de TAREAS (cada tarea tiene su propia variable)
+    let taskOneCompleted = false;             // Estado de la primera misión
+    let taskTwoCompleted = false;             // Estado de la segunda misión
+    let taskThreeCompleted = false;           // Estado de la tercera misión
+    let taskFourCompleted = false;            // Estado de la cuarta misión
+    
+    // Constantes de recompensa (valores fijos)
+    const TASK_REWARD_VALUE = 0.04;           // Cada tarea completada otorga 0.04 USD
+    const REFERRAL_REWARD_VALUE = 0.01;       // Cada referido nuevo otorga 0.01 USD
+    
+    // --------------------- FUNCIONES DE PERSISTENCIA ---------------------
+    function loadUserDataFromStorage() {
+        const storedData = localStorage.getItem('gvs_independent_variables');
+        if(storedData) {
             try {
-                const data = JSON.parse(saved);
-                userWalletBalance = data.userWalletBalance ?? 0;
-                totalLifetimeEarned = data.totalLifetimeEarned ?? 0;
-                referralCount = data.referralCount ?? 0;
-                totalReferralCommissions = data.totalReferralCommissions ?? 0;
-                missionOneCompleted = data.missionOneCompleted ?? false;
-                missionTwoCompleted = data.missionTwoCompleted ?? false;
-                missionThreeCompleted = data.missionThreeCompleted ?? false;
-                missionFourCompleted = data.missionFourCompleted ?? false;
+                const parsed = JSON.parse(storedData);
+                availableBalance = parsed.availableBalance ?? 0;
+                totalHistoricalEarned = parsed.totalHistoricalEarned ?? 0;
+                referralActiveCount = parsed.referralActiveCount ?? 0;
+                referralCommissionsTotal = parsed.referralCommissionsTotal ?? 0;
+                taskOneCompleted = parsed.taskOneCompleted ?? false;
+                taskTwoCompleted = parsed.taskTwoCompleted ?? false;
+                taskThreeCompleted = parsed.taskThreeCompleted ?? false;
+                taskFourCompleted = parsed.taskFourCompleted ?? false;
             } catch(e) {}
         }
-        refreshAllUI();
-        refreshMissionButtons();
+        updateAllVisualElements();
+        updateTaskButtonsVisual();
     }
     
-    function persistFullState() {
-        localStorage.setItem('gvs_luxury_wealth', JSON.stringify({
-            userWalletBalance, totalLifetimeEarned, referralCount, totalReferralCommissions,
-            missionOneCompleted, missionTwoCompleted, missionThreeCompleted, missionFourCompleted
+    function saveCompleteState() {
+        localStorage.setItem('gvs_independent_variables', JSON.stringify({
+            availableBalance, totalHistoricalEarned,
+            referralActiveCount, referralCommissionsTotal,
+            taskOneCompleted, taskTwoCompleted, taskThreeCompleted, taskFourCompleted
         }));
     }
     
-    // Notificaciones elegantes + anuncio obligatorio
-    function displayLuxuryMessage(msg) {
+    // Mostrar anuncio + notificación visual
+    function triggerAdvertisementAndNotify(message) {
         if(typeof show_10747271 === 'function') {
             try { show_10747271(); } catch(e) {}
         }
-        const toastEl = document.createElement('div');
-        toastEl.className = 'toast-luxury';
-        toastEl.innerHTML = `<i class="fas fa-gem"></i> ${msg}`;
-        document.body.appendChild(toastEl);
-        setTimeout(() => toastEl.remove(), 2700);
+        const toastMessage = document.createElement('div');
+        toastMessage.className = 'toast-premium';
+        toastMessage.innerHTML = `<i class="fas fa-circle-info"></i> ${message}`;
+        document.body.appendChild(toastMessage);
+        setTimeout(() => toastMessage.remove(), 2800);
     }
     
-    function refreshAllUI() {
-        document.getElementById('mainBalance').innerText = `$${userWalletBalance.toFixed(4)}`;
-        document.getElementById('totalProfit').innerText = `$${totalLifetimeEarned.toFixed(4)}`;
-        document.getElementById('referralsCountDisplay').innerText = referralCount;
-        document.getElementById('commissionsDisplay').innerText = `$${totalReferralCommissions.toFixed(4)}`;
+    function updateAllVisualElements() {
+        document.getElementById('mainBalanceDisplay').innerText = `$${availableBalance.toFixed(4)}`;
+        document.getElementById('totalEarnedDisplay').innerText = `$${totalHistoricalEarned.toFixed(4)}`;
+        document.getElementById('referralsCountValue').innerText = referralActiveCount;
+        document.getElementById('commissionsValue').innerText = `$${referralCommissionsTotal.toFixed(4)}`;
     }
     
-    // Actualizar aspecto visual de los botones según su variable específica
-    function refreshMissionButtons() {
-        const btn1 = document.getElementById('missionOneBtn');
-        if(missionOneCompleted) {
-            btn1.innerText = '✅ Completada'; btn1.classList.remove('active'); btn1.classList.add('completed'); btn1.disabled = true;
-        } else { btn1.innerText = 'Iniciar'; btn1.classList.add('active'); btn1.classList.remove('completed'); btn1.disabled = false; }
+    function updateTaskButtonsVisual() {
+        const buttonOne = document.getElementById('taskOneButton');
+        if(taskOneCompleted) {
+            buttonOne.innerText = 'Finalizada'; buttonOne.classList.remove('active'); buttonOne.classList.add('completed'); buttonOne.disabled = true;
+        } else { buttonOne.innerText = 'Comenzar'; buttonOne.classList.add('active'); buttonOne.classList.remove('completed'); buttonOne.disabled = false; }
         
-        const btn2 = document.getElementById('missionTwoBtn');
-        if(missionTwoCompleted) {
-            btn2.innerText = '✅ Completada'; btn2.classList.remove('active'); btn2.classList.add('completed'); btn2.disabled = true;
-        } else { btn2.innerText = 'Iniciar'; btn2.classList.add('active'); btn2.classList.remove('completed'); btn2.disabled = false; }
+        const buttonTwo = document.getElementById('taskTwoButton');
+        if(taskTwoCompleted) {
+            buttonTwo.innerText = 'Finalizada'; buttonTwo.classList.remove('active'); buttonTwo.classList.add('completed'); buttonTwo.disabled = true;
+        } else { buttonTwo.innerText = 'Comenzar'; buttonTwo.classList.add('active'); buttonTwo.classList.remove('completed'); buttonTwo.disabled = false; }
         
-        const btn3 = document.getElementById('missionThreeBtn');
-        if(missionThreeCompleted) {
-            btn3.innerText = '✅ Completada'; btn3.classList.remove('active'); btn3.classList.add('completed'); btn3.disabled = true;
-        } else { btn3.innerText = 'Iniciar'; btn3.classList.add('active'); btn3.classList.remove('completed'); btn3.disabled = false; }
+        const buttonThree = document.getElementById('taskThreeButton');
+        if(taskThreeCompleted) {
+            buttonThree.innerText = 'Finalizada'; buttonThree.classList.remove('active'); buttonThree.classList.add('completed'); buttonThree.disabled = true;
+        } else { buttonThree.innerText = 'Comenzar'; buttonThree.classList.add('active'); buttonThree.classList.remove('completed'); buttonThree.disabled = false; }
         
-        const btn4 = document.getElementById('missionFourBtn');
-        if(missionFourCompleted) {
-            btn4.innerText = '✅ Completada'; btn4.classList.remove('active'); btn4.classList.add('completed'); btn4.disabled = true;
-        } else { btn4.innerText = 'Iniciar'; btn4.classList.add('active'); btn4.classList.remove('completed'); btn4.disabled = false; }
+        const buttonFour = document.getElementById('taskFourButton');
+        if(taskFourCompleted) {
+            buttonFour.innerText = 'Finalizada'; buttonFour.classList.remove('active'); buttonFour.classList.add('completed'); buttonFour.disabled = true;
+        } else { buttonFour.innerText = 'Comenzar'; buttonFour.classList.add('active'); buttonFour.classList.remove('completed'); buttonFour.disabled = false; }
     }
     
-    // Función genérica para completar tareas con su propia variable de estado
-    function completeSpecificMission(missionId, currentFlag, setFlagCallback) {
-        if(currentFlag) {
-            displayLuxuryMessage('🌸 Ya realizaste esta misión hoy. Regresa mañana.');
+    // Función exclusiva para completar una tarea (solo afecta a la variable de esa tarea)
+    function executeTaskCompletion(taskIdentifier, currentTaskFlag, updateTaskFlagCallback) {
+        if(currentTaskFlag) {
+            triggerAdvertisementAndNotify('Esta misión ya fue completada. Regresa mañana para nuevas actividades.');
             return;
         }
-        // Agregar recompensa
-        userWalletBalance += REWARD_PER_TASK;
-        totalLifetimeEarned += REWARD_PER_TASK;
-        setFlagCallback(true);
-        persistFullState();
-        refreshAllUI();
-        refreshMissionButtons();
-        displayLuxuryMessage(`✨ Misión completada: +$${REWARD_PER_TASK.toFixed(2)} USD. ¡Sigue así!`);
+        availableBalance += TASK_REWARD_VALUE;
+        totalHistoricalEarned += TASK_REWARD_VALUE;
+        updateTaskFlagCallback(true);
+        saveCompleteState();
+        updateAllVisualElements();
+        updateTaskButtonsVisual();
+        triggerAdvertisementAndNotify(`Misión completada exitosamente. +${TASK_REWARD_VALUE.toFixed(2)} USD añadidos a tu saldo.`);
     }
     
-    // ========== ASIGNACIÓN DE CADA BOTÓN CON SU VARIABLE INDIVIDUAL ==========
-    document.getElementById('missionOneBtn').addEventListener('click', () => {
-        completeSpecificMission(1, missionOneCompleted, (val) => missionOneCompleted = val);
+    // ========== ASIGNACIÓN DE CADA BOTÓN A SU VARIABLE ÚNICA (SIN MEZCLAS) ==========
+    document.getElementById('taskOneButton').addEventListener('click', () => {
+        executeTaskCompletion(1, taskOneCompleted, (val) => taskOneCompleted = val);
     });
-    document.getElementById('missionTwoBtn').addEventListener('click', () => {
-        completeSpecificMission(2, missionTwoCompleted, (val) => missionTwoCompleted = val);
+    document.getElementById('taskTwoButton').addEventListener('click', () => {
+        executeTaskCompletion(2, taskTwoCompleted, (val) => taskTwoCompleted = val);
     });
-    document.getElementById('missionThreeBtn').addEventListener('click', () => {
-        completeSpecificMission(3, missionThreeCompleted, (val) => missionThreeCompleted = val);
+    document.getElementById('taskThreeButton').addEventListener('click', () => {
+        executeTaskCompletion(3, taskThreeCompleted, (val) => taskThreeCompleted = val);
     });
-    document.getElementById('missionFourBtn').addEventListener('click', () => {
-        completeSpecificMission(4, missionFourCompleted, (val) => missionFourCompleted = val);
-    });
-    
-    // ========== SISTEMA DE REFERIDOS CON SU PROPIA VARIABLE ==========
-    document.getElementById('addReferralLuxBtn').addEventListener('click', () => {
-        displayLuxuryMessage('👥 Nuevo referido registrado mediante tu enlace');
-        referralCount += 1;
-        totalReferralCommissions += REWARD_PER_REFERRAL;
-        userWalletBalance += REWARD_PER_REFERRAL;
-        totalLifetimeEarned += REWARD_PER_REFERRAL;
-        persistFullState();
-        refreshAllUI();
+    document.getElementById('taskFourButton').addEventListener('click', () => {
+        executeTaskCompletion(4, taskFourCompleted, (val) => taskFourCompleted = val);
     });
     
-    // Copiar enlace de referido
-    document.getElementById('copyRefLuxBtn').addEventListener('click', () => {
-        const linkField = document.getElementById('dynamicRefLink').innerText;
-        navigator.clipboard.writeText(linkField);
-        displayLuxuryMessage('🔗 Enlace de invitación copiado. Comparte y gana $0.01 por cada amigo.');
+    // ========== SISTEMA DE REFERIDOS (VARIABLES EXCLUSIVAS, NO SE MEZCLAN CON TAREAS) ==========
+    document.getElementById('addReferralButton').addEventListener('click', () => {
+        triggerAdvertisementAndNotify('Nuevo referido registrado mediante tu enlace de invitación.');
+        referralActiveCount += 1;
+        referralCommissionsTotal += REFERRAL_REWARD_VALUE;
+        availableBalance += REFERRAL_REWARD_VALUE;
+        totalHistoricalEarned += REFERRAL_REWARD_VALUE;
+        saveCompleteState();
+        updateAllVisualElements();
+    });
+    
+    document.getElementById('copyReferralLinkButton').addEventListener('click', () => {
+        const currentLink = document.getElementById('dynamicReferralLink').innerText;
+        navigator.clipboard.writeText(currentLink);
+        triggerAdvertisementAndNotify('Enlace de referido copiado. Comparte y cada registro te dará 0.01 USD.');
     });
     
     // ========== NAVEGACIÓN CON ANUNCIO ==========
-    const navElements = document.querySelectorAll('.nav-lux-item');
-    navElements.forEach(nav => {
-        nav.addEventListener('click', () => {
-            displayLuxuryMessage(`📱 Navegando a ${nav.innerText.trim()} - GVS Store`);
-            navElements.forEach(n => n.classList.remove('active'));
-            nav.classList.add('active');
-            const target = nav.innerText.trim().toLowerCase();
-            if(target === 'tareas') document.querySelector('.missions-section').scrollIntoView({ behavior: 'smooth' });
-            else if(target === 'referidos') document.querySelector('.referral-luxury').scrollIntoView({ behavior: 'smooth' });
+    const bottomNavigationItems = document.querySelectorAll('.nav-item');
+    bottomNavigationItems.forEach(item => {
+        item.addEventListener('click', () => {
+            triggerAdvertisementAndNotify(`Navegando a sección: ${item.innerText.trim()}`);
+            bottomNavigationItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+            const targetSection = item.innerText.trim().toLowerCase();
+            if(targetSection === 'misiones') document.querySelector('.tasks-section').scrollIntoView({ behavior: 'smooth' });
+            else if(targetSection === 'referidos') document.querySelector('.referral-panel').scrollIntoView({ behavior: 'smooth' });
             else window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     });
     
-    // Generar ID de usuario y enlace con gvsstoreBot
-    let uniqueUserId = localStorage.getItem('gvs_luxury_user_id');
-    if(!uniqueUserId) {
-        uniqueUserId = Math.floor(100000 + Math.random() * 900000).toString();
-        localStorage.setItem('gvs_luxury_user_id', uniqueUserId);
+    // Generar identificador único y enlace con la marca gvsstoreBot
+    let generatedUserId = localStorage.getItem('gvs_unique_user_identifier');
+    if(!generatedUserId) {
+        generatedUserId = Math.floor(100000 + Math.random() * 900000).toString();
+        localStorage.setItem('gvs_unique_user_identifier', generatedUserId);
     }
-    document.getElementById('globalUserId').innerText = uniqueUserId;
-    document.getElementById('dynamicRefLink').innerHTML = `https://t.me/gvsstoreBot?start=${uniqueUserId}`;
+    document.getElementById('globalUserId').innerText = generatedUserId;
+    document.getElementById('dynamicReferralLink').innerHTML = `https://t.me/gvsstoreBot?start=${generatedUserId}`;
     
-    loadUserState();
-    displayLuxuryMessage('🍃 Bienvenido a GVS Store. Completa misiones y acumula recompensas reales.');
+    loadUserDataFromStorage();
+    triggerAdvertisementAndNotify('Bienvenido a GVS Store. Completa misiones y acumula recompensas.');
 </script>
 </body>
 </html>
