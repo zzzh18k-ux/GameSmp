@@ -69,17 +69,54 @@
         .anuncio-card .num { width:36px; height:36px; border-radius:12px; background:var(--yellow); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; }
         .anuncio-card.done { background:#F4FAF7; }
         .anuncio-card.done .num { background:var(--green); }
-        .ad-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:200; display:none; justify-content:center; align-items:center; }
+        .ad-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:200; display:none; justify-content:center; align-items:center; backdrop-filter:blur(4px); }
         .ad-overlay.show { display:flex; }
-        .ad-box { background:var(--card); border-radius:28px; padding:24px; text-align:center; border:4px solid var(--border); box-shadow:0 10px 0 var(--border); max-width:320px; width:90%; }
-        .ad-box .timer { font-size:40px; font-weight:700; margin:12px 0; }
+        .ad-box { background:var(--card); border-radius:28px; padding:28px; text-align:center; border:4px solid var(--border); box-shadow:0 10px 0 var(--border); max-width:320px; width:90%; }
+        .ad-box .timer { font-size:48px; font-weight:700; margin:12px 0; }
         .ad-box .warning { font-size:12px; color:#E67E22; font-weight:600; margin-top:8px; }
+        .anuncio-recompensa { font-size:12px; color:var(--text2); margin-top:4px; }
+        .admin-saldo { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+        .admin-saldo input { flex:1; min-width:100px; margin:0; }
+        .admin-saldo button { background:var(--pink); border:3px solid var(--border); padding:10px 16px; border-radius:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 0 var(--border); }
+        .admin-saldo button:active { transform:translateY(2px); box-shadow:0 2px 0 var(--border); }
+        /* Alerta personalizada */
+        .alerta-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:300; display:none; justify-content:center; align-items:center; backdrop-filter:blur(8px); }
+        .alerta-overlay.show { display:flex; }
+        .alerta-box { background:#FFFDF6; border-radius:28px; padding:32px 24px; max-width:320px; width:90%; text-align:center; border:4px solid #5D4037; box-shadow:0 10px 0 #5D4037; }
+        .alerta-box .icono { font-size:48px; margin-bottom:12px; }
+        .alerta-box .titulo { font-size:20px; font-weight:700; color:#4E3629; }
+        .alerta-box .mensaje { font-size:14px; color:#8D7365; margin:12px 0; line-height:1.5; }
+        .alerta-box .btn-intentar { background:#FFD3DA; border:3px solid #5D4037; padding:14px 30px; border-radius:18px; font-weight:700; font-size:16px; cursor:pointer; box-shadow:0 5px 0 #5D4037; width:100%; }
+        .alerta-box .btn-intentar:active { transform:translateY(3px); box-shadow:0 2px 0 #5D4037; }
     </style>
 </head>
 <body>
 
 <div id="toast" class="toast"></div>
-<div id="adOverlay" class="ad-overlay"><div class="ad-box"><div style="font-size:18px;font-weight:700;">🎬 ANUNCIO EN PROGRESO</div><div class="timer" id="adTimer">15</div><div style="font-size:13px;color:var(--text2);">segundos restantes</div><div class="warning">⚠️ No cierres esta ventana</div></div></div>
+
+<!-- Overlay de anuncio -->
+<div id="adOverlay" class="ad-overlay">
+    <div class="ad-box">
+        <div style="font-size:18px;font-weight:700;">🎬 ANUNCIO EN PROGRESO</div>
+        <div class="timer" id="adTimer">15</div>
+        <div style="font-size:13px;color:var(--text2);">segundos restantes</div>
+        <div class="warning">⚠️ No cierres esta ventana</div>
+    </div>
+</div>
+
+<!-- Alerta de "no viste el anuncio" -->
+<div id="alertaNoVisto" class="alerta-overlay">
+    <div class="alerta-box">
+        <div class="icono">⏳</div>
+        <div class="titulo">¡No viste el anuncio!</div>
+        <div class="mensaje">
+            Para recibir tu recompensa debes ver el anuncio completo (15 segundos).
+            <br><br>
+            <strong>Vuelve a intentarlo.</strong>
+        </div>
+        <button class="btn-intentar" onclick="cerrarAlertaNoVisto()">🔄 VOLVER A INTENTAR</button>
+    </div>
+</div>
 
 <div class="app">
 
@@ -129,8 +166,9 @@
             <span class="balance-label">USDT RETIRABLE</span>
         </div>
         <div class="card">
-            <div style="font-weight:700;font-size:16px;margin-bottom:10px;">🎬 ANUNCIOS DIARIOS (3 x $0.01)</div>
+            <div style="font-weight:700;font-size:16px;margin-bottom:10px;">🎬 ANUNCIOS DIARIOS (3 x $0.00333)</div>
             <div id="anunciosList"></div>
+            <div class="anuncio-recompensa">💰 3 anuncios = $0.01 diarios</div>
         </div>
     </div>
 
@@ -177,8 +215,20 @@
             <div class="panel-login"><input type="password" id="adminPass" placeholder="Clave"><button id="btnAdminLogin">ENTRAR</button></div>
             <div id="adminContent" class="oculto">
                 <div class="resumen-box"><div style="font-size:11px;">PENDIENTES</div><div class="total" id="totalPendientes">0</div></div>
-                <div id="pendientesList" class="scroll" style="max-height:250px;"></div>
-                <div class="btn-group"><button class="btn btn-green" id="btnPagarTodos">✅ PAGAR TODOS</button><button class="btn" id="btnCerrarAdmin">❌ CERRAR</button></div>
+                <div id="pendientesList" class="scroll" style="max-height:200px;"></div>
+                <div style="margin-top:12px; border-top:2px dashed var(--border); padding-top:12px;">
+                    <div style="font-weight:700;font-size:13px;margin-bottom:6px;">💰 DAR SALDO A USUARIO</div>
+                    <div class="admin-saldo">
+                        <input type="text" id="adminUserId" placeholder="Usuario (ej: juan)">
+                        <input type="number" id="adminMonto" placeholder="Monto (ej: 0.50)" step="0.01">
+                        <button id="btnDarSaldo">AGREGAR</button>
+                    </div>
+                    <div style="font-size:10px;color:var(--text2);margin-top:4px;">⚠️ Se suma al balance del usuario</div>
+                </div>
+                <div class="btn-group" style="margin-top:12px;">
+                    <button class="btn btn-green" id="btnPagarTodos">✅ PAGAR TODOS</button>
+                    <button class="btn" id="btnCerrarAdmin">❌ CERRAR</button>
+                </div>
             </div>
         </div>
     </div>
@@ -207,7 +257,7 @@
 
     const CLAVE_ADMIN = '231606';
     const ANUNCIOS_URLS = ['https://omg10.com/4/10274047','https://omg10.com/4/10874553','https://omg10.com/4/10180875'];
-    const RECOMPENSA_ANUNCIO = 0.01;
+    const RECOMPENSA_ANUNCIO = 0.00333;
     const MIN_RETIRO = 0.01;
     const COMISION = 0.05;
     const DOMINIO = 'newstarnoni.click';
@@ -215,10 +265,14 @@
     let USER_ID = null;
     let USER_DATA = null;
     let viendoAnuncio = false;
+    let tiempoRestante = 15;
+    let timerInterval = null;
+    let visibilityHandler = null;
 
     const adOverlay = document.getElementById('adOverlay');
     const adTimer = document.getElementById('adTimer');
     const navbar = document.getElementById('navbar');
+    const alertaNoVisto = document.getElementById('alertaNoVisto');
 
     // Detectar referido de URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -241,6 +295,11 @@
         document.getElementById(id).classList.add('active');
     }
 
+    function cerrarAlertaNoVisto() {
+        alertaNoVisto.classList.remove('show');
+        viendoAnuncio = false;
+    }
+
     // REGISTRO
     document.getElementById('btnRegistrar').addEventListener('click', async () => {
         const usuario = document.getElementById('regUsuario').value.trim().toLowerCase();
@@ -250,21 +309,16 @@
         if (!usuario || usuario.length < 3) return toast('⚠️ Usuario mínimo 3 caracteres', 'error');
         if (!password || password.length < 8) return toast('⚠️ Contraseña mínimo 8 caracteres', 'error');
 
-        // Si puso código manual, úsalo. Si no, usa el de la URL
         const codigoFinal = refManual || refCode || null;
 
         try {
             const fp = await getFingerprint();
-
-            // Verificar multicuentas
             const existente = await db.collection('usuarios').where('fingerprint', '==', fp).get();
             if (!existente.empty) return toast('🚫 Ya tienes una cuenta en este dispositivo', 'error');
 
-            // Verificar usuario duplicado
             const doc = await db.collection('usuarios').doc(usuario).get();
             if (doc.exists) return toast('⚠️ Ese nombre de usuario ya existe', 'error');
 
-            // Verificar que el código de referido exista (si se puso uno)
             if (codigoFinal && codigoFinal !== usuario) {
                 const refDoc = await db.collection('usuarios').doc(codigoFinal).get();
                 if (!refDoc.exists) return toast('⚠️ El código de invitación no existe', 'error');
@@ -284,8 +338,6 @@
             };
 
             await db.collection('usuarios').doc(usuario).set(data);
-
-            // Sumar referido al que invitó
             if (codigoFinal) {
                 await db.collection('usuarios').doc(codigoFinal).update({
                     referidos: firebase.firestore.FieldValue.arrayUnion(usuario)
@@ -318,7 +370,6 @@
             const fp = await getFingerprint();
             const data = doc.data();
             
-            // Actualizar fingerprint si no tenía
             if (!data.fingerprint) {
                 await db.collection('usuarios').doc(usuario).update({ fingerprint: fp });
             } else if (data.fingerprint !== fp) {
@@ -337,11 +388,7 @@
         }
     });
 
-    // ============================================================
-    //  🔧 FUNCIÓN CORREGIDA (EL ERROR ESTABA AQUÍ)
-    // ============================================================
     async function getFingerprint() {
-        // Usamos window.screen en lugar de la variable 'screen'
         const ancho = window.screen.width;
         const alto = window.screen.height;
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -388,10 +435,10 @@
         const doc = await db.collection('usuarios').doc(USER_ID).get();
         if (!doc.exists) return;
         USER_DATA = doc.data();
-        document.getElementById('balanceHome').textContent = `$${(USER_DATA.balance||0).toFixed(2)}`;
-        document.getElementById('balanceWithdraw').textContent = `$${(USER_DATA.balance||0).toFixed(2)}`;
+        document.getElementById('balanceHome').textContent = `$${(USER_DATA.balance||0).toFixed(5)}`;
+        document.getElementById('balanceWithdraw').textContent = `$${(USER_DATA.balance||0).toFixed(5)}`;
         document.getElementById('invitadosCount').textContent = (USER_DATA.referidos||[]).length;
-        document.getElementById('comisionAcumulada').textContent = `$${(USER_DATA.comision||0).toFixed(4)}`;
+        document.getElementById('comisionAcumulada').textContent = `$${(USER_DATA.comision||0).toFixed(5)}`;
         document.getElementById('refLinkBox').textContent = DOMINIO + '/?ref=' + USER_ID;
         renderAnuncios(); renderReferidos(); renderHistorial();
     }
@@ -406,31 +453,95 @@
             const done = i < vistos && fecha === hoy;
             html += `<div class="anuncio-card ${done?'done':''}">
                 <div class="num">${done?'✓':i+1}</div>
-                <div style="flex:1;font-size:13px;font-weight:600;">Anuncio #${i+1} (+$${RECOMPENSA_ANUNCIO.toFixed(2)})</div>
+                <div style="flex:1;font-size:13px;font-weight:600;">Anuncio #${i+1} (+$${RECOMPENSA_ANUNCIO.toFixed(5)})</div>
                 <button class="btn-sm" ${done?'disabled':''} onclick="verAnuncio(${i})">${done?'Visto':'Ver'}</button>
             </div>`;
         }
         l.innerHTML = html;
     }
 
+    // ============================================================
+    // 🔥 FUNCIÓN CORREGIDA - CON DETECCIÓN DE VUELTA RÁPIDA
+    // ============================================================
     window.verAnuncio = async function(index) {
         if (viendoAnuncio) return;
         viendoAnuncio = true;
+        tiempoRestante = 15;
+        
+        // Abrir el anuncio en una nueva ventana/pestaña
         window.open(ANUNCIOS_URLS[index], '_blank');
+        
+        // Mostrar overlay de espera
         adOverlay.classList.add('show');
-        let t = 15;
-        adTimer.textContent = t;
-        const i = setInterval(() => {
-            t--; adTimer.textContent = t;
-            if (t <= 5) adTimer.style.color = '#E67E22';
-            if (t <= 0) {
-                clearInterval(i);
-                adOverlay.classList.remove('show');
-                adTimer.style.color = '#4E3629';
-                completarAnuncio(index);
-                viendoAnuncio = false;
+        adTimer.textContent = tiempoRestante;
+        adTimer.style.color = '#4E3629';
+        let completado = false;
+        
+        // Limpiar timer anterior si existe
+        if (timerInterval) clearInterval(timerInterval);
+        
+        // Temporizador para la recompensa
+        timerInterval = setInterval(() => {
+            tiempoRestante--;
+            adTimer.textContent = tiempoRestante;
+            if (tiempoRestante <= 5) adTimer.style.color = '#E67E22';
+            
+            if (tiempoRestante <= 0) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                if (!completado) {
+                    completado = true;
+                    adOverlay.classList.remove('show');
+                    adTimer.style.color = '#4E3629';
+                    completarAnuncio(index);
+                    viendoAnuncio = false;
+                    // Remover el listener
+                    if (visibilityHandler) {
+                        document.removeEventListener('visibilitychange', visibilityHandler);
+                        visibilityHandler = null;
+                    }
+                }
             }
         }, 1000);
+        
+        // DETECTAR CUANDO EL USUARIO VUELVE A LA APP
+        if (visibilityHandler) {
+            document.removeEventListener('visibilitychange', visibilityHandler);
+        }
+        
+        visibilityHandler = () => {
+            if (document.visibilityState === 'visible' && viendoAnuncio) {
+                // El usuario volvió a la app
+                if (!completado && tiempoRestante > 0) {
+                    // VOLVIÓ ANTES DE TIEMPO ❌
+                    completado = true;
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    adOverlay.classList.remove('show');
+                    adTimer.style.color = '#4E3629';
+                    viendoAnuncio = false;
+                    document.removeEventListener('visibilitychange', visibilityHandler);
+                    visibilityHandler = null;
+                    
+                    // MOSTRAR ALERTA DE "NO VISTE EL ANUNCIO"
+                    alertaNoVisto.classList.add('show');
+                    toast('❌ No viste el anuncio completo. Vuelve a intentarlo.', 'error');
+                } else if (!completado && tiempoRestante <= 0) {
+                    // VOLVIÓ DESPUÉS DE 15s (o justo cuando terminó) ✅
+                    completado = true;
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    adOverlay.classList.remove('show');
+                    adTimer.style.color = '#4E3629';
+                    completarAnuncio(index);
+                    viendoAnuncio = false;
+                    document.removeEventListener('visibilitychange', visibilityHandler);
+                    visibilityHandler = null;
+                }
+            }
+        };
+        
+        document.addEventListener('visibilitychange', visibilityHandler);
     };
 
     async function completarAnuncio(index) {
@@ -447,7 +558,7 @@
                 comision: firebase.firestore.FieldValue.increment(RECOMPENSA_ANUNCIO * COMISION)
             });
         }
-        toast(`✅ +$${RECOMPENSA_ANUNCIO.toFixed(2)} USDT`, 'success');
+        toast(`✅ +$${RECOMPENSA_ANUNCIO.toFixed(5)} USDT`, 'success');
         actualizarUI();
     }
 
@@ -466,7 +577,7 @@
         const c = USER_DATA.comision || 0;
         if (c <= 0) return toast('⚠️ Sin comisiones acumuladas', 'error');
         await db.collection('usuarios').doc(USER_ID).update({ balance: firebase.firestore.FieldValue.increment(c), comision: 0 });
-        toast(`💰 +$${c.toFixed(4)} USDT añadido a tu balance`, 'success');
+        toast(`💰 +$${c.toFixed(5)} USDT añadido a tu balance`, 'success');
         actualizarUI();
     });
 
@@ -482,8 +593,8 @@
             historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }),
             pendientes: firebase.firestore.FieldValue.arrayUnion(pago)
         });
-        document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${m.toFixed(2)} solicitado`;
-        toast(`✅ Retiro solicitado: $${m.toFixed(2)}`, 'success');
+        document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${m.toFixed(5)} solicitado`;
+        toast(`✅ Retiro solicitado: $${m.toFixed(5)}`, 'success');
         document.getElementById('walletInput').value = '';
         actualizarUI();
     });
@@ -491,20 +602,49 @@
     function renderHistorial() {
         const l = document.getElementById('historialList');
         const h = USER_DATA.historial || [];
-        l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(2)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros aún</div>';
+        l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(5)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros aún</div>';
     }
 
+    // ============================================================
     // ADMIN
+    // ============================================================
     document.getElementById('adminTrigger').addEventListener('click', () => document.getElementById('adminPanel').classList.toggle('oculto'));
+    
     document.getElementById('btnAdminLogin').addEventListener('click', async () => {
         if (document.getElementById('adminPass').value !== CLAVE_ADMIN) return toast('❌ Clave incorrecta', 'error');
         document.getElementById('adminContent').classList.remove('oculto');
         await cargarPendientes();
     });
+    
     document.getElementById('btnCerrarAdmin').addEventListener('click', () => {
         document.getElementById('adminPanel').classList.add('oculto');
         document.getElementById('adminContent').classList.add('oculto');
     });
+
+    document.getElementById('btnDarSaldo').addEventListener('click', async () => {
+        const usuario = document.getElementById('adminUserId').value.trim().toLowerCase();
+        const monto = parseFloat(document.getElementById('adminMonto').value);
+        
+        if (!usuario) return toast('⚠️ Escribe un nombre de usuario', 'error');
+        if (isNaN(monto) || monto <= 0) return toast('⚠️ Monto inválido', 'error');
+        if (document.getElementById('adminPass').value !== CLAVE_ADMIN) return toast('❌ Clave incorrecta', 'error');
+        
+        try {
+            const doc = await db.collection('usuarios').doc(usuario).get();
+            if (!doc.exists) return toast('❌ Usuario no encontrado', 'error');
+            
+            await db.collection('usuarios').doc(usuario).update({
+                balance: firebase.firestore.FieldValue.increment(monto)
+            });
+            
+            toast(`✅ +$${monto.toFixed(2)} agregado a ${usuario}`, 'success');
+            document.getElementById('adminUserId').value = '';
+            document.getElementById('adminMonto').value = '';
+        } catch (e) {
+            toast('❌ Error: ' + e.message, 'error');
+        }
+    });
+
     document.getElementById('btnPagarTodos').addEventListener('click', async () => {
         if (!confirm('¿Pagar todos los retiros pendientes?')) return;
         const snap = await db.collection('usuarios').get();
@@ -533,7 +673,7 @@
         document.getElementById('totalPendientes').textContent = all.length;
         document.getElementById('pendientesList').innerHTML = all.length ? all.map(p => `
             <div class="admin-item">
-                <div><strong>$${p.monto.toFixed(2)}</strong><br><span style="font-size:10px;">👤 ${p.usuario}</span><br><span style="font-size:10px;color:var(--text2);">${p.wallet}</span></div>
+                <div><strong>$${p.monto.toFixed(5)}</strong><br><span style="font-size:10px;">👤 ${p.usuario}</span><br><span style="font-size:10px;color:var(--text2);">${p.wallet}</span></div>
                 <button class="btn-sm" onclick="pagarAdmin('${p.userId}',${p.id})">✅ PAGAR</button>
             </div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">No hay pagos pendientes</div>';
     }
