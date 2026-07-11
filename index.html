@@ -33,8 +33,6 @@
         .btn-green { background:var(--green); }
         .btn-coral { background:var(--coral); }
         .btn-yellow { background:var(--yellow); }
-        .btn-purple { background:var(--purple); }
-        .btn-blue { background:var(--blue); }
         input { width:100%; padding:14px 18px; border-radius:18px; border:3px solid var(--border); background:var(--card); font-size:13px; font-weight:600; outline:none; margin:6px 0; }
         input:focus { background:#FFFDF9; }
         .fila { display:flex; justify-content:space-between; padding:8px 0; border-bottom:2px dashed #E5DCD5; font-size:13px; font-weight:600; }
@@ -90,12 +88,13 @@
         <div class="card card-center">
             <div style="font-size:48px;">⭐</div>
             <div style="font-weight:700;font-size:22px;">StarGainCoins</div>
-            <div style="font-size:13px;color:var(--text2);margin:4px 0;">Gana recompensas diarias</div>
+            <div style="font-size:13px;color:var(--text2);">Gana recompensas diarias</div>
         </div>
         <div class="card">
             <div style="font-weight:700;font-size:15px;margin-bottom:8px;">📝 REGISTRO</div>
             <input type="text" id="regUsuario" placeholder="Nombre de usuario">
             <input type="password" id="regPassword" placeholder="Contraseña (mínimo 8 caracteres)">
+            <input type="text" id="regRefManual" placeholder="Código de invitado (opcional)">
             <div style="font-size:11px;color:var(--text2);margin:4px 0;" id="refInfo"></div>
             <button class="btn btn-pink" id="btnRegistrar">⭐ CREAR CUENTA</button>
         </div>
@@ -198,7 +197,6 @@
     const firebaseConfig = {
         apiKey: "AIzaSyALWjB7Ut2s-jUcC7hhXODRzFHhuBoHZU",
         authDomain: "usdt-8b129.firebaseapp.com",
-        databaseURL: "https://usdt-8b129-default-rtdb.asia-southeast1.firebaseio.com",
         projectId: "usdt-8b129",
         storageBucket: "usdt-8b129.appspot.com",
         messagingSenderId: "816855613636",
@@ -222,9 +220,12 @@
     const adTimer = document.getElementById('adTimer');
     const navbar = document.getElementById('navbar');
 
+    // Detectar referido de URL
     const urlParams = new URLSearchParams(window.location.search);
-    const refCode = urlParams.get('ref');
-    if (refCode) document.getElementById('refInfo').textContent = '🔗 Invitado por: ' + refCode;
+    let refCode = urlParams.get('ref') || '';
+    if (refCode) {
+        document.getElementById('refInfo').textContent = '🔗 Invitado por: ' + refCode;
+    }
 
     function toast(msg, tipo) {
         const t = document.getElementById('toast');
@@ -244,52 +245,96 @@
     document.getElementById('btnRegistrar').addEventListener('click', async () => {
         const usuario = document.getElementById('regUsuario').value.trim().toLowerCase();
         const password = document.getElementById('regPassword').value.trim();
+        const refManual = document.getElementById('regRefManual').value.trim().toLowerCase();
+
         if (!usuario || usuario.length < 3) return toast('⚠️ Usuario mínimo 3 caracteres', 'error');
         if (!password || password.length < 8) return toast('⚠️ Contraseña mínimo 8 caracteres', 'error');
 
-        const fp = await getFingerprint();
-        const existente = await db.collection('usuarios').where('fingerprint', '==', fp).get();
-        if (!existente.empty) return toast('🚫 Ya tienes una cuenta', 'error');
+        // Si puso código manual, úsalo. Si no, usa el de la URL
+        const codigoFinal = refManual || refCode || null;
 
-        const doc = await db.collection('usuarios').doc(usuario).get();
-        if (doc.exists) return toast('⚠️ Usuario ya existe', 'error');
+        try {
+            const fp = await getFingerprint();
 
-        const data = {
-            usuario, password, fingerprint: fp,
-            balance: 0, referidoPor: refCode || null,
-            referidos: [], comision: 0,
-            anunciosVistos: 0, anunciosFecha: '',
-            historial: [], pendientes: [], creado: Date.now()
-        };
-        await db.collection('usuarios').doc(usuario).set(data);
-        if (refCode) {
-            await db.collection('usuarios').doc(refCode).update({
-                referidos: firebase.firestore.FieldValue.arrayUnion(usuario)
-            });
+            // Verificar multicuentas
+            const existente = await db.collection('usuarios').where('fingerprint', '==', fp).get();
+            if (!existente.empty) return toast('🚫 Ya tienes una cuenta en este dispositivo', 'error');
+
+            // Verificar usuario duplicado
+            const doc = await db.collection('usuarios').doc(usuario).get();
+            if (doc.exists) return toast('⚠️ Ese nombre de usuario ya existe', 'error');
+
+            // Verificar que el código de referido exista (si se puso uno)
+            if (codigoFinal && codigoFinal !== usuario) {
+                const refDoc = await db.collection('usuarios').doc(codigoFinal).get();
+                if (!refDoc.exists) return toast('⚠️ El código de invitación no existe', 'error');
+            }
+
+            const data = {
+                usuario, password, fingerprint: fp,
+                balance: 0,
+                referidoPor: codigoFinal,
+                referidos: [],
+                comision: 0,
+                anunciosVistos: 0,
+                anunciosFecha: '',
+                historial: [],
+                pendientes: [],
+                creado: Date.now()
+            };
+
+            await db.collection('usuarios').doc(usuario).set(data);
+
+            // Sumar referido al que invitó
+            if (codigoFinal) {
+                await db.collection('usuarios').doc(codigoFinal).update({
+                    referidos: firebase.firestore.FieldValue.arrayUnion(usuario)
+                });
+            }
+
+            USER_ID = usuario;
+            USER_DATA = data;
+            localStorage.setItem('sgc_user', usuario);
+            localStorage.setItem('sgc_pass', password);
+            toast('✅ Cuenta creada con éxito', 'success');
+            entrarApp();
+        } catch (e) {
+            console.error('Error al registrar:', e);
+            toast('❌ Error: ' + e.message, 'error');
         }
-        USER_ID = usuario; USER_DATA = data;
-        localStorage.setItem('sgc_user', usuario); localStorage.setItem('sgc_pass', password);
-        toast('✅ Cuenta creada', 'success');
-        entrarApp();
     });
 
     // LOGIN
     document.getElementById('btnLogin').addEventListener('click', async () => {
         const usuario = document.getElementById('loginUsuario').value.trim().toLowerCase();
         const password = document.getElementById('loginPassword').value.trim();
-        if (!usuario || !password) return toast('⚠️ Completa los campos', 'error');
-        const doc = await db.collection('usuarios').doc(usuario).get();
-        if (!doc.exists) return toast('❌ Usuario no encontrado', 'error');
-        if (doc.data().password !== password) return toast('❌ Contraseña incorrecta', 'error');
+        if (!usuario || !password) return toast('⚠️ Completa todos los campos', 'error');
 
-        const fp = await getFingerprint();
-        if (doc.data().fingerprint && doc.data().fingerprint !== fp) {
-            return toast('🚫 Cuenta bloqueada por multicuentas', 'error');
+        try {
+            const doc = await db.collection('usuarios').doc(usuario).get();
+            if (!doc.exists) return toast('❌ Usuario no encontrado', 'error');
+            if (doc.data().password !== password) return toast('❌ Contraseña incorrecta', 'error');
+
+            const fp = await getFingerprint();
+            const data = doc.data();
+            
+            // Actualizar fingerprint si no tenía
+            if (!data.fingerprint) {
+                await db.collection('usuarios').doc(usuario).update({ fingerprint: fp });
+            } else if (data.fingerprint !== fp) {
+                return toast('🚫 Esta cuenta está vinculada a otro dispositivo', 'error');
+            }
+
+            USER_ID = usuario;
+            USER_DATA = data;
+            localStorage.setItem('sgc_user', usuario);
+            localStorage.setItem('sgc_pass', password);
+            toast('✅ Bienvenido, ' + usuario + '!', 'success');
+            entrarApp();
+        } catch (e) {
+            console.error('Error al iniciar sesión:', e);
+            toast('❌ Error: ' + e.message, 'error');
         }
-        USER_ID = usuario; USER_DATA = doc.data();
-        localStorage.setItem('sgc_user', usuario); localStorage.setItem('sgc_pass', password);
-        toast('✅ Bienvenido', 'success');
-        entrarApp();
     });
 
     async function getFingerprint() {
@@ -327,6 +372,7 @@
         USER_ID = null; USER_DATA = null;
         navbar.classList.add('oculto');
         navigate('loginScreen');
+        toast('👋 Sesión cerrada', 'success');
     });
 
     async function actualizarUI() {
@@ -338,6 +384,7 @@
         document.getElementById('balanceWithdraw').textContent = `$${(USER_DATA.balance||0).toFixed(2)}`;
         document.getElementById('invitadosCount').textContent = (USER_DATA.referidos||[]).length;
         document.getElementById('comisionAcumulada').textContent = `$${(USER_DATA.comision||0).toFixed(4)}`;
+        document.getElementById('refLinkBox').textContent = DOMINIO + '/?ref=' + USER_ID;
         renderAnuncios(); renderReferidos(); renderHistorial();
     }
 
@@ -398,20 +445,20 @@
 
     document.getElementById('btnCopiarLink').addEventListener('click', () => {
         const link = DOMINIO + '/?ref=' + USER_ID;
-        navigator.clipboard.writeText(link).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + link, 'success'));
+        navigator.clipboard.writeText(link).then(() => toast('📋 Enlace copiado!', 'success')).catch(() => toast('📋 ' + link, 'success'));
     });
 
     function renderReferidos() {
         const l = document.getElementById('referidosList');
         const refs = USER_DATA.referidos || [];
-        l.innerHTML = refs.length ? refs.map(r => `<div class="referido-item"><strong>👤 ${r}</strong><span style="color:#B8860B;">5%</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin invitados</div>';
+        l.innerHTML = refs.length ? refs.map(r => `<div class="referido-item"><strong>👤 ${r}</strong><span style="color:#B8860B;">+5% comisión</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Aún no has invitado a nadie</div>';
     }
 
     document.getElementById('btnReclamarComision').addEventListener('click', async () => {
         const c = USER_DATA.comision || 0;
-        if (c <= 0) return toast('⚠️ Sin comisiones', 'error');
+        if (c <= 0) return toast('⚠️ Sin comisiones acumuladas', 'error');
         await db.collection('usuarios').doc(USER_ID).update({ balance: firebase.firestore.FieldValue.increment(c), comision: 0 });
-        toast(`💰 +$${c.toFixed(4)}`, 'success');
+        toast(`💰 +$${c.toFixed(4)} USDT añadido a tu balance`, 'success');
         actualizarUI();
     });
 
@@ -428,7 +475,7 @@
             pendientes: firebase.firestore.FieldValue.arrayUnion(pago)
         });
         document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${m.toFixed(2)} solicitado`;
-        toast(`✅ Retiro solicitado`, 'success');
+        toast(`✅ Retiro solicitado: $${m.toFixed(2)}`, 'success');
         document.getElementById('walletInput').value = '';
         actualizarUI();
     });
@@ -436,9 +483,10 @@
     function renderHistorial() {
         const l = document.getElementById('historialList');
         const h = USER_DATA.historial || [];
-        l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(2)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros</div>';
+        l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(2)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros aún</div>';
     }
 
+    // ADMIN
     document.getElementById('adminTrigger').addEventListener('click', () => document.getElementById('adminPanel').classList.toggle('oculto'));
     document.getElementById('btnAdminLogin').addEventListener('click', async () => {
         if (document.getElementById('adminPass').value !== CLAVE_ADMIN) return toast('❌ Clave incorrecta', 'error');
@@ -450,7 +498,7 @@
         document.getElementById('adminContent').classList.add('oculto');
     });
     document.getElementById('btnPagarTodos').addEventListener('click', async () => {
-        if (!confirm('¿Pagar todos?')) return;
+        if (!confirm('¿Pagar todos los retiros pendientes?')) return;
         const snap = await db.collection('usuarios').get();
         let count = 0;
         for (const doc of snap.docs) {
@@ -462,7 +510,7 @@
             historial.forEach(h => { if (h.estado === 'pendiente') h.estado = 'exitoso'; });
             if (updated) await db.collection('usuarios').doc(doc.id).update({ pendientes, historial });
         }
-        toast(`✅ ${count} pagos`, 'success');
+        toast(`✅ ${count} pagos marcados como EXITOSOS`, 'success');
         cargarPendientes();
     });
 
@@ -479,7 +527,7 @@
             <div class="admin-item">
                 <div><strong>$${p.monto.toFixed(2)}</strong><br><span style="font-size:10px;">👤 ${p.usuario}</span><br><span style="font-size:10px;color:var(--text2);">${p.wallet}</span></div>
                 <button class="btn-sm" onclick="pagarAdmin('${p.userId}',${p.id})">✅ PAGAR</button>
-            </div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">No hay pendientes</div>';
+            </div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">No hay pagos pendientes</div>';
     }
 
     window.pagarAdmin = async function(uid, pid) {
@@ -491,7 +539,7 @@
         if (p) { p.estado = 'exitoso'; }
         historial.forEach(h => { if (h.estado === 'pendiente' && h.wallet === p.wallet) h.estado = 'exitoso'; });
         await db.collection('usuarios').doc(uid).update({ pendientes, historial });
-        toast('✅ Pagado', 'success');
+        toast('✅ Pago marcado como exitoso', 'success');
         cargarPendientes();
     };
 
