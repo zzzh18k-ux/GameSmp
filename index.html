@@ -2,604 +2,511 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>GVS Store | Earnings Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⭐ StarGainCoins</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src='//libtl.com/sdk.js' data-zone='10747271' data-sdk='show_10747271'></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src='//libtl.com/sdk.js' data-zone='10853207' data-sdk='show_10853207'></script>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #FFFDF6; --card: #FFFFFF; --text: #4E3629; --text2: #8D7365; --border: #5D4037;
+            --pink: #FFD3DA; --green: #C5EBE1; --purple: #E2DBF5; --coral: #FFCAB8; --yellow: #FFF0C2; --blue: #D3E5FF;
+            --shadow: 0 6px 0 #5D4037;
         }
-
-        body {
-            background: #EBE5D9;
-            font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            padding: 24px 16px;
-            padding-bottom: 100px;
-            min-height: 100vh;
-        }
-
-        .app {
-            max-width: 500px;
-            margin: 0 auto;
-            background: #FFFFFF;
-            border-radius: 48px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Header */
-        .header {
-            background: #FFFFFF;
-            padding: 32px 28px 24px;
-            text-align: center;
-            border-bottom: 1px solid #EDE6DD;
-        }
-        .logo {
-            font-size: 34px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            color: #1F3D2C;
-        }
-        .logo span {
-            font-weight: 300;
-            color: #B2905A;
-        }
-        .user-badge {
-            background: #F5F2ED;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 6px 20px;
-            border-radius: 60px;
-            margin-top: 18px;
-            font-size: 13px;
-            border: 1px solid #E2D9CE;
-            color: #4A5B4A;
-        }
-        .user-badge i { color: #7E9A6B; }
-        .user-badge span { font-weight: 700; color: #2C5F2D; }
-
-        /* Balance Cards */
-        .balance-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            padding: 28px 24px;
-            background: #FFFFFF;
-        }
-        .balance-card {
-            background: #F9F7F3;
-            border-radius: 32px;
-            padding: 22px 18px;
-            border: 1px solid #E8E0D4;
-        }
-        .balance-icon {
-            font-size: 26px;
-            margin-bottom: 12px;
-            color: #7E9A6B;
-        }
-        .balance-label {
-            font-size: 12px;
-            letter-spacing: 1px;
-            color: #A3967C;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-        .balance-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: #2C5F2D;
-            margin-top: 8px;
-        }
-
-        /* Sección de Tareas */
-        .tasks-section {
-            padding: 0 24px 24px 24px;
-        }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 22px;
-            padding-bottom: 6px;
-            border-bottom: 2px solid #E8E0D4;
-        }
-        .section-header h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #2C3E2B;
-        }
-        .free-badge {
-            background: #E9F0E6;
-            color: #5B8C5A;
-            font-size: 11px;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-weight: 600;
-        }
-
-        /* Tarjeta de tarea individual */
-        .task-card {
-            background: #FDFCFA;
-            border-radius: 28px;
-            padding: 18px 20px;
-            margin-bottom: 14px;
-            border: 1px solid #EBE3D8;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .task-info h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #2B3B2A;
-        }
-        .task-info p {
-            font-size: 12px;
-            color: #9B8E74;
-            margin-top: 4px;
-        }
-        .task-reward {
-            font-weight: 700;
-            font-size: 15px;
-            color: #7E9A6B;
-            margin-bottom: 6px;
-            text-align: right;
-        }
-        .task-button {
-            background: #FFFFFF;
-            border: 1.5px solid #D6CDBE;
-            padding: 10px 22px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            color: #4A6741;
-            min-width: 110px;
-        }
-        .task-button.active {
-            background: #E8F1E5;
-            border-color: #7E9A6B;
-            color: #2C5F2D;
-        }
-        .task-button.completed {
-            background: #2C5F2D;
-            border-color: #2C5F2D;
-            color: white;
-            cursor: default;
-        }
-
-        /* Panel de Referidos */
-        .referral-panel {
-            background: #F9F7F3;
-            margin: 8px 24px 24px 24px;
-            border-radius: 36px;
-            padding: 24px;
-            border: 1px solid #E8E0D4;
-        }
-        .stats-container {
-            display: flex;
-            gap: 18px;
-            margin: 20px 0;
-        }
-        .stat-card {
-            flex: 1;
-            background: #FFFFFF;
-            border-radius: 24px;
-            padding: 16px 12px;
-            text-align: center;
-            border: 1px solid #ECE3D8;
-        }
-        .stat-card .stat-label {
-            font-size: 11px;
-            color: #A3967C;
-            text-transform: uppercase;
-        }
-        .stat-card .stat-number {
-            font-size: 28px;
-            font-weight: 800;
-            color: #2C5F2D;
-            margin-top: 6px;
-        }
-        .ref-link-container {
-            display: flex;
-            gap: 12px;
-            background: #FFFFFF;
-            border-radius: 60px;
-            padding: 5px 12px;
-            border: 1px solid #E2D9CE;
-            margin: 16px 0;
-        }
-        .ref-link-text {
-            flex: 1;
-            font-size: 12px;
-            font-family: monospace;
-            color: #7E9A6B;
-            word-break: break-all;
-        }
-        .copy-button {
-            background: #F0EDE7;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 12px;
-            cursor: pointer;
-            color: #4A6741;
-        }
-        .invite-button {
-            background: #2C5F2D;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-
-        /* Retiro deshabilitado */
-        .withdraw-blocked {
-            background: #F4F1EB;
-            margin: 0 24px 28px 24px;
-            border-radius: 32px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid #E0D6C8;
-        }
-        .withdraw-blocked p {
-            color: #B2905A;
-            font-weight: 500;
-            font-size: 13px;
-        }
-        .withdraw-button-disabled {
-            background: #E8E2D9;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 60px;
-            font-weight: 600;
-            margin-top: 12px;
-            color: #A3967C;
-            cursor: not-allowed;
-        }
-
-        /* Navegación inferior */
-        .bottom-nav {
-            background: #FFFFFF;
-            border-top: 1px solid #EDE6DD;
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 20px 22px;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        .nav-item {
-            text-align: center;
-            font-size: 12px;
-            color: #B6A992;
-            cursor: pointer;
-            padding: 6px;
-            flex: 1;
-        }
-        .nav-item i { font-size: 22px; display: block; margin-bottom: 4px; }
-        .nav-item.active { color: #2C5F2D; font-weight: 500; }
-
-        /* Toast notificación */
-        .toast-premium {
-            position: fixed;
-            bottom: 100px;
-            left: 24px;
-            right: 24px;
-            background: #2C3E2B;
-            border-left: 5px solid #C9A87C;
-            padding: 14px 20px;
-            border-radius: 28px;
-            color: #FEFCF8;
-            font-size: 13px;
-            z-index: 1000;
-            animation: fadeSlide 0.3s ease;
-            max-width: 460px;
-            margin: 0 auto;
-        }
-        @keyframes fadeSlide {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; font-family:'Fredoka',sans-serif; color:var(--text); }
+        body { background:var(--bg); min-height:100vh; display:flex; justify-content:center; background-image:radial-gradient(#F3EDE0 1.5px,transparent 1.5px),radial-gradient(#F3EDE0 1.5px,#FFFDF6 1.5px); background-size:24px 24px; background-position:0 0,12px 12px; }
+        .app { max-width:450px; width:100%; display:flex; flex-direction:column; min-height:100vh; }
+        .screen { display:none; flex-direction:column; padding:16px; gap:14px; padding-bottom:100px; }
+        .screen.active { display:flex; }
+        .card { background:var(--card); border-radius:26px; padding:18px; border:4px solid var(--border); box-shadow:var(--shadow); }
+        .card-center { text-align:center; }
+        .balance-display { font-size:42px; font-weight:700; line-height:1; margin:4px 0; }
+        .balance-label { font-size:11px; letter-spacing:1px; color:var(--text2); font-weight:700; background:var(--yellow); display:inline-block; padding:2px 12px; border-radius:12px; border:2px solid var(--border); }
+        .btn { width:100%; padding:14px; border:3px solid var(--border); border-radius:18px; font-weight:700; font-size:14px; cursor:pointer; box-shadow:0 5px 0 var(--border); transition:all 0.1s; text-align:center; margin-top:6px; background:var(--card); }
+        .btn:active { transform:translateY(3px); box-shadow:0 2px 0 var(--border); }
+        .btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:0 2px 0 var(--border); }
+        .btn-pink { background:var(--pink); }
+        .btn-green { background:var(--green); }
+        .btn-coral { background:var(--coral); }
+        .btn-yellow { background:var(--yellow); }
+        .btn-purple { background:var(--purple); }
+        .btn-blue { background:var(--blue); }
+        input { width:100%; padding:14px 18px; border-radius:18px; border:3px solid var(--border); background:var(--card); font-size:13px; font-weight:600; outline:none; margin:6px 0; }
+        input:focus { background:#FFFDF9; }
+        .fila { display:flex; justify-content:space-between; padding:8px 0; border-bottom:2px dashed #E5DCD5; font-size:13px; font-weight:600; }
+        .fila:last-child { border:none; }
+        .hist-item { display:flex; justify-content:space-between; padding:10px; border-bottom:2px dashed #E5DCD5; font-size:12px; flex-wrap:wrap; gap:4px; }
+        .badge-sm { padding:2px 10px; border-radius:10px; border:2px solid var(--border); font-size:10px; font-weight:700; }
+        .badge-green { background:var(--green); }
+        .badge-yellow { background:var(--yellow); }
+        .referido-item { background:#FFF; border-radius:16px; padding:12px; margin-bottom:6px; border:2px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:12px; box-shadow:0 3px 0 var(--border); }
+        .scroll { max-height:200px; overflow-y:auto; }
+        .toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:var(--text); color:#FFF; padding:12px 24px; border-radius:20px; font-size:13px; z-index:999; opacity:0; transition:opacity 0.3s; pointer-events:none; white-space:nowrap; font-weight:600; }
+        .toast.show { opacity:1; }
+        .navbar { position:fixed; bottom:0; left:50%; transform:translateX(-50%); max-width:450px; width:100%; background:var(--card); border-top:4px solid var(--border); display:flex; justify-content:space-around; padding:10px 0; z-index:100; }
+        .nav-btn { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:8px 16px; border-radius:14px; transition:all 0.15s; background:transparent; border:none; font-weight:700; font-size:11px; }
+        .nav-btn i { font-size:20px; }
+        .nav-btn.active { background:var(--pink); }
+        .admin-trigger { text-align:center; font-size:10px; color:#D5C4B5; cursor:pointer; letter-spacing:2px; margin-top:8px; user-select:none; }
+        .admin-panel { background:var(--card); border-radius:26px; padding:18px; border:4px solid var(--border); box-shadow:var(--shadow); }
+        .admin-item { background:#FFF; border-radius:16px; padding:12px; margin-bottom:8px; border:3px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:12px; box-shadow:0 3px 0 var(--border); }
+        .btn-sm { padding:6px 14px; border-radius:12px; border:2px solid var(--border); font-weight:700; cursor:pointer; font-size:11px; background:var(--green); box-shadow:0 3px 0 var(--border); }
+        .btn-sm:active { transform:translateY(2px); box-shadow:none; }
+        .panel-login { display:flex; gap:8px; margin-bottom:12px; }
+        .panel-login input { flex:1; margin:0; }
+        .panel-login button { background:var(--pink); border:3px solid var(--border); padding:10px 20px; border-radius:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 0 var(--border); }
+        .oculto { display:none; }
+        .btn-group { display:flex; gap:8px; margin-top:10px; }
+        .btn-group .btn { flex:1; margin-top:0; }
+        .resumen-box { background:var(--yellow); border-radius:16px; padding:12px; text-align:center; border:2px solid var(--border); margin-bottom:12px; }
+        .resumen-box .total { font-size:26px; font-weight:700; }
+        .link-box { background:var(--purple); border-radius:14px; padding:10px; margin:8px 0; font-size:11px; font-weight:600; word-break:break-all; border:2px solid var(--border); text-align:center; }
+        .btn-copiar { background:var(--blue); border:2px solid var(--border); padding:8px 16px; border-radius:12px; font-weight:700; cursor:pointer; font-size:12px; box-shadow:0 3px 0 var(--border); width:100%; margin-top:4px; }
+        .btn-copiar:active { transform:translateY(2px); box-shadow:none; }
+        .anuncio-card { background:var(--card); border-radius:20px; padding:14px; margin-bottom:8px; border:3px solid var(--border); box-shadow:0 4px 0 var(--border); display:flex; align-items:center; gap:12px; }
+        .anuncio-card .num { width:36px; height:36px; border-radius:12px; background:var(--yellow); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; }
+        .anuncio-card.done { background:#F4FAF7; }
+        .anuncio-card.done .num { background:var(--green); }
+        .ad-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:200; display:none; justify-content:center; align-items:center; }
+        .ad-overlay.show { display:flex; }
+        .ad-box { background:var(--card); border-radius:28px; padding:24px; text-align:center; border:4px solid var(--border); box-shadow:0 10px 0 var(--border); max-width:320px; width:90%; }
+        .ad-box .timer { font-size:40px; font-weight:700; margin:12px 0; }
+        .ad-box .warning { font-size:12px; color:#E67E22; font-weight:600; margin-top:8px; }
     </style>
 </head>
 <body>
 
+<div id="toast" class="toast"></div>
+<div id="adOverlay" class="ad-overlay"><div class="ad-box"><div style="font-size:18px;font-weight:700;">🎬 ANUNCIO EN PROGRESO</div><div class="timer" id="adTimer">15</div><div style="font-size:13px;color:var(--text2);">segundos restantes</div><div class="warning">⚠️ No cierres esta ventana</div></div></div>
+
 <div class="app">
-    <div class="header">
-        <div class="logo">GVS<span>STORE</span></div>
-        <div class="user-badge">
-            <i class="fas fa-leaf"></i> IDENTIFICADOR: <span id="globalUserId">482160</span>
-            <i class="fas fa-shield-alt"></i> VERIFICADO
+
+    <!-- REGISTRO -->
+    <div id="registerScreen" class="screen active">
+        <div class="card card-center">
+            <div style="font-size:48px;">⭐</div>
+            <div style="font-weight:700;font-size:22px;">StarGainCoins</div>
+            <div style="font-size:13px;color:var(--text2);margin:4px 0;">Gana recompensas diarias</div>
+        </div>
+        <div class="card">
+            <div style="font-weight:700;font-size:15px;margin-bottom:8px;">📝 REGISTRO</div>
+            <input type="text" id="regUsuario" placeholder="Nombre de usuario">
+            <input type="password" id="regPassword" placeholder="Contraseña (mínimo 8 caracteres)">
+            <div style="font-size:11px;color:var(--text2);margin:4px 0;" id="refInfo"></div>
+            <button class="btn btn-pink" id="btnRegistrar">⭐ CREAR CUENTA</button>
+        </div>
+        <div class="card card-center">
+            <button class="btn btn-outline" id="btnIrLogin" style="background:var(--card);">🔑 INICIAR SESIÓN</button>
         </div>
     </div>
 
-    <!-- Balance principal -->
-    <div class="balance-grid">
-        <div class="balance-card">
-            <div class="balance-icon"><i class="fas fa-coins"></i></div>
-            <div class="balance-label">SALDO DISPONIBLE</div>
-            <div class="balance-value" id="mainBalanceDisplay">$0.0000</div>
+    <!-- LOGIN -->
+    <div id="loginScreen" class="screen">
+        <div class="card card-center">
+            <div style="font-size:48px;">⭐</div>
+            <div style="font-weight:700;font-size:22px;">StarGainCoins</div>
+            <div style="font-size:13px;color:var(--text2);">Gana recompensas diarias</div>
         </div>
-        <div class="balance-card">
-            <div class="balance-icon"><i class="fas fa-chart-simple"></i></div>
-            <div class="balance-label">ACUMULADO TOTAL</div>
-            <div class="balance-value" id="totalEarnedDisplay">$0.0000</div>
+        <div class="card">
+            <div style="font-weight:700;font-size:15px;margin-bottom:8px;">🔑 INICIAR SESIÓN</div>
+            <input type="text" id="loginUsuario" placeholder="Nombre de usuario">
+            <input type="password" id="loginPassword" placeholder="Contraseña">
+            <button class="btn btn-green" id="btnLogin">✅ ENTRAR</button>
         </div>
-    </div>
-
-    <!-- ========== SECCIÓN DE TAREAS (CADA BOTÓN ES ÚNICO Y SOLO HACE TAREAS) ========== -->
-    <div class="tasks-section">
-        <div class="section-header">
-            <h3><i class="fas fa-calendar-check"></i> Misiones disponibles</h3>
-            <span class="free-badge">ACTIVO</span>
-        </div>
-
-        <!-- TAREA UNO - variable única: taskOneState -->
-        <div class="task-card">
-            <div class="task-info">
-                <h4>Contenido audiovisual</h4>
-                <p>Visualización de treinta segundos</p>
-            </div>
-            <div>
-                <div class="task-reward">+ $0.04</div>
-                <button class="task-button active" id="taskOneButton">Comenzar</button>
-            </div>
-        </div>
-
-        <!-- TAREA DOS - variable única: taskTwoState -->
-        <div class="task-card">
-            <div class="task-info">
-                <h4>Canal de actualizaciones</h4>
-                <p>Suscripción oficial</p>
-            </div>
-            <div>
-                <div class="task-reward">+ $0.04</div>
-                <button class="task-button active" id="taskTwoButton">Comenzar</button>
-            </div>
-        </div>
-
-        <!-- TAREA TRES - variable única: taskThreeState -->
-        <div class="task-card">
-            <div class="task-info">
-                <h4>Comunidad privada</h4>
-                <p>Ingreso al grupo</p>
-            </div>
-            <div>
-                <div class="task-reward">+ $0.04</div>
-                <button class="task-button active" id="taskThreeButton">Comenzar</button>
-            </div>
-        </div>
-
-        <!-- TAREA CUATRO - variable única: taskFourState -->
-        <div class="task-card">
-            <div class="task-info">
-                <h4>Asistente interactivo</h4>
-                <p>Primer uso del bot</p>
-            </div>
-            <div>
-                <div class="task-reward">+ $0.04</div>
-                <button class="task-button active" id="taskFourButton">Comenzar</button>
-            </div>
+        <div class="card card-center">
+            <button class="btn btn-outline" id="btnIrRegistro" style="background:var(--card);">📝 CREAR CUENTA</button>
         </div>
     </div>
 
-    <!-- ========== SECCIÓN DE REFERIDOS (SOLO REFERIDOS, CADA BOTÓN ES ÚNICO) ========== -->
-    <div class="referral-panel">
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-label">REFERIDOS ACTIVOS</div>
-                <div class="stat-number" id="referralsCountValue">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">COMISIONES GENERADAS</div>
-                <div class="stat-number" id="commissionsValue">$0.0000</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">VALOR POR REFERIDO</div>
-                <div class="stat-number">$0.01</div>
-            </div>
+    <!-- HOME -->
+    <div id="homeScreen" class="screen">
+        <div class="card card-center">
+            <div style="font-size:12px;font-weight:700;color:var(--text2);">⭐ BALANCE</div>
+            <div class="balance-display" id="balanceHome">$0.00</div>
+            <span class="balance-label">USDT RETIRABLE</span>
         </div>
-        <div class="ref-link-container">
-            <span class="ref-link-text" id="dynamicReferralLink">Cargando enlace...</span>
-            <button class="copy-button" id="copyReferralLinkButton">Duplicar enlace</button>
+        <div class="card">
+            <div style="font-weight:700;font-size:16px;margin-bottom:10px;">🎬 ANUNCIOS DIARIOS (3 x $0.01)</div>
+            <div id="anunciosList"></div>
         </div>
-        <button class="invite-button" id="addReferralButton">Registrar nuevo referido</button>
-        <p style="font-size: 11px; color: #A3967C; text-align: center; margin-top: 14px;">Cada usuario que ingrese mediante tu enlace genera una comisión de 0.01 USD</p>
     </div>
 
-    <!-- RETIRO DESHABILITADO (SOLO DECORATIVO) -->
-    <div class="withdraw-blocked">
-        <p><i class="fas fa-lock"></i> Procesos de retiro en mantenimiento</p>
-        <button class="withdraw-button-disabled" disabled>Solicitar retiro</button>
-        <p style="font-size: 10px; margin-top: 8px;">Monto mínimo requerido: 10.00 USD — disponible próximamente</p>
+    <!-- INVITAR -->
+    <div id="inviteScreen" class="screen">
+        <div class="card card-center">
+            <div style="font-size:40px;">👥</div>
+            <div style="font-weight:700;font-size:18px;">INVITAR AMIGOS</div>
+            <div style="font-size:13px;color:var(--text2);">5% de comisión</div>
+            <div class="link-box" id="refLinkBox">Cargando...</div>
+            <button class="btn-copiar" id="btnCopiarLink"><i class="fas fa-copy"></i> COPIAR ENLACE</button>
+        </div>
+        <div class="card">
+            <div class="fila"><span>Amigos invitados</span><strong id="invitadosCount">0</strong></div>
+            <div class="fila"><span>Comisión acumulada</span><strong style="color:#B8860B;" id="comisionAcumulada">$0.00</strong></div>
+            <button class="btn btn-yellow" id="btnReclamarComision">💰 RETIRAR COMISIÓN</button>
+        </div>
+        <div class="card">
+            <div style="font-weight:700;font-size:15px;margin-bottom:8px;">📋 AMIGOS INVITADOS</div>
+            <div id="referidosList" class="scroll"></div>
+        </div>
     </div>
-</div>
 
-<div class="bottom-nav">
-    <div class="nav-item active" data-nav="home"><i class="fas fa-home"></i><span>Inicio</span></div>
-    <div class="nav-item" data-nav="tasks"><i class="fas fa-list-check"></i><span>Misiones</span></div>
-    <div class="nav-item" data-nav="refer"><i class="fas fa-user-group"></i><span>Referidos</span></div>
-    <div class="nav-item" data-nav="profile"><i class="fas fa-id-card"></i><span>Perfil</span></div>
+    <!-- RETIRAR -->
+    <div id="withdrawScreen" class="screen">
+        <div class="card card-center">
+            <div style="font-size:12px;font-weight:700;color:var(--text2);">BALANCE</div>
+            <div class="balance-display" id="balanceWithdraw">$0.00</div>
+        </div>
+        <div class="card">
+            <div style="font-weight:700;font-size:15px;margin-bottom:8px;">💳 RETIRAR USDT</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Mínimo: $0.01 USDT</div>
+            <input type="text" id="walletInput" placeholder="Dirección Polygon (0x...)">
+            <button class="btn btn-green" id="btnRetirar">📤 SOLICITAR RETIRO</button>
+            <div style="font-size:12px;margin-top:6px;min-height:18px;font-weight:600;" id="estadoRetiro"></div>
+        </div>
+        <div class="card">
+            <div style="font-weight:700;font-size:15px;margin-bottom:8px;">📋 HISTORIAL</div>
+            <div id="historialList" class="scroll"></div>
+        </div>
+        <div class="admin-trigger" id="adminTrigger">◆ ADMIN ◆</div>
+        <div id="adminPanel" class="admin-panel oculto">
+            <h3 style="margin-bottom:10px;"><i class="fas fa-crown"></i> PANEL ADMIN</h3>
+            <div class="panel-login"><input type="password" id="adminPass" placeholder="Clave"><button id="btnAdminLogin">ENTRAR</button></div>
+            <div id="adminContent" class="oculto">
+                <div class="resumen-box"><div style="font-size:11px;">PENDIENTES</div><div class="total" id="totalPendientes">0</div></div>
+                <div id="pendientesList" class="scroll" style="max-height:250px;"></div>
+                <div class="btn-group"><button class="btn btn-green" id="btnPagarTodos">✅ PAGAR TODOS</button><button class="btn" id="btnCerrarAdmin">❌ CERRAR</button></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <div id="navbar" class="navbar oculto">
+        <button class="nav-btn active" data-screen="homeScreen"><i class="fas fa-home"></i><span>Inicio</span></button>
+        <button class="nav-btn" data-screen="inviteScreen"><i class="fas fa-users"></i><span>Invitar</span></button>
+        <button class="nav-btn" data-screen="withdrawScreen"><i class="fas fa-wallet"></i><span>Retirar</span></button>
+        <button class="nav-btn" id="btnCerrarSesion" style="color:#C0392B;"><i class="fas fa-sign-out-alt"></i><span>Salir</span></button>
+    </div>
+
 </div>
 
 <script>
-    // ============================================================
-    // CADA VARIABLE ES ÚNICA Y PERTENECE EXCLUSIVAMENTE A SU FUNCIÓN
-    // ============================================================
-    
-    // Variables del sistema de balance
-    let availableBalance = 0.00;           // Saldo disponible del usuario
-    let totalHistoricalEarned = 0.00;       // Total acumulado de todas las ganancias
-    
-    // Variables exclusivas para el sistema de REFERIDOS (solo referidos)
-    let referralActiveCount = 0;             // Número total de referidos activos
-    let referralCommissionsTotal = 0.00;     // Comisiones acumuladas por referidos
-    
-    // Variables exclusivas para el sistema de TAREAS (cada tarea tiene su propia variable)
-    let taskOneCompleted = false;             // Estado de la primera misión
-    let taskTwoCompleted = false;             // Estado de la segunda misión
-    let taskThreeCompleted = false;           // Estado de la tercera misión
-    let taskFourCompleted = false;            // Estado de la cuarta misión
-    
-    // Constantes de recompensa (valores fijos)
-    const TASK_REWARD_VALUE = 0.04;           // Cada tarea completada otorga 0.04 USD
-    const REFERRAL_REWARD_VALUE = 0.01;       // Cada referido nuevo otorga 0.01 USD
-    
-    // --------------------- FUNCIONES DE PERSISTENCIA ---------------------
-    function loadUserDataFromStorage() {
-        const storedData = localStorage.getItem('gvs_independent_variables');
-        if(storedData) {
-            try {
-                const parsed = JSON.parse(storedData);
-                availableBalance = parsed.availableBalance ?? 0;
-                totalHistoricalEarned = parsed.totalHistoricalEarned ?? 0;
-                referralActiveCount = parsed.referralActiveCount ?? 0;
-                referralCommissionsTotal = parsed.referralCommissionsTotal ?? 0;
-                taskOneCompleted = parsed.taskOneCompleted ?? false;
-                taskTwoCompleted = parsed.taskTwoCompleted ?? false;
-                taskThreeCompleted = parsed.taskThreeCompleted ?? false;
-                taskFourCompleted = parsed.taskFourCompleted ?? false;
-            } catch(e) {}
+    const firebaseConfig = {
+        apiKey: "AIzaSyALWjB7Ut2s-jUcC7hhXODRzFHhuBoHZU",
+        authDomain: "usdt-8b129.firebaseapp.com",
+        databaseURL: "https://usdt-8b129-default-rtdb.asia-southeast1.firebaseio.com",
+        projectId: "usdt-8b129",
+        storageBucket: "usdt-8b129.appspot.com",
+        messagingSenderId: "816855613636",
+        appId: "1:816855613636:web:7891ba3996acef2c91c991"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const CLAVE_ADMIN = '231606';
+    const ANUNCIOS_URLS = ['https://omg10.com/4/10274047','https://omg10.com/4/10874553','https://omg10.com/4/10180875'];
+    const RECOMPENSA_ANUNCIO = 0.01;
+    const MIN_RETIRO = 0.01;
+    const COMISION = 0.05;
+    const DOMINIO = 'newstarnoni.click';
+
+    let USER_ID = null;
+    let USER_DATA = null;
+    let viendoAnuncio = false;
+
+    const adOverlay = document.getElementById('adOverlay');
+    const adTimer = document.getElementById('adTimer');
+    const navbar = document.getElementById('navbar');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref');
+    if (refCode) document.getElementById('refInfo').textContent = '🔗 Invitado por: ' + refCode;
+
+    function toast(msg, tipo) {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.style.color = '#FFF';
+        t.style.background = tipo === 'success' ? '#2D6A4F' : tipo === 'error' ? '#C0392B' : '#4E3629';
+        t.classList.add('show');
+        clearTimeout(t._t);
+        t._t = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function navigate(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    // REGISTRO
+    document.getElementById('btnRegistrar').addEventListener('click', async () => {
+        const usuario = document.getElementById('regUsuario').value.trim().toLowerCase();
+        const password = document.getElementById('regPassword').value.trim();
+        if (!usuario || usuario.length < 3) return toast('⚠️ Usuario mínimo 3 caracteres', 'error');
+        if (!password || password.length < 8) return toast('⚠️ Contraseña mínimo 8 caracteres', 'error');
+
+        const fp = await getFingerprint();
+        const existente = await db.collection('usuarios').where('fingerprint', '==', fp).get();
+        if (!existente.empty) return toast('🚫 Ya tienes una cuenta', 'error');
+
+        const doc = await db.collection('usuarios').doc(usuario).get();
+        if (doc.exists) return toast('⚠️ Usuario ya existe', 'error');
+
+        const data = {
+            usuario, password, fingerprint: fp,
+            balance: 0, referidoPor: refCode || null,
+            referidos: [], comision: 0,
+            anunciosVistos: 0, anunciosFecha: '',
+            historial: [], pendientes: [], creado: Date.now()
+        };
+        await db.collection('usuarios').doc(usuario).set(data);
+        if (refCode) {
+            await db.collection('usuarios').doc(refCode).update({
+                referidos: firebase.firestore.FieldValue.arrayUnion(usuario)
+            });
         }
-        updateAllVisualElements();
-        updateTaskButtonsVisual();
-    }
-    
-    function saveCompleteState() {
-        localStorage.setItem('gvs_independent_variables', JSON.stringify({
-            availableBalance, totalHistoricalEarned,
-            referralActiveCount, referralCommissionsTotal,
-            taskOneCompleted, taskTwoCompleted, taskThreeCompleted, taskFourCompleted
-        }));
-    }
-    
-    // Mostrar anuncio + notificación visual
-    function triggerAdvertisementAndNotify(message) {
-        if(typeof show_10747271 === 'function') {
-            try { show_10747271(); } catch(e) {}
+        USER_ID = usuario; USER_DATA = data;
+        localStorage.setItem('sgc_user', usuario); localStorage.setItem('sgc_pass', password);
+        toast('✅ Cuenta creada', 'success');
+        entrarApp();
+    });
+
+    // LOGIN
+    document.getElementById('btnLogin').addEventListener('click', async () => {
+        const usuario = document.getElementById('loginUsuario').value.trim().toLowerCase();
+        const password = document.getElementById('loginPassword').value.trim();
+        if (!usuario || !password) return toast('⚠️ Completa los campos', 'error');
+        const doc = await db.collection('usuarios').doc(usuario).get();
+        if (!doc.exists) return toast('❌ Usuario no encontrado', 'error');
+        if (doc.data().password !== password) return toast('❌ Contraseña incorrecta', 'error');
+
+        const fp = await getFingerprint();
+        if (doc.data().fingerprint && doc.data().fingerprint !== fp) {
+            return toast('🚫 Cuenta bloqueada por multicuentas', 'error');
         }
-        const toastMessage = document.createElement('div');
-        toastMessage.className = 'toast-premium';
-        toastMessage.innerHTML = `<i class="fas fa-circle-info"></i> ${message}`;
-        document.body.appendChild(toastMessage);
-        setTimeout(() => toastMessage.remove(), 2800);
+        USER_ID = usuario; USER_DATA = doc.data();
+        localStorage.setItem('sgc_user', usuario); localStorage.setItem('sgc_pass', password);
+        toast('✅ Bienvenido', 'success');
+        entrarApp();
+    });
+
+    async function getFingerprint() {
+        const screen = `${screen.width}x${screen.height}`;
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const lang = navigator.language;
+        const str = `${screen}|${tz}|${lang}`;
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
+        return hash.toString();
     }
-    
-    function updateAllVisualElements() {
-        document.getElementById('mainBalanceDisplay').innerText = `$${availableBalance.toFixed(4)}`;
-        document.getElementById('totalEarnedDisplay').innerText = `$${totalHistoricalEarned.toFixed(4)}`;
-        document.getElementById('referralsCountValue').innerText = referralActiveCount;
-        document.getElementById('commissionsValue').innerText = `$${referralCommissionsTotal.toFixed(4)}`;
+
+    function entrarApp() {
+        navigate('homeScreen');
+        navbar.classList.remove('oculto');
+        document.querySelectorAll('.nav-btn[data-screen]').forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-screen="homeScreen"]').classList.add('active');
+        document.getElementById('refLinkBox').textContent = DOMINIO + '/?ref=' + USER_ID;
+        actualizarUI();
     }
-    
-    function updateTaskButtonsVisual() {
-        const buttonOne = document.getElementById('taskOneButton');
-        if(taskOneCompleted) {
-            buttonOne.innerText = 'Finalizada'; buttonOne.classList.remove('active'); buttonOne.classList.add('completed'); buttonOne.disabled = true;
-        } else { buttonOne.innerText = 'Comenzar'; buttonOne.classList.add('active'); buttonOne.classList.remove('completed'); buttonOne.disabled = false; }
-        
-        const buttonTwo = document.getElementById('taskTwoButton');
-        if(taskTwoCompleted) {
-            buttonTwo.innerText = 'Finalizada'; buttonTwo.classList.remove('active'); buttonTwo.classList.add('completed'); buttonTwo.disabled = true;
-        } else { buttonTwo.innerText = 'Comenzar'; buttonTwo.classList.add('active'); buttonTwo.classList.remove('completed'); buttonTwo.disabled = false; }
-        
-        const buttonThree = document.getElementById('taskThreeButton');
-        if(taskThreeCompleted) {
-            buttonThree.innerText = 'Finalizada'; buttonThree.classList.remove('active'); buttonThree.classList.add('completed'); buttonThree.disabled = true;
-        } else { buttonThree.innerText = 'Comenzar'; buttonThree.classList.add('active'); buttonThree.classList.remove('completed'); buttonThree.disabled = false; }
-        
-        const buttonFour = document.getElementById('taskFourButton');
-        if(taskFourCompleted) {
-            buttonFour.innerText = 'Finalizada'; buttonFour.classList.remove('active'); buttonFour.classList.add('completed'); buttonFour.disabled = true;
-        } else { buttonFour.innerText = 'Comenzar'; buttonFour.classList.add('active'); buttonFour.classList.remove('completed'); buttonFour.disabled = false; }
-    }
-    
-    // Función exclusiva para completar una tarea (solo afecta a la variable de esa tarea)
-    function executeTaskCompletion(taskIdentifier, currentTaskFlag, updateTaskFlagCallback) {
-        if(currentTaskFlag) {
-            triggerAdvertisementAndNotify('Esta misión ya fue completada. Regresa mañana para nuevas actividades.');
-            return;
-        }
-        availableBalance += TASK_REWARD_VALUE;
-        totalHistoricalEarned += TASK_REWARD_VALUE;
-        updateTaskFlagCallback(true);
-        saveCompleteState();
-        updateAllVisualElements();
-        updateTaskButtonsVisual();
-        triggerAdvertisementAndNotify(`Misión completada exitosamente. +${TASK_REWARD_VALUE.toFixed(2)} USD añadidos a tu saldo.`);
-    }
-    
-    // ========== ASIGNACIÓN DE CADA BOTÓN A SU VARIABLE ÚNICA (SIN MEZCLAS) ==========
-    document.getElementById('taskOneButton').addEventListener('click', () => {
-        executeTaskCompletion(1, taskOneCompleted, (val) => taskOneCompleted = val);
-    });
-    document.getElementById('taskTwoButton').addEventListener('click', () => {
-        executeTaskCompletion(2, taskTwoCompleted, (val) => taskTwoCompleted = val);
-    });
-    document.getElementById('taskThreeButton').addEventListener('click', () => {
-        executeTaskCompletion(3, taskThreeCompleted, (val) => taskThreeCompleted = val);
-    });
-    document.getElementById('taskFourButton').addEventListener('click', () => {
-        executeTaskCompletion(4, taskFourCompleted, (val) => taskFourCompleted = val);
-    });
-    
-    // ========== SISTEMA DE REFERIDOS (VARIABLES EXCLUSIVAS, NO SE MEZCLAN CON TAREAS) ==========
-    document.getElementById('addReferralButton').addEventListener('click', () => {
-        triggerAdvertisementAndNotify('Nuevo referido registrado mediante tu enlace de invitación.');
-        referralActiveCount += 1;
-        referralCommissionsTotal += REFERRAL_REWARD_VALUE;
-        availableBalance += REFERRAL_REWARD_VALUE;
-        totalHistoricalEarned += REFERRAL_REWARD_VALUE;
-        saveCompleteState();
-        updateAllVisualElements();
-    });
-    
-    document.getElementById('copyReferralLinkButton').addEventListener('click', () => {
-        const currentLink = document.getElementById('dynamicReferralLink').innerText;
-        navigator.clipboard.writeText(currentLink);
-        triggerAdvertisementAndNotify('Enlace de referido copiado. Comparte y cada registro te dará 0.01 USD.');
-    });
-    
-    // ========== NAVEGACIÓN CON ANUNCIO ==========
-    const bottomNavigationItems = document.querySelectorAll('.nav-item');
-    bottomNavigationItems.forEach(item => {
-        item.addEventListener('click', () => {
-            triggerAdvertisementAndNotify(`Navegando a sección: ${item.innerText.trim()}`);
-            bottomNavigationItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-            const targetSection = item.innerText.trim().toLowerCase();
-            if(targetSection === 'misiones') document.querySelector('.tasks-section').scrollIntoView({ behavior: 'smooth' });
-            else if(targetSection === 'referidos') document.querySelector('.referral-panel').scrollIntoView({ behavior: 'smooth' });
-            else window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    document.querySelectorAll('.nav-btn[data-screen]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            navigate(this.dataset.screen);
+            document.querySelectorAll('.nav-btn[data-screen]').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            actualizarUI();
         });
     });
-    
-    // Generar identificador único y enlace con la marca gvsstoreBot
-    let generatedUserId = localStorage.getItem('gvs_unique_user_identifier');
-    if(!generatedUserId) {
-        generatedUserId = Math.floor(100000 + Math.random() * 900000).toString();
-        localStorage.setItem('gvs_unique_user_identifier', generatedUserId);
+
+    document.getElementById('btnIrLogin').addEventListener('click', () => navigate('loginScreen'));
+    document.getElementById('btnIrRegistro').addEventListener('click', () => navigate('registerScreen'));
+    document.getElementById('btnCerrarSesion').addEventListener('click', () => {
+        localStorage.removeItem('sgc_user'); localStorage.removeItem('sgc_pass');
+        USER_ID = null; USER_DATA = null;
+        navbar.classList.add('oculto');
+        navigate('loginScreen');
+    });
+
+    async function actualizarUI() {
+        if (!USER_ID) return;
+        const doc = await db.collection('usuarios').doc(USER_ID).get();
+        if (!doc.exists) return;
+        USER_DATA = doc.data();
+        document.getElementById('balanceHome').textContent = `$${(USER_DATA.balance||0).toFixed(2)}`;
+        document.getElementById('balanceWithdraw').textContent = `$${(USER_DATA.balance||0).toFixed(2)}`;
+        document.getElementById('invitadosCount').textContent = (USER_DATA.referidos||[]).length;
+        document.getElementById('comisionAcumulada').textContent = `$${(USER_DATA.comision||0).toFixed(4)}`;
+        renderAnuncios(); renderReferidos(); renderHistorial();
     }
-    document.getElementById('globalUserId').innerText = generatedUserId;
-    document.getElementById('dynamicReferralLink').innerHTML = `https://t.me/gvsstoreBot?start=${generatedUserId}`;
-    
-    loadUserDataFromStorage();
-    triggerAdvertisementAndNotify('Bienvenido a GVS Store. Completa misiones y acumula recompensas.');
+
+    function renderAnuncios() {
+        const l = document.getElementById('anunciosList');
+        const vistos = USER_DATA.anunciosVistos || 0;
+        const fecha = USER_DATA.anunciosFecha || '';
+        const hoy = new Date().toLocaleDateString();
+        let html = '';
+        for (let i = 0; i < 3; i++) {
+            const done = i < vistos && fecha === hoy;
+            html += `<div class="anuncio-card ${done?'done':''}">
+                <div class="num">${done?'✓':i+1}</div>
+                <div style="flex:1;font-size:13px;font-weight:600;">Anuncio #${i+1} (+$${RECOMPENSA_ANUNCIO.toFixed(2)})</div>
+                <button class="btn-sm" ${done?'disabled':''} onclick="verAnuncio(${i})">${done?'Visto':'Ver'}</button>
+            </div>`;
+        }
+        l.innerHTML = html;
+    }
+
+    window.verAnuncio = async function(index) {
+        if (viendoAnuncio) return;
+        viendoAnuncio = true;
+        window.open(ANUNCIOS_URLS[index], '_blank');
+        adOverlay.classList.add('show');
+        let t = 15;
+        adTimer.textContent = t;
+        const i = setInterval(() => {
+            t--; adTimer.textContent = t;
+            if (t <= 5) adTimer.style.color = '#E67E22';
+            if (t <= 0) {
+                clearInterval(i);
+                adOverlay.classList.remove('show');
+                adTimer.style.color = '#4E3629';
+                completarAnuncio(index);
+                viendoAnuncio = false;
+            }
+        }, 1000);
+    };
+
+    async function completarAnuncio(index) {
+        const hoy = new Date().toLocaleDateString();
+        let vistos = USER_DATA.anunciosVistos || 0;
+        if (USER_DATA.anunciosFecha !== hoy) vistos = 0;
+        if (index >= vistos) vistos = index + 1;
+        await db.collection('usuarios').doc(USER_ID).update({
+            balance: firebase.firestore.FieldValue.increment(RECOMPENSA_ANUNCIO),
+            anunciosVistos: vistos, anunciosFecha: hoy
+        });
+        if (USER_DATA.referidoPor) {
+            await db.collection('usuarios').doc(USER_DATA.referidoPor).update({
+                comision: firebase.firestore.FieldValue.increment(RECOMPENSA_ANUNCIO * COMISION)
+            });
+        }
+        toast(`✅ +$${RECOMPENSA_ANUNCIO.toFixed(2)} USDT`, 'success');
+        actualizarUI();
+    }
+
+    document.getElementById('btnCopiarLink').addEventListener('click', () => {
+        const link = DOMINIO + '/?ref=' + USER_ID;
+        navigator.clipboard.writeText(link).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + link, 'success'));
+    });
+
+    function renderReferidos() {
+        const l = document.getElementById('referidosList');
+        const refs = USER_DATA.referidos || [];
+        l.innerHTML = refs.length ? refs.map(r => `<div class="referido-item"><strong>👤 ${r}</strong><span style="color:#B8860B;">5%</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin invitados</div>';
+    }
+
+    document.getElementById('btnReclamarComision').addEventListener('click', async () => {
+        const c = USER_DATA.comision || 0;
+        if (c <= 0) return toast('⚠️ Sin comisiones', 'error');
+        await db.collection('usuarios').doc(USER_ID).update({ balance: firebase.firestore.FieldValue.increment(c), comision: 0 });
+        toast(`💰 +$${c.toFixed(4)}`, 'success');
+        actualizarUI();
+    });
+
+    document.getElementById('btnRetirar').addEventListener('click', async () => {
+        const w = document.getElementById('walletInput').value.trim();
+        if (!w || !w.startsWith('0x')) return toast('⚠️ Dirección Polygon inválida', 'error');
+        if ((USER_DATA.balance||0) < MIN_RETIRO) return toast('⚠️ Mínimo $' + MIN_RETIRO.toFixed(2), 'error');
+        const m = USER_DATA.balance;
+        const hoy = new Date().toLocaleDateString();
+        const pago = { id: Date.now(), wallet: w, monto: m, fecha: hoy, estado: 'pendiente', usuario: USER_ID };
+        await db.collection('usuarios').doc(USER_ID).update({
+            balance: 0,
+            historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }),
+            pendientes: firebase.firestore.FieldValue.arrayUnion(pago)
+        });
+        document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${m.toFixed(2)} solicitado`;
+        toast(`✅ Retiro solicitado`, 'success');
+        document.getElementById('walletInput').value = '';
+        actualizarUI();
+    });
+
+    function renderHistorial() {
+        const l = document.getElementById('historialList');
+        const h = USER_DATA.historial || [];
+        l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(2)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros</div>';
+    }
+
+    document.getElementById('adminTrigger').addEventListener('click', () => document.getElementById('adminPanel').classList.toggle('oculto'));
+    document.getElementById('btnAdminLogin').addEventListener('click', async () => {
+        if (document.getElementById('adminPass').value !== CLAVE_ADMIN) return toast('❌ Clave incorrecta', 'error');
+        document.getElementById('adminContent').classList.remove('oculto');
+        await cargarPendientes();
+    });
+    document.getElementById('btnCerrarAdmin').addEventListener('click', () => {
+        document.getElementById('adminPanel').classList.add('oculto');
+        document.getElementById('adminContent').classList.add('oculto');
+    });
+    document.getElementById('btnPagarTodos').addEventListener('click', async () => {
+        if (!confirm('¿Pagar todos?')) return;
+        const snap = await db.collection('usuarios').get();
+        let count = 0;
+        for (const doc of snap.docs) {
+            const d = doc.data();
+            let pendientes = d.pendientes || [];
+            let historial = d.historial || [];
+            let updated = false;
+            pendientes.forEach(p => { if (p.estado === 'pendiente') { p.estado = 'exitoso'; updated = true; count++; } });
+            historial.forEach(h => { if (h.estado === 'pendiente') h.estado = 'exitoso'; });
+            if (updated) await db.collection('usuarios').doc(doc.id).update({ pendientes, historial });
+        }
+        toast(`✅ ${count} pagos`, 'success');
+        cargarPendientes();
+    });
+
+    async function cargarPendientes() {
+        const snap = await db.collection('usuarios').get();
+        let all = [];
+        snap.forEach(doc => {
+            (doc.data().pendientes || []).forEach(p => {
+                if (p.estado === 'pendiente') all.push({ ...p, userId: doc.id });
+            });
+        });
+        document.getElementById('totalPendientes').textContent = all.length;
+        document.getElementById('pendientesList').innerHTML = all.length ? all.map(p => `
+            <div class="admin-item">
+                <div><strong>$${p.monto.toFixed(2)}</strong><br><span style="font-size:10px;">👤 ${p.usuario}</span><br><span style="font-size:10px;color:var(--text2);">${p.wallet}</span></div>
+                <button class="btn-sm" onclick="pagarAdmin('${p.userId}',${p.id})">✅ PAGAR</button>
+            </div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">No hay pendientes</div>';
+    }
+
+    window.pagarAdmin = async function(uid, pid) {
+        const doc = await db.collection('usuarios').doc(uid).get();
+        const d = doc.data();
+        let pendientes = d.pendientes || [];
+        let historial = d.historial || [];
+        const p = pendientes.find(x => x.id === pid);
+        if (p) { p.estado = 'exitoso'; }
+        historial.forEach(h => { if (h.estado === 'pendiente' && h.wallet === p.wallet) h.estado = 'exitoso'; });
+        await db.collection('usuarios').doc(uid).update({ pendientes, historial });
+        toast('✅ Pagado', 'success');
+        cargarPendientes();
+    };
+
+    // AUTO-LOGIN
+    (async function() {
+        const u = localStorage.getItem('sgc_user');
+        const p = localStorage.getItem('sgc_pass');
+        if (u && p) {
+            const doc = await db.collection('usuarios').doc(u).get();
+            if (doc.exists && doc.data().password === p) {
+                USER_ID = u; USER_DATA = doc.data();
+                entrarApp();
+            }
+        }
+    })();
 </script>
 </body>
 </html>
