@@ -337,13 +337,21 @@
         }
     });
 
+    // ============================================================
+    //  🔧 FUNCIÓN CORREGIDA (EL ERROR ESTABA AQUÍ)
+    // ============================================================
     async function getFingerprint() {
-        const screen = `${screen.width}x${screen.height}`;
+        // Usamos window.screen en lugar de la variable 'screen'
+        const ancho = window.screen.width;
+        const alto = window.screen.height;
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const lang = navigator.language;
-        const str = `${screen}|${tz}|${lang}`;
+        const str = `${ancho}x${alto}|${tz}|${lang}`;
         let hash = 0;
-        for (let i = 0; i < str.length; i++) { hash = ((hash << 5) - hash) + str.charCodeAt(i); hash |= 0; }
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) - hash) + str.charCodeAt(i);
+            hash |= 0;
+        }
         return hash.toString();
     }
 
