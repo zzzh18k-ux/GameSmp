@@ -24,7 +24,7 @@
         .screen.active { display:flex; }
         .card { background:var(--card); border-radius:26px; padding:18px; border:4px solid var(--border); box-shadow:var(--shadow); }
         .card-center { text-align:center; }
-        .balance-display { font-size:42px; font-weight:700; line-height:1; margin:4px 0; }
+        .balance-display { font-size:42px; font-weight:700; line-height:1; margin:4px 0; cursor:pointer; user-select:none; }
         .balance-label { font-size:11px; letter-spacing:1px; color:var(--text2); font-weight:700; background:var(--yellow); display:inline-block; padding:2px 12px; border-radius:12px; border:2px solid var(--border); }
         .btn { width:100%; padding:14px; border:3px solid var(--border); border-radius:18px; font-weight:700; font-size:14px; cursor:pointer; box-shadow:0 5px 0 var(--border); transition:all 0.1s; text-align:center; margin-top:6px; background:var(--card); }
         .btn:active { transform:translateY(3px); box-shadow:0 2px 0 var(--border); }
@@ -33,8 +33,10 @@
         .btn-green { background:var(--green); }
         .btn-coral { background:var(--coral); }
         .btn-yellow { background:var(--yellow); }
-        input { width:100%; padding:14px 18px; border-radius:18px; border:3px solid var(--border); background:var(--card); font-size:13px; font-weight:600; outline:none; margin:6px 0; }
-        input:focus { background:#FFFDF9; }
+        .btn-purple { background:var(--purple); }
+        input, textarea { width:100%; padding:14px 18px; border-radius:18px; border:3px solid var(--border); background:var(--card); font-size:13px; font-weight:600; outline:none; margin:6px 0; }
+        input:focus, textarea:focus { background:#FFFDF9; }
+        textarea { resize:vertical; min-height:60px; }
         .fila { display:flex; justify-content:space-between; padding:8px 0; border-bottom:2px dashed #E5DCD5; font-size:13px; font-weight:600; }
         .fila:last-child { border:none; }
         .hist-item { display:flex; justify-content:space-between; padding:10px; border-bottom:2px dashed #E5DCD5; font-size:12px; flex-wrap:wrap; gap:4px; }
@@ -49,11 +51,13 @@
         .nav-btn { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:8px 16px; border-radius:14px; transition:all 0.15s; background:transparent; border:none; font-weight:700; font-size:11px; }
         .nav-btn i { font-size:20px; }
         .nav-btn.active { background:var(--pink); }
-        .admin-trigger { text-align:center; font-size:10px; color:#D5C4B5; cursor:pointer; letter-spacing:2px; margin-top:8px; user-select:none; }
         .admin-panel { background:var(--card); border-radius:26px; padding:18px; border:4px solid var(--border); box-shadow:var(--shadow); }
-        .admin-item { background:#FFF; border-radius:16px; padding:12px; margin-bottom:8px; border:3px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:12px; box-shadow:0 3px 0 var(--border); }
-        .btn-sm { padding:6px 14px; border-radius:12px; border:2px solid var(--border); font-weight:700; cursor:pointer; font-size:11px; background:var(--green); box-shadow:0 3px 0 var(--border); }
-        .btn-sm:active { transform:translateY(2px); box-shadow:none; }
+        .admin-item { background:#FFF; border-radius:16px; padding:12px; margin-bottom:8px; border:3px solid var(--border); box-shadow:0 3px 0 var(--border); }
+        .admin-item .cmd-box { background:#FFFBF0; border:1px dashed var(--border); border-radius:8px; padding:6px 8px; margin:6px 0; font-size:11px; font-family:monospace; word-break:break-all; color:var(--text); }
+        .btn-xs { padding:5px 10px; border-radius:10px; border:2px solid var(--border); font-weight:700; cursor:pointer; font-size:10px; box-shadow:0 2px 0 var(--border); margin:2px; }
+        .btn-xs:active { transform:translateY(2px); box-shadow:none; }
+        .btn-copy { background:var(--blue); }
+        .btn-done { background:var(--green); }
         .panel-login { display:flex; gap:8px; margin-bottom:12px; }
         .panel-login input { flex:1; margin:0; }
         .panel-login button { background:var(--pink); border:3px solid var(--border); padding:10px 20px; border-radius:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 0 var(--border); }
@@ -69,64 +73,26 @@
         .anuncio-card .num { width:36px; height:36px; border-radius:12px; background:var(--yellow); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; }
         .anuncio-card.done { background:#F4FAF7; }
         .anuncio-card.done .num { background:var(--green); }
-        .ad-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:200; display:none; justify-content:center; align-items:center; backdrop-filter:blur(4px); }
+        .ad-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:200; display:none; justify-content:center; align-items:center; }
         .ad-overlay.show { display:flex; }
-        .ad-box { background:var(--card); border-radius:28px; padding:28px; text-align:center; border:4px solid var(--border); box-shadow:0 10px 0 var(--border); max-width:320px; width:90%; }
-        .ad-box .timer { font-size:48px; font-weight:700; margin:12px 0; }
+        .ad-box { background:var(--card); border-radius:28px; padding:24px; text-align:center; border:4px solid var(--border); box-shadow:0 10px 0 var(--border); max-width:320px; width:90%; }
+        .ad-box .timer { font-size:40px; font-weight:700; margin:12px 0; }
         .ad-box .warning { font-size:12px; color:#E67E22; font-weight:600; margin-top:8px; }
-        .anuncio-recompensa { font-size:12px; color:var(--text2); margin-top:4px; }
-        .admin-saldo { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
-        .admin-saldo input { flex:1; min-width:100px; margin:0; }
-        .admin-saldo button { background:var(--pink); border:3px solid var(--border); padding:10px 16px; border-radius:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 0 var(--border); }
-        .admin-saldo button:active { transform:translateY(2px); box-shadow:0 2px 0 var(--border); }
-        /* Alerta personalizada */
-        .alerta-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:300; display:none; justify-content:center; align-items:center; backdrop-filter:blur(8px); }
-        .alerta-overlay.show { display:flex; }
-        .alerta-box { background:#FFFDF6; border-radius:28px; padding:32px 24px; max-width:320px; width:90%; text-align:center; border:4px solid #5D4037; box-shadow:0 10px 0 #5D4037; }
-        .alerta-box .icono { font-size:48px; margin-bottom:12px; }
-        .alerta-box .titulo { font-size:20px; font-weight:700; color:#4E3629; }
-        .alerta-box .mensaje { font-size:14px; color:#8D7365; margin:12px 0; line-height:1.5; }
-        .alerta-box .btn-intentar { background:#FFD3DA; border:3px solid #5D4037; padding:14px 30px; border-radius:18px; font-weight:700; font-size:16px; cursor:pointer; box-shadow:0 5px 0 #5D4037; width:100%; }
-        .alerta-box .btn-intentar:active { transform:translateY(3px); box-shadow:0 2px 0 #5D4037; }
+        .admin-section { margin-top:12px; padding:12px; border-radius:16px; border:2px dashed var(--border); background:#FFFBF0; }
+        .admin-section h4 { font-size:13px; margin-bottom:8px; }
+        .mensaje-global { background:var(--coral); border-radius:16px; padding:12px; margin-bottom:10px; border:3px solid var(--border); text-align:center; font-size:13px; font-weight:600; }
     </style>
 </head>
 <body>
 
 <div id="toast" class="toast"></div>
-
-<!-- Overlay de anuncio -->
-<div id="adOverlay" class="ad-overlay">
-    <div class="ad-box">
-        <div style="font-size:18px;font-weight:700;">🎬 ANUNCIO EN PROGRESO</div>
-        <div class="timer" id="adTimer">15</div>
-        <div style="font-size:13px;color:var(--text2);">segundos restantes</div>
-        <div class="warning">⚠️ No cierres esta ventana</div>
-    </div>
-</div>
-
-<!-- Alerta de "no viste el anuncio" -->
-<div id="alertaNoVisto" class="alerta-overlay">
-    <div class="alerta-box">
-        <div class="icono">⏳</div>
-        <div class="titulo">¡No viste el anuncio!</div>
-        <div class="mensaje">
-            Para recibir tu recompensa debes ver el anuncio completo (15 segundos).
-            <br><br>
-            <strong>Vuelve a intentarlo.</strong>
-        </div>
-        <button class="btn-intentar" onclick="cerrarAlertaNoVisto()">🔄 VOLVER A INTENTAR</button>
-    </div>
-</div>
+<div id="adOverlay" class="ad-overlay"><div class="ad-box"><div style="font-size:18px;font-weight:700;">🎬 ANUNCIO EN PROGRESO</div><div class="timer" id="adTimer">15</div><div style="font-size:13px;color:var(--text2);">segundos restantes</div><div class="warning">⚠️ No cierres esta ventana</div></div></div>
 
 <div class="app">
 
     <!-- REGISTRO -->
     <div id="registerScreen" class="screen active">
-        <div class="card card-center">
-            <div style="font-size:48px;">⭐</div>
-            <div style="font-weight:700;font-size:22px;">StarGainCoins</div>
-            <div style="font-size:13px;color:var(--text2);">Gana recompensas diarias</div>
-        </div>
+        <div class="card card-center"><div style="font-size:48px;">⭐</div><div style="font-weight:700;font-size:22px;">StarGainCoins</div><div style="font-size:13px;color:var(--text2);">Gana recompensas diarias</div></div>
         <div class="card">
             <div style="font-weight:700;font-size:15px;margin-bottom:8px;">📝 REGISTRO</div>
             <input type="text" id="regUsuario" placeholder="Nombre de usuario">
@@ -135,49 +101,38 @@
             <div style="font-size:11px;color:var(--text2);margin:4px 0;" id="refInfo"></div>
             <button class="btn btn-pink" id="btnRegistrar">⭐ CREAR CUENTA</button>
         </div>
-        <div class="card card-center">
-            <button class="btn btn-outline" id="btnIrLogin" style="background:var(--card);">🔑 INICIAR SESIÓN</button>
-        </div>
+        <div class="card card-center"><button class="btn btn-outline" id="btnIrLogin" style="background:var(--card);">🔑 INICIAR SESIÓN</button></div>
     </div>
 
     <!-- LOGIN -->
     <div id="loginScreen" class="screen">
-        <div class="card card-center">
-            <div style="font-size:48px;">⭐</div>
-            <div style="font-weight:700;font-size:22px;">StarGainCoins</div>
-            <div style="font-size:13px;color:var(--text2);">Gana recompensas diarias</div>
-        </div>
+        <div class="card card-center"><div style="font-size:48px;">⭐</div><div style="font-weight:700;font-size:22px;">StarGainCoins</div><div style="font-size:13px;color:var(--text2);">Gana recompensas diarias</div></div>
         <div class="card">
             <div style="font-weight:700;font-size:15px;margin-bottom:8px;">🔑 INICIAR SESIÓN</div>
             <input type="text" id="loginUsuario" placeholder="Nombre de usuario">
             <input type="password" id="loginPassword" placeholder="Contraseña">
             <button class="btn btn-green" id="btnLogin">✅ ENTRAR</button>
         </div>
-        <div class="card card-center">
-            <button class="btn btn-outline" id="btnIrRegistro" style="background:var(--card);">📝 CREAR CUENTA</button>
-        </div>
+        <div class="card card-center"><button class="btn btn-outline" id="btnIrRegistro" style="background:var(--card);">📝 CREAR CUENTA</button></div>
     </div>
 
     <!-- HOME -->
     <div id="homeScreen" class="screen">
-        <div class="card card-center">
+        <div id="mensajeGlobalBox" class="mensaje-global oculto"></div>
+        <div class="card card-center" id="balanceCard">
             <div style="font-size:12px;font-weight:700;color:var(--text2);">⭐ BALANCE</div>
             <div class="balance-display" id="balanceHome">$0.00</div>
             <span class="balance-label">USDT RETIRABLE</span>
         </div>
         <div class="card">
-            <div style="font-weight:700;font-size:16px;margin-bottom:10px;">🎬 ANUNCIOS DIARIOS (3 x $0.00333)</div>
+            <div style="font-weight:700;font-size:16px;margin-bottom:10px;">🎬 ANUNCIOS DIARIOS (3 x <span id="precioAnuncioHome">$0.01</span>)</div>
             <div id="anunciosList"></div>
-            <div class="anuncio-recompensa">💰 3 anuncios = $0.01 diarios</div>
         </div>
     </div>
 
     <!-- INVITAR -->
     <div id="inviteScreen" class="screen">
-        <div class="card card-center">
-            <div style="font-size:40px;">👥</div>
-            <div style="font-weight:700;font-size:18px;">INVITAR AMIGOS</div>
-            <div style="font-size:13px;color:var(--text2);">5% de comisión</div>
+        <div class="card card-center"><div style="font-size:40px;">👥</div><div style="font-weight:700;font-size:18px;">INVITAR AMIGOS</div><div style="font-size:13px;color:var(--text2);">5% de comisión</div>
             <div class="link-box" id="refLinkBox">Cargando...</div>
             <button class="btn-copiar" id="btnCopiarLink"><i class="fas fa-copy"></i> COPIAR ENLACE</button>
         </div>
@@ -186,18 +141,12 @@
             <div class="fila"><span>Comisión acumulada</span><strong style="color:#B8860B;" id="comisionAcumulada">$0.00</strong></div>
             <button class="btn btn-yellow" id="btnReclamarComision">💰 RETIRAR COMISIÓN</button>
         </div>
-        <div class="card">
-            <div style="font-weight:700;font-size:15px;margin-bottom:8px;">📋 AMIGOS INVITADOS</div>
-            <div id="referidosList" class="scroll"></div>
-        </div>
+        <div class="card"><div style="font-weight:700;font-size:15px;margin-bottom:8px;">📋 AMIGOS INVITADOS</div><div id="referidosList" class="scroll"></div></div>
     </div>
 
     <!-- RETIRAR -->
     <div id="withdrawScreen" class="screen">
-        <div class="card card-center">
-            <div style="font-size:12px;font-weight:700;color:var(--text2);">BALANCE</div>
-            <div class="balance-display" id="balanceWithdraw">$0.00</div>
-        </div>
+        <div class="card card-center"><div style="font-size:12px;font-weight:700;color:var(--text2);">BALANCE</div><div class="balance-display" id="balanceWithdraw">$0.00</div></div>
         <div class="card">
             <div style="font-weight:700;font-size:15px;margin-bottom:8px;">💳 RETIRAR USDT</div>
             <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Mínimo: $0.01 USDT</div>
@@ -205,30 +154,38 @@
             <button class="btn btn-green" id="btnRetirar">📤 SOLICITAR RETIRO</button>
             <div style="font-size:12px;margin-top:6px;min-height:18px;font-weight:600;" id="estadoRetiro"></div>
         </div>
-        <div class="card">
-            <div style="font-weight:700;font-size:15px;margin-bottom:8px;">📋 HISTORIAL</div>
-            <div id="historialList" class="scroll"></div>
-        </div>
-        <div class="admin-trigger" id="adminTrigger">◆ ADMIN ◆</div>
+        <div class="card"><div style="font-weight:700;font-size:15px;margin-bottom:8px;">📋 HISTORIAL</div><div id="historialList" class="scroll"></div></div>
+        
+        <!-- PANEL ADMIN OCULTO -->
         <div id="adminPanel" class="admin-panel oculto">
             <h3 style="margin-bottom:10px;"><i class="fas fa-crown"></i> PANEL ADMIN</h3>
             <div class="panel-login"><input type="password" id="adminPass" placeholder="Clave"><button id="btnAdminLogin">ENTRAR</button></div>
             <div id="adminContent" class="oculto">
                 <div class="resumen-box"><div style="font-size:11px;">PENDIENTES</div><div class="total" id="totalPendientes">0</div></div>
                 <div id="pendientesList" class="scroll" style="max-height:200px;"></div>
-                <div style="margin-top:12px; border-top:2px dashed var(--border); padding-top:12px;">
-                    <div style="font-weight:700;font-size:13px;margin-bottom:6px;">💰 DAR SALDO A USUARIO</div>
-                    <div class="admin-saldo">
-                        <input type="text" id="adminUserId" placeholder="Usuario (ej: juan)">
-                        <input type="number" id="adminMonto" placeholder="Monto (ej: 0.50)" step="0.01">
-                        <button id="btnDarSaldo">AGREGAR</button>
-                    </div>
-                    <div style="font-size:10px;color:var(--text2);margin-top:4px;">⚠️ Se suma al balance del usuario</div>
+                
+                <!-- RESTABLECER ANUNCIOS -->
+                <div class="admin-section" style="background:#FFF0F0;border-color:#E74C3C;">
+                    <h4>🔄 RESTABLECER ANUNCIOS PARA TODOS</h4>
+                    <div style="font-size:10px;color:#C0392B;margin-bottom:6px;">⚠️ Todos podrán ver anuncios de nuevo sin esperar 24h</div>
+                    <button class="btn btn-coral" id="btnResetAnuncios">🔄 RESTABLECER AHORA</button>
                 </div>
-                <div class="btn-group" style="margin-top:12px;">
-                    <button class="btn btn-green" id="btnPagarTodos">✅ PAGAR TODOS</button>
-                    <button class="btn" id="btnCerrarAdmin">❌ CERRAR</button>
+                
+                <!-- PRECIO ANUNCIO -->
+                <div class="admin-section">
+                    <h4>💰 PRECIO POR ANUNCIO</h4>
+                    <input type="number" id="adminPrecioAnuncio" placeholder="Ej: 0.01" step="0.001">
+                    <button class="btn btn-yellow" id="btnGuardarPrecio">💾 GUARDAR PRECIO</button>
                 </div>
+                
+                <!-- MENSAJE GLOBAL -->
+                <div class="admin-section">
+                    <h4>📢 MENSAJE PARA TODOS</h4>
+                    <textarea id="adminMensajeGlobal" placeholder="Escribe un mensaje..."></textarea>
+                    <button class="btn btn-purple" id="btnGuardarMensaje">📢 PUBLICAR MENSAJE</button>
+                </div>
+                
+                <button class="btn" id="btnCerrarAdmin" style="margin-top:10px;">❌ CERRAR</button>
             </div>
         </div>
     </div>
@@ -257,166 +214,91 @@
 
     const CLAVE_ADMIN = '231606';
     const ANUNCIOS_URLS = ['https://omg10.com/4/10274047','https://omg10.com/4/10874553','https://omg10.com/4/10180875'];
-    const RECOMPENSA_ANUNCIO = 0.00333;
     const MIN_RETIRO = 0.01;
     const COMISION = 0.05;
     const DOMINIO = 'newstarnoni.click';
 
-    let USER_ID = null;
-    let USER_DATA = null;
-    let viendoAnuncio = false;
-    let tiempoRestante = 15;
-    let timerInterval = null;
-    let visibilityHandler = null;
+    let USER_ID = null, USER_DATA = null, viendoAnuncio = false, PRECIO_ANUNCIO = 0.01, MENSAJE_GLOBAL = '';
 
-    const adOverlay = document.getElementById('adOverlay');
-    const adTimer = document.getElementById('adTimer');
-    const navbar = document.getElementById('navbar');
-    const alertaNoVisto = document.getElementById('alertaNoVisto');
-
-    // Detectar referido de URL
+    const adOverlay = document.getElementById('adOverlay'), adTimer = document.getElementById('adTimer'), navbar = document.getElementById('navbar');
     const urlParams = new URLSearchParams(window.location.search);
     let refCode = urlParams.get('ref') || '';
-    if (refCode) {
-        document.getElementById('refInfo').textContent = '🔗 Invitado por: ' + refCode;
+    if (refCode) document.getElementById('refInfo').textContent = '🔗 Invitado por: ' + refCode;
+
+    async function cargarConfig() {
+        const doc = await db.collection('config').doc('global').get();
+        if (doc.exists) { PRECIO_ANUNCIO = doc.data().precioAnuncio || 0.01; MENSAJE_GLOBAL = doc.data().mensajeGlobal || ''; }
+        document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3);
+        const mb = document.getElementById('mensajeGlobalBox');
+        if (MENSAJE_GLOBAL) { mb.textContent = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); }
     }
 
     function toast(msg, tipo) {
-        const t = document.getElementById('toast');
-        t.textContent = msg; t.style.color = '#FFF';
+        const t = document.getElementById('toast'); t.textContent = msg; t.style.color = '#FFF';
         t.style.background = tipo === 'success' ? '#2D6A4F' : tipo === 'error' ? '#C0392B' : '#4E3629';
-        t.classList.add('show');
-        clearTimeout(t._t);
-        t._t = setTimeout(() => t.classList.remove('show'), 3000);
+        t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3000);
     }
 
-    function navigate(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-    function cerrarAlertaNoVisto() {
-        alertaNoVisto.classList.remove('show');
-        viendoAnuncio = false;
-    }
+    function navigate(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
     // REGISTRO
     document.getElementById('btnRegistrar').addEventListener('click', async () => {
-        const usuario = document.getElementById('regUsuario').value.trim().toLowerCase();
-        const password = document.getElementById('regPassword').value.trim();
-        const refManual = document.getElementById('regRefManual').value.trim().toLowerCase();
-
-        if (!usuario || usuario.length < 3) return toast('⚠️ Usuario mínimo 3 caracteres', 'error');
-        if (!password || password.length < 8) return toast('⚠️ Contraseña mínimo 8 caracteres', 'error');
-
-        const codigoFinal = refManual || refCode || null;
-
+        const u = document.getElementById('regUsuario').value.trim().toLowerCase();
+        const p = document.getElementById('regPassword').value.trim();
+        const rm = document.getElementById('regRefManual').value.trim().toLowerCase();
+        if (!u || u.length < 3) return toast('⚠️ Usuario mínimo 3 caracteres', 'error');
+        if (!p || p.length < 8) return toast('⚠️ Contraseña mínimo 8 caracteres', 'error');
+        const cf = rm || refCode || null;
         try {
-            const fp = await getFingerprint();
-            const existente = await db.collection('usuarios').where('fingerprint', '==', fp).get();
-            if (!existente.empty) return toast('🚫 Ya tienes una cuenta en este dispositivo', 'error');
-
-            const doc = await db.collection('usuarios').doc(usuario).get();
-            if (doc.exists) return toast('⚠️ Ese nombre de usuario ya existe', 'error');
-
-            if (codigoFinal && codigoFinal !== usuario) {
-                const refDoc = await db.collection('usuarios').doc(codigoFinal).get();
-                if (!refDoc.exists) return toast('⚠️ El código de invitación no existe', 'error');
-            }
-
-            const data = {
-                usuario, password, fingerprint: fp,
-                balance: 0,
-                referidoPor: codigoFinal,
-                referidos: [],
-                comision: 0,
-                anunciosVistos: 0,
-                anunciosFecha: '',
-                historial: [],
-                pendientes: [],
-                creado: Date.now()
-            };
-
-            await db.collection('usuarios').doc(usuario).set(data);
-            if (codigoFinal) {
-                await db.collection('usuarios').doc(codigoFinal).update({
-                    referidos: firebase.firestore.FieldValue.arrayUnion(usuario)
-                });
-            }
-
-            USER_ID = usuario;
-            USER_DATA = data;
-            localStorage.setItem('sgc_user', usuario);
-            localStorage.setItem('sgc_pass', password);
-            toast('✅ Cuenta creada con éxito', 'success');
-            entrarApp();
-        } catch (e) {
-            console.error('Error al registrar:', e);
-            toast('❌ Error: ' + e.message, 'error');
-        }
+            const fp = await getFp();
+            if (!(await db.collection('usuarios').where('fingerprint','==',fp).get()).empty) return toast('🚫 Ya tienes una cuenta', 'error');
+            if ((await db.collection('usuarios').doc(u).get()).exists) return toast('⚠️ Usuario ya existe', 'error');
+            if (cf && cf !== u && !(await db.collection('usuarios').doc(cf).get()).exists) return toast('⚠️ Código no existe', 'error');
+            const data = { usuario:u, password:p, fingerprint:fp, balance:0, referidoPor:cf, referidos:[], comision:0, anunciosVistos:0, anunciosFecha:'', historial:[], pendientes:[], creado:Date.now() };
+            await db.collection('usuarios').doc(u).set(data);
+            if (cf) await db.collection('usuarios').doc(cf).update({ referidos: firebase.firestore.FieldValue.arrayUnion(u) });
+            USER_ID = u; USER_DATA = data;
+            localStorage.setItem('sgc_user', u); localStorage.setItem('sgc_pass', p);
+            toast('✅ Cuenta creada', 'success'); entrarApp();
+        } catch (e) { toast('❌ Error: ' + e.message, 'error'); }
     });
 
     // LOGIN
     document.getElementById('btnLogin').addEventListener('click', async () => {
-        const usuario = document.getElementById('loginUsuario').value.trim().toLowerCase();
-        const password = document.getElementById('loginPassword').value.trim();
-        if (!usuario || !password) return toast('⚠️ Completa todos los campos', 'error');
-
+        const u = document.getElementById('loginUsuario').value.trim().toLowerCase();
+        const p = document.getElementById('loginPassword').value.trim();
+        if (!u || !p) return toast('⚠️ Completa los campos', 'error');
         try {
-            const doc = await db.collection('usuarios').doc(usuario).get();
+            const doc = await db.collection('usuarios').doc(u).get();
             if (!doc.exists) return toast('❌ Usuario no encontrado', 'error');
-            if (doc.data().password !== password) return toast('❌ Contraseña incorrecta', 'error');
-
-            const fp = await getFingerprint();
-            const data = doc.data();
-            
-            if (!data.fingerprint) {
-                await db.collection('usuarios').doc(usuario).update({ fingerprint: fp });
-            } else if (data.fingerprint !== fp) {
-                return toast('🚫 Esta cuenta está vinculada a otro dispositivo', 'error');
-            }
-
-            USER_ID = usuario;
-            USER_DATA = data;
-            localStorage.setItem('sgc_user', usuario);
-            localStorage.setItem('sgc_pass', password);
-            toast('✅ Bienvenido, ' + usuario + '!', 'success');
-            entrarApp();
-        } catch (e) {
-            console.error('Error al iniciar sesión:', e);
-            toast('❌ Error: ' + e.message, 'error');
-        }
+            if (doc.data().password !== p) return toast('❌ Contraseña incorrecta', 'error');
+            const fp = await getFp(), data = doc.data();
+            if (!data.fingerprint) await db.collection('usuarios').doc(u).update({ fingerprint:fp });
+            else if (data.fingerprint !== fp) return toast('🚫 Dispositivo no autorizado', 'error');
+            USER_ID = u; USER_DATA = data;
+            localStorage.setItem('sgc_user', u); localStorage.setItem('sgc_pass', p);
+            toast('✅ Bienvenido!', 'success'); entrarApp();
+        } catch (e) { toast('❌ Error: ' + e.message, 'error'); }
     });
 
-    async function getFingerprint() {
-        const ancho = window.screen.width;
-        const alto = window.screen.height;
-        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const lang = navigator.language;
-        const str = `${ancho}x${alto}|${tz}|${lang}`;
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            hash = ((hash << 5) - hash) + str.charCodeAt(i);
-            hash |= 0;
-        }
-        return hash.toString();
+    async function getFp() {
+        const s = `${screen.width}x${screen.height}|${Intl.DateTimeFormat().resolvedOptions().timeZone}|${navigator.language}`;
+        let h = 0; for (let i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; } return h.toString();
     }
 
     function entrarApp() {
-        navigate('homeScreen');
-        navbar.classList.remove('oculto');
+        navigate('homeScreen'); navbar.classList.remove('oculto');
         document.querySelectorAll('.nav-btn[data-screen]').forEach(b => b.classList.remove('active'));
         document.querySelector('[data-screen="homeScreen"]').classList.add('active');
         document.getElementById('refLinkBox').textContent = DOMINIO + '/?ref=' + USER_ID;
-        actualizarUI();
+        cargarConfig().then(() => actualizarUI());
     }
 
     document.querySelectorAll('.nav-btn[data-screen]').forEach(btn => {
         btn.addEventListener('click', function() {
             navigate(this.dataset.screen);
             document.querySelectorAll('.nav-btn[data-screen]').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            actualizarUI();
+            this.classList.add('active'); actualizarUI();
         });
     });
 
@@ -424,10 +306,8 @@
     document.getElementById('btnIrRegistro').addEventListener('click', () => navigate('registerScreen'));
     document.getElementById('btnCerrarSesion').addEventListener('click', () => {
         localStorage.removeItem('sgc_user'); localStorage.removeItem('sgc_pass');
-        USER_ID = null; USER_DATA = null;
-        navbar.classList.add('oculto');
-        navigate('loginScreen');
-        toast('👋 Sesión cerrada', 'success');
+        USER_ID = null; USER_DATA = null; navbar.classList.add('oculto');
+        navigate('loginScreen'); toast('👋 Sesión cerrada', 'success');
     });
 
     async function actualizarUI() {
@@ -435,273 +315,152 @@
         const doc = await db.collection('usuarios').doc(USER_ID).get();
         if (!doc.exists) return;
         USER_DATA = doc.data();
-        document.getElementById('balanceHome').textContent = `$${(USER_DATA.balance||0).toFixed(5)}`;
-        document.getElementById('balanceWithdraw').textContent = `$${(USER_DATA.balance||0).toFixed(5)}`;
+        document.getElementById('balanceHome').textContent = `$${(USER_DATA.balance||0).toFixed(2)}`;
+        document.getElementById('balanceWithdraw').textContent = `$${(USER_DATA.balance||0).toFixed(2)}`;
         document.getElementById('invitadosCount').textContent = (USER_DATA.referidos||[]).length;
-        document.getElementById('comisionAcumulada').textContent = `$${(USER_DATA.comision||0).toFixed(5)}`;
+        document.getElementById('comisionAcumulada').textContent = `$${(USER_DATA.comision||0).toFixed(4)}`;
         document.getElementById('refLinkBox').textContent = DOMINIO + '/?ref=' + USER_ID;
+        document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3);
+        document.getElementById('adminPrecioAnuncio').value = PRECIO_ANUNCIO;
+        document.getElementById('adminMensajeGlobal').value = MENSAJE_GLOBAL;
+        const mb = document.getElementById('mensajeGlobalBox');
+        if (MENSAJE_GLOBAL) { mb.textContent = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); }
+        else { mb.classList.add('oculto'); }
         renderAnuncios(); renderReferidos(); renderHistorial();
     }
 
     function renderAnuncios() {
-        const l = document.getElementById('anunciosList');
-        const vistos = USER_DATA.anunciosVistos || 0;
-        const fecha = USER_DATA.anunciosFecha || '';
-        const hoy = new Date().toLocaleDateString();
+        const l = document.getElementById('anunciosList'), vistos = USER_DATA.anunciosVistos || 0;
+        const fecha = USER_DATA.anunciosFecha || '', hoy = new Date().toLocaleDateString();
         let html = '';
         for (let i = 0; i < 3; i++) {
             const done = i < vistos && fecha === hoy;
-            html += `<div class="anuncio-card ${done?'done':''}">
-                <div class="num">${done?'✓':i+1}</div>
-                <div style="flex:1;font-size:13px;font-weight:600;">Anuncio #${i+1} (+$${RECOMPENSA_ANUNCIO.toFixed(5)})</div>
-                <button class="btn-sm" ${done?'disabled':''} onclick="verAnuncio(${i})">${done?'Visto':'Ver'}</button>
-            </div>`;
+            html += `<div class="anuncio-card ${done?'done':''}"><div class="num">${done?'✓':i+1}</div><div style="flex:1;font-size:13px;font-weight:600;">Anuncio #${i+1} (+$${PRECIO_ANUNCIO.toFixed(3)})</div><button class="btn-sm" ${done?'disabled':''} onclick="verAnuncio(${i})">${done?'Visto':'Ver'}</button></div>`;
         }
         l.innerHTML = html;
     }
 
-    // ============================================================
-    // 🔥 FUNCIÓN CORREGIDA - CON DETECCIÓN DE VUELTA RÁPIDA
-    // ============================================================
-    window.verAnuncio = async function(index) {
-        if (viendoAnuncio) return;
-        viendoAnuncio = true;
-        tiempoRestante = 15;
-        
-        // Abrir el anuncio en una nueva ventana/pestaña
-        window.open(ANUNCIOS_URLS[index], '_blank');
-        
-        // Mostrar overlay de espera
-        adOverlay.classList.add('show');
-        adTimer.textContent = tiempoRestante;
-        adTimer.style.color = '#4E3629';
-        let completado = false;
-        
-        // Limpiar timer anterior si existe
-        if (timerInterval) clearInterval(timerInterval);
-        
-        // Temporizador para la recompensa
-        timerInterval = setInterval(() => {
-            tiempoRestante--;
-            adTimer.textContent = tiempoRestante;
-            if (tiempoRestante <= 5) adTimer.style.color = '#E67E22';
-            
-            if (tiempoRestante <= 0) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-                if (!completado) {
-                    completado = true;
-                    adOverlay.classList.remove('show');
-                    adTimer.style.color = '#4E3629';
-                    completarAnuncio(index);
-                    viendoAnuncio = false;
-                    // Remover el listener
-                    if (visibilityHandler) {
-                        document.removeEventListener('visibilitychange', visibilityHandler);
-                        visibilityHandler = null;
-                    }
-                }
-            }
-        }, 1000);
-        
-        // DETECTAR CUANDO EL USUARIO VUELVE A LA APP
-        if (visibilityHandler) {
-            document.removeEventListener('visibilitychange', visibilityHandler);
-        }
-        
-        visibilityHandler = () => {
-            if (document.visibilityState === 'visible' && viendoAnuncio) {
-                // El usuario volvió a la app
-                if (!completado && tiempoRestante > 0) {
-                    // VOLVIÓ ANTES DE TIEMPO ❌
-                    completado = true;
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-                    adOverlay.classList.remove('show');
-                    adTimer.style.color = '#4E3629';
-                    viendoAnuncio = false;
-                    document.removeEventListener('visibilitychange', visibilityHandler);
-                    visibilityHandler = null;
-                    
-                    // MOSTRAR ALERTA DE "NO VISTE EL ANUNCIO"
-                    alertaNoVisto.classList.add('show');
-                    toast('❌ No viste el anuncio completo. Vuelve a intentarlo.', 'error');
-                } else if (!completado && tiempoRestante <= 0) {
-                    // VOLVIÓ DESPUÉS DE 15s (o justo cuando terminó) ✅
-                    completado = true;
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-                    adOverlay.classList.remove('show');
-                    adTimer.style.color = '#4E3629';
-                    completarAnuncio(index);
-                    viendoAnuncio = false;
-                    document.removeEventListener('visibilitychange', visibilityHandler);
-                    visibilityHandler = null;
-                }
-            }
-        };
-        
-        document.addEventListener('visibilitychange', visibilityHandler);
+    window.verAnuncio = async function(i) {
+        if (viendoAnuncio) return; viendoAnuncio = true;
+        window.open(ANUNCIOS_URLS[i], '_blank');
+        adOverlay.classList.add('show'); let t = 15; adTimer.textContent = t;
+        const iv = setInterval(() => { t--; adTimer.textContent = t; if (t <= 5) adTimer.style.color = '#E67E22'; if (t <= 0) { clearInterval(iv); adOverlay.classList.remove('show'); adTimer.style.color = '#4E3629'; completarAnuncio(i); viendoAnuncio = false; } }, 1000);
     };
 
-    async function completarAnuncio(index) {
+    async function completarAnuncio(i) {
         const hoy = new Date().toLocaleDateString();
         let vistos = USER_DATA.anunciosVistos || 0;
         if (USER_DATA.anunciosFecha !== hoy) vistos = 0;
-        if (index >= vistos) vistos = index + 1;
-        await db.collection('usuarios').doc(USER_ID).update({
-            balance: firebase.firestore.FieldValue.increment(RECOMPENSA_ANUNCIO),
-            anunciosVistos: vistos, anunciosFecha: hoy
-        });
-        if (USER_DATA.referidoPor) {
-            await db.collection('usuarios').doc(USER_DATA.referidoPor).update({
-                comision: firebase.firestore.FieldValue.increment(RECOMPENSA_ANUNCIO * COMISION)
-            });
-        }
-        toast(`✅ +$${RECOMPENSA_ANUNCIO.toFixed(5)} USDT`, 'success');
-        actualizarUI();
+        if (i >= vistos) vistos = i + 1;
+        await db.collection('usuarios').doc(USER_ID).update({ balance: firebase.firestore.FieldValue.increment(PRECIO_ANUNCIO), anunciosVistos: vistos, anunciosFecha: hoy });
+        if (USER_DATA.referidoPor) await db.collection('usuarios').doc(USER_DATA.referidoPor).update({ comision: firebase.firestore.FieldValue.increment(PRECIO_ANUNCIO * COMISION) });
+        toast(`✅ +$${PRECIO_ANUNCIO.toFixed(3)} USDT`, 'success'); actualizarUI();
     }
 
     document.getElementById('btnCopiarLink').addEventListener('click', () => {
-        const link = DOMINIO + '/?ref=' + USER_ID;
-        navigator.clipboard.writeText(link).then(() => toast('📋 Enlace copiado!', 'success')).catch(() => toast('📋 ' + link, 'success'));
+        const lk = DOMINIO + '/?ref=' + USER_ID;
+        navigator.clipboard.writeText(lk).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + lk, 'success'));
     });
 
     function renderReferidos() {
-        const l = document.getElementById('referidosList');
-        const refs = USER_DATA.referidos || [];
-        l.innerHTML = refs.length ? refs.map(r => `<div class="referido-item"><strong>👤 ${r}</strong><span style="color:#B8860B;">+5% comisión</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Aún no has invitado a nadie</div>';
+        const l = document.getElementById('referidosList'), refs = USER_DATA.referidos || [];
+        l.innerHTML = refs.length ? refs.map(r => `<div class="referido-item"><strong>👤 ${r}</strong><span style="color:#B8860B;">+5%</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin invitados</div>';
     }
 
     document.getElementById('btnReclamarComision').addEventListener('click', async () => {
-        const c = USER_DATA.comision || 0;
-        if (c <= 0) return toast('⚠️ Sin comisiones acumuladas', 'error');
+        const c = USER_DATA.comision || 0; if (c <= 0) return toast('⚠️ Sin comisiones', 'error');
         await db.collection('usuarios').doc(USER_ID).update({ balance: firebase.firestore.FieldValue.increment(c), comision: 0 });
-        toast(`💰 +$${c.toFixed(5)} USDT añadido a tu balance`, 'success');
-        actualizarUI();
+        toast(`💰 +$${c.toFixed(4)}`, 'success'); actualizarUI();
     });
 
     document.getElementById('btnRetirar').addEventListener('click', async () => {
         const w = document.getElementById('walletInput').value.trim();
-        if (!w || !w.startsWith('0x')) return toast('⚠️ Dirección Polygon inválida', 'error');
+        if (!w || !w.startsWith('0x')) return toast('⚠️ Dirección inválida', 'error');
         if ((USER_DATA.balance||0) < MIN_RETIRO) return toast('⚠️ Mínimo $' + MIN_RETIRO.toFixed(2), 'error');
-        const m = USER_DATA.balance;
-        const hoy = new Date().toLocaleDateString();
-        const pago = { id: Date.now(), wallet: w, monto: m, fecha: hoy, estado: 'pendiente', usuario: USER_ID };
-        await db.collection('usuarios').doc(USER_ID).update({
-            balance: 0,
-            historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }),
-            pendientes: firebase.firestore.FieldValue.arrayUnion(pago)
-        });
-        document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${m.toFixed(5)} solicitado`;
-        toast(`✅ Retiro solicitado: $${m.toFixed(5)}`, 'success');
-        document.getElementById('walletInput').value = '';
-        actualizarUI();
+        const m = USER_DATA.balance, hoy = new Date().toLocaleDateString();
+        const pg = { id: Date.now(), wallet: w, monto: m, fecha: hoy, estado: 'pendiente', usuario: USER_ID };
+        await db.collection('usuarios').doc(USER_ID).update({ balance: 0, historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }), pendientes: firebase.firestore.FieldValue.arrayUnion(pg) });
+        document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${m.toFixed(2)} solicitado`;
+        toast('✅ Retiro solicitado', 'success'); document.getElementById('walletInput').value = ''; actualizarUI();
     });
 
     function renderHistorial() {
-        const l = document.getElementById('historialList');
-        const h = USER_DATA.historial || [];
-        l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(5)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros aún</div>';
+        const l = document.getElementById('historialList'), h = USER_DATA.historial || [];
+        l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(2)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros</div>';
     }
 
-    // ============================================================
     // ADMIN
-    // ============================================================
-    document.getElementById('adminTrigger').addEventListener('click', () => document.getElementById('adminPanel').classList.toggle('oculto'));
-    
+    let adTimer2 = null;
+    document.getElementById('balanceCard').addEventListener('mousedown', () => { adTimer2 = setTimeout(() => { document.getElementById('adminPanel').classList.remove('oculto'); document.getElementById('adminContent').classList.add('oculto'); document.getElementById('adminPass').value = ''; }, 15000); });
+    document.getElementById('balanceCard').addEventListener('mouseup', () => clearTimeout(adTimer2));
+    document.getElementById('balanceCard').addEventListener('touchstart', () => { adTimer2 = setTimeout(() => { document.getElementById('adminPanel').classList.remove('oculto'); document.getElementById('adminContent').classList.add('oculto'); document.getElementById('adminPass').value = ''; }, 15000); });
+    document.getElementById('balanceCard').addEventListener('touchend', () => clearTimeout(adTimer2));
+
     document.getElementById('btnAdminLogin').addEventListener('click', async () => {
         if (document.getElementById('adminPass').value !== CLAVE_ADMIN) return toast('❌ Clave incorrecta', 'error');
         document.getElementById('adminContent').classList.remove('oculto');
+        document.getElementById('adminPrecioAnuncio').value = PRECIO_ANUNCIO;
+        document.getElementById('adminMensajeGlobal').value = MENSAJE_GLOBAL;
         await cargarPendientes();
     });
-    
-    document.getElementById('btnCerrarAdmin').addEventListener('click', () => {
-        document.getElementById('adminPanel').classList.add('oculto');
-        document.getElementById('adminContent').classList.add('oculto');
-    });
 
-    document.getElementById('btnDarSaldo').addEventListener('click', async () => {
-        const usuario = document.getElementById('adminUserId').value.trim().toLowerCase();
-        const monto = parseFloat(document.getElementById('adminMonto').value);
-        
-        if (!usuario) return toast('⚠️ Escribe un nombre de usuario', 'error');
-        if (isNaN(monto) || monto <= 0) return toast('⚠️ Monto inválido', 'error');
-        if (document.getElementById('adminPass').value !== CLAVE_ADMIN) return toast('❌ Clave incorrecta', 'error');
-        
+    document.getElementById('btnCerrarAdmin').addEventListener('click', () => { document.getElementById('adminPanel').classList.add('oculto'); document.getElementById('adminContent').classList.add('oculto'); });
+
+    // RESTABLECER ANUNCIOS PARA TODOS
+    document.getElementById('btnResetAnuncios').addEventListener('click', async () => {
+        if (!confirm('¿Restablecer los anuncios para TODOS los usuarios? Podrán ver anuncios de nuevo sin esperar 24h.')) return;
         try {
-            const doc = await db.collection('usuarios').doc(usuario).get();
-            if (!doc.exists) return toast('❌ Usuario no encontrado', 'error');
-            
-            await db.collection('usuarios').doc(usuario).update({
-                balance: firebase.firestore.FieldValue.increment(monto)
+            const snap = await db.collection('usuarios').get();
+            let count = 0;
+            const batch = db.batch();
+            snap.forEach(doc => {
+                batch.update(doc.ref, { anunciosVistos: 0, anunciosFecha: '' });
+                count++;
             });
-            
-            toast(`✅ +$${monto.toFixed(2)} agregado a ${usuario}`, 'success');
-            document.getElementById('adminUserId').value = '';
-            document.getElementById('adminMonto').value = '';
+            await batch.commit();
+            toast(`✅ Anuncios restablecidos para ${count} usuarios`, 'success');
         } catch (e) {
             toast('❌ Error: ' + e.message, 'error');
         }
     });
 
-    document.getElementById('btnPagarTodos').addEventListener('click', async () => {
-        if (!confirm('¿Pagar todos los retiros pendientes?')) return;
-        const snap = await db.collection('usuarios').get();
-        let count = 0;
-        for (const doc of snap.docs) {
-            const d = doc.data();
-            let pendientes = d.pendientes || [];
-            let historial = d.historial || [];
-            let updated = false;
-            pendientes.forEach(p => { if (p.estado === 'pendiente') { p.estado = 'exitoso'; updated = true; count++; } });
-            historial.forEach(h => { if (h.estado === 'pendiente') h.estado = 'exitoso'; });
-            if (updated) await db.collection('usuarios').doc(doc.id).update({ pendientes, historial });
-        }
-        toast(`✅ ${count} pagos marcados como EXITOSOS`, 'success');
-        cargarPendientes();
-    });
-
     async function cargarPendientes() {
         const snap = await db.collection('usuarios').get();
         let all = [];
-        snap.forEach(doc => {
-            (doc.data().pendientes || []).forEach(p => {
-                if (p.estado === 'pendiente') all.push({ ...p, userId: doc.id });
-            });
-        });
+        snap.forEach(doc => { (doc.data().pendientes || []).forEach(p => { if (p.estado === 'pendiente') all.push({ ...p, userId: doc.id }); }); });
         document.getElementById('totalPendientes').textContent = all.length;
         document.getElementById('pendientesList').innerHTML = all.length ? all.map(p => `
-            <div class="admin-item">
-                <div><strong>$${p.monto.toFixed(5)}</strong><br><span style="font-size:10px;">👤 ${p.usuario}</span><br><span style="font-size:10px;color:var(--text2);">${p.wallet}</span></div>
-                <button class="btn-sm" onclick="pagarAdmin('${p.userId}',${p.id})">✅ PAGAR</button>
-            </div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">No hay pagos pendientes</div>';
+            <div class="admin-item"><div style="flex:1;"><strong>$${p.monto.toFixed(2)}</strong> | <span style="font-size:10px;">👤 ${p.usuario}</span><div class="cmd-box">/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}</div></div>
+            <div style="display:flex;flex-direction:column;gap:4px;"><button class="btn-xs btn-copy" onclick="copiarCmd('/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}')">📋</button><button class="btn-xs btn-done" onclick="pagarAdm('${p.userId}',${p.id})">✅</button></div></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin pendientes</div>';
     }
 
-    window.pagarAdmin = async function(uid, pid) {
-        const doc = await db.collection('usuarios').doc(uid).get();
-        const d = doc.data();
-        let pendientes = d.pendientes || [];
-        let historial = d.historial || [];
-        const p = pendientes.find(x => x.id === pid);
-        if (p) { p.estado = 'exitoso'; }
-        historial.forEach(h => { if (h.estado === 'pendiente' && h.wallet === p.wallet) h.estado = 'exitoso'; });
-        await db.collection('usuarios').doc(uid).update({ pendientes, historial });
-        toast('✅ Pago marcado como exitoso', 'success');
-        cargarPendientes();
+    window.copiarCmd = function(c) { navigator.clipboard.writeText(c).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + c, 'success')); };
+    window.pagarAdm = async function(uid, pid) {
+        const d = (await db.collection('usuarios').doc(uid).get()).data();
+        let pe = d.pendientes || [], hi = d.historial || [];
+        const p = pe.find(x => x.id === pid); if (p) p.estado = 'exitoso';
+        hi.forEach(h => { if (h.estado === 'pendiente' && h.wallet === p.wallet) h.estado = 'exitoso'; });
+        await db.collection('usuarios').doc(uid).update({ pendientes: pe, historial: hi });
+        toast('✅ Pagado', 'success'); cargarPendientes();
     };
 
-    // AUTO-LOGIN
+    document.getElementById('btnGuardarPrecio').addEventListener('click', async () => {
+        const n = parseFloat(document.getElementById('adminPrecioAnuncio').value);
+        if (!n || n <= 0) return toast('⚠️ Precio inválido', 'error');
+        await db.collection('config').doc('global').set({ precioAnuncio: n, mensajeGlobal: MENSAJE_GLOBAL }, { merge: true });
+        PRECIO_ANUNCIO = n; toast('✅ Precio: $' + n.toFixed(3), 'success'); actualizarUI();
+    });
+
+    document.getElementById('btnGuardarMensaje').addEventListener('click', async () => {
+        const m = document.getElementById('adminMensajeGlobal').value.trim();
+        await db.collection('config').doc('global').set({ precioAnuncio: PRECIO_ANUNCIO, mensajeGlobal: m }, { merge: true });
+        MENSAJE_GLOBAL = m; toast('✅ Mensaje publicado', 'success'); actualizarUI();
+    });
+
     (async function() {
-        const u = localStorage.getItem('sgc_user');
-        const p = localStorage.getItem('sgc_pass');
-        if (u && p) {
-            const doc = await db.collection('usuarios').doc(u).get();
-            if (doc.exists && doc.data().password === p) {
-                USER_ID = u; USER_DATA = doc.data();
-                entrarApp();
-            }
-        }
+        await cargarConfig();
+        const u = localStorage.getItem('sgc_user'), p = localStorage.getItem('sgc_pass');
+        if (u && p) { const doc = await db.collection('usuarios').doc(u).get(); if (doc.exists && doc.data().password === p) { USER_ID = u; USER_DATA = doc.data(); entrarApp(); } }
     })();
 </script>
 </body>
