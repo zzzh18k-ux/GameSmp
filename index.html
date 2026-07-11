@@ -73,11 +73,12 @@
         .anuncio-card .num { width:36px; height:36px; border-radius:12px; background:var(--yellow); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; }
         .anuncio-card.done { background:#F4FAF7; }
         .anuncio-card.done .num { background:var(--green); }
-        .ad-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:200; display:none; justify-content:center; align-items:center; }
+        .ad-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:200; display:none; justify-content:center; align-items:center; flex-direction:column; gap:12px; }
         .ad-overlay.show { display:flex; }
         .ad-box { background:var(--card); border-radius:28px; padding:24px; text-align:center; border:4px solid var(--border); box-shadow:0 10px 0 var(--border); max-width:320px; width:90%; }
         .ad-box .timer { font-size:40px; font-weight:700; margin:12px 0; }
         .ad-box .warning { font-size:12px; color:#E67E22; font-weight:600; margin-top:8px; }
+        .ad-box .fraude-msg { font-size:14px; color:#C0392B; font-weight:700; margin-top:6px; display:none; }
         .admin-section { margin-top:12px; padding:12px; border-radius:16px; border:2px dashed var(--border); background:#FFFBF0; }
         .admin-section h4 { font-size:13px; margin-bottom:8px; }
         .mensaje-global { background:var(--coral); border-radius:16px; padding:12px; margin-bottom:10px; border:3px solid var(--border); text-align:center; font-size:13px; font-weight:600; }
@@ -86,7 +87,15 @@
 <body>
 
 <div id="toast" class="toast"></div>
-<div id="adOverlay" class="ad-overlay"><div class="ad-box"><div style="font-size:18px;font-weight:700;">🎬 ANUNCIO EN PROGRESO</div><div class="timer" id="adTimer">15</div><div style="font-size:13px;color:var(--text2);">segundos restantes</div><div class="warning">⚠️ No cierres esta ventana</div></div></div>
+<div id="adOverlay" class="ad-overlay">
+    <div class="ad-box">
+        <div style="font-size:18px;font-weight:700;">🎬 ANUNCIO EN PROGRESO</div>
+        <div class="timer" id="adTimer">15</div>
+        <div style="font-size:13px;color:var(--text2);">segundos restantes</div>
+        <div class="warning">⚠️ No cierres el anuncio</div>
+        <div class="fraude-msg" id="fraudeMsg">⛔ Debes ver el anuncio completo. Espera <span id="fraudeSegundos">15</span>s</div>
+    </div>
+</div>
 
 <div class="app">
 
@@ -164,10 +173,17 @@
                 <div class="resumen-box"><div style="font-size:11px;">PENDIENTES</div><div class="total" id="totalPendientes">0</div></div>
                 <div id="pendientesList" class="scroll" style="max-height:200px;"></div>
                 
+                <!-- AGREGAR SALDO -->
+                <div class="admin-section" style="background:#F0FFF0;border-color:#27AE60;">
+                    <h4>💵 AGREGAR SALDO A USUARIO</h4>
+                    <input type="text" id="adminAddUser" placeholder="Nombre de usuario">
+                    <input type="number" id="adminAddMonto" placeholder="Monto en USDT" step="0.001">
+                    <button class="btn btn-green" id="btnAddSaldo">💵 AGREGAR SALDO</button>
+                </div>
+                
                 <!-- RESTABLECER ANUNCIOS -->
                 <div class="admin-section" style="background:#FFF0F0;border-color:#E74C3C;">
                     <h4>🔄 RESTABLECER ANUNCIOS PARA TODOS</h4>
-                    <div style="font-size:10px;color:#C0392B;margin-bottom:6px;">⚠️ Todos podrán ver anuncios de nuevo sin esperar 24h</div>
                     <button class="btn btn-coral" id="btnResetAnuncios">🔄 RESTABLECER AHORA</button>
                 </div>
                 
@@ -218,9 +234,14 @@
     const COMISION = 0.05;
     const DOMINIO = 'newstarnoni.click';
 
-    let USER_ID = null, USER_DATA = null, viendoAnuncio = false, PRECIO_ANUNCIO = 0.01, MENSAJE_GLOBAL = '';
+    let USER_ID = null, USER_DATA = null, PRECIO_ANUNCIO = 0.01, MENSAJE_GLOBAL = '';
+    let anuncioActivo = false, anuncioTimer = null, anuncioIndex = null, ventanaAnuncio = null;
+    let tiempoRestante = 15;
+    let fraudeDetectado = false;
 
-    const adOverlay = document.getElementById('adOverlay'), adTimer = document.getElementById('adTimer'), navbar = document.getElementById('navbar');
+    const adOverlay = document.getElementById('adOverlay'), adTimer = document.getElementById('adTimer');
+    const fraudeMsg = document.getElementById('fraudeMsg'), fraudeSegundos = document.getElementById('fraudeSegundos');
+    const navbar = document.getElementById('navbar');
     const urlParams = new URLSearchParams(window.location.search);
     let refCode = urlParams.get('ref') || '';
     if (refCode) document.getElementById('refInfo').textContent = '🔗 Invitado por: ' + refCode;
@@ -315,14 +336,12 @@
         const doc = await db.collection('usuarios').doc(USER_ID).get();
         if (!doc.exists) return;
         USER_DATA = doc.data();
-        document.getElementById('balanceHome').textContent = `$${(USER_DATA.balance||0).toFixed(2)}`;
-        document.getElementById('balanceWithdraw').textContent = `$${(USER_DATA.balance||0).toFixed(2)}`;
+        document.getElementById('balanceHome').textContent = `$${(USER_DATA.balance||0).toFixed(3)}`;
+        document.getElementById('balanceWithdraw').textContent = `$${(USER_DATA.balance||0).toFixed(3)}`;
         document.getElementById('invitadosCount').textContent = (USER_DATA.referidos||[]).length;
         document.getElementById('comisionAcumulada').textContent = `$${(USER_DATA.comision||0).toFixed(4)}`;
         document.getElementById('refLinkBox').textContent = DOMINIO + '/?ref=' + USER_ID;
         document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3);
-        document.getElementById('adminPrecioAnuncio').value = PRECIO_ANUNCIO;
-        document.getElementById('adminMensajeGlobal').value = MENSAJE_GLOBAL;
         const mb = document.getElementById('mensajeGlobalBox');
         if (MENSAJE_GLOBAL) { mb.textContent = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); }
         else { mb.classList.add('oculto'); }
@@ -335,26 +354,105 @@
         let html = '';
         for (let i = 0; i < 3; i++) {
             const done = i < vistos && fecha === hoy;
-            html += `<div class="anuncio-card ${done?'done':''}"><div class="num">${done?'✓':i+1}</div><div style="flex:1;font-size:13px;font-weight:600;">Anuncio #${i+1} (+$${PRECIO_ANUNCIO.toFixed(3)})</div><button class="btn-sm" ${done?'disabled':''} onclick="verAnuncio(${i})">${done?'Visto':'Ver'}</button></div>`;
+            html += `<div class="anuncio-card ${done?'done':''}"><div class="num">${done?'✓':i+1}</div><div style="flex:1;font-size:13px;font-weight:600;">Anuncio #${i+1} (+$${PRECIO_ANUNCIO.toFixed(3)})</div><button class="btn-sm" ${done||anuncioActivo?'disabled':''} onclick="iniciarAnuncio(${i})">${done?'Visto':'Ver'}</button></div>`;
         }
         l.innerHTML = html;
     }
 
-    window.verAnuncio = async function(i) {
-        if (viendoAnuncio) return; viendoAnuncio = true;
-        window.open(ANUNCIOS_URLS[i], '_blank');
-        adOverlay.classList.add('show'); let t = 15; adTimer.textContent = t;
-        const iv = setInterval(() => { t--; adTimer.textContent = t; if (t <= 5) adTimer.style.color = '#E67E22'; if (t <= 0) { clearInterval(iv); adOverlay.classList.remove('show'); adTimer.style.color = '#4E3629'; completarAnuncio(i); viendoAnuncio = false; } }, 1000);
+    window.iniciarAnuncio = function(i) {
+        if (anuncioActivo) return;
+        anuncioActivo = true;
+        anuncioIndex = i;
+        fraudeDetectado = false;
+        tiempoRestante = 15;
+        
+        ventanaAnuncio = window.open(ANUNCIOS_URLS[i], '_blank');
+        adOverlay.classList.add('show');
+        adTimer.textContent = tiempoRestante;
+        adTimer.style.color = '#4E3629';
+        fraudeMsg.style.display = 'none';
+        document.querySelector('.warning').style.display = 'block';
+        
+        actualizarUI();
+        
+        anuncioTimer = setInterval(() => {
+            // Verificar si la ventana del anuncio sigue abierta
+            if (ventanaAnuncio && ventanaAnuncio.closed) {
+                // El usuario cerró la ventana del anuncio
+                fraudeDetectado = true;
+                detenerTemporizador();
+                return;
+            }
+            
+            tiempoRestante--;
+            adTimer.textContent = tiempoRestante;
+            
+            if (tiempoRestante <= 5) adTimer.style.color = '#E67E22';
+            
+            if (tiempoRestante <= 0) {
+                clearInterval(anuncioTimer);
+                anuncioTimer = null;
+                adOverlay.classList.remove('show');
+                completarAnuncio(anuncioIndex);
+            }
+        }, 1000);
     };
+
+    function detenerTemporizador() {
+        if (anuncioTimer) {
+            clearInterval(anuncioTimer);
+            anuncioTimer = null;
+        }
+        adTimer.style.color = '#C0392B';
+        document.querySelector('.warning').style.display = 'none';
+        fraudeSegundos.textContent = tiempoRestante;
+        fraudeMsg.style.display = 'block';
+        anuncioActivo = false;
+        
+        setTimeout(() => {
+            adOverlay.classList.remove('show');
+            fraudeMsg.style.display = 'none';
+            toast('⛔ Debes ver el anuncio completo. Sin trampa.', 'error');
+            actualizarUI();
+        }, 2000);
+    }
+
+    // Detectar si la ventana se cierra
+    setInterval(() => {
+        if (anuncioActivo && ventanaAnuncio && ventanaAnuncio.closed && !fraudeDetectado) {
+            fraudeDetectado = true;
+            detenerTemporizador();
+        }
+    }, 500);
 
     async function completarAnuncio(i) {
         const hoy = new Date().toLocaleDateString();
         let vistos = USER_DATA.anunciosVistos || 0;
         if (USER_DATA.anunciosFecha !== hoy) vistos = 0;
         if (i >= vistos) vistos = i + 1;
-        await db.collection('usuarios').doc(USER_ID).update({ balance: firebase.firestore.FieldValue.increment(PRECIO_ANUNCIO), anunciosVistos: vistos, anunciosFecha: hoy });
-        if (USER_DATA.referidoPor) await db.collection('usuarios').doc(USER_DATA.referidoPor).update({ comision: firebase.firestore.FieldValue.increment(PRECIO_ANUNCIO * COMISION) });
-        toast(`✅ +$${PRECIO_ANUNCIO.toFixed(3)} USDT`, 'success'); actualizarUI();
+        
+        const nuevoBalance = (USER_DATA.balance || 0) + PRECIO_ANUNCIO;
+        await db.collection('usuarios').doc(USER_ID).update({ 
+            balance: nuevoBalance, 
+            anunciosVistos: vistos, 
+            anunciosFecha: hoy 
+        });
+        
+        USER_DATA.balance = nuevoBalance;
+        USER_DATA.anunciosVistos = vistos;
+        USER_DATA.anunciosFecha = hoy;
+        
+        if (USER_DATA.referidoPor) {
+            await db.collection('usuarios').doc(USER_DATA.referidoPor).update({ 
+                comision: firebase.firestore.FieldValue.increment(PRECIO_ANUNCIO * COMISION) 
+            });
+        }
+        
+        anuncioActivo = false;
+        anuncioIndex = null;
+        ventanaAnuncio = null;
+        toast(`✅ +$${PRECIO_ANUNCIO.toFixed(3)} USDT`, 'success');
+        actualizarUI();
     }
 
     document.getElementById('btnCopiarLink').addEventListener('click', () => {
@@ -369,7 +467,9 @@
 
     document.getElementById('btnReclamarComision').addEventListener('click', async () => {
         const c = USER_DATA.comision || 0; if (c <= 0) return toast('⚠️ Sin comisiones', 'error');
-        await db.collection('usuarios').doc(USER_ID).update({ balance: firebase.firestore.FieldValue.increment(c), comision: 0 });
+        const nuevoBalance = (USER_DATA.balance || 0) + c;
+        await db.collection('usuarios').doc(USER_ID).update({ balance: nuevoBalance, comision: 0 });
+        USER_DATA.balance = nuevoBalance; USER_DATA.comision = 0;
         toast(`💰 +$${c.toFixed(4)}`, 'success'); actualizarUI();
     });
 
@@ -379,7 +479,13 @@
         if ((USER_DATA.balance||0) < MIN_RETIRO) return toast('⚠️ Mínimo $' + MIN_RETIRO.toFixed(2), 'error');
         const m = USER_DATA.balance, hoy = new Date().toLocaleDateString();
         const pg = { id: Date.now(), wallet: w, monto: m, fecha: hoy, estado: 'pendiente', usuario: USER_ID };
-        await db.collection('usuarios').doc(USER_ID).update({ balance: 0, historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }), pendientes: firebase.firestore.FieldValue.arrayUnion(pg) });
+        await db.collection('usuarios').doc(USER_ID).update({ 
+            balance: 0, 
+            historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }), 
+            pendientes: firebase.firestore.FieldValue.arrayUnion(pg) 
+        });
+        USER_DATA.balance = 0;
+        USER_DATA.historial = [...(USER_DATA.historial||[]), { fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }];
         document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${m.toFixed(2)} solicitado`;
         toast('✅ Retiro solicitado', 'success'); document.getElementById('walletInput').value = ''; actualizarUI();
     });
@@ -390,11 +496,18 @@
     }
 
     // ADMIN
-    let adTimer2 = null;
-    document.getElementById('balanceCard').addEventListener('mousedown', () => { adTimer2 = setTimeout(() => { document.getElementById('adminPanel').classList.remove('oculto'); document.getElementById('adminContent').classList.add('oculto'); document.getElementById('adminPass').value = ''; }, 15000); });
-    document.getElementById('balanceCard').addEventListener('mouseup', () => clearTimeout(adTimer2));
-    document.getElementById('balanceCard').addEventListener('touchstart', () => { adTimer2 = setTimeout(() => { document.getElementById('adminPanel').classList.remove('oculto'); document.getElementById('adminContent').classList.add('oculto'); document.getElementById('adminPass').value = ''; }, 15000); });
-    document.getElementById('balanceCard').addEventListener('touchend', () => clearTimeout(adTimer2));
+    let adminTouchTimer = null;
+    const balanceCard = document.getElementById('balanceCard');
+    balanceCard.addEventListener('mousedown', () => { adminTouchTimer = setTimeout(mostrarAdmin, 15000); });
+    balanceCard.addEventListener('mouseup', () => clearTimeout(adminTouchTimer));
+    balanceCard.addEventListener('touchstart', () => { adminTouchTimer = setTimeout(mostrarAdmin, 15000); });
+    balanceCard.addEventListener('touchend', () => clearTimeout(adminTouchTimer));
+    
+    function mostrarAdmin() {
+        document.getElementById('adminPanel').classList.remove('oculto');
+        document.getElementById('adminContent').classList.add('oculto');
+        document.getElementById('adminPass').value = '';
+    }
 
     document.getElementById('btnAdminLogin').addEventListener('click', async () => {
         if (document.getElementById('adminPass').value !== CLAVE_ADMIN) return toast('❌ Clave incorrecta', 'error');
@@ -404,24 +517,35 @@
         await cargarPendientes();
     });
 
-    document.getElementById('btnCerrarAdmin').addEventListener('click', () => { document.getElementById('adminPanel').classList.add('oculto'); document.getElementById('adminContent').classList.add('oculto'); });
+    document.getElementById('btnCerrarAdmin').addEventListener('click', () => { 
+        document.getElementById('adminPanel').classList.add('oculto'); 
+        document.getElementById('adminContent').classList.add('oculto'); 
+    });
 
-    // RESTABLECER ANUNCIOS PARA TODOS
+    // AGREGAR SALDO A USUARIO
+    document.getElementById('btnAddSaldo').addEventListener('click', async () => {
+        const user = document.getElementById('adminAddUser').value.trim().toLowerCase();
+        const monto = parseFloat(document.getElementById('adminAddMonto').value);
+        if (!user || !monto || monto <= 0) return toast('⚠️ Datos inválidos', 'error');
+        const doc = await db.collection('usuarios').doc(user).get();
+        if (!doc.exists) return toast('❌ Usuario no existe', 'error');
+        await db.collection('usuarios').doc(user).update({ balance: firebase.firestore.FieldValue.increment(monto) });
+        toast(`✅ +$${monto.toFixed(3)} a ${user}`, 'success');
+        document.getElementById('adminAddUser').value = '';
+        document.getElementById('adminAddMonto').value = '';
+    });
+
+    // RESTABLECER ANUNCIOS
     document.getElementById('btnResetAnuncios').addEventListener('click', async () => {
-        if (!confirm('¿Restablecer los anuncios para TODOS los usuarios? Podrán ver anuncios de nuevo sin esperar 24h.')) return;
+        if (!confirm('¿Restablecer anuncios para TODOS?')) return;
         try {
             const snap = await db.collection('usuarios').get();
             let count = 0;
             const batch = db.batch();
-            snap.forEach(doc => {
-                batch.update(doc.ref, { anunciosVistos: 0, anunciosFecha: '' });
-                count++;
-            });
+            snap.forEach(doc => { batch.update(doc.ref, { anunciosVistos: 0, anunciosFecha: '' }); count++; });
             await batch.commit();
-            toast(`✅ Anuncios restablecidos para ${count} usuarios`, 'success');
-        } catch (e) {
-            toast('❌ Error: ' + e.message, 'error');
-        }
+            toast(`✅ ${count} usuarios restablecidos`, 'success');
+        } catch (e) { toast('❌ Error: ' + e.message, 'error'); }
     });
 
     async function cargarPendientes() {
@@ -430,7 +554,7 @@
         snap.forEach(doc => { (doc.data().pendientes || []).forEach(p => { if (p.estado === 'pendiente') all.push({ ...p, userId: doc.id }); }); });
         document.getElementById('totalPendientes').textContent = all.length;
         document.getElementById('pendientesList').innerHTML = all.length ? all.map(p => `
-            <div class="admin-item"><div style="flex:1;"><strong>$${p.monto.toFixed(2)}</strong> | <span style="font-size:10px;">👤 ${p.usuario}</span><div class="cmd-box">/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}</div></div>
+            <div class="admin-item"><div style="flex:1;"><strong>$${p.monto.toFixed(2)}</strong> | 👤 ${p.usuario}<div class="cmd-box">/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}</div></div>
             <div style="display:flex;flex-direction:column;gap:4px;"><button class="btn-xs btn-copy" onclick="copiarCmd('/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}')">📋</button><button class="btn-xs btn-done" onclick="pagarAdm('${p.userId}',${p.id})">✅</button></div></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin pendientes</div>';
     }
 
