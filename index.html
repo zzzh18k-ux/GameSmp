@@ -277,11 +277,14 @@
     function navigate(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
     async function verificarMulticuentas() {
-        if (localStorage.getItem('sgc_bloqueo_mc')) return { bloqueado: true, motivo: '🚫 Ya hay una cuenta registrada en este navegador.' };
         const fp = await getFp();
+        if (!userIP) userIP = await obtenerIP();
         const mismoFp = await db.collection('usuarios').where('fingerprint', '==', fp).get();
-        if (!mismoFp.empty) return { bloqueado: true, motivo: '🚫 Ya tienes una cuenta en este dispositivo.' };
-        if (userIP) { const mismaIP = await db.collection('usuarios').where('ip', '==', userIP).get(); if (!mismaIP.empty) return { bloqueado: true, motivo: '🚫 Ya existe una cuenta desde esta conexión.' }; }
+        let mismaIP = null;
+        if (userIP) { mismaIP = await db.collection('usuarios').where('ip', '==', userIP).get(); }
+        if (!mismoFp.empty && mismaIP && !mismaIP.empty) {
+            return { bloqueado: true, motivo: '🚫 Ya existe una cuenta en este dispositivo con esta conexión.' };
+        }
         return { bloqueado: false };
     }
 
@@ -303,7 +306,6 @@
         const data = { usuario:u, password:p, fingerprint:fp, ip:userIP, balance:0, referidoPor:cf, referidos:[], comision:0, anunciosVistos:0, anunciosFecha:'', historial:[], pendientes:[], creado:Date.now() };
         await db.collection('usuarios').doc(u).set(data);
         if (cf) await db.collection('usuarios').doc(cf).update({ referidos: firebase.firestore.FieldValue.arrayUnion(u) });
-        localStorage.setItem('sgc_bloqueo_mc', '1');
         USER_ID = u; USER_DATA = data;
         localStorage.setItem('sgc_user', u); localStorage.setItem('sgc_pass', p);
         toast('✅ Cuenta creada', 'success'); entrarApp();
@@ -319,7 +321,6 @@
         if (!data.fingerprint) { if (!userIP) userIP = await obtenerIP(); await db.collection('usuarios').doc(u).update({ fingerprint:fp, ip:userIP }); }
         USER_ID = u; USER_DATA = data;
         localStorage.setItem('sgc_user', u); localStorage.setItem('sgc_pass', p);
-        localStorage.setItem('sgc_bloqueo_mc', '1');
         toast('✅ Bienvenido!', 'success'); entrarApp();
     }
 
