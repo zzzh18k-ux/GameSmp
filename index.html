@@ -256,10 +256,15 @@
 
     async function cargarConfig() {
         const doc = await db.collection('config').doc('global').get();
-        if (doc.exists) { PRECIO_ANUNCIO = doc.data().precioAnuncio || 0.01; MENSAJE_GLOBAL = doc.data().mensajeGlobal || ''; }
+        if (doc.exists) {
+            const data = doc.data();
+            PRECIO_ANUNCIO = parseFloat(data.precioAnuncio) || 0.01;
+            MENSAJE_GLOBAL = data.mensajeGlobal || '';
+        }
         document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3);
         const mb = document.getElementById('mensajeGlobalBox');
-        if (MENSAJE_GLOBAL) { mb.textContent = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); }
+        if (MENSAJE_GLOBAL) { mb.innerHTML = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); }
+        else { mb.classList.add('oculto'); }
     }
 
     function toast(msg, tipo) {
@@ -317,7 +322,6 @@
         toast('✅ Bienvenido!', 'success'); entrarApp();
     }
 
-    // REGISTRO (FORM)
     document.getElementById('formRegistro').addEventListener('submit', async function(e) {
         e.preventDefault();
         const u = document.getElementById('regUsuario').value.trim().toLowerCase();
@@ -328,7 +332,6 @@
         await registrarUsuario(u, p, rm);
     });
 
-    // LOGIN (FORM)
     document.getElementById('formLogin').addEventListener('submit', async function(e) {
         e.preventDefault();
         const u = document.getElementById('loginUsuario').value.trim().toLowerCase();
@@ -369,7 +372,8 @@
         document.getElementById('refLinkBox').textContent = DOMINIO + '/?ref=' + USER_ID;
         document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3);
         const mb = document.getElementById('mensajeGlobalBox');
-        if (MENSAJE_GLOBAL) { mb.textContent = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); } else { mb.classList.add('oculto'); }
+        if (MENSAJE_GLOBAL) { mb.innerHTML = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); }
+        else { mb.classList.add('oculto'); }
         renderAnuncios(); renderReferidos(); renderHistorial();
     }
 
@@ -446,8 +450,47 @@
     async function cargarPendientes() { const snap = await db.collection('usuarios').get(); let all = []; snap.forEach(doc => { (doc.data().pendientes || []).forEach(p => { if (p.estado === 'pendiente') all.push({ ...p, userId: doc.id }); }); }); document.getElementById('totalPendientes').textContent = all.length; document.getElementById('pendientesList').innerHTML = all.length ? all.map(p => `<div class="admin-item"><div style="flex:1;"><strong>$${p.monto.toFixed(2)}</strong> | 👤 ${p.usuario}<div class="cmd-box">/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}</div></div><div style="display:flex;flex-direction:column;gap:4px;"><button class="btn-xs btn-copy" onclick="copiarCmd('/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}')">📋</button><button class="btn-xs btn-done" onclick="pagarAdm('${p.userId}',${p.id})">✅</button></div></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin pendientes</div>'; }
     window.copiarCmd = function(c) { navigator.clipboard.writeText(c).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + c, 'success')); };
     window.pagarAdm = async function(uid, pid) { const d = (await db.collection('usuarios').doc(uid).get()).data(); let pe = d.pendientes || [], hi = d.historial || []; const p = pe.find(x => x.id === pid); if (p) p.estado = 'exitoso'; hi.forEach(h => { if (h.estado === 'pendiente' && h.wallet === p.wallet) h.estado = 'exitoso'; }); await db.collection('usuarios').doc(uid).update({ pendientes: pe, historial: hi }); toast('✅ Pagado', 'success'); cargarPendientes(); };
-    document.getElementById('btnGuardarPrecio').addEventListener('click', async () => { const n = parseFloat(document.getElementById('adminPrecioAnuncio').value); if (!n || n <= 0) return toast('⚠️ Precio inválido', 'error'); await db.collection('config').doc('global').set({ precioAnuncio: n, mensajeGlobal: MENSAJE_GLOBAL }, { merge: true }); PRECIO_ANUNCIO = n; toast('✅ Precio: $' + n.toFixed(3), 'success'); actualizarUI(); });
-    document.getElementById('btnGuardarMensaje').addEventListener('click', async () => { const m = document.getElementById('adminMensajeGlobal').value.trim(); await db.collection('config').doc('global').set({ precioAnuncio: PRECIO_ANUNCIO, mensajeGlobal: m }, { merge: true }); MENSAJE_GLOBAL = m; toast('✅ Mensaje publicado', 'success'); actualizarUI(); });
+
+    // GUARDAR PRECIO - CORREGIDO
+    document.getElementById('btnGuardarPrecio').addEventListener('click', async () => {
+        const n = parseFloat(document.getElementById('adminPrecioAnuncio').value);
+        if (!n || n <= 0) return toast('⚠️ Precio inválido', 'error');
+        try {
+            await db.collection('config').doc('global').set({ 
+                precioAnuncio: n, 
+                mensajeGlobal: MENSAJE_GLOBAL 
+            }, { merge: true });
+            PRECIO_ANUNCIO = n;
+            document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3);
+            toast('✅ Precio actualizado: $' + n.toFixed(3), 'success');
+            actualizarUI();
+        } catch (e) {
+            toast('❌ Error al guardar: ' + e.message, 'error');
+        }
+    });
+
+    // GUARDAR MENSAJE - CORREGIDO
+    document.getElementById('btnGuardarMensaje').addEventListener('click', async () => {
+        const m = document.getElementById('adminMensajeGlobal').value.trim();
+        try {
+            await db.collection('config').doc('global').set({ 
+                precioAnuncio: PRECIO_ANUNCIO, 
+                mensajeGlobal: m 
+            }, { merge: true });
+            MENSAJE_GLOBAL = m;
+            const mb = document.getElementById('mensajeGlobalBox');
+            if (m) {
+                mb.innerHTML = '📢 ' + m;
+                mb.classList.remove('oculto');
+            } else {
+                mb.classList.add('oculto');
+            }
+            toast('✅ Mensaje publicado', 'success');
+            actualizarUI();
+        } catch (e) {
+            toast('❌ Error al guardar: ' + e.message, 'error');
+        }
+    });
 
     (async function() { userIP = await obtenerIP(); await cargarConfig(); const u = localStorage.getItem('sgc_user'), p = localStorage.getItem('sgc_pass'); if (u && p) { const doc = await db.collection('usuarios').doc(u).get(); if (doc.exists && doc.data().password === p) { USER_ID = u; USER_DATA = doc.data(); entrarApp(); } } })();
 </script>
