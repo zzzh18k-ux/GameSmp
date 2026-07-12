@@ -34,6 +34,9 @@
         .btn-coral { background:var(--coral); }
         .btn-yellow { background:var(--yellow); }
         .btn-purple { background:var(--purple); }
+        .btn-sm { padding:8px 16px; border-radius:14px; border:2px solid var(--border); font-weight:700; cursor:pointer; font-size:12px; box-shadow:0 3px 0 var(--border); background:var(--pink); }
+        .btn-sm:active { transform:translateY(2px); box-shadow:none; }
+        .btn-sm:disabled { opacity:0.5; cursor:not-allowed; box-shadow:0 2px 0 var(--border); background:#EAEAEA; }
         input, textarea { width:100%; padding:14px 18px; border-radius:18px; border:3px solid var(--border); background:var(--card); font-size:13px; font-weight:600; outline:none; margin:6px 0; }
         input:focus, textarea:focus { background:#FFFDF9; }
         textarea { resize:vertical; min-height:60px; }
@@ -70,7 +73,7 @@
         .btn-copiar { background:var(--blue); border:2px solid var(--border); padding:8px 16px; border-radius:12px; font-weight:700; cursor:pointer; font-size:12px; box-shadow:0 3px 0 var(--border); width:100%; margin-top:4px; }
         .btn-copiar:active { transform:translateY(2px); box-shadow:none; }
         .anuncio-card { background:var(--card); border-radius:20px; padding:14px; margin-bottom:8px; border:3px solid var(--border); box-shadow:0 4px 0 var(--border); display:flex; align-items:center; gap:12px; }
-        .anuncio-card .num { width:36px; height:36px; border-radius:12px; background:var(--yellow); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; }
+        .anuncio-card .num { width:36px; height:36px; border-radius:12px; background:var(--yellow); border:2px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; flex-shrink:0; }
         .anuncio-card.done { background:#F4FAF7; }
         .anuncio-card.done .num { background:var(--green); }
         .ad-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:200; display:none; justify-content:center; align-items:center; flex-direction:column; gap:12px; }
@@ -82,6 +85,7 @@
         .admin-section { margin-top:12px; padding:12px; border-radius:16px; border:2px dashed var(--border); background:#FFFBF0; }
         .admin-section h4 { font-size:13px; margin-bottom:8px; }
         .mensaje-global { background:var(--coral); border-radius:16px; padding:12px; margin-bottom:10px; border:3px solid var(--border); text-align:center; font-size:13px; font-weight:600; }
+        form { width:100%; }
     </style>
 </head>
 <body>
@@ -102,26 +106,30 @@
     <!-- REGISTRO -->
     <div id="registerScreen" class="screen active">
         <div class="card card-center"><div style="font-size:48px;">⭐</div><div style="font-weight:700;font-size:22px;">StarGainCoins</div><div style="font-size:13px;color:var(--text2);">Gana recompensas diarias</div></div>
+        <form id="formRegistro" autocomplete="on">
         <div class="card">
             <div style="font-weight:700;font-size:15px;margin-bottom:8px;">📝 REGISTRO</div>
-            <input type="text" id="regUsuario" placeholder="Nombre de usuario">
-            <input type="password" id="regPassword" placeholder="Contraseña (mínimo 8 caracteres)">
+            <input type="text" id="regUsuario" name="username" placeholder="Nombre de usuario" autocomplete="username">
+            <input type="password" id="regPassword" name="password" placeholder="Contraseña (mínimo 8 caracteres)" autocomplete="new-password">
             <input type="text" id="regRefManual" placeholder="Código de invitado (opcional)">
             <div style="font-size:11px;color:var(--text2);margin:4px 0;" id="refInfo"></div>
-            <button class="btn btn-pink" id="btnRegistrar">⭐ CREAR CUENTA</button>
+            <button type="submit" class="btn btn-pink" id="btnRegistrar">⭐ CREAR CUENTA</button>
         </div>
+        </form>
         <div class="card card-center"><button class="btn btn-outline" id="btnIrLogin" style="background:var(--card);">🔑 INICIAR SESIÓN</button></div>
     </div>
 
     <!-- LOGIN -->
     <div id="loginScreen" class="screen">
         <div class="card card-center"><div style="font-size:48px;">⭐</div><div style="font-weight:700;font-size:22px;">StarGainCoins</div><div style="font-size:13px;color:var(--text2);">Gana recompensas diarias</div></div>
+        <form id="formLogin" autocomplete="on">
         <div class="card">
             <div style="font-weight:700;font-size:15px;margin-bottom:8px;">🔑 INICIAR SESIÓN</div>
-            <input type="text" id="loginUsuario" placeholder="Nombre de usuario">
-            <input type="password" id="loginPassword" placeholder="Contraseña">
-            <button class="btn btn-green" id="btnLogin">✅ ENTRAR</button>
+            <input type="text" id="loginUsuario" name="username" placeholder="Nombre de usuario" autocomplete="username">
+            <input type="password" id="loginPassword" name="password" placeholder="Contraseña" autocomplete="current-password">
+            <button type="submit" class="btn btn-green" id="btnLogin">✅ ENTRAR</button>
         </div>
+        </form>
         <div class="card card-center"><button class="btn btn-outline" id="btnIrRegistro" style="background:var(--card);">📝 CREAR CUENTA</button></div>
     </div>
 
@@ -173,7 +181,6 @@
                 <div class="resumen-box"><div style="font-size:11px;">PENDIENTES</div><div class="total" id="totalPendientes">0</div></div>
                 <div id="pendientesList" class="scroll" style="max-height:200px;"></div>
                 
-                <!-- AGREGAR SALDO -->
                 <div class="admin-section" style="background:#F0FFF0;border-color:#27AE60;">
                     <h4>💵 AGREGAR SALDO A USUARIO</h4>
                     <input type="text" id="adminAddUser" placeholder="Nombre de usuario">
@@ -181,20 +188,17 @@
                     <button class="btn btn-green" id="btnAddSaldo">💵 AGREGAR SALDO</button>
                 </div>
                 
-                <!-- RESTABLECER ANUNCIOS -->
                 <div class="admin-section" style="background:#FFF0F0;border-color:#E74C3C;">
                     <h4>🔄 RESTABLECER ANUNCIOS PARA TODOS</h4>
                     <button class="btn btn-coral" id="btnResetAnuncios">🔄 RESTABLECER AHORA</button>
                 </div>
                 
-                <!-- PRECIO ANUNCIO -->
                 <div class="admin-section">
                     <h4>💰 PRECIO POR ANUNCIO</h4>
                     <input type="number" id="adminPrecioAnuncio" placeholder="Ej: 0.01" step="0.001">
                     <button class="btn btn-yellow" id="btnGuardarPrecio">💾 GUARDAR PRECIO</button>
                 </div>
                 
-                <!-- MENSAJE GLOBAL -->
                 <div class="admin-section">
                     <h4>📢 MENSAJE PARA TODOS</h4>
                     <textarea id="adminMensajeGlobal" placeholder="Escribe un mensaje..."></textarea>
@@ -228,7 +232,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const CLAVE_ADMIN = '231606';
     const ANUNCIOS_URLS = ['https://omg10.com/4/10274047','https://omg10.com/4/10874553','https://omg10.com/4/10180875'];
     const MIN_RETIRO = 0.01;
     const COMISION = 0.05;
@@ -236,8 +239,9 @@
 
     let USER_ID = null, USER_DATA = null, PRECIO_ANUNCIO = 0.01, MENSAJE_GLOBAL = '';
     let anuncioActivo = false, anuncioTimer = null, anuncioIndex = null, ventanaAnuncio = null;
-    let tiempoRestante = 15;
-    let fraudeDetectado = false;
+    let tiempoRestante = 15, fraudeDetectado = false;
+    let adminTouchTimer = null, adminAbierto = false;
+    let userIP = null;
 
     const adOverlay = document.getElementById('adOverlay'), adTimer = document.getElementById('adTimer');
     const fraudeMsg = document.getElementById('fraudeMsg'), fraudeSegundos = document.getElementById('fraudeSegundos');
@@ -245,6 +249,10 @@
     const urlParams = new URLSearchParams(window.location.search);
     let refCode = urlParams.get('ref') || '';
     if (refCode) document.getElementById('refInfo').textContent = '🔗 Invitado por: ' + refCode;
+
+    async function obtenerIP() {
+        try { const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json(); return d.ip; } catch (e) { return null; }
+    }
 
     async function cargarConfig() {
         const doc = await db.collection('config').doc('global').get();
@@ -262,44 +270,71 @@
 
     function navigate(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
-    // REGISTRO
-    document.getElementById('btnRegistrar').addEventListener('click', async () => {
+    async function verificarMulticuentas() {
+        if (localStorage.getItem('sgc_bloqueo_mc')) return { bloqueado: true, motivo: '🚫 Ya hay una cuenta registrada en este navegador.' };
+        const fp = await getFp();
+        const mismoFp = await db.collection('usuarios').where('fingerprint', '==', fp).get();
+        if (!mismoFp.empty) return { bloqueado: true, motivo: '🚫 Ya tienes una cuenta en este dispositivo.' };
+        if (userIP) { const mismaIP = await db.collection('usuarios').where('ip', '==', userIP).get(); if (!mismaIP.empty) return { bloqueado: true, motivo: '🚫 Ya existe una cuenta desde esta conexión.' }; }
+        return { bloqueado: false };
+    }
+
+    async function verificarMulticuentasLogin(usuario) {
+        const fp = await getFp(); const doc = await db.collection('usuarios').doc(usuario).get();
+        if (!doc.exists) return { bloqueado: false };
+        if (doc.data().fingerprint && doc.data().fingerprint !== fp) return { bloqueado: true, motivo: '🚫 Esta cuenta está vinculada a otro dispositivo.' };
+        return { bloqueado: false };
+    }
+
+    async function registrarUsuario(u, p, rm) {
+        const cf = rm || refCode || null;
+        const mc = await verificarMulticuentas();
+        if (mc.bloqueado) { toast(mc.motivo, 'error'); return; }
+        const fp = await getFp();
+        if ((await db.collection('usuarios').doc(u).get()).exists) { toast('⚠️ Usuario ya existe', 'error'); return; }
+        if (cf && cf !== u && !(await db.collection('usuarios').doc(cf).get()).exists) { toast('⚠️ Código no existe', 'error'); return; }
+        if (!userIP) userIP = await obtenerIP();
+        const data = { usuario:u, password:p, fingerprint:fp, ip:userIP, balance:0, referidoPor:cf, referidos:[], comision:0, anunciosVistos:0, anunciosFecha:'', historial:[], pendientes:[], creado:Date.now() };
+        await db.collection('usuarios').doc(u).set(data);
+        if (cf) await db.collection('usuarios').doc(cf).update({ referidos: firebase.firestore.FieldValue.arrayUnion(u) });
+        localStorage.setItem('sgc_bloqueo_mc', '1');
+        USER_ID = u; USER_DATA = data;
+        localStorage.setItem('sgc_user', u); localStorage.setItem('sgc_pass', p);
+        toast('✅ Cuenta creada', 'success'); entrarApp();
+    }
+
+    async function iniciarSesion(u, p) {
+        const doc = await db.collection('usuarios').doc(u).get();
+        if (!doc.exists) { toast('❌ Usuario no encontrado', 'error'); return; }
+        if (doc.data().password !== p) { toast('❌ Contraseña incorrecta', 'error'); return; }
+        const mc = await verificarMulticuentasLogin(u);
+        if (mc.bloqueado) { toast(mc.motivo, 'error'); return; }
+        const fp = await getFp(), data = doc.data();
+        if (!data.fingerprint) { if (!userIP) userIP = await obtenerIP(); await db.collection('usuarios').doc(u).update({ fingerprint:fp, ip:userIP }); }
+        USER_ID = u; USER_DATA = data;
+        localStorage.setItem('sgc_user', u); localStorage.setItem('sgc_pass', p);
+        localStorage.setItem('sgc_bloqueo_mc', '1');
+        toast('✅ Bienvenido!', 'success'); entrarApp();
+    }
+
+    // REGISTRO (FORM)
+    document.getElementById('formRegistro').addEventListener('submit', async function(e) {
+        e.preventDefault();
         const u = document.getElementById('regUsuario').value.trim().toLowerCase();
         const p = document.getElementById('regPassword').value.trim();
         const rm = document.getElementById('regRefManual').value.trim().toLowerCase();
         if (!u || u.length < 3) return toast('⚠️ Usuario mínimo 3 caracteres', 'error');
         if (!p || p.length < 8) return toast('⚠️ Contraseña mínimo 8 caracteres', 'error');
-        const cf = rm || refCode || null;
-        try {
-            const fp = await getFp();
-            if (!(await db.collection('usuarios').where('fingerprint','==',fp).get()).empty) return toast('🚫 Ya tienes una cuenta', 'error');
-            if ((await db.collection('usuarios').doc(u).get()).exists) return toast('⚠️ Usuario ya existe', 'error');
-            if (cf && cf !== u && !(await db.collection('usuarios').doc(cf).get()).exists) return toast('⚠️ Código no existe', 'error');
-            const data = { usuario:u, password:p, fingerprint:fp, balance:0, referidoPor:cf, referidos:[], comision:0, anunciosVistos:0, anunciosFecha:'', historial:[], pendientes:[], creado:Date.now() };
-            await db.collection('usuarios').doc(u).set(data);
-            if (cf) await db.collection('usuarios').doc(cf).update({ referidos: firebase.firestore.FieldValue.arrayUnion(u) });
-            USER_ID = u; USER_DATA = data;
-            localStorage.setItem('sgc_user', u); localStorage.setItem('sgc_pass', p);
-            toast('✅ Cuenta creada', 'success'); entrarApp();
-        } catch (e) { toast('❌ Error: ' + e.message, 'error'); }
+        await registrarUsuario(u, p, rm);
     });
 
-    // LOGIN
-    document.getElementById('btnLogin').addEventListener('click', async () => {
+    // LOGIN (FORM)
+    document.getElementById('formLogin').addEventListener('submit', async function(e) {
+        e.preventDefault();
         const u = document.getElementById('loginUsuario').value.trim().toLowerCase();
         const p = document.getElementById('loginPassword').value.trim();
         if (!u || !p) return toast('⚠️ Completa los campos', 'error');
-        try {
-            const doc = await db.collection('usuarios').doc(u).get();
-            if (!doc.exists) return toast('❌ Usuario no encontrado', 'error');
-            if (doc.data().password !== p) return toast('❌ Contraseña incorrecta', 'error');
-            const fp = await getFp(), data = doc.data();
-            if (!data.fingerprint) await db.collection('usuarios').doc(u).update({ fingerprint:fp });
-            else if (data.fingerprint !== fp) return toast('🚫 Dispositivo no autorizado', 'error');
-            USER_ID = u; USER_DATA = data;
-            localStorage.setItem('sgc_user', u); localStorage.setItem('sgc_pass', p);
-            toast('✅ Bienvenido!', 'success'); entrarApp();
-        } catch (e) { toast('❌ Error: ' + e.message, 'error'); }
+        await iniciarSesion(u, p);
     });
 
     async function getFp() {
@@ -316,25 +351,16 @@
     }
 
     document.querySelectorAll('.nav-btn[data-screen]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            navigate(this.dataset.screen);
-            document.querySelectorAll('.nav-btn[data-screen]').forEach(b => b.classList.remove('active'));
-            this.classList.add('active'); actualizarUI();
-        });
+        btn.addEventListener('click', function() { navigate(this.dataset.screen); document.querySelectorAll('.nav-btn[data-screen]').forEach(b => b.classList.remove('active')); this.classList.add('active'); actualizarUI(); });
     });
 
     document.getElementById('btnIrLogin').addEventListener('click', () => navigate('loginScreen'));
     document.getElementById('btnIrRegistro').addEventListener('click', () => navigate('registerScreen'));
-    document.getElementById('btnCerrarSesion').addEventListener('click', () => {
-        localStorage.removeItem('sgc_user'); localStorage.removeItem('sgc_pass');
-        USER_ID = null; USER_DATA = null; navbar.classList.add('oculto');
-        navigate('loginScreen'); toast('👋 Sesión cerrada', 'success');
-    });
+    document.getElementById('btnCerrarSesion').addEventListener('click', () => { localStorage.removeItem('sgc_user'); localStorage.removeItem('sgc_pass'); USER_ID = null; USER_DATA = null; navbar.classList.add('oculto'); navigate('loginScreen'); toast('👋 Sesión cerrada', 'success'); });
 
     async function actualizarUI() {
         if (!USER_ID) return;
-        const doc = await db.collection('usuarios').doc(USER_ID).get();
-        if (!doc.exists) return;
+        const doc = await db.collection('usuarios').doc(USER_ID).get(); if (!doc.exists) return;
         USER_DATA = doc.data();
         document.getElementById('balanceHome').textContent = `$${(USER_DATA.balance||0).toFixed(3)}`;
         document.getElementById('balanceWithdraw').textContent = `$${(USER_DATA.balance||0).toFixed(3)}`;
@@ -343,14 +369,12 @@
         document.getElementById('refLinkBox').textContent = DOMINIO + '/?ref=' + USER_ID;
         document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3);
         const mb = document.getElementById('mensajeGlobalBox');
-        if (MENSAJE_GLOBAL) { mb.textContent = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); }
-        else { mb.classList.add('oculto'); }
+        if (MENSAJE_GLOBAL) { mb.textContent = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); } else { mb.classList.add('oculto'); }
         renderAnuncios(); renderReferidos(); renderHistorial();
     }
 
     function renderAnuncios() {
-        const l = document.getElementById('anunciosList'), vistos = USER_DATA.anunciosVistos || 0;
-        const fecha = USER_DATA.anunciosFecha || '', hoy = new Date().toLocaleDateString();
+        const l = document.getElementById('anunciosList'), vistos = USER_DATA.anunciosVistos || 0, fecha = USER_DATA.anunciosFecha || '', hoy = new Date().toLocaleDateString();
         let html = '';
         for (let i = 0; i < 3; i++) {
             const done = i < vistos && fecha === hoy;
@@ -361,231 +385,71 @@
 
     window.iniciarAnuncio = function(i) {
         if (anuncioActivo) return;
-        anuncioActivo = true;
-        anuncioIndex = i;
-        fraudeDetectado = false;
-        tiempoRestante = 15;
-        
+        anuncioActivo = true; anuncioIndex = i; fraudeDetectado = false; tiempoRestante = 15;
         ventanaAnuncio = window.open(ANUNCIOS_URLS[i], '_blank');
-        adOverlay.classList.add('show');
-        adTimer.textContent = tiempoRestante;
-        adTimer.style.color = '#4E3629';
-        fraudeMsg.style.display = 'none';
-        document.querySelector('.warning').style.display = 'block';
-        
+        adOverlay.classList.add('show'); adTimer.textContent = tiempoRestante; adTimer.style.color = '#4E3629';
+        fraudeMsg.style.display = 'none'; document.querySelector('.warning').style.display = 'block';
         actualizarUI();
-        
         anuncioTimer = setInterval(() => {
-            // Verificar si la ventana del anuncio sigue abierta
-            if (ventanaAnuncio && ventanaAnuncio.closed) {
-                // El usuario cerró la ventana del anuncio
-                fraudeDetectado = true;
-                detenerTemporizador();
-                return;
-            }
-            
-            tiempoRestante--;
-            adTimer.textContent = tiempoRestante;
-            
+            if (ventanaAnuncio && ventanaAnuncio.closed) { fraudeDetectado = true; detenerTemporizador(); return; }
+            tiempoRestante--; adTimer.textContent = tiempoRestante;
             if (tiempoRestante <= 5) adTimer.style.color = '#E67E22';
-            
-            if (tiempoRestante <= 0) {
-                clearInterval(anuncioTimer);
-                anuncioTimer = null;
-                adOverlay.classList.remove('show');
-                completarAnuncio(anuncioIndex);
-            }
+            if (tiempoRestante <= 0) { clearInterval(anuncioTimer); anuncioTimer = null; adOverlay.classList.remove('show'); completarAnuncio(anuncioIndex); }
         }, 1000);
     };
 
     function detenerTemporizador() {
-        if (anuncioTimer) {
-            clearInterval(anuncioTimer);
-            anuncioTimer = null;
-        }
-        adTimer.style.color = '#C0392B';
-        document.querySelector('.warning').style.display = 'none';
-        fraudeSegundos.textContent = tiempoRestante;
-        fraudeMsg.style.display = 'block';
-        anuncioActivo = false;
-        
-        setTimeout(() => {
-            adOverlay.classList.remove('show');
-            fraudeMsg.style.display = 'none';
-            toast('⛔ Debes ver el anuncio completo. Sin trampa.', 'error');
-            actualizarUI();
-        }, 2000);
+        if (anuncioTimer) { clearInterval(anuncioTimer); anuncioTimer = null; }
+        adTimer.style.color = '#C0392B'; document.querySelector('.warning').style.display = 'none';
+        fraudeSegundos.textContent = tiempoRestante; fraudeMsg.style.display = 'block'; anuncioActivo = false;
+        setTimeout(() => { adOverlay.classList.remove('show'); fraudeMsg.style.display = 'none'; toast('⛔ Debes ver el anuncio completo. Sin trampa.', 'error'); actualizarUI(); }, 2000);
     }
 
-    // Detectar si la ventana se cierra
-    setInterval(() => {
-        if (anuncioActivo && ventanaAnuncio && ventanaAnuncio.closed && !fraudeDetectado) {
-            fraudeDetectado = true;
-            detenerTemporizador();
-        }
-    }, 500);
+    setInterval(() => { if (anuncioActivo && ventanaAnuncio && ventanaAnuncio.closed && !fraudeDetectado) { fraudeDetectado = true; detenerTemporizador(); } }, 500);
 
     async function completarAnuncio(i) {
-        const hoy = new Date().toLocaleDateString();
-        let vistos = USER_DATA.anunciosVistos || 0;
-        if (USER_DATA.anunciosFecha !== hoy) vistos = 0;
-        if (i >= vistos) vistos = i + 1;
-        
+        const hoy = new Date().toLocaleDateString(); let vistos = USER_DATA.anunciosVistos || 0;
+        if (USER_DATA.anunciosFecha !== hoy) vistos = 0; if (i >= vistos) vistos = i + 1;
         const nuevoBalance = (USER_DATA.balance || 0) + PRECIO_ANUNCIO;
-        await db.collection('usuarios').doc(USER_ID).update({ 
-            balance: nuevoBalance, 
-            anunciosVistos: vistos, 
-            anunciosFecha: hoy 
-        });
-        
-        USER_DATA.balance = nuevoBalance;
-        USER_DATA.anunciosVistos = vistos;
-        USER_DATA.anunciosFecha = hoy;
-        
-        if (USER_DATA.referidoPor) {
-            await db.collection('usuarios').doc(USER_DATA.referidoPor).update({ 
-                comision: firebase.firestore.FieldValue.increment(PRECIO_ANUNCIO * COMISION) 
-            });
-        }
-        
-        anuncioActivo = false;
-        anuncioIndex = null;
-        ventanaAnuncio = null;
-        toast(`✅ +$${PRECIO_ANUNCIO.toFixed(3)} USDT`, 'success');
-        actualizarUI();
+        await db.collection('usuarios').doc(USER_ID).update({ balance: nuevoBalance, anunciosVistos: vistos, anunciosFecha: hoy });
+        USER_DATA.balance = nuevoBalance; USER_DATA.anunciosVistos = vistos; USER_DATA.anunciosFecha = hoy;
+        if (USER_DATA.referidoPor) { await db.collection('usuarios').doc(USER_DATA.referidoPor).update({ comision: firebase.firestore.FieldValue.increment(PRECIO_ANUNCIO * COMISION) }); }
+        anuncioActivo = false; anuncioIndex = null; ventanaAnuncio = null;
+        toast(`✅ +$${PRECIO_ANUNCIO.toFixed(3)} USDT`, 'success'); actualizarUI();
     }
 
-    document.getElementById('btnCopiarLink').addEventListener('click', () => {
-        const lk = DOMINIO + '/?ref=' + USER_ID;
-        navigator.clipboard.writeText(lk).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + lk, 'success'));
-    });
+    document.getElementById('btnCopiarLink').addEventListener('click', () => { const lk = DOMINIO + '/?ref=' + USER_ID; navigator.clipboard.writeText(lk).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + lk, 'success')); });
 
-    function renderReferidos() {
-        const l = document.getElementById('referidosList'), refs = USER_DATA.referidos || [];
-        l.innerHTML = refs.length ? refs.map(r => `<div class="referido-item"><strong>👤 ${r}</strong><span style="color:#B8860B;">+5%</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin invitados</div>';
-    }
+    function renderReferidos() { const l = document.getElementById('referidosList'), refs = USER_DATA.referidos || []; l.innerHTML = refs.length ? refs.map(r => `<div class="referido-item"><strong>👤 ${r}</strong><span style="color:#B8860B;">+5%</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin invitados</div>'; }
 
-    document.getElementById('btnReclamarComision').addEventListener('click', async () => {
-        const c = USER_DATA.comision || 0; if (c <= 0) return toast('⚠️ Sin comisiones', 'error');
-        const nuevoBalance = (USER_DATA.balance || 0) + c;
-        await db.collection('usuarios').doc(USER_ID).update({ balance: nuevoBalance, comision: 0 });
-        USER_DATA.balance = nuevoBalance; USER_DATA.comision = 0;
-        toast(`💰 +$${c.toFixed(4)}`, 'success'); actualizarUI();
-    });
+    document.getElementById('btnReclamarComision').addEventListener('click', async () => { const c = USER_DATA.comision || 0; if (c <= 0) return toast('⚠️ Sin comisiones', 'error'); const nuevoBalance = (USER_DATA.balance || 0) + c; await db.collection('usuarios').doc(USER_ID).update({ balance: nuevoBalance, comision: 0 }); USER_DATA.balance = nuevoBalance; USER_DATA.comision = 0; toast(`💰 +$${c.toFixed(4)}`, 'success'); actualizarUI(); });
 
-    document.getElementById('btnRetirar').addEventListener('click', async () => {
-        const w = document.getElementById('walletInput').value.trim();
-        if (!w || !w.startsWith('0x')) return toast('⚠️ Dirección inválida', 'error');
-        if ((USER_DATA.balance||0) < MIN_RETIRO) return toast('⚠️ Mínimo $' + MIN_RETIRO.toFixed(2), 'error');
-        const m = USER_DATA.balance, hoy = new Date().toLocaleDateString();
-        const pg = { id: Date.now(), wallet: w, monto: m, fecha: hoy, estado: 'pendiente', usuario: USER_ID };
-        await db.collection('usuarios').doc(USER_ID).update({ 
-            balance: 0, 
-            historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }), 
-            pendientes: firebase.firestore.FieldValue.arrayUnion(pg) 
-        });
-        USER_DATA.balance = 0;
-        USER_DATA.historial = [...(USER_DATA.historial||[]), { fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }];
-        document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${m.toFixed(2)} solicitado`;
-        toast('✅ Retiro solicitado', 'success'); document.getElementById('walletInput').value = ''; actualizarUI();
-    });
+    document.getElementById('btnRetirar').addEventListener('click', async () => { const w = document.getElementById('walletInput').value.trim(); if (!w || !w.startsWith('0x')) return toast('⚠️ Dirección inválida', 'error'); if ((USER_DATA.balance||0) < MIN_RETIRO) return toast('⚠️ Mínimo $' + MIN_RETIRO.toFixed(2), 'error'); const m = USER_DATA.balance, hoy = new Date().toLocaleDateString(); const pg = { id: Date.now(), wallet: w, monto: m, fecha: hoy, estado: 'pendiente', usuario: USER_ID }; await db.collection('usuarios').doc(USER_ID).update({ balance: 0, historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }), pendientes: firebase.firestore.FieldValue.arrayUnion(pg) }); USER_DATA.balance = 0; USER_DATA.historial = [...(USER_DATA.historial||[]), { fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }]; document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${m.toFixed(2)} solicitado`; toast('✅ Retiro solicitado', 'success'); document.getElementById('walletInput').value = ''; actualizarUI(); });
 
-    function renderHistorial() {
-        const l = document.getElementById('historialList'), h = USER_DATA.historial || [];
-        l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(2)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros</div>';
-    }
+    function renderHistorial() { const l = document.getElementById('historialList'), h = USER_DATA.historial || []; l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(2)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros</div>'; }
 
     // ADMIN
-    let adminTouchTimer = null;
     const balanceCard = document.getElementById('balanceCard');
-    balanceCard.addEventListener('mousedown', () => { adminTouchTimer = setTimeout(mostrarAdmin, 15000); });
-    balanceCard.addEventListener('mouseup', () => clearTimeout(adminTouchTimer));
-    balanceCard.addEventListener('touchstart', () => { adminTouchTimer = setTimeout(mostrarAdmin, 15000); });
-    balanceCard.addEventListener('touchend', () => clearTimeout(adminTouchTimer));
-    
-    function mostrarAdmin() {
-        document.getElementById('adminPanel').classList.remove('oculto');
-        document.getElementById('adminContent').classList.add('oculto');
-        document.getElementById('adminPass').value = '';
-    }
+    balanceCard.addEventListener('touchstart', function(e) { if (adminAbierto) return; clearTimeout(adminTouchTimer); adminTouchTimer = setTimeout(() => { adminAbierto = true; mostrarAdmin(); }, 15000); });
+    balanceCard.addEventListener('touchend', function() { clearTimeout(adminTouchTimer); });
+    balanceCard.addEventListener('touchmove', function() { clearTimeout(adminTouchTimer); });
+    balanceCard.addEventListener('mousedown', function(e) { if (adminAbierto) return; clearTimeout(adminTouchTimer); adminTouchTimer = setTimeout(() => { adminAbierto = true; mostrarAdmin(); }, 15000); });
+    balanceCard.addEventListener('mouseup', function() { clearTimeout(adminTouchTimer); });
+    balanceCard.addEventListener('mouseleave', function() { clearTimeout(adminTouchTimer); });
+    function mostrarAdmin() { document.getElementById('adminPanel').classList.remove('oculto'); document.getElementById('adminContent').classList.add('oculto'); document.getElementById('adminPass').value = ''; }
 
-    document.getElementById('btnAdminLogin').addEventListener('click', async () => {
-        if (document.getElementById('adminPass').value !== CLAVE_ADMIN) return toast('❌ Clave incorrecta', 'error');
-        document.getElementById('adminContent').classList.remove('oculto');
-        document.getElementById('adminPrecioAnuncio').value = PRECIO_ANUNCIO;
-        document.getElementById('adminMensajeGlobal').value = MENSAJE_GLOBAL;
-        await cargarPendientes();
-    });
+    document.getElementById('btnAdminLogin').addEventListener('click', async () => { const pass = document.getElementById('adminPass').value; try { const doc = await db.collection('config').doc('admin').get(); if (!doc.exists || doc.data().clave !== pass) return toast('❌ Clave incorrecta', 'error'); document.getElementById('adminContent').classList.remove('oculto'); document.getElementById('adminPrecioAnuncio').value = PRECIO_ANUNCIO; document.getElementById('adminMensajeGlobal').value = MENSAJE_GLOBAL; await cargarPendientes(); } catch (e) { toast('❌ Error al verificar', 'error'); } });
+    document.getElementById('btnCerrarAdmin').addEventListener('click', () => { document.getElementById('adminPanel').classList.add('oculto'); document.getElementById('adminContent').classList.add('oculto'); adminAbierto = false; });
+    document.getElementById('btnAddSaldo').addEventListener('click', async () => { const user = document.getElementById('adminAddUser').value.trim().toLowerCase(); const monto = parseFloat(document.getElementById('adminAddMonto').value); if (!user || !monto || monto <= 0) return toast('⚠️ Datos inválidos', 'error'); const doc = await db.collection('usuarios').doc(user).get(); if (!doc.exists) return toast('❌ Usuario no existe', 'error'); await db.collection('usuarios').doc(user).update({ balance: firebase.firestore.FieldValue.increment(monto) }); toast(`✅ +$${monto.toFixed(3)} a ${user}`, 'success'); document.getElementById('adminAddUser').value = ''; document.getElementById('adminAddMonto').value = ''; });
+    document.getElementById('btnResetAnuncios').addEventListener('click', async () => { if (!confirm('¿Restablecer anuncios para TODOS?')) return; try { const snap = await db.collection('usuarios').get(); let count = 0; const batch = db.batch(); snap.forEach(doc => { batch.update(doc.ref, { anunciosVistos: 0, anunciosFecha: '' }); count++; }); await batch.commit(); toast(`✅ ${count} usuarios restablecidos`, 'success'); } catch (e) { toast('❌ Error: ' + e.message, 'error'); } });
 
-    document.getElementById('btnCerrarAdmin').addEventListener('click', () => { 
-        document.getElementById('adminPanel').classList.add('oculto'); 
-        document.getElementById('adminContent').classList.add('oculto'); 
-    });
-
-    // AGREGAR SALDO A USUARIO
-    document.getElementById('btnAddSaldo').addEventListener('click', async () => {
-        const user = document.getElementById('adminAddUser').value.trim().toLowerCase();
-        const monto = parseFloat(document.getElementById('adminAddMonto').value);
-        if (!user || !monto || monto <= 0) return toast('⚠️ Datos inválidos', 'error');
-        const doc = await db.collection('usuarios').doc(user).get();
-        if (!doc.exists) return toast('❌ Usuario no existe', 'error');
-        await db.collection('usuarios').doc(user).update({ balance: firebase.firestore.FieldValue.increment(monto) });
-        toast(`✅ +$${monto.toFixed(3)} a ${user}`, 'success');
-        document.getElementById('adminAddUser').value = '';
-        document.getElementById('adminAddMonto').value = '';
-    });
-
-    // RESTABLECER ANUNCIOS
-    document.getElementById('btnResetAnuncios').addEventListener('click', async () => {
-        if (!confirm('¿Restablecer anuncios para TODOS?')) return;
-        try {
-            const snap = await db.collection('usuarios').get();
-            let count = 0;
-            const batch = db.batch();
-            snap.forEach(doc => { batch.update(doc.ref, { anunciosVistos: 0, anunciosFecha: '' }); count++; });
-            await batch.commit();
-            toast(`✅ ${count} usuarios restablecidos`, 'success');
-        } catch (e) { toast('❌ Error: ' + e.message, 'error'); }
-    });
-
-    async function cargarPendientes() {
-        const snap = await db.collection('usuarios').get();
-        let all = [];
-        snap.forEach(doc => { (doc.data().pendientes || []).forEach(p => { if (p.estado === 'pendiente') all.push({ ...p, userId: doc.id }); }); });
-        document.getElementById('totalPendientes').textContent = all.length;
-        document.getElementById('pendientesList').innerHTML = all.length ? all.map(p => `
-            <div class="admin-item"><div style="flex:1;"><strong>$${p.monto.toFixed(2)}</strong> | 👤 ${p.usuario}<div class="cmd-box">/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}</div></div>
-            <div style="display:flex;flex-direction:column;gap:4px;"><button class="btn-xs btn-copy" onclick="copiarCmd('/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}')">📋</button><button class="btn-xs btn-done" onclick="pagarAdm('${p.userId}',${p.id})">✅</button></div></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin pendientes</div>';
-    }
-
+    async function cargarPendientes() { const snap = await db.collection('usuarios').get(); let all = []; snap.forEach(doc => { (doc.data().pendientes || []).forEach(p => { if (p.estado === 'pendiente') all.push({ ...p, userId: doc.id }); }); }); document.getElementById('totalPendientes').textContent = all.length; document.getElementById('pendientesList').innerHTML = all.length ? all.map(p => `<div class="admin-item"><div style="flex:1;"><strong>$${p.monto.toFixed(2)}</strong> | 👤 ${p.usuario}<div class="cmd-box">/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}</div></div><div style="display:flex;flex-direction:column;gap:4px;"><button class="btn-xs btn-copy" onclick="copiarCmd('/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}')">📋</button><button class="btn-xs btn-done" onclick="pagarAdm('${p.userId}',${p.id})">✅</button></div></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin pendientes</div>'; }
     window.copiarCmd = function(c) { navigator.clipboard.writeText(c).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + c, 'success')); };
-    window.pagarAdm = async function(uid, pid) {
-        const d = (await db.collection('usuarios').doc(uid).get()).data();
-        let pe = d.pendientes || [], hi = d.historial || [];
-        const p = pe.find(x => x.id === pid); if (p) p.estado = 'exitoso';
-        hi.forEach(h => { if (h.estado === 'pendiente' && h.wallet === p.wallet) h.estado = 'exitoso'; });
-        await db.collection('usuarios').doc(uid).update({ pendientes: pe, historial: hi });
-        toast('✅ Pagado', 'success'); cargarPendientes();
-    };
+    window.pagarAdm = async function(uid, pid) { const d = (await db.collection('usuarios').doc(uid).get()).data(); let pe = d.pendientes || [], hi = d.historial || []; const p = pe.find(x => x.id === pid); if (p) p.estado = 'exitoso'; hi.forEach(h => { if (h.estado === 'pendiente' && h.wallet === p.wallet) h.estado = 'exitoso'; }); await db.collection('usuarios').doc(uid).update({ pendientes: pe, historial: hi }); toast('✅ Pagado', 'success'); cargarPendientes(); };
+    document.getElementById('btnGuardarPrecio').addEventListener('click', async () => { const n = parseFloat(document.getElementById('adminPrecioAnuncio').value); if (!n || n <= 0) return toast('⚠️ Precio inválido', 'error'); await db.collection('config').doc('global').set({ precioAnuncio: n, mensajeGlobal: MENSAJE_GLOBAL }, { merge: true }); PRECIO_ANUNCIO = n; toast('✅ Precio: $' + n.toFixed(3), 'success'); actualizarUI(); });
+    document.getElementById('btnGuardarMensaje').addEventListener('click', async () => { const m = document.getElementById('adminMensajeGlobal').value.trim(); await db.collection('config').doc('global').set({ precioAnuncio: PRECIO_ANUNCIO, mensajeGlobal: m }, { merge: true }); MENSAJE_GLOBAL = m; toast('✅ Mensaje publicado', 'success'); actualizarUI(); });
 
-    document.getElementById('btnGuardarPrecio').addEventListener('click', async () => {
-        const n = parseFloat(document.getElementById('adminPrecioAnuncio').value);
-        if (!n || n <= 0) return toast('⚠️ Precio inválido', 'error');
-        await db.collection('config').doc('global').set({ precioAnuncio: n, mensajeGlobal: MENSAJE_GLOBAL }, { merge: true });
-        PRECIO_ANUNCIO = n; toast('✅ Precio: $' + n.toFixed(3), 'success'); actualizarUI();
-    });
-
-    document.getElementById('btnGuardarMensaje').addEventListener('click', async () => {
-        const m = document.getElementById('adminMensajeGlobal').value.trim();
-        await db.collection('config').doc('global').set({ precioAnuncio: PRECIO_ANUNCIO, mensajeGlobal: m }, { merge: true });
-        MENSAJE_GLOBAL = m; toast('✅ Mensaje publicado', 'success'); actualizarUI();
-    });
-
-    (async function() {
-        await cargarConfig();
-        const u = localStorage.getItem('sgc_user'), p = localStorage.getItem('sgc_pass');
-        if (u && p) { const doc = await db.collection('usuarios').doc(u).get(); if (doc.exists && doc.data().password === p) { USER_ID = u; USER_DATA = doc.data(); entrarApp(); } }
-    })();
+    (async function() { userIP = await obtenerIP(); await cargarConfig(); const u = localStorage.getItem('sgc_user'), p = localStorage.getItem('sgc_pass'); if (u && p) { const doc = await db.collection('usuarios').doc(u).get(); if (doc.exists && doc.data().password === p) { USER_ID = u; USER_DATA = doc.data(); entrarApp(); } } })();
 </script>
 </body>
 </html>
