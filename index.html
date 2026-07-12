@@ -24,7 +24,7 @@
         .screen.active { display:flex; }
         .card { background:var(--card); border-radius:26px; padding:18px; border:4px solid var(--border); box-shadow:var(--shadow); }
         .card-center { text-align:center; }
-        .balance-display { font-size:42px; font-weight:700; line-height:1; margin:4px 0; cursor:pointer; user-select:none; }
+        .balance-display { font-size:36px; font-weight:700; line-height:1; margin:4px 0; cursor:pointer; user-select:none; }
         .balance-label { font-size:11px; letter-spacing:1px; color:var(--text2); font-weight:700; background:var(--yellow); display:inline-block; padding:2px 12px; border-radius:12px; border:2px solid var(--border); }
         .btn { width:100%; padding:14px; border:3px solid var(--border); border-radius:18px; font-weight:700; font-size:14px; cursor:pointer; box-shadow:0 5px 0 var(--border); transition:all 0.1s; text-align:center; margin-top:6px; background:var(--card); }
         .btn:active { transform:translateY(3px); box-shadow:0 2px 0 var(--border); }
@@ -138,7 +138,7 @@
         <div id="mensajeGlobalBox" class="mensaje-global oculto"></div>
         <div class="card card-center" id="balanceCard">
             <div style="font-size:12px;font-weight:700;color:var(--text2);">⭐ BALANCE</div>
-            <div class="balance-display" id="balanceHome">$0.00</div>
+            <div class="balance-display" id="balanceHome">$0.00000</div>
             <span class="balance-label">USDT RETIRABLE</span>
         </div>
         <div class="card">
@@ -155,7 +155,7 @@
         </div>
         <div class="card">
             <div class="fila"><span>Amigos invitados</span><strong id="invitadosCount">0</strong></div>
-            <div class="fila"><span>Comisión acumulada</span><strong style="color:#B8860B;" id="comisionAcumulada">$0.00</strong></div>
+            <div class="fila"><span>Comisión acumulada</span><strong style="color:#B8860B;" id="comisionAcumulada">$0.0000</strong></div>
             <button class="btn btn-yellow" id="btnReclamarComision">💰 RETIRAR COMISIÓN</button>
         </div>
         <div class="card"><div style="font-weight:700;font-size:15px;margin-bottom:8px;">📋 AMIGOS INVITADOS</div><div id="referidosList" class="scroll"></div></div>
@@ -163,7 +163,7 @@
 
     <!-- RETIRAR -->
     <div id="withdrawScreen" class="screen">
-        <div class="card card-center"><div style="font-size:12px;font-weight:700;color:var(--text2);">BALANCE</div><div class="balance-display" id="balanceWithdraw">$0.00</div></div>
+        <div class="card card-center"><div style="font-size:12px;font-weight:700;color:var(--text2);">BALANCE</div><div class="balance-display" id="balanceWithdraw">$0.00000</div></div>
         <div class="card">
             <div style="font-weight:700;font-size:15px;margin-bottom:8px;">💳 RETIRAR USDT</div>
             <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">Mínimo: $0.01 USDT</div>
@@ -184,7 +184,7 @@
                 <div class="admin-section" style="background:#F0FFF0;border-color:#27AE60;">
                     <h4>💵 AGREGAR SALDO A USUARIO</h4>
                     <input type="text" id="adminAddUser" placeholder="Nombre de usuario">
-                    <input type="number" id="adminAddMonto" placeholder="Monto en USDT" step="0.001">
+                    <input type="number" id="adminAddMonto" placeholder="Monto en USDT" step="0.00001">
                     <button class="btn btn-green" id="btnAddSaldo">💵 AGREGAR SALDO</button>
                 </div>
                 
@@ -195,7 +195,7 @@
                 
                 <div class="admin-section">
                     <h4>💰 PRECIO POR ANUNCIO</h4>
-                    <input type="number" id="adminPrecioAnuncio" placeholder="Ej: 0.01" step="0.001">
+                    <input type="number" id="adminPrecioAnuncio" placeholder="Ej: 0.01" step="0.00001">
                     <button class="btn btn-yellow" id="btnGuardarPrecio">💾 GUARDAR PRECIO</button>
                 </div>
                 
@@ -261,7 +261,7 @@
             PRECIO_ANUNCIO = parseFloat(data.precioAnuncio) || 0.01;
             MENSAJE_GLOBAL = data.mensajeGlobal || '';
         }
-        document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3);
+        document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(5);
         const mb = document.getElementById('mensajeGlobalBox');
         if (MENSAJE_GLOBAL) { mb.innerHTML = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); }
         else { mb.classList.add('oculto'); }
@@ -365,12 +365,12 @@
         if (!USER_ID) return;
         const doc = await db.collection('usuarios').doc(USER_ID).get(); if (!doc.exists) return;
         USER_DATA = doc.data();
-        document.getElementById('balanceHome').textContent = `$${(USER_DATA.balance||0).toFixed(3)}`;
-        document.getElementById('balanceWithdraw').textContent = `$${(USER_DATA.balance||0).toFixed(3)}`;
+        document.getElementById('balanceHome').textContent = '$' + (USER_DATA.balance||0).toFixed(5);
+        document.getElementById('balanceWithdraw').textContent = '$' + (USER_DATA.balance||0).toFixed(5);
         document.getElementById('invitadosCount').textContent = (USER_DATA.referidos||[]).length;
-        document.getElementById('comisionAcumulada').textContent = `$${(USER_DATA.comision||0).toFixed(4)}`;
+        document.getElementById('comisionAcumulada').textContent = '$' + (USER_DATA.comision||0).toFixed(5);
         document.getElementById('refLinkBox').textContent = DOMINIO + '/?ref=' + USER_ID;
-        document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3);
+        document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(5);
         const mb = document.getElementById('mensajeGlobalBox');
         if (MENSAJE_GLOBAL) { mb.innerHTML = '📢 ' + MENSAJE_GLOBAL; mb.classList.remove('oculto'); }
         else { mb.classList.add('oculto'); }
@@ -382,7 +382,7 @@
         let html = '';
         for (let i = 0; i < 3; i++) {
             const done = i < vistos && fecha === hoy;
-            html += `<div class="anuncio-card ${done?'done':''}"><div class="num">${done?'✓':i+1}</div><div style="flex:1;font-size:13px;font-weight:600;">Anuncio #${i+1} (+$${PRECIO_ANUNCIO.toFixed(3)})</div><button class="btn-sm" ${done||anuncioActivo?'disabled':''} onclick="iniciarAnuncio(${i})">${done?'Visto':'Ver'}</button></div>`;
+            html += `<div class="anuncio-card ${done?'done':''}"><div class="num">${done?'✓':i+1}</div><div style="flex:1;font-size:13px;font-weight:600;">Anuncio #${i+1} (+$${PRECIO_ANUNCIO.toFixed(5)})</div><button class="btn-sm" ${done||anuncioActivo?'disabled':''} onclick="iniciarAnuncio(${i})">${done?'Visto':'Ver'}</button></div>`;
         }
         l.innerHTML = html;
     }
@@ -417,48 +417,43 @@
         const nuevoBalance = (USER_DATA.balance || 0) + PRECIO_ANUNCIO;
         await db.collection('usuarios').doc(USER_ID).update({ balance: nuevoBalance, anunciosVistos: vistos, anunciosFecha: hoy });
         USER_DATA.balance = nuevoBalance; USER_DATA.anunciosVistos = vistos; USER_DATA.anunciosFecha = hoy;
-        if (USER_DATA.referidoPor) { await db.collection('usuarios').doc(USER_DATA.referidoPor).update({ comision: firebase.firestore.FieldValue.increment(PRECIO_ANUNCIO * COMISION) }); }
+        if (USER_DATA.referidoPor) { 
+            const com = PRECIO_ANUNCIO * COMISION;
+            await db.collection('usuarios').doc(USER_DATA.referidoPor).update({ comision: firebase.firestore.FieldValue.increment(com) }); 
+        }
         anuncioActivo = false; anuncioIndex = null; ventanaAnuncio = null;
-        toast(`✅ +$${PRECIO_ANUNCIO.toFixed(3)} USDT`, 'success'); actualizarUI();
+        toast('✅ +$' + PRECIO_ANUNCIO.toFixed(5) + ' USDT', 'success'); actualizarUI();
     }
 
     document.getElementById('btnCopiarLink').addEventListener('click', () => { const lk = DOMINIO + '/?ref=' + USER_ID; navigator.clipboard.writeText(lk).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + lk, 'success')); });
 
     function renderReferidos() { const l = document.getElementById('referidosList'), refs = USER_DATA.referidos || []; l.innerHTML = refs.length ? refs.map(r => `<div class="referido-item"><strong>👤 ${r}</strong><span style="color:#B8860B;">+5%</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin invitados</div>'; }
 
-    // RECLAMAR COMISIÓN - ARREGLADO
     document.getElementById('btnReclamarComision').addEventListener('click', async () => {
         const doc = await db.collection('usuarios').doc(USER_ID).get();
         const c = doc.data().comision || 0;
-        if (c <= 0) return toast('⚠️ Sin comisiones acumuladas', 'error');
+        if (c < 0.00001) return toast('⚠️ Sin comisiones acumuladas', 'error');
         const nuevoBalance = (doc.data().balance || 0) + c;
         await db.collection('usuarios').doc(USER_ID).update({ balance: nuevoBalance, comision: 0 });
         USER_DATA.balance = nuevoBalance;
         USER_DATA.comision = 0;
-        toast(`💰 +$${c.toFixed(4)} añadido a tu balance`, 'success');
+        toast('💰 +$' + c.toFixed(5) + ' añadido a tu balance', 'success');
         actualizarUI();
     });
 
-    // RETIRAR - ARREGLADO (muestra bien el mínimo)
     document.getElementById('btnRetirar').addEventListener('click', async () => {
         const w = document.getElementById('walletInput').value.trim();
         if (!w || !w.startsWith('0x')) return toast('⚠️ Dirección Polygon inválida', 'error');
         const doc = await db.collection('usuarios').doc(USER_ID).get();
         const bal = doc.data().balance || 0;
-        if (bal < MIN_RETIRO) return toast('⚠️ Mínimo de retiro: $' + MIN_RETIRO.toFixed(2) + ' USDT. Tu balance: $' + bal.toFixed(4), 'error');
+        if (bal < 0.009) return toast('⚠️ Mínimo de retiro: $0.01 USDT. Tu balance: $' + bal.toFixed(5), 'error');
         const hoy = new Date().toLocaleDateString();
         const pg = { id: Date.now(), wallet: w, monto: bal, fecha: hoy, estado: 'pendiente', usuario: USER_ID };
-        await db.collection('usuarios').doc(USER_ID).update({ 
-            balance: 0, 
-            historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: bal, wallet: w, estado: 'pendiente' }), 
-            pendientes: firebase.firestore.FieldValue.arrayUnion(pg) 
-        });
-        USER_DATA.balance = 0;
-        USER_DATA.historial = [...(USER_DATA.historial||[]), { fecha: hoy, monto: bal, wallet: w, estado: 'pendiente' }];
-        document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${bal.toFixed(4)} solicitado`;
-        toast('✅ Retiro solicitado: $' + bal.toFixed(4), 'success');
-        document.getElementById('walletInput').value = '';
-        actualizarUI();
+        await db.collection('usuarios').doc(USER_ID).update({ balance: 0, historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: bal, wallet: w, estado: 'pendiente' }), pendientes: firebase.firestore.FieldValue.arrayUnion(pg) });
+        USER_DATA.balance = 0; USER_DATA.historial = [...(USER_DATA.historial||[]), { fecha: hoy, monto: bal, wallet: w, estado: 'pendiente' }];
+        document.getElementById('estadoRetiro').textContent = '✅ Retiro de $' + bal.toFixed(5) + ' solicitado';
+        toast('✅ Retiro solicitado: $' + bal.toFixed(5), 'success');
+        document.getElementById('walletInput').value = ''; actualizarUI();
     });
 
     function renderHistorial() { const l = document.getElementById('historialList'), h = USER_DATA.historial || []; l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(2)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros</div>'; }
@@ -475,14 +470,14 @@
 
     document.getElementById('btnAdminLogin').addEventListener('click', async () => { const pass = document.getElementById('adminPass').value; try { const doc = await db.collection('config').doc('admin').get(); if (!doc.exists || doc.data().clave !== pass) return toast('❌ Clave incorrecta', 'error'); document.getElementById('adminContent').classList.remove('oculto'); document.getElementById('adminPrecioAnuncio').value = PRECIO_ANUNCIO; document.getElementById('adminMensajeGlobal').value = MENSAJE_GLOBAL; await cargarPendientes(); } catch (e) { toast('❌ Error al verificar', 'error'); } });
     document.getElementById('btnCerrarAdmin').addEventListener('click', () => { document.getElementById('adminPanel').classList.add('oculto'); document.getElementById('adminContent').classList.add('oculto'); adminAbierto = false; });
-    document.getElementById('btnAddSaldo').addEventListener('click', async () => { const user = document.getElementById('adminAddUser').value.trim().toLowerCase(); const monto = parseFloat(document.getElementById('adminAddMonto').value); if (!user || !monto || monto <= 0) return toast('⚠️ Datos inválidos', 'error'); const doc = await db.collection('usuarios').doc(user).get(); if (!doc.exists) return toast('❌ Usuario no existe', 'error'); await db.collection('usuarios').doc(user).update({ balance: firebase.firestore.FieldValue.increment(monto) }); toast(`✅ +$${monto.toFixed(3)} a ${user}`, 'success'); document.getElementById('adminAddUser').value = ''; document.getElementById('adminAddMonto').value = ''; });
-    document.getElementById('btnResetAnuncios').addEventListener('click', async () => { if (!confirm('¿Restablecer anuncios para TODOS?')) return; try { const snap = await db.collection('usuarios').get(); let count = 0; const batch = db.batch(); snap.forEach(doc => { batch.update(doc.ref, { anunciosVistos: 0, anunciosFecha: '' }); count++; }); await batch.commit(); toast(`✅ ${count} usuarios restablecidos`, 'success'); } catch (e) { toast('❌ Error: ' + e.message, 'error'); } });
+    document.getElementById('btnAddSaldo').addEventListener('click', async () => { const user = document.getElementById('adminAddUser').value.trim().toLowerCase(); const monto = parseFloat(document.getElementById('adminAddMonto').value); if (!user || !monto || monto <= 0) return toast('⚠️ Datos inválidos', 'error'); const doc = await db.collection('usuarios').doc(user).get(); if (!doc.exists) return toast('❌ Usuario no existe', 'error'); await db.collection('usuarios').doc(user).update({ balance: firebase.firestore.FieldValue.increment(monto) }); toast('✅ +$' + monto.toFixed(5) + ' a ' + user, 'success'); document.getElementById('adminAddUser').value = ''; document.getElementById('adminAddMonto').value = ''; });
+    document.getElementById('btnResetAnuncios').addEventListener('click', async () => { if (!confirm('¿Restablecer anuncios para TODOS?')) return; try { const snap = await db.collection('usuarios').get(); let count = 0; const batch = db.batch(); snap.forEach(doc => { batch.update(doc.ref, { anunciosVistos: 0, anunciosFecha: '' }); count++; }); await batch.commit(); toast('✅ ' + count + ' usuarios restablecidos', 'success'); } catch (e) { toast('❌ Error: ' + e.message, 'error'); } });
 
-    async function cargarPendientes() { const snap = await db.collection('usuarios').get(); let all = []; snap.forEach(doc => { (doc.data().pendientes || []).forEach(p => { if (p.estado === 'pendiente') all.push({ ...p, userId: doc.id }); }); }); document.getElementById('totalPendientes').textContent = all.length; document.getElementById('pendientesList').innerHTML = all.length ? all.map(p => `<div class="admin-item"><div style="flex:1;"><strong>$${p.monto.toFixed(2)}</strong> | 👤 ${p.usuario}<div class="cmd-box">/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}</div></div><div style="display:flex;flex-direction:column;gap:4px;"><button class="btn-xs btn-copy" onclick="copiarCmd('/withdraw ${p.monto.toFixed(4)} usdt ${p.wallet}')">📋</button><button class="btn-xs btn-done" onclick="pagarAdm('${p.userId}',${p.id})">✅</button></div></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin pendientes</div>'; }
+    async function cargarPendientes() { const snap = await db.collection('usuarios').get(); let all = []; snap.forEach(doc => { (doc.data().pendientes || []).forEach(p => { if (p.estado === 'pendiente') all.push({ ...p, userId: doc.id }); }); }); document.getElementById('totalPendientes').textContent = all.length; document.getElementById('pendientesList').innerHTML = all.length ? all.map(p => `<div class="admin-item"><div style="flex:1;"><strong>$${p.monto.toFixed(5)}</strong> | 👤 ${p.usuario}<div class="cmd-box">/withdraw ${p.monto.toFixed(5)} usdt ${p.wallet}</div></div><div style="display:flex;flex-direction:column;gap:4px;"><button class="btn-xs btn-copy" onclick="copiarCmd('/withdraw ${p.monto.toFixed(5)} usdt ${p.wallet}')">📋</button><button class="btn-xs btn-done" onclick="pagarAdm('${p.userId}',${p.id})">✅</button></div></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin pendientes</div>'; }
     window.copiarCmd = function(c) { navigator.clipboard.writeText(c).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + c, 'success')); };
     window.pagarAdm = async function(uid, pid) { const d = (await db.collection('usuarios').doc(uid).get()).data(); let pe = d.pendientes || [], hi = d.historial || []; const p = pe.find(x => x.id === pid); if (p) p.estado = 'exitoso'; hi.forEach(h => { if (h.estado === 'pendiente' && h.wallet === p.wallet) h.estado = 'exitoso'; }); await db.collection('usuarios').doc(uid).update({ pendientes: pe, historial: hi }); toast('✅ Pagado', 'success'); cargarPendientes(); };
 
-    document.getElementById('btnGuardarPrecio').addEventListener('click', async () => { const n = parseFloat(document.getElementById('adminPrecioAnuncio').value); if (!n || n <= 0) return toast('⚠️ Precio inválido', 'error'); try { await db.collection('config').doc('global').set({ precioAnuncio: n, mensajeGlobal: MENSAJE_GLOBAL }, { merge: true }); PRECIO_ANUNCIO = n; document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3); toast('✅ Precio: $' + n.toFixed(3), 'success'); actualizarUI(); } catch (e) { toast('❌ Error: ' + e.message, 'error'); } });
+    document.getElementById('btnGuardarPrecio').addEventListener('click', async () => { const n = parseFloat(document.getElementById('adminPrecioAnuncio').value); if (!n || n <= 0) return toast('⚠️ Precio inválido', 'error'); try { await db.collection('config').doc('global').set({ precioAnuncio: n, mensajeGlobal: MENSAJE_GLOBAL }, { merge: true }); PRECIO_ANUNCIO = n; document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(5); toast('✅ Precio: $' + n.toFixed(5), 'success'); actualizarUI(); } catch (e) { toast('❌ Error: ' + e.message, 'error'); } });
     document.getElementById('btnGuardarMensaje').addEventListener('click', async () => { const m = document.getElementById('adminMensajeGlobal').value.trim(); try { await db.collection('config').doc('global').set({ precioAnuncio: PRECIO_ANUNCIO, mensajeGlobal: m }, { merge: true }); MENSAJE_GLOBAL = m; const mb = document.getElementById('mensajeGlobalBox'); if (m) { mb.innerHTML = '📢 ' + m; mb.classList.remove('oculto'); } else { mb.classList.add('oculto'); } toast('✅ Mensaje publicado', 'success'); actualizarUI(); } catch (e) { toast('❌ Error: ' + e.message, 'error'); } });
 
     (async function() { userIP = await obtenerIP(); await cargarConfig(); const u = localStorage.getItem('sgc_user'), p = localStorage.getItem('sgc_pass'); if (u && p) { const doc = await db.collection('usuarios').doc(u).get(); if (doc.exists && doc.data().password === p) { USER_ID = u; USER_DATA = doc.data(); entrarApp(); } } })();
