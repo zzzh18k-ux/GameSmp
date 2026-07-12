@@ -426,9 +426,40 @@
 
     function renderReferidos() { const l = document.getElementById('referidosList'), refs = USER_DATA.referidos || []; l.innerHTML = refs.length ? refs.map(r => `<div class="referido-item"><strong>👤 ${r}</strong><span style="color:#B8860B;">+5%</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin invitados</div>'; }
 
-    document.getElementById('btnReclamarComision').addEventListener('click', async () => { const c = USER_DATA.comision || 0; if (c <= 0) return toast('⚠️ Sin comisiones', 'error'); const nuevoBalance = (USER_DATA.balance || 0) + c; await db.collection('usuarios').doc(USER_ID).update({ balance: nuevoBalance, comision: 0 }); USER_DATA.balance = nuevoBalance; USER_DATA.comision = 0; toast(`💰 +$${c.toFixed(4)}`, 'success'); actualizarUI(); });
+    // RECLAMAR COMISIÓN - ARREGLADO
+    document.getElementById('btnReclamarComision').addEventListener('click', async () => {
+        const doc = await db.collection('usuarios').doc(USER_ID).get();
+        const c = doc.data().comision || 0;
+        if (c <= 0) return toast('⚠️ Sin comisiones acumuladas', 'error');
+        const nuevoBalance = (doc.data().balance || 0) + c;
+        await db.collection('usuarios').doc(USER_ID).update({ balance: nuevoBalance, comision: 0 });
+        USER_DATA.balance = nuevoBalance;
+        USER_DATA.comision = 0;
+        toast(`💰 +$${c.toFixed(4)} añadido a tu balance`, 'success');
+        actualizarUI();
+    });
 
-    document.getElementById('btnRetirar').addEventListener('click', async () => { const w = document.getElementById('walletInput').value.trim(); if (!w || !w.startsWith('0x')) return toast('⚠️ Dirección inválida', 'error'); if ((USER_DATA.balance||0) < MIN_RETIRO) return toast('⚠️ Mínimo $' + MIN_RETIRO.toFixed(2), 'error'); const m = USER_DATA.balance, hoy = new Date().toLocaleDateString(); const pg = { id: Date.now(), wallet: w, monto: m, fecha: hoy, estado: 'pendiente', usuario: USER_ID }; await db.collection('usuarios').doc(USER_ID).update({ balance: 0, historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }), pendientes: firebase.firestore.FieldValue.arrayUnion(pg) }); USER_DATA.balance = 0; USER_DATA.historial = [...(USER_DATA.historial||[]), { fecha: hoy, monto: m, wallet: w, estado: 'pendiente' }]; document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${m.toFixed(2)} solicitado`; toast('✅ Retiro solicitado', 'success'); document.getElementById('walletInput').value = ''; actualizarUI(); });
+    // RETIRAR - ARREGLADO (muestra bien el mínimo)
+    document.getElementById('btnRetirar').addEventListener('click', async () => {
+        const w = document.getElementById('walletInput').value.trim();
+        if (!w || !w.startsWith('0x')) return toast('⚠️ Dirección Polygon inválida', 'error');
+        const doc = await db.collection('usuarios').doc(USER_ID).get();
+        const bal = doc.data().balance || 0;
+        if (bal < MIN_RETIRO) return toast('⚠️ Mínimo de retiro: $' + MIN_RETIRO.toFixed(2) + ' USDT. Tu balance: $' + bal.toFixed(4), 'error');
+        const hoy = new Date().toLocaleDateString();
+        const pg = { id: Date.now(), wallet: w, monto: bal, fecha: hoy, estado: 'pendiente', usuario: USER_ID };
+        await db.collection('usuarios').doc(USER_ID).update({ 
+            balance: 0, 
+            historial: firebase.firestore.FieldValue.arrayUnion({ fecha: hoy, monto: bal, wallet: w, estado: 'pendiente' }), 
+            pendientes: firebase.firestore.FieldValue.arrayUnion(pg) 
+        });
+        USER_DATA.balance = 0;
+        USER_DATA.historial = [...(USER_DATA.historial||[]), { fecha: hoy, monto: bal, wallet: w, estado: 'pendiente' }];
+        document.getElementById('estadoRetiro').textContent = `✅ Retiro de $${bal.toFixed(4)} solicitado`;
+        toast('✅ Retiro solicitado: $' + bal.toFixed(4), 'success');
+        document.getElementById('walletInput').value = '';
+        actualizarUI();
+    });
 
     function renderHistorial() { const l = document.getElementById('historialList'), h = USER_DATA.historial || []; l.innerHTML = h.length ? h.slice().reverse().map(x => `<div class="hist-item"><span>${x.fecha}</span><span>$${x.monto.toFixed(2)}</span><span class="badge-sm ${x.estado==='exitoso'?'badge-green':'badge-yellow'}">${x.estado.toUpperCase()}</span></div>`).join('') : '<div style="text-align:center;padding:14px;color:var(--text2);">Sin retiros</div>'; }
 
@@ -451,46 +482,8 @@
     window.copiarCmd = function(c) { navigator.clipboard.writeText(c).then(() => toast('📋 Copiado!', 'success')).catch(() => toast('📋 ' + c, 'success')); };
     window.pagarAdm = async function(uid, pid) { const d = (await db.collection('usuarios').doc(uid).get()).data(); let pe = d.pendientes || [], hi = d.historial || []; const p = pe.find(x => x.id === pid); if (p) p.estado = 'exitoso'; hi.forEach(h => { if (h.estado === 'pendiente' && h.wallet === p.wallet) h.estado = 'exitoso'; }); await db.collection('usuarios').doc(uid).update({ pendientes: pe, historial: hi }); toast('✅ Pagado', 'success'); cargarPendientes(); };
 
-    // GUARDAR PRECIO - CORREGIDO
-    document.getElementById('btnGuardarPrecio').addEventListener('click', async () => {
-        const n = parseFloat(document.getElementById('adminPrecioAnuncio').value);
-        if (!n || n <= 0) return toast('⚠️ Precio inválido', 'error');
-        try {
-            await db.collection('config').doc('global').set({ 
-                precioAnuncio: n, 
-                mensajeGlobal: MENSAJE_GLOBAL 
-            }, { merge: true });
-            PRECIO_ANUNCIO = n;
-            document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3);
-            toast('✅ Precio actualizado: $' + n.toFixed(3), 'success');
-            actualizarUI();
-        } catch (e) {
-            toast('❌ Error al guardar: ' + e.message, 'error');
-        }
-    });
-
-    // GUARDAR MENSAJE - CORREGIDO
-    document.getElementById('btnGuardarMensaje').addEventListener('click', async () => {
-        const m = document.getElementById('adminMensajeGlobal').value.trim();
-        try {
-            await db.collection('config').doc('global').set({ 
-                precioAnuncio: PRECIO_ANUNCIO, 
-                mensajeGlobal: m 
-            }, { merge: true });
-            MENSAJE_GLOBAL = m;
-            const mb = document.getElementById('mensajeGlobalBox');
-            if (m) {
-                mb.innerHTML = '📢 ' + m;
-                mb.classList.remove('oculto');
-            } else {
-                mb.classList.add('oculto');
-            }
-            toast('✅ Mensaje publicado', 'success');
-            actualizarUI();
-        } catch (e) {
-            toast('❌ Error al guardar: ' + e.message, 'error');
-        }
-    });
+    document.getElementById('btnGuardarPrecio').addEventListener('click', async () => { const n = parseFloat(document.getElementById('adminPrecioAnuncio').value); if (!n || n <= 0) return toast('⚠️ Precio inválido', 'error'); try { await db.collection('config').doc('global').set({ precioAnuncio: n, mensajeGlobal: MENSAJE_GLOBAL }, { merge: true }); PRECIO_ANUNCIO = n; document.getElementById('precioAnuncioHome').textContent = '$' + PRECIO_ANUNCIO.toFixed(3); toast('✅ Precio: $' + n.toFixed(3), 'success'); actualizarUI(); } catch (e) { toast('❌ Error: ' + e.message, 'error'); } });
+    document.getElementById('btnGuardarMensaje').addEventListener('click', async () => { const m = document.getElementById('adminMensajeGlobal').value.trim(); try { await db.collection('config').doc('global').set({ precioAnuncio: PRECIO_ANUNCIO, mensajeGlobal: m }, { merge: true }); MENSAJE_GLOBAL = m; const mb = document.getElementById('mensajeGlobalBox'); if (m) { mb.innerHTML = '📢 ' + m; mb.classList.remove('oculto'); } else { mb.classList.add('oculto'); } toast('✅ Mensaje publicado', 'success'); actualizarUI(); } catch (e) { toast('❌ Error: ' + e.message, 'error'); } });
 
     (async function() { userIP = await obtenerIP(); await cargarConfig(); const u = localStorage.getItem('sgc_user'), p = localStorage.getItem('sgc_pass'); if (u && p) { const doc = await db.collection('usuarios').doc(u).get(); if (doc.exists && doc.data().password === p) { USER_ID = u; USER_DATA = doc.data(); entrarApp(); } } })();
 </script>
