@@ -193,7 +193,6 @@
       box-shadow: 3px 3px 0 var(--border-color);
     }
 
-    /* ===== Barra de carga de la IA ===== */
     #loadingBar {
       position: absolute;
       top: 45%;
@@ -309,7 +308,6 @@
 </head>
 <body>
 
-  <!-- Bienvenida fuera del karaoke -->
   <div id="welcomeScreen">
     <div class="welcome-card">
       <h1 class="welcome-title">Bienvenido a tu espacio de práctica de voz</h1>
@@ -372,7 +370,6 @@
 
   <div class="prompter-container" id="prompterContainer">
     <div class="reading-guide" id="readingGuide"></div>
-    <!-- Barra de carga dentro del área del prompter -->
     <div id="loadingBar">
       <div class="loading-text" id="loadingText">Generando letra...</div>
       <div class="loading-track">
@@ -544,7 +541,6 @@
       if (isGenerating) return;
       isGenerating = true;
 
-      // Mostrar barra de carga (distinto mensaje si es continuación)
       showLoading(autoAppend ? 'Generando más texto...' : 'Generando letra...');
 
       var userCustom = customTopic.value.trim();
@@ -553,7 +549,8 @@
       var prompt = 'Escribe un monólogo corto de 3 párrafos en español neutro, con tono natural y cotidiano, como si le estuvieras enviando un mensaje de voz de WhatsApp a alguien de confianza. Habla sobre: ' + chosenTopic + '. Usa un español estándar, sin modismos ni acentos de ningún país específico. Emplea frases claras, buena puntuación para practicar la articulación. No pongas títulos, solo el texto corrido.';
 
       try {
-        var response = await fetch('https://text.pollinations.ai/' + encodeURIComponent(prompt) + '?model=openai&seed=' + Math.floor(Math.random()*10000));
+        // CAMBIO: model=mistral en vez de model=openai
+        var response = await fetch('https://text.pollinations.ai/' + encodeURIComponent(prompt) + '?model=mistral&seed=' + Math.floor(Math.random()*10000));
         var newText = await response.text();
 
         hideLoading();
@@ -567,7 +564,6 @@
       } catch (error) {
         hideLoading();
         if (!autoAppend) {
-          // Si falla la IA, mostrar un texto neutro para que no quede vacío
           var fallback = 'Te cuento algo sobre ' + chosenTopic + '. Es un tema que da para conversar un buen rato, porque siempre aparecen ideas y detalles interesantes. Cuando quieras seguimos practicando con calma y a tu ritmo.';
           renderKaraokeText(fallback, false);
           resetScroll();
@@ -580,11 +576,9 @@
     function enterApp() {
       var screen = document.getElementById('welcomeScreen');
       if (screen) screen.classList.add('hidden');
-      // El karaoke arranca vacío y muestra la barra de carga
       textElement.innerHTML = '';
       showLoading('Generando letra...');
       setTimeout(updateKaraokeHighlight, 100);
-      // Pedir texto a la IA
       generateNewChat(false);
     }
 
