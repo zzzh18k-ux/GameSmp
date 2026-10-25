@@ -1,137 +1,594 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Mini App de Telegram 🚀</title>
-    <style>
-        /* Quitamos los bordes para que se vea como app 📱 */
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teleprompter Pro: Karaoke + Voz + IA</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Ocultamos la página principal al principio 🙈 */
-        #mi-pagina {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: none;
-        }
+    :root {
+      --bg-paper: #fdf3df;
+      --text-color: #1a1a1a;
+      --panel-bg: #ffe9c7;
+      --border-color: #2b2118;
+      --shadow-color: #2b2118;
+      --guide-bg: rgba(255, 180, 50, 0.25);
+      --guide-border: #e85d04;
+      --karaoke-bg: #ffd166;
+      --karaoke-text: #1a1a1a;
+    }
 
-        /* Estilo para la pantalla bonita del mensaje 🎨 */
-        #pantalla-mensaje {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Color bonito de fondo */
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            z-index: 100;
-        }
+    body.white-mode {
+      --bg-paper: #ffffff;
+      --text-color: #111111;
+      --panel-bg: #f1f5f9;
+      --border-color: #1e293b;
+      --shadow-color: #1e293b;
+      --guide-bg: rgba(34, 197, 94, 0.15);
+      --guide-border: #15803d;
+      --karaoke-bg: #86efac;
+      --karaoke-text: #000000;
+    }
 
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
+    body {
+      background-color: var(--bg-paper);
+      color: var(--text-color);
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
 
-        p {
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
+    .controls {
+      background-color: var(--panel-bg);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border-bottom: 5px solid var(--border-color);
+      z-index: 10;
+    }
 
-        /* Estilo del botón 🔘 */
-        #boton-anuncio {
-            background-color: white;
-            color: #764ba2;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
-        }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-        /* Cuando el botón está cargando se ve grisito ⏳ */
-        #boton-anuncio:disabled {
-            background-color: #cccccc;
-            color: #666666;
-            cursor: not-allowed;
-        }
-    </style>
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 14px;
+      background: #fffaf0;
+      border: 3px solid var(--border-color);
+      border-radius: 12px;
+      padding: 8px 14px;
+      box-shadow: 4px 4px 0 var(--shadow-color);
+    }
+
+    button {
+      background-color: #2e9e5b;
+      color: #ffffff;
+      border: 3px solid var(--border-color);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--border-color);
+      transition: transform 0.08s, box-shadow 0.08s;
+      font-family: inherit;
+    }
+
+    button:hover { filter: brightness(1.08); }
+
+    button:active {
+      transform: translate(4px, 4px);
+      box-shadow: 0px 0px 0 var(--border-color);
+    }
+
+    button.secondary { background-color: #2563eb; }
+    button.reset { background-color: #e11d48; }
+    button.theme-btn { background-color: #7c3aed; }
+    button.record-btn { background-color: #ea580c; }
+
+    button.record-btn.recording {
+      background-color: #991b1b;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    input[type="range"] {
+      cursor: pointer;
+      width: 110px;
+      accent-color: #ea580c;
+    }
+
+    select, input[type="text"] {
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #1a1a1a;
+      border: 3px solid var(--border-color);
+      font-weight: 700;
+      font-size: 14px;
+      box-shadow: 3px 3px 0 var(--shadow-color);
+      font-family: inherit;
+    }
+
+    input[type="text"] { width: 240px; }
+
+    .audio-bar {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 3px solid var(--border-color);
+      box-shadow: 3px 3px 0 var(--shadow-color);
+    }
+
+    audio { height: 32px; }
+
+    .prompter-container {
+      position: relative;
+      flex: 1;
+      overflow-y: hidden;
+      display: flex;
+      justify-content: center;
+    }
+
+    .reading-guide {
+      position: absolute;
+      top: 32%;
+      left: 0;
+      width: 100%;
+      height: 110px;
+      background: var(--guide-bg);
+      border-top: 4px solid var(--guide-border);
+      border-bottom: 4px solid var(--guide-border);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .prompter-text {
+      width: 88%;
+      max-width: 860px;
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.75;
+      padding-top: 34vh;
+      padding-bottom: 65vh;
+      text-align: left;
+      z-index: 6;
+    }
+
+    .paragraph-block { margin-bottom: 28px; }
+
+    .word {
+      display: inline-block;
+      padding: 2px 6px;
+      margin: 0 2px;
+      border-radius: 8px;
+      transition: background-color 0.12s, transform 0.12s;
+    }
+
+    .word.active-karaoke {
+      background-color: var(--karaoke-bg);
+      color: var(--karaoke-text);
+      transform: scale(1.07);
+      box-shadow: 3px 3px 0 var(--border-color);
+    }
+
+    /* ===== Barra de carga de la IA ===== */
+    #loadingBar {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70%;
+      max-width: 500px;
+      z-index: 20;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    #loadingBar.active {
+      display: flex;
+    }
+
+    .loading-text {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-color);
+      letter-spacing: 0.5px;
+    }
+
+    .loading-track {
+      width: 100%;
+      height: 18px;
+      background: #fffaf0;
+      border: 3px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 4px 4px 0 var(--shadow-color);
+      overflow: hidden;
+    }
+
+    .loading-fill {
+      height: 100%;
+      width: 30%;
+      background: #ff8c42;
+      border-right: 3px solid var(--border-color);
+      border-radius: 8px 0 0 8px;
+      animation: loadingSlide 1.2s infinite ease-in-out;
+    }
+
+    @keyframes loadingSlide {
+      0% { width: 10%; margin-left: 0%; }
+      50% { width: 45%; margin-left: 30%; }
+      100% { width: 10%; margin-left: 90%; }
+    }
+
+    #welcomeScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-color: var(--bg-paper);
+    }
+
+    #welcomeScreen.hidden {
+      display: none;
+    }
+
+    .welcome-card {
+      width: 100%;
+      max-width: 640px;
+      background: #fffaf0;
+      border: 4px solid var(--border-color);
+      border-radius: 18px;
+      padding: 40px 36px 32px;
+      box-shadow: 8px 8px 0 var(--shadow-color);
+      text-align: left;
+    }
+
+    .welcome-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-color);
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    .welcome-message {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-color);
+      margin-bottom: 28px;
+    }
+
+    .welcome-message p {
+      margin-bottom: 14px;
+    }
+
+    .welcome-message strong {
+      font-weight: 800;
+    }
+
+    .welcome-btn {
+      width: 100%;
+      background-color: #2e9e5b;
+      font-size: 16px;
+      padding: 14px;
+    }
+
+    @media (max-width: 560px) {
+      .welcome-card { padding: 28px 22px 24px; }
+      .welcome-title { font-size: 22px; }
+      .welcome-message { font-size: 15px; }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- Esta es la pantalla del mensaje bonito ✨ -->
-    <div id="pantalla-mensaje">
-        <h1>¡Bienvenido a tu espacio favorito! 📺💖</h1>
-        <p>Solo ve este anuncio rápido y tendrás acceso libre por las próximas 24 horas. ¡Disfruta sin límites! 🚀</p>
-        <button id="boton-anuncio" onclick="simularAnuncio()">▶️ Ver anuncio (5/5)</button>
+  <!-- Bienvenida fuera del karaoke -->
+  <div id="welcomeScreen">
+    <div class="welcome-card">
+      <h1 class="welcome-title">Bienvenido a tu espacio de práctica de voz</h1>
+      <div class="welcome-message">
+        <p><strong>Tómate tu tiempo.</strong> Aquí no hay prisa. Pronuncia cada palabra con calma, como si estuvieras conversando con alguien de confianza.</p>
+        <p><strong>No imites a nadie.</strong> Tu voz natural tiene su propio carisma, y ese es tu mejor recurso. Habla con tu ritmo, con tu tono, con tu manera.</p>
+        <p><strong>La constancia es la clave.</strong> Lee en voz alta, escúchate al terminar y verás cómo cada día articulas mejor y te sientes más seguro al hablar.</p>
+      </div>
+      <button type="button" class="welcome-btn" id="startBtn">Comenzar a practicar</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="row">
+      <div class="control-group">
+        <button id="playPauseBtn" onclick="togglePlay()">Iniciar</button>
+        <button class="reset" onclick="resetScroll()">Inicio</button>
+        <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">Blanco / Cartón</button>
+      </div>
+
+      <div class="control-group">
+        <label>Velocidad:</label>
+        <input type="range" id="speedRange" min="0.3" max="4.5" step="0.1" value="1.1" oninput="updateSpeedLabel()">
+        <span id="speedValue">1.1x</span>
+      </div>
+
+      <div class="control-group">
+        <label>Letra:</label>
+        <input type="range" id="fontSize" min="28" max="62" step="2" value="40" oninput="updateFontSize()">
+      </div>
+
+      <div class="control-group">
+        <button class="record-btn" id="recordBtn" onclick="toggleRecording()">Grabar mi voz</button>
+        <div class="audio-bar" id="audioBar">
+          <span>Tu audio:</span>
+          <audio id="audioPlayer" controls></audio>
+        </div>
+      </div>
     </div>
 
-    <!-- Tu página incrustada (Iframe) 🌐 -->
-    <iframe id="mi-pagina" src="https://famelack.com/tv"></iframe>
+    <div class="row">
+      <div class="control-group">
+        <label>Ideas:</label>
+        <select id="topicSelect" onchange="clearCustomInput()">
+          <option value="contar una anécdota divertida del día">Anécdota del día</option>
+          <option value="planear un viaje o salida de fin de semana">Plan de fin de semana</option>
+          <option value="recomendar una película o serie buenísima">Película o serie</option>
+          <option value="hablar de comida rica y recetas fáciles">Comida favorita</option>
+          <option value="reflexión motivadora y positiva entre amigos">Charla positiva</option>
+        </select>
+      </div>
 
-    <!-- Aquí va la magia que cuenta el tiempo y hace funcionar el botón 🪄 -->
-    <script>
-        // Esta función revisa si ya pasaron las 24 horas 🕵️‍♀️
-        function revisarAcceso() {
-            const tiempoGuardado = localStorage.getItem('acceso_app');
-            
-            if (tiempoGuardado) {
-                const tiempoPasado = Date.now() - parseInt(tiempoGuardado);
-                const veinticuatroHoras = 24 * 60 * 60 * 1000; // Esto es 24 horas en milisegundos ⏱️
-                
-                if (tiempoPasado < veinticuatroHoras) {
-                    // Si no han pasado 24 horas, abrimos la app de una vez 🎉
-                    mostrarAplicacion();
-                }
-            }
+      <div class="control-group" style="flex: 1; justify-content: flex-end;">
+        <label>O escribe tu tema:</label>
+        <input type="text" id="customTopic" placeholder="Ej: Mi música favorita, un cuento...">
+        <button class="secondary" onclick="generateNewChat(false)">Generar Charla IA</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="prompter-container" id="prompterContainer">
+    <div class="reading-guide" id="readingGuide"></div>
+    <!-- Barra de carga dentro del área del prompter -->
+    <div id="loadingBar">
+      <div class="loading-text" id="loadingText">Generando letra...</div>
+      <div class="loading-track">
+        <div class="loading-fill"></div>
+      </div>
+    </div>
+    <div class="prompter-text" id="prompterText"></div>
+  </div>
+
+  <script>
+    var isPlaying = false;
+    var scrollPos = 0;
+    var animationId = null;
+    var isGenerating = false;
+
+    var mediaRecorder = null;
+    var audioChunks = [];
+    var isRecording = false;
+
+    var container = document.getElementById('prompterContainer');
+    var textElement = document.getElementById('prompterText');
+    var guideElement = document.getElementById('readingGuide');
+    var playPauseBtn = document.getElementById('playPauseBtn');
+    var speedRange = document.getElementById('speedRange');
+    var speedValue = document.getElementById('speedValue');
+    var fontSize = document.getElementById('fontSize');
+    var topicSelect = document.getElementById('topicSelect');
+    var customTopic = document.getElementById('customTopic');
+    var recordBtn = document.getElementById('recordBtn');
+    var audioBar = document.getElementById('audioBar');
+    var audioPlayer = document.getElementById('audioPlayer');
+    var loadingBar = document.getElementById('loadingBar');
+    var loadingText = document.getElementById('loadingText');
+
+    function showLoading(msg) {
+      loadingText.textContent = msg || 'Generando letra...';
+      loadingBar.classList.add('active');
+    }
+
+    function hideLoading() {
+      loadingBar.classList.remove('active');
+    }
+
+    function renderKaraokeText(rawText, append) {
+      if (append === undefined) append = false;
+      if (!append) textElement.innerHTML = '';
+      var paragraphs = rawText.split(/\n+/).filter(function(p) { return p.trim() !== ''; });
+      paragraphs.forEach(function(pText) {
+        var pDiv = document.createElement('div');
+        pDiv.className = 'paragraph-block';
+        var words = pText.trim().split(/\s+/);
+        words.forEach(function(w) {
+          var span = document.createElement('span');
+          span.className = 'word';
+          span.textContent = w;
+          pDiv.appendChild(span);
+          pDiv.appendChild(document.createTextNode(' '));
+        });
+        textElement.appendChild(pDiv);
+      });
+      updateKaraokeHighlight();
+    }
+
+    function updateKaraokeHighlight() {
+      var guideRect = guideElement.getBoundingClientRect();
+      var targetY = guideRect.top + (guideRect.height * 0.45);
+      var allWords = document.querySelectorAll('.word');
+      var activeLinesWords = [];
+      allWords.forEach(function(w) {
+        w.classList.remove('active-karaoke');
+        var rect = w.getBoundingClientRect();
+        var wordCenterY = rect.top + (rect.height / 2);
+        if (Math.abs(wordCenterY - targetY) < (rect.height * 0.55)) {
+          activeLinesWords.push(w);
         }
-
-        // Esta función hace el efecto del botón contando 5, 4, 3, 2, 1 ⏳
-        function simularAnuncio() {
-            const boton = document.getElementById('boton-anuncio');
-            let contador = 5; // Empezamos en 5
-            
-            boton.disabled = true; // Apagamos el botón para que no lo toquen 2 veces 🔒
-
-            const temporizador = setInterval(() => {
-                contador--;
-                
-                if (contador > 0) {
-                    boton.innerText = `⏳ Espere... (${contador}/5)`;
-                } else {
-                    // Cuando llega a cero... ¡Listo! 🎊
-                    clearInterval(temporizador);
-                    boton.innerText = "¡Completado! 🎉";
-                    
-                    // Guardamos la hora actual en el teléfono de la persona 💾
-                    localStorage.setItem('acceso_app', Date.now());
-                    
-                    // Esperamos medio segundo para que vea el "Completado" y abrimos la app 🚀
-                    setTimeout(mostrarAplicacion, 500);
-                }
-            }, 1000); // 1000 significa que cambia cada 1 segundo ⏱️
+      });
+      if (activeLinesWords.length > 0) {
+        var firstWordRect = activeLinesWords[0].getBoundingClientRect();
+        var lineHeight = firstWordRect.height;
+        var progress = ((guideRect.top + guideRect.height * 0.75) - firstWordRect.top) / (lineHeight * 1.1);
+        progress = Math.max(0, Math.min(0.99, progress));
+        var wordIndex = Math.floor(progress * activeLinesWords.length);
+        if (activeLinesWords[wordIndex]) {
+          activeLinesWords[wordIndex].classList.add('active-karaoke');
         }
+      }
+    }
 
-        // Esta función quita el mensaje y muestra tu iframe 🪄
-        function mostrarAplicacion() {
-            document.getElementById('pantalla-mensaje').style.display = 'none';
-            document.getElementById('mi-pagina').style.display = 'block';
+    function step() {
+      if (isPlaying) {
+        var speed = parseFloat(speedRange.value);
+        scrollPos += speed * 0.55;
+        container.scrollTop = scrollPos;
+        updateKaraokeHighlight();
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight - 380) {
+          if (!isGenerating) generateNewChat(true);
         }
+        animationId = requestAnimationFrame(step);
+      }
+    }
 
-        // Apenas la persona abre la app, ejecutamos la revisión 👀
-        revisarAcceso();
-    </script>
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        playPauseBtn.innerHTML = 'Pausar';
+        scrollPos = container.scrollTop;
+        animationId = requestAnimationFrame(step);
+      } else {
+        playPauseBtn.innerHTML = 'Continuar';
+        cancelAnimationFrame(animationId);
+      }
+    }
 
+    function resetScroll() {
+      isPlaying = false;
+      cancelAnimationFrame(animationId);
+      playPauseBtn.innerHTML = 'Iniciar';
+      scrollPos = 0;
+      container.scrollTop = 0;
+      setTimeout(updateKaraokeHighlight, 50);
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('white-mode');
+    }
+
+    function updateSpeedLabel() { speedValue.innerText = speedRange.value + 'x'; }
+
+    function updateFontSize() {
+      textElement.style.fontSize = fontSize.value + 'px';
+      updateKaraokeHighlight();
+    }
+
+    function clearCustomInput() { customTopic.value = ''; }
+
+    async function toggleRecording() {
+      if (!isRecording) {
+        try {
+          var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+          mediaRecorder.ondataavailable = function(event) {
+            if (event.data.size > 0) audioChunks.push(event.data);
+          };
+          mediaRecorder.onstop = function() {
+            var audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            var audioUrl = URL.createObjectURL(audioBlob);
+            audioPlayer.src = audioUrl;
+            audioBar.style.display = 'flex';
+          };
+          mediaRecorder.start();
+          isRecording = true;
+          recordBtn.classList.add('recording');
+          recordBtn.innerHTML = 'Detener grabación';
+        } catch (err) {
+          alert('Para grabar tu voz, acepta el permiso del micrófono en tu navegador.');
+        }
+      } else {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(function(track) { track.stop(); });
+        isRecording = false;
+        recordBtn.classList.remove('recording');
+        recordBtn.innerHTML = 'Grabar mi voz';
+      }
+    }
+
+    async function generateNewChat(autoAppend) {
+      if (autoAppend === undefined) autoAppend = false;
+      if (isGenerating) return;
+      isGenerating = true;
+
+      // Mostrar barra de carga (distinto mensaje si es continuación)
+      showLoading(autoAppend ? 'Generando más texto...' : 'Generando letra...');
+
+      var userCustom = customTopic.value.trim();
+      var chosenTopic = userCustom !== '' ? userCustom : topicSelect.value;
+
+      var prompt = 'Escribe un monólogo corto de 3 párrafos en español neutro, con tono natural y cotidiano, como si le estuvieras enviando un mensaje de voz de WhatsApp a alguien de confianza. Habla sobre: ' + chosenTopic + '. Usa un español estándar, sin modismos ni acentos de ningún país específico. Emplea frases claras, buena puntuación para practicar la articulación. No pongas títulos, solo el texto corrido.';
+
+      try {
+        var response = await fetch('https://text.pollinations.ai/' + encodeURIComponent(prompt) + '?model=openai&seed=' + Math.floor(Math.random()*10000));
+        var newText = await response.text();
+
+        hideLoading();
+
+        if (autoAppend) {
+          renderKaraokeText('Continuamos.\n\n' + newText.trim(), true);
+        } else {
+          renderKaraokeText(newText.trim(), false);
+          resetScroll();
+        }
+      } catch (error) {
+        hideLoading();
+        if (!autoAppend) {
+          // Si falla la IA, mostrar un texto neutro para que no quede vacío
+          var fallback = 'Te cuento algo sobre ' + chosenTopic + '. Es un tema que da para conversar un buen rato, porque siempre aparecen ideas y detalles interesantes. Cuando quieras seguimos practicando con calma y a tu ritmo.';
+          renderKaraokeText(fallback, false);
+          resetScroll();
+        }
+      } finally {
+        isGenerating = false;
+      }
+    }
+
+    function enterApp() {
+      var screen = document.getElementById('welcomeScreen');
+      if (screen) screen.classList.add('hidden');
+      // El karaoke arranca vacío y muestra la barra de carga
+      textElement.innerHTML = '';
+      showLoading('Generando letra...');
+      setTimeout(updateKaraokeHighlight, 100);
+      // Pedir texto a la IA
+      generateNewChat(false);
+    }
+
+    document.getElementById('startBtn').addEventListener('click', enterApp);
+  </script>
 </body>
 </html>
