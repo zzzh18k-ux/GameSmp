@@ -549,9 +549,27 @@
       var prompt = 'Escribe un monólogo corto de 3 párrafos en español neutro, con tono natural y cotidiano, como si le estuvieras enviando un mensaje de voz de WhatsApp a alguien de confianza. Habla sobre: ' + chosenTopic + '. Usa un español estándar, sin modismos ni acentos de ningún país específico. Emplea frases claras, buena puntuación para practicar la articulación. No pongas títulos, solo el texto corrido.';
 
       try {
-        // CAMBIO: model=mistral en vez de model=openai
-        var response = await fetch('https://text.pollinations.ai/' + encodeURIComponent(prompt) + '?model=mistral&seed=' + Math.floor(Math.random()*10000));
-        var newText = await response.text();
+        // LLAMADA A LLM7.IO (Gratis, sin registro, límite de 20 RPM)
+        var response = await fetch('https://api.llm7.io/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // La capa gratuita no requiere una clave real, se usa "unused"
+            'Authorization': 'Bearer unused'
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini', // Modelo rápido y con buen español
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.7
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Error en la respuesta de LLM7.io');
+        }
+
+        var data = await response.json();
+        var newText = data.choices[0].message.content;
 
         hideLoading();
 
